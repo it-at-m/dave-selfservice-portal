@@ -1,0 +1,65 @@
+spring:
+
+  # Define the local keycloak realm here
+  realm: Dave
+
+  # spring cloud gateway config
+  cloud:
+    gateway:
+      actuator:
+        verbose:
+          enabled: false
+      globalcors:
+        corsConfigurations:
+          # The cors configuration to allow frontend developers cross origin request via this api gateway
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:8086"
+              - "http://127.0.0.1:8086"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+      routes:
+        - id: sso
+          uri: ${uri:http://ssodev.local}
+          predicates:
+            - Path=/api/sso/userinfo
+          filters:
+            - RewritePath=/api/sso/userinfo, /auth/realms/${spring.realm}/protocol/openid-connect/userinfo
+        - id: backend
+          uri: http://localhost:39146/
+          predicates:
+            - Path=/api/dave-backend-service/**
+          filters:
+            - name: Retry
+              args:
+                retries: 2
+                methods: GET
+                backoff:
+                  firstBackoff: 10ms
+                  maxBackoff: 50ms
+                  factor: 2
+                  basedOnPreviousValue: false
+            - RewritePath=/api/dave-backend-service/(?<urlsegments>.*), /$\{urlsegments}
+            - RemoveResponseHeader=WWW-Authenticate
+      default-filters:
+        - RemoveResponseHeader=Expires
+        - RemoveRequestHeader=cookie
+        - RemoveRequestHeader=x-xsrf-token
+        - TokenRelay=
+
+  # security config
+  security:
+    oauth2:
+      client:
+        provider:
+          keycloak:
+            issuer-uri: ${keycloak_uri}
+        registration:
+          keycloak:
+            client-id: ${keycloak_client_id}
+            client-secret: ${keycloak_client_secret}
+
+  http:
+    log-request-details: on
