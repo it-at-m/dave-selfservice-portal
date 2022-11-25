@@ -27,6 +27,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## Contact
 
-it@m - opensource@muenchendigital.io
-
-[join our slack channel](https://join.slack.com/t/digiwf/shared_invite/zt-14jxazj1j-jq0WNtXp7S7HAwJA7tKgpw)
+it@m - opensource@muenchen.de
