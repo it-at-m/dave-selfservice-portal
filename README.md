@@ -1,7 +1,13 @@
 # DAVe Selfservice-Portal
 
 ## About the project
-Das Selfservice Portal von DAVe gibt dem Zähldienstleister die Möglichkeit, seine Zählungsaufträge online anzurufen und diesen Aufträgen Zähldaten zuzuordnen (hochzuladen). Diese Daten können dann über das Portal an die LHM übergeben werden.
+Dieses Repository ist eine der 5 Komponenten der Anwendung "DAVe" (Datenbank und Auswertung für Verkehrszählungen).
+
+Bitte beachten Sie, dass diese Komponente nicht ohne das [dave-backend](https://github.com/it-at-m/dave-backend) betrieben werden kann!
+
+Um einen genaueren Überblick über die verschiedenen Komponenten der Anwendung und deren Zusammenhänge zu bekommen, bitte die Dokumentation des [dave-backend](https://github.com/it-at-m/dave-backend) zu Hilfe nehmen.
+
+Das Selfservice-Portal dient zur Kommunikation zwischen LHM und Zähldienstleister. Über das Portal hat der Dienstleister die Möglichkeit, seine Zählungsaufträge online aufzurufen und diesen Aufträgen Zähldaten zuzuordnen (hochzuladen). Diese Daten können dann über das [Adminportal](https://github.com/it-at-m/dave-admin-portal) von der LHM überprüft und für den weiteren Gebrauch feigegeben werden. Es ist momentan die einzige Möglichkeit neue Zähldaten über die Weboberfläche in das System einzupflegen. 
 
 ## Built with
 * Java
