@@ -27,16 +27,14 @@ import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.verify;
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static de.muenchen.dave.TestConstants.WIREMOCK_PORT_NUMBER;
-
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(
-        classes = { ApiGatewayApplication.class },
+        classes = {ApiGatewayApplication.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ActiveProfiles(SPRING_TEST_PROFILE)
-@AutoConfigureWireMock(port = WIREMOCK_PORT_NUMBER)
+@AutoConfigureWireMock
 public class BackendRouteTest {
 
     @Autowired
@@ -58,7 +56,7 @@ public class BackendRouteTest {
     @Test
     @WithMockUser
     public void backendRouteResponse() {
-        webTestClient.get().uri("/api/dave-backend-service/remote/endpoint")
+        this.webTestClient.get().uri("/api/dave-backend-service/remote/endpoint")
                 .header("Cookie", "SESSION=5cfb01a3-b691-4ca9-8735-a05690e6c2ec; XSRF-TOKEN=4d82f9f1-41f6-4a09-994a-df99d30d1be9") // removed by default-filter
                 .header("X-XSRF-TOKEN", "5cfb01a3-b691-4ca9-8735-a05690e6c2ec") // angular specific -> removed by default-filter
                 .header("Content-Type", "application/hal+json")

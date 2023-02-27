@@ -5,8 +5,6 @@
 package de.muenchen.dave.filter;
 
 import de.muenchen.dave.ApiGatewayApplication;
-import org.apache.commons.codec.Charsets;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,13 +15,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
+import java.nio.charset.StandardCharsets;
+
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(
-        classes = { ApiGatewayApplication.class },
+        classes = {ApiGatewayApplication.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ActiveProfiles(SPRING_TEST_PROFILE)
@@ -34,14 +34,13 @@ public class GlobalRequestParameterPollutionFilterTest {
 
     @Test
     @WithMockUser
-    @Disabled
     public void parameterPollutionAttack() {
         final StringBuilder jsonResponseBody = new StringBuilder();
-        webTestClient.get().uri("/api/dave-backend-service/testendpoint?parameter1=testdata_1&parameter2=testdata&parameter1=testdata_2").exchange()
+        this.webTestClient.get().uri("/api/dave-backend-service/testendpoint?parameter1=testdata_1&parameter2=testdata&parameter1=testdata_2").exchange()
                 .expectStatus()
-                    .isEqualTo(HttpStatus.BAD_REQUEST)
+                .isEqualTo(HttpStatus.BAD_REQUEST)
                 .expectBody()
-                    .consumeWith(responseBody -> jsonResponseBody.append(new String(responseBody.getResponseBody(), Charsets.UTF_8)));
+                .consumeWith(responseBody -> jsonResponseBody.append(new String(responseBody.getResponseBody(), StandardCharsets.UTF_8)));
         assertTrue(jsonResponseBody.toString().contains("\"message\" : \"parameter pollution\""));
     }
 

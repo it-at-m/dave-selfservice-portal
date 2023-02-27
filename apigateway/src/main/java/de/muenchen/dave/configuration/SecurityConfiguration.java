@@ -4,14 +4,12 @@
  */
 package de.muenchen.dave.configuration;
 
-import de.muenchen.dave.filter.CsrfTokenAppendingHelperFilter;
 import de.muenchen.dave.util.GatewayUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.server.SecurityWebFilterChain;
@@ -39,45 +37,45 @@ public class SecurityConfiguration {
     private long springSessionTimeoutSeconds;
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain springSecurityFilterChain(final ServerHttpSecurity http) {
         http
                 .logout()
-                    .logoutSuccessHandler(GatewayUtils.createLogoutSuccessHandler(LOGOUT_SUCCESS_URL))
-                    .logoutUrl(LOGOUT_URL)
-                    .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, LOGOUT_URL))
+                .logoutSuccessHandler(GatewayUtils.createLogoutSuccessHandler(LOGOUT_SUCCESS_URL))
+                .logoutUrl(LOGOUT_URL)
+                .requiresLogout(ServerWebExchangeMatchers.pathMatchers(HttpMethod.POST, LOGOUT_URL))
                 .and()
-                    .authorizeExchange()
-                        // permitAll
-                        .pathMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
-                        .pathMatchers(LOGOUT_SUCCESS_URL).permitAll()
-                        .pathMatchers("/api/*/info",
-                                "/actuator/health",
-                                "/actuator/info",
-                                "/actuator/metrics").permitAll()
-                        // only authenticated
-                        .anyExchange().authenticated()
+                .authorizeExchange()
+                // permitAll
+                .pathMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                .pathMatchers(LOGOUT_SUCCESS_URL).permitAll()
+                .pathMatchers("/api/*/info",
+                        "/actuator/health",
+                        "/actuator/info",
+                        "/actuator/metrics").permitAll()
+                // only authenticated
+                .anyExchange().authenticated()
                 .and()
-                    /**
-                     * The necessary subscription for csrf token attachment to {@link ServerHttpResponse}
-                     * is done in class {@link CsrfTokenAppendingHelperFilter}.
-                     */
-                    .csrf().csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
+                /*
+                 * The necessary subscription for csrf token attachment to {@link ServerHttpResponse}
+                 * is done in class {@link CsrfTokenAppendingHelperFilter}.
+                 */
+                .csrf().csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
                 .and()
-                    .cors()
+                .cors()
                 .and()
-                    .oauth2Login()
-                    /**
-                     * Set security session timeout.
-                     */
-                    .authenticationSuccessHandler(new RedirectServerAuthenticationSuccessHandler() {
-                        @Override
-                        public Mono<Void> onAuthenticationSuccess(WebFilterExchange webFilterExchange, Authentication authentication) {
-                            webFilterExchange.getExchange().getSession().subscribe(
-                                    webSession -> webSession.setMaxIdleTime(Duration.ofSeconds(springSessionTimeoutSeconds))
-                            );
-                            return super.onAuthenticationSuccess(webFilterExchange, authentication);
-                        }
-                    });
+                .oauth2Login()
+                /*
+                 * Set security session timeout.
+                 */
+                .authenticationSuccessHandler(new RedirectServerAuthenticationSuccessHandler() {
+                    @Override
+                    public Mono<Void> onAuthenticationSuccess(final WebFilterExchange webFilterExchange, final Authentication authentication) {
+                        webFilterExchange.getExchange().getSession().subscribe(
+                                webSession -> webSession.setMaxIdleTime(Duration.ofSeconds(SecurityConfiguration.this.springSessionTimeoutSeconds))
+                        );
+                        return super.onAuthenticationSuccess(webFilterExchange, authentication);
+                    }
+                });
         return http.build();
     }
 

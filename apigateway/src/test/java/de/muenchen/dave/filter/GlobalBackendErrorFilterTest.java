@@ -24,23 +24,21 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static de.muenchen.dave.TestConstants.WIREMOCK_PORT_NUMBER;
-
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(
-        classes = { ApiGatewayApplication.class },
+        classes = {ApiGatewayApplication.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ActiveProfiles(SPRING_TEST_PROFILE)
-@AutoConfigureWireMock(port = WIREMOCK_PORT_NUMBER)
-public class GlobalBackendErrorFilterTest {
+@AutoConfigureWireMock
+class GlobalBackendErrorFilterTest {
 
     @Autowired
     private WebTestClient webTestClient;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         stubFor(get(urlEqualTo("/remote"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.INTERNAL_SERVER_ERROR.value())
@@ -54,15 +52,15 @@ public class GlobalBackendErrorFilterTest {
 
     @Test
     @WithMockUser
-    public void backendError() {
-        webTestClient.get().uri("/api/dave-backend-service/remote").exchange()
+    void backendError() {
+        this.webTestClient.get().uri("/api/dave-backend-service/remote").exchange()
                 .expectStatus().isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR)
                 .expectHeader().valueMatches("Content-Type", "application/json")
                 .expectHeader().doesNotExist("WWW-Authenticate")
                 .expectHeader().valueMatches("Expires", "0")
                 .expectBody()
-                    .jsonPath("$.status").isEqualTo("500")
-                    .jsonPath("$.error").isEqualTo("Internal Server Error");
+                .jsonPath("$.status").isEqualTo("500")
+                .jsonPath("$.error").isEqualTo("Internal Server Error");
     }
 
 }

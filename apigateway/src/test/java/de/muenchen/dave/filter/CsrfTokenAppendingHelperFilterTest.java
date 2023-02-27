@@ -19,7 +19,7 @@ import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(
-        classes = { ApiGatewayApplication.class },
+        classes = {ApiGatewayApplication.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ActiveProfiles(SPRING_TEST_PROFILE)
@@ -31,9 +31,9 @@ public class CsrfTokenAppendingHelperFilterTest {
     @Test
     @WithMockUser
     public void csrfCookieAppendition() {
-        webTestClient.get().uri("/").exchange()
+        this.webTestClient.get().uri("/").exchange()
                 .expectHeader()
-                    .valueMatches("set-cookie", "XSRF-TOKEN=[a-f\\d]{8}(-[a-f\\d]{4}){3}-[a-f\\d]{12}?;\\sPath=/");
+                .valueMatches("set-cookie", "XSRF-TOKEN=[a-f\\d]{8}(-[a-f\\d]{4}){3}-[a-f\\d]{12}?;\\sPath=/");
     }
 
 }
