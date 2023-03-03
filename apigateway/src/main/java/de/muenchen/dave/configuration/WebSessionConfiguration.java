@@ -71,7 +71,7 @@ public class WebSessionConfiguration {
     }
 
     @Bean
-    @Profile({"dev", "kon", "prod"})
+    @Profile({"dev", "kon", "prod", "demo", "konexternal", "prodexternal"})
     public Config config(@Value("${spring.session.timeout}") final int timeout) {
         final var hazelcastConfig = new Config();
         hazelcastConfig.setInstanceName(this.hazelcastInstanceName);
