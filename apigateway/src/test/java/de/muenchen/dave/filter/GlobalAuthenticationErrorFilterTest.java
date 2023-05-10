@@ -24,7 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
-import static de.muenchen.dave.TestConstants.WIREMOCK_PORT_NUMBER;
 
 
 @ExtendWith(SpringExtension.class)
@@ -33,14 +32,14 @@ import static de.muenchen.dave.TestConstants.WIREMOCK_PORT_NUMBER;
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
 @ActiveProfiles(SPRING_TEST_PROFILE)
-@AutoConfigureWireMock(port = WIREMOCK_PORT_NUMBER)
+@AutoConfigureWireMock
 public class GlobalAuthenticationErrorFilterTest {
 
     @Autowired
     private WebTestClient webTestClient;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         stubFor(get(urlEqualTo("/remote"))
                 .willReturn(aResponse()
                         .withStatus(HttpStatus.UNAUTHORIZED.value())
@@ -54,15 +53,15 @@ public class GlobalAuthenticationErrorFilterTest {
 
     @Test
     @WithMockUser
-    public void backendAuthenticationError() {
-        webTestClient.get().uri("/api/dave-backend-service/remote").exchange()
+    void backendAuthenticationError() {
+        this.webTestClient.get().uri("/api/dave-backend-service/remote").exchange()
                 .expectStatus().isEqualTo(HttpStatus.UNAUTHORIZED)
                 .expectHeader().valueMatches("Content-Type", "application/json")
                 .expectHeader().doesNotExist("WWW-Authenticate")
                 .expectHeader().valueMatches("Expires", "0")
                 .expectBody()
-                    .jsonPath("$.status").isEqualTo("401")
-                    .jsonPath("$.error").isEqualTo("Authentication Error");
+                .jsonPath("$.status").isEqualTo("401")
+                .jsonPath("$.error").isEqualTo("Authentication Error");
     }
 
 }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.muenchen.dave.frontend</groupId>
@@ -14,8 +15,10 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <exec.maven.plugin>1.6.0</exec.maven.plugin>
+        <exec.maven.plugin>3.0.0</exec.maven.plugin>
         <maven.clean.plugin>3.1.0</maven.clean.plugin>
+        <sonar.sources>src,public</sonar.sources>
+        <sonar.coverage.exclusions>src,public</sonar.coverage.exclusions>
     </properties>
 
 
@@ -70,10 +73,6 @@
                                     <executable>npm</executable>
                                     <arguments>
                                         <argument>install</argument>
-                                        <!--<argument>primevue</argument>-->
-                                        <!--<argument>primeicons</argument>-->
-                                        <!--<argument>sass-loader</argument>-->
-                                        <!--<argument>node-sass</argument>-->
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -124,6 +123,14 @@
                         </configuration>
                     </plugin>
                 </plugins>
+
+                <resources>
+                    <resource>
+                        <directory>dist</directory>
+                        <targetPath>static</targetPath>
+                    </resource>
+                </resources>
+
             </build>
         </profile>
     </profiles>

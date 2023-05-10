@@ -12,7 +12,4 @@ import lombok.NoArgsConstructor;
 public final class TestConstants {
 
     public static final String SPRING_TEST_PROFILE = "test";
-
-    public static final int WIREMOCK_PORT_NUMBER = 56327;
-
 }
