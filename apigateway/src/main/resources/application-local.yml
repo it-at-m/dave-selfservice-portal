@@ -61,5 +61,5 @@ spring:
             client-id: ${keycloak_client_id}
             client-secret: ${keycloak_client_secret}
 
-  http:
+  mvc:
     log-request-details: on

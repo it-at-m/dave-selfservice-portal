@@ -7,13 +7,11 @@ package de.muenchen.dave.util;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.reactivestreams.Publisher;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpResponse;
@@ -26,6 +24,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -36,8 +35,6 @@ import java.net.URI;
 @Slf4j
 public class GatewayUtils {
 
-    public static final int ORDER_GLOBAL_EXCEPTION_HANDLER = -2;
-
     public static final int ORDER_GLOBAL_FILTER = -3;
 
     public static final String EMPTY_JSON_OBJECT = "{}";
@@ -45,13 +42,13 @@ public class GatewayUtils {
     /**
      * The method is used in {@link GlobalFilter}s to add the response body given in the
      * parameter when the {@link HttpStatus} given in the parameter is met.
-     *
+     * <p>
      * If the {@link HttpStatus} given in the parameter is the same as in {@link ServerHttpResponse}
      * the body within the parameter will be added otherwise the body received from upstream stays the same.
      *
-     * @param exchange Contains the response.
-     * @param chain The filter chain for delegation to the next filter.
-     * @param httpStatus Status of the http {@link ServerHttpResponse}.
+     * @param exchange        Contains the response.
+     * @param chain           The filter chain for delegation to the next filter.
+     * @param httpStatus      Status of the http {@link ServerHttpResponse}.
      * @param newResponseBody The UTF8 conform message to add into the body of the {@link ServerHttpResponse}.
      * @return An empty mono. The results are processed within the {@link GatewayFilterChain}.
      */
@@ -73,18 +70,19 @@ public class GatewayUtils {
              * the body given by the parameter.
              */
             @Override
-            public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-                final HttpStatus responseHttpStatus = getDelegate().getStatusCode();
+            public Mono<Void> writeWith(final Publisher<? extends DataBuffer> body) {
+                final var responseHttpStatus = this.getDelegate().getStatusCode();
                 if (body instanceof Flux && responseHttpStatus.equals(httpStatus)) {
-                    final DataBufferFactory dataBufferFactory = response.bufferFactory();
+                    final var dataBufferFactory = response.bufferFactory();
                     final DataBuffer newDataBuffer = dataBufferFactory.wrap(
-                            StringUtils.getBytesUtf8(ObjectUtils.defaultIfNull(newResponseBody, EMPTY_JSON_OBJECT))
+                            ObjectUtils.defaultIfNull(newResponseBody, EMPTY_JSON_OBJECT)
+                                    .getBytes(StandardCharsets.UTF_8)
                     );
 
                     log.debug("Response from upstream {} get new response body: {}", httpStatus, newResponseBody);
-                    getDelegate().getHeaders().setContentLength(newDataBuffer.readableByteCount());
-                    getDelegate().getHeaders().setContentType(MediaType.APPLICATION_JSON);
-                    Flux<? extends DataBuffer> flux = (Flux<? extends DataBuffer>) body;
+                    this.getDelegate().getHeaders().setContentLength(newDataBuffer.readableByteCount());
+                    this.getDelegate().getHeaders().setContentType(MediaType.APPLICATION_JSON);
+                    final Flux<? extends DataBuffer> flux = (Flux<? extends DataBuffer>) body;
 
                     return super.writeWith(flux.buffer().map(
                             // replace old body represented by dataBuffer by the new one
@@ -108,7 +106,7 @@ public class GatewayUtils {
      * @return The handler for forwarding after an succesful logout.
      */
     public static ServerLogoutSuccessHandler createLogoutSuccessHandler(final String uri) {
-        final RedirectServerLogoutSuccessHandler successHandler = new RedirectServerLogoutSuccessHandler();
+        final var successHandler = new RedirectServerLogoutSuccessHandler();
         successHandler.setLogoutSuccessUrl(URI.create(uri));
         return successHandler;
     }

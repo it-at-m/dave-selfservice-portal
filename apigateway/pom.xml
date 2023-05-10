@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-
-    <parent>
-        <groupId>de.muenchen</groupId>
-        <artifactId>muenchen-pom</artifactId>
-        <version>2.1.0</version>
-    </parent>
-
 
     <groupId>de.muenchen.dave.apigateway</groupId>
     <artifactId>dave-selfserviceportal-apigateway</artifactId>
@@ -16,17 +9,15 @@
     <packaging>jar</packaging>
     <name>dave_selfserviceportal_apigateway</name>
 
-
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>11</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <maven.compiler.release>${java.version}</maven.compiler.release>
-        <spring.boot.version>2.5.5</spring.boot.version>
-        <spring.cloud.version>2020.0.4</spring.cloud.version>
-        <logstash.encoder>6.3</logstash.encoder>
-        <hazelcast.version>4.1.5</hazelcast.version>
+        <spring.boot.version>2.7.8</spring.boot.version>
+        <spring.cloud.version>2021.0.5</spring.cloud.version>
+        <logstash.encoder.version>7.0.1</logstash.encoder.version>
         <apache.commons.lang.version>3.12.0</apache.commons.lang.version>
         <jvm.options>-Dorg.conscrypt.native.workdir=$(pwd)</jvm.options>
     </properties>
@@ -87,22 +78,6 @@
 
         <!-- security -->
         <dependency>
-            <groupId>org.springframework.security.oauth.boot</groupId>
-            <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-resource-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-oauth2-jose</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-client</artifactId>
         </dependency>
@@ -112,8 +87,11 @@
         </dependency>
         <dependency>
             <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast-all</artifactId>
-            <version>${hazelcast.version}</version>
+            <artifactId>hazelcast</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.hazelcast</groupId>
+            <artifactId>hazelcast-spring</artifactId>
         </dependency>
 
         <!-- Testing -->
@@ -155,7 +133,7 @@
         <dependency>
             <groupId>net.logstash.logback</groupId>
             <artifactId>logstash-logback-encoder</artifactId>
-            <version>${logstash.encoder}</version>
+            <version>${logstash.encoder.version}</version>
         </dependency>
         <dependency>
             <groupId>io.micrometer</groupId>

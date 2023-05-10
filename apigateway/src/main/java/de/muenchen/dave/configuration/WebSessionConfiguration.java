@@ -6,9 +6,7 @@ package de.muenchen.dave.configuration;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.EvictionPolicy;
-import com.hazelcast.config.JoinConfig;
 import com.hazelcast.config.MapConfig;
-import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.map.IMap;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,6 @@ import org.springframework.session.hazelcast.HazelcastIndexedSessionRepository;
 
 /**
  * This class configures Hazelcast as the ReactiveSessionRepository.
- *
  */
 @Configuration
 @EnableSpringWebSession
@@ -48,60 +45,65 @@ public class WebSessionConfiguration {
     }
 
     @Bean
-    public ReactiveSessionRepository<MapSession> reactiveSessionRepository(@Qualifier("hazelcastInstance") @Autowired HazelcastInstance hazelcastInstance) {
+    public ReactiveSessionRepository<MapSession> reactiveSessionRepository(@Qualifier("hazelcastInstance") @Autowired final HazelcastInstance hazelcastInstance) {
         final IMap<String, Session> map = hazelcastInstance.getMap(HazelcastIndexedSessionRepository.DEFAULT_SESSION_MAP_NAME);
         return new ReactiveMapSessionRepository(map);
     }
 
     @Bean
     @Profile({"local", "test"})
-    public Config localConfig(@Value("${spring.session.timeout}") int timeout) {
+    public Config localConfig(@Value("${spring.session.timeout}") final int timeout) {
+        final var hazelcastConfig = new Config();
+        hazelcastConfig.setInstanceName(this.hazelcastInstanceName);
+        hazelcastConfig.setClusterName(this.groupConfigName);
 
-        final Config config = new Config();
-        config.setInstanceName(hazelcastInstanceName);
-        config.setClusterName(groupConfigName);
+        this.addSessionTimeoutToHazelcastConfig(hazelcastConfig, timeout);
 
-        mapConfig(config, timeout);
+        final var networkConfig = hazelcastConfig.getNetworkConfig();
 
-        final NetworkConfig networkConfig = config.getNetworkConfig();
-
-        final JoinConfig joinConfig = networkConfig.getJoin();
+        final var joinConfig = networkConfig.getJoin();
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig()
                 .setEnabled(true)
                 .addMember("127.0.0.1");
 
-        return config;
+        return hazelcastConfig;
     }
 
     @Bean
-    @Profile({"dev", "kon", "prod", "hotfix", "demo", "konexternal", "prodexternal"})
-    public Config config(@Value("${spring.session.timeout}") int timeout) {
+    @Profile({"dev", "kon", "prod", "demo", "konexternal", "prodexternal"})
+    public Config config(@Value("${spring.session.timeout}") final int timeout) {
+        final var hazelcastConfig = new Config();
+        hazelcastConfig.setInstanceName(this.hazelcastInstanceName);
+        hazelcastConfig.setClusterName(this.groupConfigName);
 
-        final Config config = new Config();
-        config.setInstanceName(hazelcastInstanceName);
-        config.setClusterName(groupConfigName);
 
-        mapConfig(config, timeout);
+        this.addSessionTimeoutToHazelcastConfig(hazelcastConfig, timeout);
 
-        config.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
-        config.getNetworkConfig().getJoin().getKubernetesConfig().setEnabled(true)
+        hazelcastConfig.getNetworkConfig().getJoin().getMulticastConfig().setEnabled(false);
+        hazelcastConfig.getNetworkConfig().getJoin().getKubernetesConfig().setEnabled(true)
                 //If we dont set a specific name, it would call -all- services within a namespace
-                .setProperty("service-name", openshiftServiceName);
+                .setProperty("service-name", this.openshiftServiceName);
 
-        return config;
+        return hazelcastConfig;
     }
 
-    // Since we are creating the map it's important to evict sessions
-    // by setting a reasonable value for time to live
-    // as the default is 0 which means infinite.
-    private void mapConfig(Config config, int timeout) {
-        final MapConfig sessionConfig = new MapConfig();
+    /**
+     * Adds the session timeout in seconds to the hazelcast configuration.
+     * <p>
+     * Since we are creating the map it's important to evict sessions
+     * by setting a reasonable value for time to live.
+     *
+     * @param hazelcastConfig to add the timeout.
+     * @param sessionTimeout  for security session.
+     */
+    private void addSessionTimeoutToHazelcastConfig(final Config hazelcastConfig, final int sessionTimeout) {
+        final var sessionConfig = new MapConfig();
         sessionConfig.setName(HazelcastIndexedSessionRepository.DEFAULT_SESSION_MAP_NAME);
-        sessionConfig.setTimeToLiveSeconds(timeout);
+        sessionConfig.setTimeToLiveSeconds(sessionTimeout);
         sessionConfig.getEvictionConfig().setEvictionPolicy(EvictionPolicy.LRU);
 
-        config.addMapConfig(sessionConfig);
+        hazelcastConfig.addMapConfig(sessionConfig);
     }
 }
 

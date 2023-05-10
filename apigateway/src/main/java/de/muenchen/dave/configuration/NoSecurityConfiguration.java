@@ -16,14 +16,14 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 public class NoSecurityConfiguration {
 
     @Bean
-    public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
+    public SecurityWebFilterChain springSecurityFilterChain(final ServerHttpSecurity http) {
         return http
                 .authorizeExchange()
-                        .anyExchange().permitAll()
+                .anyExchange().permitAll()
                 .and()
-                    .cors()
+                .cors()
                 .and()
-                    .csrf().disable()
+                .csrf().disable()
                 .build();
     }
 
