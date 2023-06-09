@@ -26,10 +26,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(
-        classes = {ApiGatewayApplication.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-)
+@SpringBootTest(classes = { ApiGatewayApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)
 @AutoConfigureWireMock
 class GlobalBackendErrorFilterTest {
@@ -45,8 +42,7 @@ class GlobalBackendErrorFilterTest {
                         .withHeaders(new HttpHeaders(
                                 new HttpHeader("Content-Type", "application/json"),
                                 new HttpHeader("WWW-Authenticate", "Bearer realm=\"Access to the staging site\", charset=\"UTF-8\""),
-                                new HttpHeader("Expires", "Wed, 21 Oct 2099 07:28:06 GMT")
-                        ))
+                                new HttpHeader("Expires", "Wed, 21 Oct 2099 07:28:06 GMT")))
                         .withBody("{ \"testkey\" : \"testvalue\" }")));
     }
 

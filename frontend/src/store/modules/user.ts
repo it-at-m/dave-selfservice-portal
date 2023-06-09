@@ -1,6 +1,6 @@
 import SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
 
-const rolePoweruser: string = "ROLE_POWERUSER";
+const rolePoweruser = "ROLE_POWERUSER";
 
 /**
  * Der UserStore wird benötigt, um die vom KeyCloak erhaltenen Nutzerdaten (Name, eMail und Authorities)
@@ -8,29 +8,31 @@ const rolePoweruser: string = "ROLE_POWERUSER";
  * der Oberfläche nur für bestimmte Rollen sichtbar sein sollen.
  */
 export default {
-  namespaced: true,
-  state: {
-    ssoUserInfoResponse: {} as SsoUserInfoResponse,
-  },
-  getters: {
-    getName(state: any): string {
-      return state.ssoUserInfoResponse.name;
+    namespaced: true,
+    state: {
+        ssoUserInfoResponse: {} as SsoUserInfoResponse,
     },
-    isPoweruser(state: any): boolean {
-      return state.ssoUserInfoResponse.authorities.includes(rolePoweruser);
+    getters: {
+        getName(state: any): string {
+            return state.ssoUserInfoResponse.name;
+        },
+        isPoweruser(state: any): boolean {
+            return state.ssoUserInfoResponse.authorities.includes(
+                rolePoweruser
+            );
+        },
+        possibleRoles(): Array<string> {
+            return [rolePoweruser];
+        },
     },
-    possibleRoles(): Array<String> {
-      return [rolePoweruser];
-    }
-  },
-  mutations: {
-    setSsoUserInfoResponse(state: any, payload: SsoUserInfoResponse) {
-      state.ssoUserInfoResponse = payload;
+    mutations: {
+        setSsoUserInfoResponse(state: any, payload: SsoUserInfoResponse) {
+            state.ssoUserInfoResponse = payload;
+        },
     },
-  },
-  actions: {
-    setSsoUserInfoResponse(context: any, payload: SsoUserInfoResponse) {
-      context.commit('setSsoUserInfoResponse', payload)
+    actions: {
+        setSsoUserInfoResponse(context: any, payload: SsoUserInfoResponse) {
+            context.commit("setSsoUserInfoResponse", payload);
+        },
     },
-  }
-}
+};

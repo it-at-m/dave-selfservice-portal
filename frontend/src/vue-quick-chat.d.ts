@@ -1,1 +1,1 @@
-declare module 'vue-quick-chat';
+declare module "vue-quick-chat";

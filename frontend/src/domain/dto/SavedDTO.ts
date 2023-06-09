@@ -1,5 +1,3 @@
 export default interface SavedDTO {
-
-  response: string;
-
+    response: string;
 }
