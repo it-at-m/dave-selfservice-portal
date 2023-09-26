@@ -20,12 +20,8 @@ import java.nio.charset.StandardCharsets;
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(
-        classes = {ApiGatewayApplication.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
-)
+@SpringBootTest(classes = { ApiGatewayApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)
 public class GlobalRequestParameterPollutionFilterTest {
 
