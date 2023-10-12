@@ -1,7 +1,8 @@
 import Vue from "vue";
 import VueI18n from "vue-i18n";
+import DateTimeFormats = VueI18n.DateTimeFormats;
 
-const dateTimeFormats = {
+const dateTimeFormats: DateTimeFormats = {
     "de-DE": {
         short: {
             year: "numeric",

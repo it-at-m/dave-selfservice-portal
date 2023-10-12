@@ -69,8 +69,8 @@ import ChatDialog from "@/components/chat/ChatDialog.vue";
 })
 export default class App extends Vue {
     private zaehlungCards: Array<ZaehlungCardObject> = [];
-    private showZaehlungDialog = false;
-    private showChatDialog = false;
+    showZaehlungDialog = false;
+    showChatDialog = false;
 
     mounted() {
         window.scrollTo(0, 0);
@@ -101,7 +101,7 @@ export default class App extends Vue {
         return this.zaehlungCards.length === 0;
     }
 
-    private reloadDataAndCloseDialog(savedDTO: SavedDTO) {
+    reloadDataAndCloseDialog(savedDTO: SavedDTO) {
         this.loadZaehlungen();
         this.showZaehlungDialog = false;
         this.$store.dispatch("snackbar/showToast", {
@@ -110,19 +110,19 @@ export default class App extends Vue {
         });
     }
 
-    private cancelZaehlungDialog() {
+    cancelZaehlungDialog() {
         this.showZaehlungDialog = false;
     }
 
-    private openZaehlungDialog() {
+    openZaehlungDialog() {
         this.showZaehlungDialog = true;
     }
 
-    private openChatDialog() {
+    openChatDialog() {
         this.showChatDialog = true;
     }
 
-    private closeChatDialog() {
+    closeChatDialog() {
         this.showChatDialog = false;
     }
 }

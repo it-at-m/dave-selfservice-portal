@@ -12,6 +12,6 @@ Icon.Default.mergeOptions({
 
 // Default-Icon
 type D = Icon.Default & {
-    _getIconUrl: string;
+    _getIconUrl?: string;
 };
 delete (Icon.Default.prototype as D)._getIconUrl;

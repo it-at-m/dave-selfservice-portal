@@ -68,25 +68,27 @@ import ChatMessageService from "@/api/service/ChatMessageService";
 import Message from "@/domain/chat/Message";
 import ChatMessageDTO from "@/domain/dto/ChatMessageDTO";
 import { ApiError } from "@/api/error";
+import accountTieUrl from "@/assets/account-tie.png";
+import kindlUrl from "@/assets/kindl.jpg";
 /* eslint-enable no-unused-vars */
 
 @Component({
     components: { Chat },
 })
 export default class ChatDialog extends Vue {
-    @Prop() private showDialog!: boolean;
-    private messages: Message[] = [];
+    @Prop() showDialog!: boolean;
+    messages: Message[] = [];
     private zaehlungId = "";
 
     private dienstleister: Participant = {
         name: "Dienstleister",
         id: 1,
-        profilePicture: require("@/assets/account-tie.png"),
+        profilePicture: accountTieUrl,
     };
     private mobilitaetsreferat: Participant = {
         name: "Mobilitätsreferat",
         id: 2,
-        profilePicture: require("@/assets/kindl.jpg"),
+        profilePicture: kindlUrl,
     };
 
     // Hier ist myself der Dienstleister

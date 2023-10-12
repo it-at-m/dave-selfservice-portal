@@ -242,14 +242,14 @@ import Status from "@/domain/enums/Status";
 })
 export default class AllgemeineInfoForm extends Vue {
     @Prop()
-    private readonly height!: string;
+    readonly height!: string;
 
     // Without Time
-    private date: string = new Date().toISOString().substr(0, 10);
-    private menu = false;
-    private validZaehlung = false;
+    date: string = new Date().toISOString().substr(0, 10);
+    menu = false;
+    validZaehlung = false;
 
-    private zaehlung: ZaehlungDTO = {} as ZaehlungDTO;
+    zaehlung: ZaehlungDTO = {} as ZaehlungDTO;
 
     @Ref("menu") private vMenu: any;
 
@@ -325,13 +325,13 @@ export default class AllgemeineInfoForm extends Vue {
         return `${day}.${month}.${year}`;
     }
 
-    private saveDate(): void {
+    saveDate(): void {
         this.vMenu.save(this.date);
         this.zaehlung.datum = this.formatDateForBackend();
         this.updateStore();
     }
 
-    private closeMenu(): void {
+    closeMenu(): void {
         this.menu = false;
         this.resetDatum();
     }
