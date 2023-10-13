@@ -346,7 +346,7 @@ export default class AllgemeineInfoForm extends Vue {
 
     get formattedDateAsText(): string {
         if (!this.zaehlung.datum) {
-            return '';
+            return "";
         }
         const [year, month, day] = this.zaehlung.datum.split("-");
         return `${day}.${month}.${year}`;
