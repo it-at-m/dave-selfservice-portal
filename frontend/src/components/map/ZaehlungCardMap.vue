@@ -58,6 +58,7 @@ import {
     Marker,
     MarkerOptions,
 } from "leaflet";
+import markerIconRed from "@/assets/marker-icon-red.png"
 /* eslint-enable no-unused-vars */
 
 @Component({
@@ -156,7 +157,7 @@ export default class ZaehlungCardMap extends Vue {
     // Legt einen neuen Marker für die Zählung an
     private createMarkerForZaehlung(coords: LatLng) {
         let defaultIcon = new Icon.Default();
-        defaultIcon.options.iconUrl = require("@/assets/marker-icon-red.png");
+        defaultIcon.options.iconUrl = markerIconRed;
 
         let options: MarkerOptions = {} as MarkerOptions;
         options.opacity = 1.0;
