@@ -6,7 +6,6 @@
     >
         <l-map
             ref="zaehlungcardmap"
-            v-resize="onResize"
             :options="mapOptions"
             style="z-index: 1"
             @ready="mapReady"
@@ -58,7 +57,7 @@ import {
     Marker,
     MarkerOptions,
 } from "leaflet";
-import markerIconRed from "@/assets/marker-icon-red.png"
+import markerIconRed from "@/assets/marker-icon-red.png";
 /* eslint-enable no-unused-vars */
 
 @Component({
@@ -203,11 +202,6 @@ export default class ZaehlungCardMap extends Vue {
                 })
             );
         }
-    }
-
-    onResize() {
-        //provoziert ein Rerendering der Karte
-        setTimeout(() => this.theMap.mapObject.invalidateSize(), 200);
     }
 
     private updateZaehlungCoords(zaehlungCoords: LatLng) {
