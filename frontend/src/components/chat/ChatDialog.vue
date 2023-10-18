@@ -227,7 +227,7 @@ export default class ChatDialog extends Vue {
             chatTitle =
                 zaehlung.projektName +
                 " - " +
-                `${this.$d(new Date(zaehlung.datum), "short", "de-DE")}`;
+                `${(new Date(zaehlung.datum), "short", "de-DE")}`;
         }
         return chatTitle;
     }
