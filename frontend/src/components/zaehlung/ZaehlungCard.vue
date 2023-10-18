@@ -307,7 +307,7 @@ export default class ZaehlungCard extends Vue {
     }
 
     get datum(): string {
-        return `${(new Date(this.getZaehlung.datum), "short", "de-DE")}`;
+        return `${this.$d(new Date(this.getZaehlung.datum), "short", "de-DE")}`;
     }
 
     get streets(): Array<KnotenarmDTO> {
