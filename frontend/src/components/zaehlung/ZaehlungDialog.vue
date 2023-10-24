@@ -40,7 +40,7 @@ export default class ZaehlungDialog extends Vue {
     /**
      * Steuerflag für den Dialog
      */
-    @Prop() private showDialog!: boolean;
+    @Prop() showDialog!: boolean;
 
     @Watch("showDialog")
     openOrCloseDialog() {
@@ -49,11 +49,11 @@ export default class ZaehlungDialog extends Vue {
         this.$store.dispatch("setResetformevent", !this.showDialog);
     }
 
-    private cancelCreate(): void {
+    cancelCreate(): void {
         this.$emit("cancel");
     }
 
-    private saved(savedDTO: SavedDTO): void {
+    saved(savedDTO: SavedDTO): void {
         this.$emit("saved", savedDTO);
     }
 

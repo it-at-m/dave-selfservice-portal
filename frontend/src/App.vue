@@ -65,7 +65,7 @@ import VersionInfoResponse from "@/domain/VersionInfoResponse";
 export default class App extends Vue {
     private static readonly URL_HANDBUCH_LINK: string = "";
 
-    private loggedInUser = "no-security";
+    loggedInUser = "no-security";
 
     // Versionen
     private backendVersion = "";
@@ -116,7 +116,7 @@ export default class App extends Vue {
             });
     }
 
-    private navigateToHandbuch() {
+    navigateToHandbuch() {
         window.open(App.URL_HANDBUCH_LINK);
     }
 }

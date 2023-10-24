@@ -15,8 +15,8 @@ import { Component, Prop, Vue } from "vue-property-decorator";
 
 @Component
 export default class LhmTextField extends Vue {
-    @Prop({ default: "" }) private readonly caption!: string;
-    @Prop({ default: "" }) private readonly text!: string;
+    @Prop({ default: "" }) readonly caption!: string;
+    @Prop({ default: "" }) readonly text!: string;
 
     get showCaption(): boolean {
         return this.caption !== "";

@@ -6,7 +6,6 @@
     >
         <l-map
             ref="zaehlungcardmap"
-            v-resize="onResize"
             :options="mapOptions"
             style="z-index: 1"
             @ready="mapReady"
@@ -58,6 +57,7 @@ import {
     Marker,
     MarkerOptions,
 } from "leaflet";
+import markerIconRed from "@/assets/marker-icon-red.png";
 /* eslint-enable no-unused-vars */
 
 @Component({
@@ -75,13 +75,13 @@ import {
 })
 export default class ZaehlungCardMap extends Vue {
     @Prop({ default: "15vh" })
-    private readonly height!: string;
+    readonly height!: string;
 
     @Prop({ default: "160px" })
-    private readonly minheight!: string;
+    readonly minheight!: string;
 
     @Prop({ default: "100%" })
-    private readonly width!: string;
+    readonly width!: string;
 
     @Prop()
     private readonly latLngZaehlstelle!: LatLng;
@@ -89,7 +89,7 @@ export default class ZaehlungCardMap extends Vue {
     private readonly latLngZaehlung!: LatLng;
 
     @Prop({ default: true })
-    private readonly showLuftbild!: boolean;
+    readonly showLuftbild!: boolean;
 
     @Prop({ default: false })
     private readonly editZaehlungMarker!: boolean;
@@ -106,7 +106,7 @@ export default class ZaehlungCardMap extends Vue {
     /**
      * Optionen fuer die Darstellung der Karte
      */
-    private mapOptions: MapOptions = {
+    mapOptions: MapOptions = {
         minZoom: 10,
         maxZoom: 18,
         preferCanvas: false,
@@ -156,7 +156,7 @@ export default class ZaehlungCardMap extends Vue {
     // Legt einen neuen Marker für die Zählung an
     private createMarkerForZaehlung(coords: LatLng) {
         let defaultIcon = new Icon.Default();
-        defaultIcon.options.iconUrl = require("@/assets/marker-icon-red.png");
+        defaultIcon.options.iconUrl = markerIconRed;
 
         let options: MarkerOptions = {} as MarkerOptions;
         options.opacity = 1.0;
@@ -202,11 +202,6 @@ export default class ZaehlungCardMap extends Vue {
                 })
             );
         }
-    }
-
-    onResize() {
-        //provoziert ein Rerendering der Karte
-        setTimeout(() => this.theMap.mapObject.invalidateSize(), 200);
     }
 
     private updateZaehlungCoords(zaehlungCoords: LatLng) {

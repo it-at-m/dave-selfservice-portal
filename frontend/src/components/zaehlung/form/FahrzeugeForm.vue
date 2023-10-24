@@ -82,16 +82,16 @@ import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 @Component
 export default class FahrzeugFahrbeziehungForm extends Vue {
     @Prop()
-    private readonly height!: string;
+    readonly height!: string;
 
     // Variablen für die Checkboxen
-    private pkw = false;
-    private lkw = false;
-    private lz = false;
-    private bus = false;
-    private krad = false;
-    private rad = false;
-    private fuss = false;
+    pkw = false;
+    lkw = false;
+    lz = false;
+    bus = false;
+    krad = false;
+    rad = false;
+    fuss = false;
 
     mounted() {
         this.resetForm();

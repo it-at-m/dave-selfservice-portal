@@ -170,7 +170,7 @@ import Zaehlart from "@/domain/enums/Zaehlart";
 })
 export default class KnotenLageForm extends Vue {
     @Prop()
-    private readonly height!: string;
+    readonly height!: string;
 
     private static readonly EXPECTED_META_HEADER: string =
         "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;";
@@ -180,12 +180,11 @@ export default class KnotenLageForm extends Vue {
 
     private static readonly SEPARATOR: string = ";";
 
-    private readonly FILE_INPUT_FIELD_ID: string = "fileInputField";
+    readonly FILE_INPUT_FIELD_ID: string = "fileInputField";
 
-    private resetFileInput = 0;
+    resetFileInput = 0;
 
-    private zaehlung: ZaehlungDTO =
-        DefaultObjectCreator.createDefaultZaehlungDTO();
+    zaehlung: ZaehlungDTO = DefaultObjectCreator.createDefaultZaehlungDTO();
 
     mounted() {
         this.updateWorkingCopy();
@@ -227,7 +226,7 @@ export default class KnotenLageForm extends Vue {
         else return this.coordsZaehlstelle;
     }
 
-    private fileUpload(): void {
+    fileUpload(): void {
         if (this.isZaehlungEditable) {
             document.getElementById(this.FILE_INPUT_FIELD_ID)?.click();
         }
@@ -257,7 +256,7 @@ export default class KnotenLageForm extends Vue {
         );
     }
 
-    private getStyle(arm: KnotenarmDTO): string {
+    getStyle(arm: KnotenarmDTO): string {
         let style = "display: none";
         if (arm.filename && arm.filename.trim().length > 0) {
             style = "";
@@ -265,7 +264,7 @@ export default class KnotenLageForm extends Vue {
         return style;
     }
 
-    private onFileSelect(selectedFiles: Array<any>) {
+    onFileSelect(selectedFiles: Array<any>) {
         // wenn zuviele Files hochgeladen wurden, dann Abbrechen
         if (
             !_.isNil(selectedFiles) &&
@@ -381,7 +380,7 @@ export default class KnotenLageForm extends Vue {
         return !file.name.toLowerCase().endsWith(".csv");
     }
 
-    private deleteFile(nummer: number): void {
+    deleteFile(nummer: number): void {
         this.zaehlung.knotenarme.forEach((arm: KnotenarmDTO) => {
             if (arm.nummer === nummer) {
                 arm.filename = "";

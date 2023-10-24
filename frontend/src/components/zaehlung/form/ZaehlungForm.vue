@@ -101,20 +101,20 @@ import Loader from "@/components/common/Loader.vue";
     },
 })
 export default class ZaehlungForm extends Vue {
-    private readonly SHEETHEIGHT: string = "580px";
+    readonly SHEETHEIGHT: string = "580px";
 
     private readonly SEPARATOR: string = ";";
 
-    private activeTab = 0;
+    activeTab = 0;
     private isAllgemeinFormValid = false;
 
-    private loader = false;
+    loader = false;
 
     get isZaehlungValid(): boolean {
         return this.isAllgemeinFormValid;
     }
 
-    private save(): void {
+    save(): void {
         this.loader = true;
         const copy: ZaehlungDTO = _.cloneDeep(this.$store.getters.getZaehlung);
         if (!copy.fahrbeziehungen) {
@@ -171,13 +171,13 @@ export default class ZaehlungForm extends Vue {
         });
     }
 
-    private cancel(): void {
+    cancel(): void {
         this.activeTab = 0;
         this.$store.dispatch("setResetformevent", true);
         this.$emit("cancel");
     }
 
-    private setAllgemeineFormValid(isPartValid: boolean) {
+    setAllgemeineFormValid(isPartValid: boolean) {
         this.isAllgemeinFormValid = isPartValid;
     }
 
