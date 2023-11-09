@@ -7,7 +7,7 @@ import search from "@/store/modules/search";
 import zaehlung from "@/store/modules/zaehlung";
 
 Vue.use(Vuex);
-const debug = process.env.NODE_ENV !== "production";
+const debug = import.meta.env.NODE_ENV !== "production";
 
 export default new Vuex.Store({
     modules: {

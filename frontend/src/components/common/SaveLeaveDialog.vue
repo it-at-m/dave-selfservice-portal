@@ -46,15 +46,15 @@ export default class SaveLeaveDialog extends Vue {
      */
     @Prop() value!: boolean;
 
-    private dialogtitle = "Ungespeicherte Änderungen";
-    private dialogtext =
+    dialogtitle = "Ungespeicherte Änderungen";
+    dialogtext =
         "Es sind ungespeicherte Änderungen vorhanden. Wollen Sie die Seite wirklich verlassen?";
 
-    private no(): void {
+    no(): void {
         this.$emit("no");
     }
 
-    private yes(): void {
+    yes(): void {
         this.$emit("yes");
     }
 }

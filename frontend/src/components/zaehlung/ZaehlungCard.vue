@@ -278,13 +278,13 @@ import Zaehlart from "@/domain/enums/Zaehlart";
     },
 })
 export default class ZaehlungCard extends Vue {
-    private readonly ICONCOLOR: string = "black";
+    readonly ICONCOLOR: string = "black";
 
-    private fab = false;
-    private loading = false;
+    fab = false;
+    loading = false;
 
     @Prop()
-    private readonly zaehlung!: ZaehlungDTO;
+    readonly zaehlung!: ZaehlungDTO;
 
     get getZaehlung(): ZaehlungDTO {
         return this.zaehlung;
@@ -363,7 +363,7 @@ export default class ZaehlungCard extends Vue {
         return latLng(parseFloat(lat), parseFloat(lng));
     }
 
-    private zaehlungAbschliessen(): void {
+    zaehlungAbschliessen(): void {
         this.loading = true;
         // Wenn alle Knotenarme einen Filename beinhalten, darf man diesen Button drücken
         if (this.hasUploadedFile) {
@@ -394,7 +394,7 @@ export default class ZaehlungCard extends Vue {
         return hasFile;
     }
 
-    private zaehlungKorrigieren(): void {
+    zaehlungKorrigieren(): void {
         this.loading = true;
         if (this.hasUploadedFile) {
             const updateZaehlung: UpdateStatusDTO = {} as UpdateStatusDTO;
@@ -414,12 +414,12 @@ export default class ZaehlungCard extends Vue {
         }
     }
 
-    private openZaehlungDialog(): void {
+    openZaehlungDialog(): void {
         this.$store.dispatch("setZaehlung", _.cloneDeep(this.zaehlung));
         this.$emit("openZaehlungDialog");
     }
 
-    private downloadDummyCsv(): void {
+    downloadDummyCsv(): void {
         // Beispiel: 62301Q_20210423_Knotenarm2.csv
         const zaehlstelleNummer: string = this.zaehlung.zaehlstelleNummer;
         const zaehlart: string =
@@ -449,7 +449,7 @@ export default class ZaehlungCard extends Vue {
         link.click();
     }
 
-    private openChatDialog() {
+    openChatDialog() {
         this.$store.dispatch("setZaehlung", _.cloneDeep(this.zaehlung));
         // Lokal false setzen damit der Punkt verschwindet, innerhalb des ChatDialog wird die Zählung auch in der DB geupdated
         this.zaehlung.unreadMessagesDienstleister = false;

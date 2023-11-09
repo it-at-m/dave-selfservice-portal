@@ -34,3 +34,6 @@ nbdist/
 
 # Sonstiges
 $(pwd)
+
+# do not check in application profile yml
+apigateway/**/application-*.yml
