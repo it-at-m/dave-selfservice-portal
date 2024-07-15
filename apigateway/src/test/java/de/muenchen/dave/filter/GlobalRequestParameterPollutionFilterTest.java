@@ -1,6 +1,6 @@
 /*
  * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2021
+ * der Landeshauptstadt München, 2022
  */
 package de.muenchen.dave.filter;
 
@@ -23,21 +23,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = { ApiGatewayApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)
-public class GlobalRequestParameterPollutionFilterTest {
+class GlobalRequestParameterPollutionFilterTest {
 
     @Autowired
     private WebTestClient webTestClient;
 
     @Test
     @WithMockUser
-    public void parameterPollutionAttack() {
+    void parameterPollutionAttack() {
         final StringBuilder jsonResponseBody = new StringBuilder();
-        this.webTestClient.get().uri("/api/dave-backend-service/testendpoint?parameter1=testdata_1&parameter2=testdata&parameter1=testdata_2").exchange()
+        webTestClient
+                .get()
+                .uri(
+                        "/api/dave-backend-service/testendpoint?parameter1=testdata_1&parameter2=testdata&parameter1=testdata_2")
+                .exchange()
                 .expectStatus()
                 .isEqualTo(HttpStatus.BAD_REQUEST)
                 .expectBody()
                 .consumeWith(responseBody -> jsonResponseBody.append(new String(responseBody.getResponseBody(), StandardCharsets.UTF_8)));
         assertTrue(jsonResponseBody.toString().contains("\"message\" : \"parameter pollution\""));
     }
-
 }
