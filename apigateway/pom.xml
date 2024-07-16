@@ -22,7 +22,6 @@
         <logstash.encoder.version>7.4</logstash.encoder.version>
         <apache.commons.lang.version>3.14.0</apache.commons.lang.version>
         <jvm.options>-Dorg.conscrypt.native.workdir=$(pwd)</jvm.options>
-        <itm-codeformat.version>1.0.3</itm-codeformat.version>
     </properties>
 
 
