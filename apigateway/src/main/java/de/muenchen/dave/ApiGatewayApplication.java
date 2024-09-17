@@ -1,11 +1,12 @@
 /*
  * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2021
+ * der Landeshauptstadt München, 2023
  */
 package de.muenchen.dave;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import reactor.core.publisher.Hooks;
 
 /**
  * To do some base configuration for the non blocking client-server framework
@@ -13,10 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @see <a href=
  *      "https://projectreactor.io/docs/netty/release/api/constant-values.html">https://projectreactor.io/docs/netty/release/api/constant-values.html</a>
- *
  *      As listed below, this above mentioned properties should be set before the application
  *      startup:
- *
  *      <ul>
  *      <li>As command line argument: e.g. -Dreactor.netty.pool.maxConnections=1000.
  *      <li>As environmental property in Openshift: e.g. with key REACTOR_NETTY_POOL_MAXCONNECTIONS
@@ -25,9 +24,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *      {@link ApiGatewayApplication#main}: e.g.
  *      <code>System.setProperty("reactor.netty.pool.maxConnections", "1000");</code>.
  *      </ul>
- *
  *      To get more information about Spring Cloud Gateway visit the following link:
- *
  * @see <a href=
  *      "https://cloud.spring.io/spring-cloud-gateway/reference/html/">https://cloud.spring.io/spring-cloud-gateway/reference/html/</a>
  */
@@ -35,6 +32,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class ApiGatewayApplication {
 
     public static void main(String[] args) {
+        Hooks.enableAutomaticContextPropagation();
         SpringApplication.run(ApiGatewayApplication.class, args);
     }
 

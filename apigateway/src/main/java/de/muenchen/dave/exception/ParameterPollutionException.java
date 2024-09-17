@@ -1,6 +1,6 @@
 /*
  * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2021
+ * der Landeshauptstadt München, 2022
  */
 package de.muenchen.dave.exception;
 

@@ -1,6 +1,6 @@
 /*
  * Copyright (c): it@M - Dienstleister für Informations- und Telekommunikationstechnik
- * der Landeshauptstadt München, 2021
+ * der Landeshauptstadt München, 2022
  */
 package de.muenchen.dave.filter;
 
@@ -19,44 +19,54 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.reactive.server.WebTestClient;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static de.muenchen.dave.TestConstants.SPRING_TEST_PROFILE;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(classes = { ApiGatewayApplication.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles(SPRING_TEST_PROFILE)
 @AutoConfigureWireMock
-public class GlobalAuthenticationErrorFilterTest {
+class GlobalAuthenticationErrorFilterTest {
 
     @Autowired
     private WebTestClient webTestClient;
 
     @BeforeEach
     void setup() {
-        stubFor(get(urlEqualTo("/remote"))
-                .willReturn(aResponse()
-                        .withStatus(HttpStatus.UNAUTHORIZED.value())
-                        .withHeaders(new HttpHeaders(
-                                new HttpHeader("Content-Type", "application/json"),
-                                new HttpHeader("WWW-Authenticate", "Bearer realm=\"Access to the staging site\", charset=\"UTF-8\""),
-                                new HttpHeader("Expires", "Wed, 21 Oct 2099 07:28:06 GMT")))
-                        .withBody("{ \"testkey\" : \"testvalue\" }")));
+        stubFor(
+                get(urlEqualTo("/remote"))
+                        .willReturn(
+                                aResponse()
+                                        .withStatus(HttpStatus.UNAUTHORIZED.value())
+                                        .withHeaders(
+                                                new HttpHeaders(
+                                                        new HttpHeader("Content-Type", "application/json"),
+                                                        new HttpHeader(
+                                                                "WWW-Authenticate",
+                                                                "Bearer realm=\"Access to the staging site\", charset=\"UTF-8\""),
+                                                        new HttpHeader("Expires", "Wed, 21 Oct 2099 07:28:06 GMT")))
+                                        .withBody("{ \"testkey\" : \"testvalue\" }")));
     }
 
     @Test
     @WithMockUser
     void backendAuthenticationError() {
-        this.webTestClient.get().uri("/api/dave-backend-service/remote").exchange()
-                .expectStatus().isEqualTo(HttpStatus.UNAUTHORIZED)
-                .expectHeader().valueMatches("Content-Type", "application/json")
-                .expectHeader().doesNotExist("WWW-Authenticate")
-                .expectHeader().valueMatches("Expires", "0")
+        webTestClient
+                .get()
+                .uri("/api/dave-backend-service/remote")
+                .exchange()
+                .expectStatus()
+                .isEqualTo(HttpStatus.UNAUTHORIZED)
+                .expectHeader()
+                .valueMatches("Content-Type", "application/json")
+                .expectHeader()
+                .doesNotExist("WWW-Authenticate")
+                .expectHeader()
+                .valueMatches("Expires", "0")
                 .expectBody()
-                .jsonPath("$.status").isEqualTo("401")
-                .jsonPath("$.error").isEqualTo("Authentication Error");
+                .jsonPath("$.status")
+                .isEqualTo("401")
+                .jsonPath("$.error")
+                .isEqualTo("Authentication Error");
     }
-
 }
