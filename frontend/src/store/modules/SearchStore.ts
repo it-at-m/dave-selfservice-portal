@@ -2,25 +2,25 @@ import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
 export const useSearchStore = defineStore("searchStore", () => {
-    const searchResult = ref<Array<number>>([]);
+    const changeTabEvent = ref<number>(0);
 
-    const lastSearchQuery = ref<string>("");
+    const resetFormEvent = ref<boolean>(false);
 
-    const getSearchResult = computed(() => searchResult.value);
+    const getGetChangeTabEvent = computed(() => changeTabEvent.value);
 
-    const getLastSearchQuery = computed(() => lastSearchQuery.value);
+    const getResetFormEvent = computed(() => resetFormEvent.value);
 
-    function setSearchResult(payload: Array<number>) {
-        searchResult.value = payload;
+    function setChangeTabEvent(payload: number) {
+        changeTabEvent.value = payload;
     }
-    function setLastSearchQuery(payload: string) {
-        lastSearchQuery.value = payload;
+    function setResetFormEvent(payload: boolean) {
+        resetFormEvent.value = payload;
     }
 
     return {
-        getSearchResult,
-        getLastSearchQuery,
-        setSearchResult,
-        setLastSearchQuery,
+        getGetChangeTabEvent,
+        getResetFormEvent,
+        setChangeTabEvent,
+        setResetFormEvent,
     };
 });
