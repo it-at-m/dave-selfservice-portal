@@ -236,6 +236,7 @@ import LhmTextField from "@/components/common/LhmTextField.vue";
 import KeyVal from "@/domain/KeyVal";
 import { wetterDropDown } from "@/domain/enums/Wetter";
 import Status from "@/domain/enums/Status";
+import { useZaehlungStore } from "@/store/ZaehlungStore";
 /* eslint-enable no-unused-vars */
 @Component({
     components: { LhmTextField },
@@ -251,6 +252,8 @@ export default class AllgemeineInfoForm extends Vue {
 
     zaehlung: ZaehlungDTO = {} as ZaehlungDTO;
 
+    private zaehlungStore = useZaehlungStore();
+
     @Ref("menu") private vMenu: any;
 
     mounted() {
@@ -258,13 +261,13 @@ export default class AllgemeineInfoForm extends Vue {
         this.updateWorkingCopy();
     }
 
-    get zaehlungStore(): ZaehlungDTO {
-        return this.$store.getters.getZaehlung;
+    get getZaehlung(): ZaehlungDTO {
+        return this.zaehlungStore.getZaehlung;
     }
 
     @Watch("zaehlungStore")
     updateWorkingCopy(): void {
-        this.zaehlung = _.cloneDeep(this.zaehlungStore);
+        this.zaehlung = _.cloneDeep(this.getZaehlung);
         this.resetDatum();
     }
 
@@ -274,7 +277,7 @@ export default class AllgemeineInfoForm extends Vue {
     }
 
     updateStore(): void {
-        this.$store.dispatch("setZaehlung", _.cloneDeep(this.zaehlung));
+        this.zaehlungStore.setZaehlung(_.cloneDeep(this.zaehlung));
     }
 
     get getSonderzaehlungText(): string {
@@ -302,7 +305,7 @@ export default class AllgemeineInfoForm extends Vue {
     }
 
     get isZaehlungReadonly(): boolean {
-        return !this.$store.getters.isZaehlungEditable;
+        return !this.zaehlungStore.isZaehlungEditable;
     }
 
     get computedDateFormatted(): string | null {

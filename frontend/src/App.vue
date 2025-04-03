@@ -57,6 +57,7 @@ import VersionInfoService from "@/api/service/VersionInfoService";
 /* eslint-disable no-unused-vars */
 import SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
 import VersionInfoResponse from "@/domain/VersionInfoResponse";
+import { useUserStore } from "@/store/UserStore";
 /* eslint-enable no-unused-vars */
 
 @Component({
@@ -72,19 +73,16 @@ export default class App extends Vue {
 
     private frontendVersion = "";
 
+    private userStore = useUserStore();
+
     // Lifecycle hook
     created() {
-        SsoUserInfoService.getUserInfo()
-            .then((ssoUserInfoResponse: SsoUserInfoResponse) => {
-                this.$store.dispatch(
-                    "user/setSsoUserInfoResponse",
-                    ssoUserInfoResponse
-                );
-                this.loggedInUser = this.$store.getters["user/getName"];
-            })
-            .catch(() => {
-                return false;
-            });
+        SsoUserInfoService.getUserInfo().then(
+            (ssoUserInfoResponse: SsoUserInfoResponse) => {
+                this.userStore.setSsoUserInfoResponse(ssoUserInfoResponse);
+                this.loggedInUser = this.userStore.getName;
+            }
+        );
         this.getFrontendVersion().then((version: string) => {
             this.frontendVersion = version;
         });

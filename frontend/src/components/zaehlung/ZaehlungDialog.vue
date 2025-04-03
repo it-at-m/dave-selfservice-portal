@@ -32,6 +32,8 @@ import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
 import SavedDTO from "@/domain/dto/SavedDTO";
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import Status from "@/domain/enums/Status";
+import { useEventbusStore } from "@/store/EventbusStore";
+import { useZaehlungStore } from "@/store/ZaehlungStore";
 /* eslint-enable no-unused-vars */
 @Component({
     components: { ZaehlungForm },
@@ -42,11 +44,15 @@ export default class ZaehlungDialog extends Vue {
      */
     @Prop() showDialog!: boolean;
 
+    private eventbusStore = useEventbusStore();
+
+    private zaehlungStore = useZaehlungStore();
+
     @Watch("showDialog")
     openOrCloseDialog() {
         // value === true, if open
         // value === false, if close
-        this.$store.dispatch("setResetformevent", !this.showDialog);
+        this.eventbusStore.setResetFormEvent(!this.showDialog);
     }
 
     cancelCreate(): void {
@@ -58,7 +64,7 @@ export default class ZaehlungDialog extends Vue {
     }
 
     get dialogtitle(): string {
-        const zaehlung: ZaehlungDTO = this.zaehlungStore;
+        const zaehlung: ZaehlungDTO = this.zaehlungStore.getZaehlung;
         let dialogtitleText = "anzeigen";
         if (zaehlung.status === Status.CORRECTION) {
             dialogtitleText = "korrigieren";
@@ -66,10 +72,6 @@ export default class ZaehlungDialog extends Vue {
             dialogtitleText = "bearbeiten";
         }
         return `${zaehlung.zaehlstelleNummer} - Zählung ${dialogtitleText}`;
-    }
-
-    get zaehlungStore(): ZaehlungDTO {
-        return this.$store.getters.getZaehlung;
     }
 }
 </script>

@@ -28,6 +28,8 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import { Levels } from "@/api/error";
+import { useSnackbarStore } from "@/store/SnackbarStore";
+import { isNil } from "lodash";
 
 @Component
 export default class TheSnackbar extends Vue {
@@ -39,15 +41,19 @@ export default class TheSnackbar extends Vue {
     snackbarTextPart2 = "";
     color = "info";
 
-    @Watch("$store.state.snackbar.switch")
+    private snackbarStore = useSnackbarStore();
+
+    @Watch("snackbarStore.trigger")
     setToast(): void {
         this.show = false;
         setTimeout(() => {
-            this.snackbarTextPart1 =
-                this.$store.state.snackbar.snackbarTextPart1;
-            this.snackbarTextPart2 =
-                this.$store.state.snackbar.snackbarTextPart2;
-            this.color = this.$store.state.snackbar.level;
+            this.snackbarTextPart1 = isNil(this.snackbarStore.getTextPart1)
+                ? ""
+                : this.snackbarStore.getTextPart1;
+            this.snackbarTextPart2 = isNil(this.snackbarStore.getTextPart2)
+                ? ""
+                : this.snackbarStore.getTextPart2;
+            this.color = this.snackbarStore.getLevel;
             switch (this.color) {
                 case Levels.ERROR: {
                     this.timeout = 0;

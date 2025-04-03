@@ -30,7 +30,7 @@
                         width="100%"
                         active-color="#1565C0"
                         passive-color="#EEEEEE"
-                        :knotenarme="knotenarmeStore"
+                        :knotenarme="getKnotenarme"
                     ></zaehlung-geometrie>
                 </v-col>
             </v-row>
@@ -160,6 +160,8 @@ import FahrbeziehungComparator from "@/util/FahrbeziehungComparator";
 import { Levels } from "@/api/error";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import Zaehlart from "@/domain/enums/Zaehlart";
+import { useZaehlungStore } from "@/store/ZaehlungStore";
+import { useSnackbarStore } from "@/store/SnackbarStore";
 /* eslint-enable no-unused-vars */
 @Component({
     components: {
@@ -186,16 +188,20 @@ export default class KnotenLageForm extends Vue {
 
     zaehlung: ZaehlungDTO = DefaultObjectCreator.createDefaultZaehlungDTO();
 
+    private zaehlungStore = useZaehlungStore();
+
+    private snackbarStore = useSnackbarStore();
+
     mounted() {
         this.updateWorkingCopy();
     }
 
-    get zaehlungStore(): ZaehlungDTO {
-        return this.$store.getters.getZaehlung;
+    get getZaehlung(): ZaehlungDTO {
+        return this.zaehlungStore.getZaehlung;
     }
 
-    get knotenarmeStore(): Array<KnotenarmDTO> {
-        return this.$store.getters.getKnotenarme;
+    get getKnotenarme(): Array<KnotenarmDTO> {
+        return this.zaehlungStore.getKnotenarme;
     }
 
     get getKreisverkehrText() {
@@ -204,12 +210,12 @@ export default class KnotenLageForm extends Vue {
 
     @Watch("zaehlungStore", { deep: true, immediate: true })
     updateWorkingCopy(): void {
-        this.zaehlung = _.cloneDeep(this.zaehlungStore);
+        this.zaehlung = _.cloneDeep(this.getZaehlung);
         this.zaehlung.knotenarme.sort(KnotenarmComparator.sortByNumber);
     }
 
     updateStore(): void {
-        this.$store.dispatch("setZaehlung", _.cloneDeep(this.zaehlung));
+        this.zaehlungStore.setZaehlung(_.cloneDeep(this.zaehlung));
     }
 
     get coordsZaehlstelle(): LatLng {
@@ -268,16 +274,15 @@ export default class KnotenLageForm extends Vue {
         // wenn zuviele Files hochgeladen wurden, dann Abbrechen
         if (
             !_.isNil(selectedFiles) &&
-            selectedFiles.length > this.zaehlungStore.knotenarme.length
+            selectedFiles.length > this.getZaehlung.knotenarme.length
         ) {
             // Damit nacheinander ein File mit identischem Namen hocheladen werden
             // kann, wird immer der FileInput zurückgesetzt
             this.resetFileInput = Math.floor(Math.random() * 10001);
-            this.$store.dispatch("snackbar/showToast", {
-                level: Levels.ERROR,
-                snackbarTextPart1: `Zu viele Dateien`,
-                snackbarTextPart2: `Es darf pro Knotenarm nur eine Datei hochgeladen werden.`,
-            });
+            this.snackbarStore.showError(
+                `Zu viele Dateien`,
+                `Es darf pro Knotenarm nur eine Datei hochgeladen werden.`
+            );
         } else {
             // Einlesen
             this.readFiles(selectedFiles);
@@ -332,21 +337,13 @@ export default class KnotenLageForm extends Vue {
                                         Math.random() * 10001
                                     );
                                     if (successfull) {
-                                        that.$store.dispatch(
-                                            "snackbar/showToast",
-                                            {
-                                                level: Levels.SUCCESS,
-                                                snackbarTextPart1: `Alle Dateien konnten einem Knotenarm zugeordnet werden.`,
-                                            }
+                                        that.snackbarStore.showSuccess(
+                                            `Alle Dateien konnten einem Knotenarm zugeordnet werden.`
                                         );
                                     } else {
-                                        that.$store.dispatch(
-                                            "snackbar/showToast",
-                                            {
-                                                level: Levels.ERROR,
-                                                snackbarTextPart1: `Folgende Dateien wurden abgelehnt:`,
-                                                snackbarTextPart2: errorText,
-                                            }
+                                        that.snackbarStore.showError(
+                                            `Folgende Dateien wurden abgelehnt:`,
+                                            errorText
                                         );
                                     }
                                 }
@@ -359,14 +356,13 @@ export default class KnotenLageForm extends Vue {
 
             if (myFile) {
                 if (this.wrongFileType(myFile)) {
-                    that.$store.dispatch("snackbar/showToast", {
-                        level: Levels.WARNING,
-                        snackbarTextPart1: `Ungültiges Dateiformat.`,
-                        snackbarTextPart2: `Es werden nur CSV-Dateien unterstützt und keine ${myFile.name
+                    that.snackbarStore.showWarning(
+                        `Ungültiges Dateiformat.`,
+                        `Es werden nur CSV-Dateien unterstützt und keine ${myFile.name
                             .split(".")
                             .pop()
-                            .toUpperCase()}-Dateien.`,
-                    });
+                            .toUpperCase()}-Dateien.`
+                    );
                 } else {
                     // Das 'load'-Event wird ausgelöst, sobald der FileReader das Laden beendet hat.
                     fileReader.readAsText(myFile);
@@ -390,12 +386,8 @@ export default class KnotenLageForm extends Vue {
         this.updateStore();
     }
 
-    get getKnotenarme(): Array<KnotenarmDTO> {
-        return this.zaehlung.knotenarme;
-    }
-
     get isZaehlungEditable(): boolean {
-        return this.$store.getters.isZaehlungEditable;
+        return this.zaehlungStore.isZaehlungEditable;
     }
 
     get appendIcon(): string {
@@ -407,7 +399,7 @@ export default class KnotenLageForm extends Vue {
     }
 
     get isNotKreisverkehr(): boolean {
-        return !this.zaehlungStore.kreisverkehr;
+        return !this.getZaehlung.kreisverkehr;
     }
 
     public getKnotenarmnummerOfCsv(csvData: Array<string>): number {
@@ -448,7 +440,7 @@ export default class KnotenLageForm extends Vue {
         armNummer: number,
         csvData: Array<string>
     ): string {
-        const zaehlung: ZaehlungDTO = this.zaehlungStore;
+        const zaehlung: ZaehlungDTO = this.getZaehlung;
         // keine Daten vorhanden
         if (_.isNil(csvData) || csvData.length < 4) {
             return "Die hochgeladene Datei enthält keine Zähldaten.";
@@ -547,7 +539,7 @@ export default class KnotenLageForm extends Vue {
                 }
 
                 // Prüfung der Zähldaten auf Korrektheit
-                if (this.zaehlungStore.kreisverkehr) {
+                if (this.getZaehlung.kreisverkehr) {
                     // e = einfahrend, a = abfahrend und v = vorbeifahrend
                     if (
                         splittedLine[1] !== "e" &&

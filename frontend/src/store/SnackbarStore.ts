@@ -62,5 +62,6 @@ export const useSnackbarStore = defineStore("snackbarStore", () => {
         showWarning,
         showError,
         showApiError,
+        showToast,
     };
 });

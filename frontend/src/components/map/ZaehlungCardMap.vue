@@ -58,6 +58,7 @@ import {
     MarkerOptions,
 } from "leaflet";
 import markerIconRed from "@/assets/marker-icon-red.png";
+import { useEventbusStore } from "@/store/EventbusStore";
 /* eslint-enable no-unused-vars */
 
 @Component({
@@ -103,6 +104,8 @@ export default class ZaehlungCardMap extends Vue {
 
     private markerZaehlung: Marker | null = null;
 
+    private eventbusStore = useEventbusStore();
+
     /**
      * Optionen fuer die Darstellung der Karte
      */
@@ -115,7 +118,7 @@ export default class ZaehlungCardMap extends Vue {
     };
 
     get resetFormEvent(): boolean {
-        return this.$store.getters.getResetformevent;
+        return this.eventbusStore.getResetFormEvent;
     }
 
     @Watch("resetFormEvent")

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
-export const useSearchStore = defineStore("searchStore", () => {
+export const useEventbusStore = defineStore("eventbusStore", () => {
     const changeTabEvent = ref<number>(0);
 
     const resetFormEvent = ref<boolean>(false);

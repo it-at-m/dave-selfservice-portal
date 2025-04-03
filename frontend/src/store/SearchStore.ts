@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
-export const useEventbusStore = defineStore("eventbusStore", () => {
+export const useSearchStore = defineStore("searchStore", () => {
     const searchResult = ref<Array<number>>([]);
 
     const lastSearchQuery = ref<string>("");

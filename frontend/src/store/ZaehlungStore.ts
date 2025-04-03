@@ -243,6 +243,7 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     return {
         getZaehlung,
         isHochrechnungsfaktorEditable,
+        isZaehlungEditable,
         getKnotenarme,
         getFahrbeziehungen,
         getKategorien,
