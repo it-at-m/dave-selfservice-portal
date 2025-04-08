@@ -90,6 +90,9 @@ import FahrzeugeForm from "@/components/zaehlung/form/FahrzeugeForm.vue";
 // Api
 import ZaehlungService from "@/api/service/ZaehlungService";
 import Loader from "@/components/common/Loader.vue";
+import { useSnackbarStore } from "@/store/SnackbarStore";
+import { useEventbusStore } from "@/store/EventbusStore";
+import { useZaehlungStore } from "@/store/ZaehlungStore";
 
 @Component({
     components: {
@@ -110,13 +113,19 @@ export default class ZaehlungForm extends Vue {
 
     loader = false;
 
+    private snackbarStore = useSnackbarStore();
+
+    private eventbusStore = useEventbusStore();
+
+    private zaehlungStore = useZaehlungStore();
+
     get isZaehlungValid(): boolean {
         return this.isAllgemeinFormValid;
     }
 
     save(): void {
         this.loader = true;
-        const copy: ZaehlungDTO = _.cloneDeep(this.$store.getters.getZaehlung);
+        const copy: ZaehlungDTO = _.cloneDeep(this.zaehlungStore.getZaehlung);
         if (!copy.fahrbeziehungen) {
             copy.fahrbeziehungen = [];
         }
@@ -128,12 +137,12 @@ export default class ZaehlungForm extends Vue {
                 this.$emit("saved", savedDTO);
             })
             .catch((error: ApiError) => {
-                this.$store.dispatch("snackbar/showError", error);
+                this.snackbarStore.showApiError(error);
             })
             .finally(() => {
                 this.activeTab = 0;
                 this.loader = false;
-                this.$store.dispatch("setResetformevent", true);
+                this.eventbusStore.setResetFormEvent(true);
             });
     }
 
@@ -173,7 +182,7 @@ export default class ZaehlungForm extends Vue {
 
     cancel(): void {
         this.activeTab = 0;
-        this.$store.dispatch("setResetformevent", true);
+        this.eventbusStore.setResetFormEvent(true);
         this.$emit("cancel");
     }
 

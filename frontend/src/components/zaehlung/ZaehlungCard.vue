@@ -266,6 +266,8 @@ import SavedDTO from "@/domain/dto/SavedDTO";
 import { ApiError } from "@/api/error";
 import UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
 import Zaehlart from "@/domain/enums/Zaehlart";
+import { useSnackbarStore } from "@/store/SnackbarStore";
+import { useZaehlungStore } from "@/store/ZaehlungStore";
 /* eslint-enable no-unused-vars */
 @Component({
     components: {
@@ -285,6 +287,10 @@ export default class ZaehlungCard extends Vue {
 
     @Prop()
     readonly zaehlung!: ZaehlungDTO;
+
+    private snackbarStore = useSnackbarStore();
+
+    private zaehlungStore = useZaehlungStore();
 
     get getZaehlung(): ZaehlungDTO {
         return this.zaehlung;
@@ -376,7 +382,7 @@ export default class ZaehlungCard extends Vue {
                     this.$emit("saved", savedDTO);
                 })
                 .catch((error: ApiError) => {
-                    this.$store.dispatch("snackbar/showError", error);
+                    this.snackbarStore.showApiError(error);
                 })
                 .finally(() => {
                     this.loading = false;
@@ -406,7 +412,7 @@ export default class ZaehlungCard extends Vue {
                     this.$emit("saved", savedDTO);
                 })
                 .catch((error: ApiError) => {
-                    this.$store.dispatch("snackbar/showError", error);
+                    this.snackbarStore.showApiError(error);
                 })
                 .finally(() => {
                     this.loading = false;
@@ -415,7 +421,7 @@ export default class ZaehlungCard extends Vue {
     }
 
     openZaehlungDialog(): void {
-        this.$store.dispatch("setZaehlung", _.cloneDeep(this.zaehlung));
+        this.zaehlungStore.setZaehlung(_.cloneDeep(this.zaehlung));
         this.$emit("openZaehlungDialog");
     }
 
@@ -450,7 +456,7 @@ export default class ZaehlungCard extends Vue {
     }
 
     openChatDialog() {
-        this.$store.dispatch("setZaehlung", _.cloneDeep(this.zaehlung));
+        this.zaehlungStore.setZaehlung(_.cloneDeep(this.zaehlung));
         // Lokal false setzen damit der Punkt verschwindet, innerhalb des ChatDialog wird die Zählung auch in der DB geupdated
         this.zaehlung.unreadMessagesDienstleister = false;
         this.$emit("openChatDialog");

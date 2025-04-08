@@ -70,6 +70,8 @@ import ChatMessageDTO from "@/domain/dto/ChatMessageDTO";
 import { ApiError } from "@/api/error";
 import accountTieUrl from "@/assets/account-tie.png";
 import kindlUrl from "@/assets/kindl.jpg";
+import { useZaehlungStore } from "@/store/ZaehlungStore";
+import { useSnackbarStore } from "@/store/SnackbarStore";
 /* eslint-enable no-unused-vars */
 
 @Component({
@@ -90,6 +92,10 @@ export default class ChatDialog extends Vue {
         id: 2,
         profilePicture: kindlUrl,
     };
+
+    private zaehlungStore = useZaehlungStore();
+
+    private snackbarStore = useSnackbarStore();
 
     // Hier ist myself der Dienstleister
     myself: Participant = this.dienstleister;
@@ -212,7 +218,7 @@ export default class ChatDialog extends Vue {
                 message.uploaded = true;
             })
             .catch((error: ApiError) => {
-                this.$store.dispatch("snackbar/showError", error);
+                this.snackbarStore.showApiError(error);
             });
     }
 
@@ -221,7 +227,7 @@ export default class ChatDialog extends Vue {
     }
 
     get chatTitle() {
-        let zaehlung = this.$store.getters.getZaehlung;
+        let zaehlung = this.zaehlungStore.getZaehlung;
         let chatTitle = "Chat";
         if (zaehlung.datum) {
             chatTitle =
@@ -235,7 +241,7 @@ export default class ChatDialog extends Vue {
     @Watch("showDialog")
     private loadMessages() {
         if (this.showDialog) {
-            this.zaehlungId = this.$store.getters.getZaehlung.id;
+            this.zaehlungId = this.zaehlungStore.getZaehlung.id;
             this.messages = [];
             ChatMessageService.getAllByZaehlungId(this.zaehlungId)
                 .then((messageDTOs) => {
@@ -252,14 +258,14 @@ export default class ChatDialog extends Vue {
                     });
                 })
                 .catch((error: ApiError) => {
-                    this.$store.dispatch("snackbar/showError", error);
+                    this.snackbarStore.showApiError(error);
                 });
 
             ChatMessageService.updateUnreadMessages(
                 this.zaehlungId,
                 this.dienstleister.id
             ).catch((error: ApiError) => {
-                this.$store.dispatch("snackbar/showError", error);
+                this.snackbarStore.showApiError(error);
             });
         } else {
             this.messages = [];

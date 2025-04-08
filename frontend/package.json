@@ -18,6 +18,7 @@
     "base64-blob": "^1.4.1",
     "core-js": "^3.17.3",
     "file-loader": "^6.2.0",
+    "pinia": "^2.1.7",
     "leaflet": "^1.9.4",
     "leaflet.nontiledlayer": "^1.0.9",
     "loadash": "^1.0.0",
@@ -30,8 +31,7 @@
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.5.4",
     "vue2-leaflet": "^2.7.1",
-    "vuetify": "^2.5.8",
-    "vuex": "^3.6.2"
+    "vuetify": "^2.5.8"
   },
   "devDependencies": {
     "@mdi/font": "^6.6.96",

@@ -58,6 +58,7 @@ import ZaehlungCard from "@/components/zaehlung/ZaehlungCard.vue";
 import { Levels } from "@/api/error";
 import SavedDTO from "@/domain/dto/SavedDTO";
 import ChatDialog from "@/components/chat/ChatDialog.vue";
+import { useSnackbarStore } from "@/store/SnackbarStore";
 
 /* eslint-enable no-unused-vars */
 @Component({
@@ -71,6 +72,8 @@ export default class App extends Vue {
     private zaehlungCards: Array<ZaehlungCardObject> = [];
     showZaehlungDialog = false;
     showChatDialog = false;
+
+    private snackbarStore = useSnackbarStore();
 
     mounted() {
         window.scrollTo(0, 0);
@@ -88,9 +91,7 @@ export default class App extends Vue {
                     ZaehlungCardObjectComparator.sortByDatumDesc
                 );
             })
-            .catch((error) =>
-                this.$store.dispatch("snackbar/showError", error)
-            );
+            .catch((error) => this.snackbarStore.showApiError(error));
     }
 
     get getZaehlungenForCards(): Array<ZaehlungCardObject> {
@@ -104,10 +105,7 @@ export default class App extends Vue {
     reloadDataAndCloseDialog(savedDTO: SavedDTO) {
         this.loadZaehlungen();
         this.showZaehlungDialog = false;
-        this.$store.dispatch("snackbar/showToast", {
-            level: Levels.INFO,
-            snackbarTextPart1: savedDTO.response,
-        });
+        this.snackbarStore.showToast(Levels.INFO, savedDTO.response);
     }
 
     cancelZaehlungDialog() {

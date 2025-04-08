@@ -77,12 +77,18 @@ import { Component, Prop, Vue, Watch } from "vue-property-decorator";
 /* eslint-disable no-unused-vars */
 import Fahrzeug from "@/domain/enums/Fahrzeug";
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
+import { useZaehlungStore } from "@/store/ZaehlungStore";
+import { useEventbusStore } from "@/store/EventbusStore";
 /* eslint-enable no-unused-vars */
 
 @Component
 export default class FahrzeugFahrbeziehungForm extends Vue {
     @Prop()
     readonly height!: string;
+
+    private zaehlungStore = useZaehlungStore();
+
+    private eventbusStore = useEventbusStore();
 
     // Variablen für die Checkboxen
     pkw = false;
@@ -97,17 +103,17 @@ export default class FahrzeugFahrbeziehungForm extends Vue {
         this.resetForm();
     }
 
-    get zaehlungStore(): ZaehlungDTO {
-        return this.$store.getters.getZaehlung;
+    get getZaehlung(): ZaehlungDTO {
+        return this.zaehlungStore.getZaehlung;
     }
 
     get resetFormEvent(): boolean {
-        return this.$store.getters.getResetformevent;
+        return this.eventbusStore.getResetFormEvent;
     }
 
     @Watch("resetFormEvent")
     private resetForm() {
-        let zaehlung: ZaehlungDTO = this.zaehlungStore;
+        let zaehlung: ZaehlungDTO = this.getZaehlung;
         this.pkw = zaehlung.kategorien.includes(Fahrzeug.PKW);
         this.lkw = zaehlung.kategorien.includes(Fahrzeug.LKW);
         this.lz = zaehlung.kategorien.includes(Fahrzeug.LZ);
