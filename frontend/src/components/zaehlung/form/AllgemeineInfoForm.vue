@@ -224,19 +224,143 @@
     </v-sheet>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { Component, Prop, Ref, Vue, Watch } from "vue-property-decorator";
 /* eslint-disable no-unused-vars */
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import { zaehlartenDropDown, zaehlartText } from "@/domain/enums/Zaehlart";
 import { zaehldauerText } from "@/domain/enums/Zaehldauer";
 import { quelleText } from "@/domain/enums/Quelle";
-import _ from "lodash";
+import _, { cloneDeep } from "lodash";
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import KeyVal from "@/domain/KeyVal";
 import { wetterDropDown } from "@/domain/enums/Wetter";
 import Status from "@/domain/enums/Status";
 import { useZaehlungStore } from "@/store/ZaehlungStore";
+import { computed, onMounted, ref, watch } from "vue";
+
+interface Props {
+    height?: string;
+}
+
+defineProps<Props>();
+
+const emits = defineEmits<{
+    (e: "isValid", v: boolean): void;
+}>();
+
+onMounted(() => {
+    validZaehlung.value = false;
+    updateWorkingCopy();
+});
+
+const date = ref<string>(new Date().toISOString().substr(0, 10));
+const menu = ref<boolean>(false);
+const validZaehlung = ref<boolean>(false);
+
+const zaehlungStore = useZaehlungStore();
+
+const zaehlung = computed<ZaehlungDTO>(() => {
+    return zaehlungStore.getZaehlung;
+});
+
+const getSonderzaehlungText = computed<string>(() => {
+    return zaehlung.value.sonderzaehlung ? "Ja" : "Nein";
+});
+
+const getZaehldauer = computed<string | undefined>(() => {
+    return zaehldauerText.get(zaehlung.value.zaehldauer);
+});
+
+const getQuelle = computed<string | undefined>(() => {
+    return quelleText.get(zaehlung.value.quelle);
+});
+
+const getZaehlintervall = computed<string>(() => {
+    return `${zaehlung.value.zaehlIntervall} min`;
+});
+
+const getWetter = computed<Array<KeyVal>>(() => {
+    return wetterDropDown;
+});
+
+const getZaehlarten = computed<Array<KeyVal>>(() => {
+    return zaehlartenDropDown;
+});
+
+const isZaehlungReadonly = computed<boolean>(() => {
+    return !zaehlungStore.isZaehlungEditable;
+});
+
+const dateFormatted = computed<string | null>(() => {
+    return formatDate(date.value);
+});
+
+const isZaehlungInstructed = computed<boolean>(() => {
+    return zaehlung.value.status === Status.INSTRUCTED;
+});
+
+const formattedDateAsText = computed<string>(() => {
+    if (!zaehlung.value.datum) {
+        return "";
+    }
+    const [year, month, day] = zaehlung.value.datum.split("-");
+    return `${day}.${month}.${year}`;
+});
+
+const getZaehlart = computed<string | undefined>(() => {
+    return zaehlartText.get(zaehlung.value.zaehlart);
+});
+
+watch(
+    zaehlung,
+    () => {
+        updateWorkingCopy();
+    },
+    { immediate: true }
+);
+
+watch(
+    validZaehlung,
+    () => {
+        emits("isValid", validZaehlung.value);
+    },
+    { immediate: true }
+);
+
+function updateWorkingCopy(): void {
+    updateZaehlungStoreWithZaehlung();
+    resetDatum();
+}
+
+function resetDatum(): void {
+    date.value = zaehlung.value.datum.substr(0, 10);
+}
+
+function updateZaehlungStoreWithZaehlung(): void {
+    zaehlungStore.setZaehlung(cloneDeep(zaehlung.value));
+}
+
+function formatDate(date: string): string | null {
+    if (!date) {
+        return null;
+    }
+    const [year, month, day] = date.split("-");
+    return `${day}.${month}.${year}`;
+}
+
+function formatDateForBackend(): string {
+    let time = new Date().toLocaleTimeString(navigator.language, {
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+    return new Date(date.value + "T" + time).toISOString();
+}
+
+function getActualDate(): string {
+    return new Date().toISOString().substr(0, 10);
+}
+
 /* eslint-enable no-unused-vars */
 @Component({
     components: { LhmTextField },
@@ -256,62 +380,76 @@ export default class AllgemeineInfoForm extends Vue {
 
     @Ref("menu") private vMenu: any;
 
+    //done
     mounted() {
         this.validZaehlung = false;
         this.updateWorkingCopy();
     }
 
+    // done
     get getZaehlung(): ZaehlungDTO {
         return this.zaehlungStore.getZaehlung;
     }
 
+    // done
     @Watch("zaehlungStore")
     updateWorkingCopy(): void {
         this.zaehlung = _.cloneDeep(this.getZaehlung);
         this.resetDatum();
     }
 
+    // done
     @Watch("validZaehlung")
     sendIsValid(): void {
         this.$emit("isValid", this.validZaehlung);
     }
 
+    // done
     updateStore(): void {
         this.zaehlungStore.setZaehlung(_.cloneDeep(this.zaehlung));
     }
 
+    // done
     get getSonderzaehlungText(): string {
         return this.zaehlung.sonderzaehlung ? "Ja" : "Nein";
     }
 
+    // done
     get getZaehldauer(): string | undefined {
         return zaehldauerText.get(this.zaehlung.zaehldauer);
     }
 
+    // done
     get getQuelle(): string | undefined {
         return quelleText.get(this.zaehlung.quelle);
     }
 
+    // done
     get getZaehlintervall(): string {
         return `${this.zaehlung.zaehlIntervall} min`;
     }
 
+    // done
     get getWetter(): Array<KeyVal> {
         return wetterDropDown;
     }
 
+    // done
     get getZaehlarten(): Array<KeyVal> {
         return zaehlartenDropDown;
     }
 
+    // done
     get isZaehlungReadonly(): boolean {
         return !this.zaehlungStore.isZaehlungEditable;
     }
 
+    // done
     get computedDateFormatted(): string | null {
         return this.formatDate(this.date);
     }
 
+    // done
     private formatDateForBackend(): string {
         let time = new Date().toLocaleTimeString(navigator.language, {
             hour: "2-digit",
@@ -320,6 +458,7 @@ export default class AllgemeineInfoForm extends Vue {
         return new Date(this.date + "T" + time).toISOString();
     }
 
+    // done
     private formatDate(date: string): string | null {
         if (!date) {
             return null;
@@ -339,14 +478,17 @@ export default class AllgemeineInfoForm extends Vue {
         this.resetDatum();
     }
 
+    // done
     private resetDatum(): void {
         this.date = this.zaehlung.datum.substr(0, 10);
     }
 
+    // done
     get isZaehlungInstructed(): boolean {
         return this.zaehlung.status === Status.INSTRUCTED;
     }
 
+    // done
     get formattedDateAsText(): string {
         if (!this.zaehlung.datum) {
             return "";
@@ -355,10 +497,12 @@ export default class AllgemeineInfoForm extends Vue {
         return `${day}.${month}.${year}`;
     }
 
+    // done
     get getZaehlart(): string | undefined {
         return zaehlartText.get(this.zaehlung.zaehlart);
     }
 
+    // done
     get getActualDate(): string {
         return new Date().toISOString().substr(0, 10);
     }
