@@ -46,8 +46,7 @@
                     >
                         <v-menu
                             v-if="isZaehlungInstructed"
-                            ref="menu"
-                            v-model="menu"
+                            v-model="datepickerMenu"
                             :close-on-content-click="false"
                             :close-on-click="false"
                             transition="scale-transition"
@@ -57,7 +56,7 @@
                         >
                             <template #activator="{ on, attrs }">
                                 <v-text-field
-                                    v-model="computedDateFormatted"
+                                    v-model="dateFormatted"
                                     label="Datum"
                                     prepend-inner-icon="mdi-calendar"
                                     readonly
@@ -255,7 +254,7 @@ onMounted(() => {
 });
 
 const date = ref<string>(new Date().toISOString().substr(0, 10));
-const menu = ref<boolean>(false);
+const datepickerMenu = ref<boolean>(false);
 const validZaehlung = ref<boolean>(false);
 
 const zaehlungStore = useZaehlungStore();
@@ -328,6 +327,17 @@ watch(
     { immediate: true }
 );
 
+function saveDate(): void {
+    datepickerMenu.value = false;
+    zaehlung.value.datum = formatDateForBackend();
+    updateZaehlungStoreWithZaehlung();
+}
+
+function closeMenu(): void {
+    datepickerMenu.value = false;
+    resetDatum();
+}
+
 function updateWorkingCopy(): void {
     updateZaehlungStoreWithZaehlung();
     resetDatum();
@@ -359,152 +369,5 @@ function formatDateForBackend(): string {
 
 function getActualDate(): string {
     return new Date().toISOString().substr(0, 10);
-}
-
-/* eslint-enable no-unused-vars */
-@Component({
-    components: { LhmTextField },
-})
-export default class AllgemeineInfoForm extends Vue {
-    @Prop()
-    readonly height!: string;
-
-    // Without Time
-    date: string = new Date().toISOString().substr(0, 10);
-    menu = false;
-    validZaehlung = false;
-
-    zaehlung: ZaehlungDTO = {} as ZaehlungDTO;
-
-    private zaehlungStore = useZaehlungStore();
-
-    @Ref("menu") private vMenu: any;
-
-    //done
-    mounted() {
-        this.validZaehlung = false;
-        this.updateWorkingCopy();
-    }
-
-    // done
-    get getZaehlung(): ZaehlungDTO {
-        return this.zaehlungStore.getZaehlung;
-    }
-
-    // done
-    @Watch("zaehlungStore")
-    updateWorkingCopy(): void {
-        this.zaehlung = _.cloneDeep(this.getZaehlung);
-        this.resetDatum();
-    }
-
-    // done
-    @Watch("validZaehlung")
-    sendIsValid(): void {
-        this.$emit("isValid", this.validZaehlung);
-    }
-
-    // done
-    updateStore(): void {
-        this.zaehlungStore.setZaehlung(_.cloneDeep(this.zaehlung));
-    }
-
-    // done
-    get getSonderzaehlungText(): string {
-        return this.zaehlung.sonderzaehlung ? "Ja" : "Nein";
-    }
-
-    // done
-    get getZaehldauer(): string | undefined {
-        return zaehldauerText.get(this.zaehlung.zaehldauer);
-    }
-
-    // done
-    get getQuelle(): string | undefined {
-        return quelleText.get(this.zaehlung.quelle);
-    }
-
-    // done
-    get getZaehlintervall(): string {
-        return `${this.zaehlung.zaehlIntervall} min`;
-    }
-
-    // done
-    get getWetter(): Array<KeyVal> {
-        return wetterDropDown;
-    }
-
-    // done
-    get getZaehlarten(): Array<KeyVal> {
-        return zaehlartenDropDown;
-    }
-
-    // done
-    get isZaehlungReadonly(): boolean {
-        return !this.zaehlungStore.isZaehlungEditable;
-    }
-
-    // done
-    get computedDateFormatted(): string | null {
-        return this.formatDate(this.date);
-    }
-
-    // done
-    private formatDateForBackend(): string {
-        let time = new Date().toLocaleTimeString(navigator.language, {
-            hour: "2-digit",
-            minute: "2-digit",
-        });
-        return new Date(this.date + "T" + time).toISOString();
-    }
-
-    // done
-    private formatDate(date: string): string | null {
-        if (!date) {
-            return null;
-        }
-        const [year, month, day] = date.split("-");
-        return `${day}.${month}.${year}`;
-    }
-
-    saveDate(): void {
-        this.vMenu.save(this.date);
-        this.zaehlung.datum = this.formatDateForBackend();
-        this.updateStore();
-    }
-
-    closeMenu(): void {
-        this.menu = false;
-        this.resetDatum();
-    }
-
-    // done
-    private resetDatum(): void {
-        this.date = this.zaehlung.datum.substr(0, 10);
-    }
-
-    // done
-    get isZaehlungInstructed(): boolean {
-        return this.zaehlung.status === Status.INSTRUCTED;
-    }
-
-    // done
-    get formattedDateAsText(): string {
-        if (!this.zaehlung.datum) {
-            return "";
-        }
-        const [year, month, day] = this.zaehlung.datum.split("-");
-        return `${day}.${month}.${year}`;
-    }
-
-    // done
-    get getZaehlart(): string | undefined {
-        return zaehlartText.get(this.zaehlung.zaehlart);
-    }
-
-    // done
-    get getActualDate(): string {
-        return new Date().toISOString().substr(0, 10);
-    }
 }
 </script>
