@@ -72,55 +72,57 @@
     </v-sheet>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+<script setup lang="ts">
 /* eslint-disable no-unused-vars */
 import Fahrzeug from "@/domain/enums/Fahrzeug";
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import { useZaehlungStore } from "@/store/ZaehlungStore";
 import { useEventbusStore } from "@/store/EventbusStore";
+import { computed, onMounted, ref, watch } from "vue";
 /* eslint-enable no-unused-vars */
 
-@Component
-export default class FahrzeugFahrbeziehungForm extends Vue {
-    @Prop()
-    readonly height!: string;
+interface Props {
+    height?: string;
+}
 
-    private zaehlungStore = useZaehlungStore();
+defineProps<Props>();
 
-    private eventbusStore = useEventbusStore();
+const zaehlungStore = useZaehlungStore();
 
-    // Variablen für die Checkboxen
-    pkw = false;
-    lkw = false;
-    lz = false;
-    bus = false;
-    krad = false;
-    rad = false;
-    fuss = false;
+const eventbusStore = useEventbusStore();
 
-    mounted() {
-        this.resetForm();
-    }
+const pkw = ref<boolean>(false);
+const lkw = ref<boolean>(false);
+const lz = ref<boolean>(false);
+const bus = ref<boolean>(false);
+const krad = ref<boolean>(false);
+const rad = ref<boolean>(false);
+const fuss = ref<boolean>(false);
 
-    get getZaehlung(): ZaehlungDTO {
-        return this.zaehlungStore.getZaehlung;
-    }
+const resetFormEvent = computed<boolean>(() => {
+    return eventbusStore.getResetFormEvent;
+});
 
-    get resetFormEvent(): boolean {
-        return this.eventbusStore.getResetFormEvent;
-    }
+onMounted(() => {
+    resetForm();
+});
 
-    @Watch("resetFormEvent")
-    private resetForm() {
-        let zaehlung: ZaehlungDTO = this.getZaehlung;
-        this.pkw = zaehlung.kategorien.includes(Fahrzeug.PKW);
-        this.lkw = zaehlung.kategorien.includes(Fahrzeug.LKW);
-        this.lz = zaehlung.kategorien.includes(Fahrzeug.LZ);
-        this.bus = zaehlung.kategorien.includes(Fahrzeug.BUS);
-        this.krad = zaehlung.kategorien.includes(Fahrzeug.KRAD);
-        this.rad = zaehlung.kategorien.includes(Fahrzeug.RAD);
-        this.fuss = zaehlung.kategorien.includes(Fahrzeug.FUSS);
-    }
+watch(
+    resetFormEvent,
+    () => {
+        resetForm();
+    },
+    { immediate: true }
+);
+
+function resetForm() {
+    const zaehlung: ZaehlungDTO = zaehlungStore.getZaehlung;
+    pkw.value = zaehlung.kategorien.includes(Fahrzeug.PKW);
+    lkw.value = zaehlung.kategorien.includes(Fahrzeug.LKW);
+    lz.value = zaehlung.kategorien.includes(Fahrzeug.LZ);
+    bus.value = zaehlung.kategorien.includes(Fahrzeug.BUS);
+    krad.value = zaehlung.kategorien.includes(Fahrzeug.KRAD);
+    rad.value = zaehlung.kategorien.includes(Fahrzeug.RAD);
+    fuss.value = zaehlung.kategorien.includes(Fahrzeug.FUSS);
 }
 </script>

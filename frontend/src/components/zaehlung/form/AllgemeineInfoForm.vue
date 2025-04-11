@@ -224,7 +224,6 @@
 </template>
 
 <script setup lang="ts">
-import { Component, Prop, Ref, Vue, Watch } from "vue-property-decorator";
 /* eslint-disable no-unused-vars */
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import { zaehlartenDropDown, zaehlartText } from "@/domain/enums/Zaehlart";
