@@ -1,10 +1,10 @@
 module.exports = {
-    transpileDependencies: ['vuetify'],
+    transpileDependencies: ["vuetify"],
     pwa: {
-        name: 'DAVe Selfserviceportal',
-        workboxPluginMode: 'InjectManifest',
+        name: "DAVe Selfserviceportal",
+        workboxPluginMode: "InjectManifest",
         workboxOptions: {
-            swSrc: 'src/service-worker.js'
-        }
-    }
+            swSrc: "src/service-worker.js",
+        },
+    },
 };

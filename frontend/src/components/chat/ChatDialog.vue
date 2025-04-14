@@ -56,7 +56,6 @@
     </v-dialog>
 </template>
 
-
 <script lang="ts">
 import Vue from "vue";
 import { Chat } from "vue-quick-chat";

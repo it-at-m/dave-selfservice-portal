@@ -77,4 +77,3 @@ export default class TheSnackbar extends Vue {
     }
 }
 </script>
-

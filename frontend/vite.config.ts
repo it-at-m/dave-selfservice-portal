@@ -2,16 +2,16 @@ import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue2";
 import legacy from "@vitejs/plugin-legacy";
 import { fileURLToPath, URL } from "url";
-import { VuetifyResolver } from 'unplugin-vue-components/resolvers';
-import Components from 'unplugin-vue-components/vite';
-import AutoImport from 'unplugin-auto-import/vite';
-import eslint from 'vite-plugin-eslint';
+import { VuetifyResolver } from "unplugin-vue-components/resolvers";
+import Components from "unplugin-vue-components/vite";
+import AutoImport from "unplugin-auto-import/vite";
+import eslint from "vite-plugin-eslint";
 
 export default defineConfig({
     plugins: [
         vue(),
         eslint({
-            fix: true
+            fix: true,
         }),
         Components({
             resolvers: [
@@ -19,18 +19,15 @@ export default defineConfig({
             ],
         }),
         AutoImport({
-            imports: [
-                'vue',
-                'vitest',
-            ],
-            ignore: ['createApp', 'resolveComponent', 'chai']
+            imports: ["vue", "vitest"],
+            ignore: ["createApp", "resolveComponent", "chai"],
         }),
         legacy({
-            targets: ["defaults", "not IE 11"]
-        })
+            targets: ["defaults", "not IE 11"],
+        }),
     ],
     server: {
-        port: 8081
+        port: 8081,
     },
     resolve: {
         alias: {
@@ -40,5 +37,5 @@ export default defineConfig({
     build: {
         //Wenn CCS Split Probleme macht
         //cssCodeSplit: false
-    }
+    },
 });
