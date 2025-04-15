@@ -190,7 +190,7 @@
                         @click="openChatDialog"
                     >
                         <v-badge
-                            v-if="zaehlung.unreadMessagesDienstleister"
+                            v-if="unreadMessagesDienstleister"
                             dot
                             color="red"
                         >
@@ -244,8 +244,7 @@
     </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
 /* eslint-disable no-unused-vars */
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
@@ -260,7 +259,7 @@ import KnotenarmComparator from "@/util/KnotenarmComparator";
 import Status, { statusIcon } from "@/domain/enums/Status";
 import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
 import IconOptions from "@/components/icons/IconOptions";
-import _ from "lodash";
+import { cloneDeep } from "lodash";
 import ZaehlungService from "@/api/service/ZaehlungService";
 import SavedDTO from "@/domain/dto/SavedDTO";
 import { ApiError } from "@/api/error";
@@ -268,198 +267,197 @@ import UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
 import Zaehlart from "@/domain/enums/Zaehlart";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useZaehlungStore } from "@/store/ZaehlungStore";
-/* eslint-enable no-unused-vars */
-@Component({
-    components: {
-        ZaehlungGeometrie,
-        QuelleIcon,
-        ZaehldauerIcon,
-        WetterIcon,
-        ZaehlartIcon,
-        ZaehlungCardMap,
+import { computed, ref, watch } from "vue";
+import i18n from "@/i18n";
+
+interface Props {
+    zaehlung: ZaehlungDTO;
+}
+
+const props = defineProps<Props>();
+
+const emits = defineEmits<{
+    (e: "saved", v: SavedDTO): void;
+    (e: "cancel"): void;
+    (e: "openZaehlungDialog"): void;
+    (e: "openChatDialog"): void;
+}>();
+
+const ICONCOLOR = "black";
+
+const fab = ref<boolean>(false);
+
+const loading = ref<boolean>(false);
+
+const unreadMessagesDienstleister = ref<boolean>(false);
+
+const snackbarStore = useSnackbarStore();
+
+const zaehlungStore = useZaehlungStore();
+
+watch(
+    props.zaehlung,
+    () => {
+        unreadMessagesDienstleister.value =
+            props.zaehlung.unreadMessagesDienstleister;
     },
-})
-export default class ZaehlungCard extends Vue {
-    readonly ICONCOLOR: string = "black";
+    { immediate: true, deep: true }
+);
 
-    fab = false;
-    loading = false;
+const coordsZaehlstelle = computed<LatLng>(() => {
+    return createLatLngFromString(
+        props.zaehlung.zaehlstellePunkt.lat,
+        props.zaehlung.zaehlstellePunkt.lon
+    );
+});
 
-    @Prop()
-    readonly zaehlung!: ZaehlungDTO;
+const coordsZaehlung = computed<LatLng>(() => {
+    const geoPoint: GeoPoint = props.zaehlung.punkt;
+    return createLatLngFromString(geoPoint.lat, geoPoint.lon);
+});
 
-    private snackbarStore = useSnackbarStore();
+const title = computed<string>(() => {
+    return props.zaehlung.projektName;
+});
 
-    private zaehlungStore = useZaehlungStore();
+const datum = computed<string>(() => {
+    return `${i18n.d(new Date(props.zaehlung.datum), "short", "de-DE")}`;
+});
 
-    get getZaehlung(): ZaehlungDTO {
-        return this.zaehlung;
+const streets = computed<Array<KnotenarmDTO>>(() => {
+    const knotenarme: Array<KnotenarmDTO> = [];
+    Object.assign(knotenarme, props.zaehlung.knotenarme);
+    return knotenarme.sort(KnotenarmComparator.sortByNumber);
+});
+
+const streetsHeader = computed<Array<any>>(() => {
+    return [
+        {
+            text: "Nummer",
+            align: "center",
+            sortable: false,
+            value: "nummer",
+            divider: "true",
+        },
+        {
+            text: "Straßenname",
+            align: "center",
+            sortable: false,
+            value: "strassenname",
+        },
+    ];
+});
+
+const statusDesign = computed<IconOptions>(() => {
+    let design: IconOptions | undefined = statusIcon.get(props.zaehlung.status);
+    if (!design) {
+        design = {} as IconOptions;
+        design.color = "deep-orange lighten-4";
+        design.iconPath = "mdi-calendar-question";
+        design.tooltip = "Status unbekannt";
     }
+    return design;
+});
 
-    get coordsZaehlstelle(): LatLng {
-        return this.createLatLngFromString(
-            this.zaehlung.zaehlstellePunkt.lat,
-            this.zaehlung.zaehlstellePunkt.lon
-        );
+const showButtonKorrektur = computed<boolean>(() => {
+    return hasUploadedFile.value && props.zaehlung.status === Status.CORRECTION;
+});
+
+const showButtonAbschliessen = computed<boolean>(() => {
+    // Wenn alle Knotenarme einen Filename beinhalten, darf man diesen Button sehen
+    return hasUploadedFile.value && props.zaehlung.status === Status.COUNTING;
+});
+
+const hasUploadedFile = computed<boolean>(() => {
+    let hasFile = false;
+    props.zaehlung.knotenarme.forEach((arm: KnotenarmDTO) => {
+        hasFile =
+            hasFile ||
+            (arm.filename != undefined && arm.filename.trim().length > 0);
+    });
+    return hasFile;
+});
+
+// Erzeugt aus den String Koordinaten ein Objekt von Typ LatLng
+function createLatLngFromString(lat: string, lng: string): LatLng {
+    return latLng(parseFloat(lat), parseFloat(lng));
+}
+
+function zaehlungAbschliessen(): void {
+    loading.value = true;
+    // Wenn alle Knotenarme einen Filename beinhalten, darf man diesen Button drücken
+    if (hasUploadedFile.value) {
+        const updateZaehlung: UpdateStatusDTO = {} as UpdateStatusDTO;
+        updateZaehlung.zaehlungId = props.zaehlung.id;
+        updateZaehlung.status = Status.ACCOMPLISHED;
+        ZaehlungService.updateStatus(updateZaehlung)
+            .then((savedDTO: SavedDTO) => {
+                savedDTO.response = `Die Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`;
+                emits("saved", savedDTO);
+            })
+            .catch((error: ApiError) => {
+                snackbarStore.showApiError(error);
+            })
+            .finally(() => {
+                loading.value = false;
+            });
     }
+}
 
-    get coordsZaehlung(): LatLng {
-        const geoPoint: GeoPoint = this.zaehlung.punkt;
-        return this.createLatLngFromString(geoPoint.lat, geoPoint.lon);
+function zaehlungKorrigieren(): void {
+    loading.value = true;
+    if (hasUploadedFile.value) {
+        const updateZaehlung: UpdateStatusDTO = {} as UpdateStatusDTO;
+        updateZaehlung.zaehlungId = props.zaehlung.id;
+        updateZaehlung.status = Status.ACCOMPLISHED;
+        ZaehlungService.updateStatus(updateZaehlung)
+            .then((savedDTO: SavedDTO) => {
+                savedDTO.response = `Die korrigierte Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`;
+                emits("saved", savedDTO);
+            })
+            .catch((error: ApiError) => {
+                snackbarStore.showApiError(error);
+            })
+            .finally(() => {
+                loading.value = false;
+            });
     }
+}
 
-    get title(): string {
-        return this.getZaehlung.projektName;
-    }
+function openZaehlungDialog(): void {
+    zaehlungStore.setZaehlung(cloneDeep(props.zaehlung));
+    emits("openZaehlungDialog");
+}
 
-    get datum(): string {
-        return `${this.$d(new Date(this.getZaehlung.datum), "short", "de-DE")}`;
-    }
+function downloadDummyCsv(): void {
+    // Beispiel: 62301Q_20210423_Knotenarm2.csv
+    const zaehlstelleNummer: string = props.zaehlung.zaehlstelleNummer;
+    const zaehlart: string =
+        props.zaehlung.zaehlart === Zaehlart.N ? "" : props.zaehlung.zaehlart;
+    let filename = `${zaehlstelleNummer}${zaehlart}_${props.zaehlung.datum.replace(
+        "-",
+        ""
+    )}_Knotenarm_X.csv`;
 
-    get streets(): Array<KnotenarmDTO> {
-        const knotenarme: Array<KnotenarmDTO> = [];
-        Object.assign(knotenarme, this.getZaehlung.knotenarme);
-        return knotenarme.sort(KnotenarmComparator.sortByNumber);
-    }
+    let metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
+    let metaData = `${zaehlstelleNummer};${zaehlart};${props.zaehlung.datum};<von-Knotenarmnr>;;;;;\n`;
+    let zaehlungHeader = "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
 
-    get streetsHeader(): Array<any> {
-        return [
-            {
-                text: "Nummer",
-                align: "center",
-                sortable: false,
-                value: "nummer",
-                divider: "true",
-            },
-            {
-                text: "Straßenname",
-                align: "center",
-                sortable: false,
-                value: "strassenname",
-            },
-        ];
-    }
+    let csvContent =
+        "data:text/csv;charset=utf-8," + metaHeader + metaData + zaehlungHeader;
+    let encodedUri = encodeURI(csvContent);
+    let link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", filename);
+    document.body.appendChild(link); // Required for FF
 
-    get statusDesign(): IconOptions {
-        let design: IconOptions | undefined = statusIcon.get(
-            this.zaehlung.status
-        );
-        if (!design) {
-            design = {} as IconOptions;
-            design.color = "deep-orange lighten-4";
-            design.iconPath = "mdi-calendar-question";
-            design.tooltip = "Status unbekannt";
-        }
-        return design;
-    }
+    link.click();
+}
 
-    get showButtonKorrektur(): boolean {
-        return (
-            this.hasUploadedFile && this.zaehlung.status === Status.CORRECTION
-        );
-    }
-
-    get showButtonAbschliessen(): boolean {
-        // Wenn alle Knotenarme einen Filename beinhalten, darf man diesen Button sehen
-        return this.hasUploadedFile && this.zaehlung.status === Status.COUNTING;
-    }
-
-    // Erzeugt aus den String Koordinaten ein Objekt von Typ LatLng
-    private createLatLngFromString(lat: string, lng: string): LatLng {
-        return latLng(parseFloat(lat), parseFloat(lng));
-    }
-
-    zaehlungAbschliessen(): void {
-        this.loading = true;
-        // Wenn alle Knotenarme einen Filename beinhalten, darf man diesen Button drücken
-        if (this.hasUploadedFile) {
-            const updateZaehlung: UpdateStatusDTO = {} as UpdateStatusDTO;
-            updateZaehlung.zaehlungId = this.zaehlung.id;
-            updateZaehlung.status = Status.ACCOMPLISHED;
-            ZaehlungService.updateStatus(updateZaehlung)
-                .then((savedDTO: SavedDTO) => {
-                    savedDTO.response = `Die Zählung vom ${this.datum} wurde an den Auftraggeber übermittelt.`;
-                    this.$emit("saved", savedDTO);
-                })
-                .catch((error: ApiError) => {
-                    this.snackbarStore.showApiError(error);
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
-        }
-    }
-
-    get hasUploadedFile(): boolean {
-        let hasFile = false;
-        this.getZaehlung.knotenarme.forEach((arm: KnotenarmDTO) => {
-            hasFile =
-                hasFile ||
-                (arm.filename != undefined && arm.filename.trim().length > 0);
-        });
-        return hasFile;
-    }
-
-    zaehlungKorrigieren(): void {
-        this.loading = true;
-        if (this.hasUploadedFile) {
-            const updateZaehlung: UpdateStatusDTO = {} as UpdateStatusDTO;
-            updateZaehlung.zaehlungId = this.zaehlung.id;
-            updateZaehlung.status = Status.ACCOMPLISHED;
-            ZaehlungService.updateStatus(updateZaehlung)
-                .then((savedDTO: SavedDTO) => {
-                    savedDTO.response = `Die korrigierte Zählung vom ${this.datum} wurde an den Auftraggeber übermittelt.`;
-                    this.$emit("saved", savedDTO);
-                })
-                .catch((error: ApiError) => {
-                    this.snackbarStore.showApiError(error);
-                })
-                .finally(() => {
-                    this.loading = false;
-                });
-        }
-    }
-
-    openZaehlungDialog(): void {
-        this.zaehlungStore.setZaehlung(_.cloneDeep(this.zaehlung));
-        this.$emit("openZaehlungDialog");
-    }
-
-    downloadDummyCsv(): void {
-        // Beispiel: 62301Q_20210423_Knotenarm2.csv
-        const zaehlstelleNummer: string = this.zaehlung.zaehlstelleNummer;
-        const zaehlart: string =
-            this.zaehlung.zaehlart === Zaehlart.N ? "" : this.zaehlung.zaehlart;
-        let filename = `${zaehlstelleNummer}${zaehlart}_${this.zaehlung.datum.replace(
-            "-",
-            ""
-        )}_Knotenarm_X.csv`;
-
-        let metaHeader =
-            "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
-        let metaData = `${zaehlstelleNummer};${zaehlart};${this.zaehlung.datum};<von-Knotenarmnr>;;;;;\n`;
-        let zaehlungHeader =
-            "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
-
-        let csvContent =
-            "data:text/csv;charset=utf-8," +
-            metaHeader +
-            metaData +
-            zaehlungHeader;
-        let encodedUri = encodeURI(csvContent);
-        let link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", filename);
-        document.body.appendChild(link); // Required for FF
-
-        link.click();
-    }
-
-    openChatDialog() {
-        this.zaehlungStore.setZaehlung(_.cloneDeep(this.zaehlung));
-        // Lokal false setzen damit der Punkt verschwindet, innerhalb des ChatDialog wird die Zählung auch in der DB geupdated
-        this.zaehlung.unreadMessagesDienstleister = false;
-        this.$emit("openChatDialog");
-    }
+function openChatDialog() {
+    zaehlungStore.setZaehlung(cloneDeep(props.zaehlung));
+    // Lokal false setzen damit der Punkt verschwindet, innerhalb des ChatDialog wird die Zählung auch in der DB geupdated
+    unreadMessagesDienstleister.value = false;
+    emits("openChatDialog");
 }
 </script>
