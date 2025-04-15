@@ -73,13 +73,11 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-unused-vars */
 import Fahrzeug from "@/domain/enums/Fahrzeug";
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import { useZaehlungStore } from "@/store/ZaehlungStore";
 import { useEventbusStore } from "@/store/EventbusStore";
 import { computed, onMounted, ref, watch } from "vue";
-/* eslint-enable no-unused-vars */
 
 interface Props {
     height?: string;

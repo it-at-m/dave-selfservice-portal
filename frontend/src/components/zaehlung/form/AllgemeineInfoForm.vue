@@ -224,7 +224,6 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-unused-vars */
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import { zaehlartenDropDown, zaehlartText } from "@/domain/enums/Zaehlart";
 import { zaehldauerText } from "@/domain/enums/Zaehldauer";

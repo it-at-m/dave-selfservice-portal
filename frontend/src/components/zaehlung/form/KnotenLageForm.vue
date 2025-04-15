@@ -144,7 +144,6 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-unused-vars */
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
 import KnotenarmDTO from "@/domain/dto/KnotenarmDTO";
