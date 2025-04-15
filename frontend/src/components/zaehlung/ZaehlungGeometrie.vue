@@ -5,7 +5,6 @@
         color="transparent"
     >
         <svg
-            version="1.2"
             :width="width"
             :height="height"
             viewBox="13891 17287 1111 1111"
@@ -213,53 +212,53 @@
         </svg>
     </v-sheet>
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-
-// Typen
-/* eslint-disable no-unused-vars */
+<script setup lang="ts">
+import { computed } from "vue";
 import KnotenarmDTO from "@/domain/dto/KnotenarmDTO";
-/* eslint-enable no-unused-vars */
 
-@Component
-export default class ZaehlungGeometrie extends Vue {
-    @Prop({ default: 72 }) height?: number;
-    @Prop({ default: 72 }) width?: number;
-    @Prop({ default: "#FFFFFF" }) activeColor?: string;
-    @Prop({ default: "#757575" }) passiveColor?: string;
-    @Prop() knotenarme?: KnotenarmDTO[];
-
-    /**
-     * Wenn für die knotenarm im Array gefunden wurde, wird diese in der Grafik in der "activeColor" dargestellt,
-     * ansonsten in der passiveColor.
-     */
-    calculateColor(knotenarm: number): string | undefined {
-        let color = this.passiveColor;
-        const gefilteterKnotenarm = this.knotenarme?.filter(
-            (k) => k.nummer === knotenarm
-        )[0];
-        if (gefilteterKnotenarm) {
-            color = this.activeColor;
-        }
-        return color;
-    }
-
-    get includesKnotenarm1and3() {
-        return (
-            this.knotenarme?.filter((k) => k.nummer === 1)[0] &&
-            this.knotenarme?.filter((k) => k.nummer === 3)[0]
-        );
-    }
-
-    get includesKnotenarm2and4() {
-        return (
-            this.knotenarme?.filter((k) => k.nummer === 2)[0] &&
-            this.knotenarme?.filter((k) => k.nummer === 4)[0]
-        );
-    }
-
-    get hasKnotenarme() {
-        return this.knotenarme && this.knotenarme.length > 0;
-    }
+interface Props {
+    height?: string;
+    width?: string;
+    activeColor: string;
+    passiveColor?: string;
+    knotenarme?: Array<KnotenarmDTO>;
 }
+
+const props = withDefaults(defineProps<Props>(), {
+    height: "72",
+    width: "72",
+    activeColor: "#FFFFFF",
+    passiveColor: "#757575",
+});
+
+/**
+ * Wenn für die knotenarm im Array gefunden wurde, wird diese in der Grafik in der "activeColor" dargestellt,
+ * ansonsten in der passiveColor.
+ */
+function calculateColor(knotenarm: number): string | undefined {
+    let color = props.passiveColor;
+    const gefilteterKnotenarm = props.knotenarme?.filter(
+        (k) => k.nummer === knotenarm
+    )[0];
+    if (gefilteterKnotenarm) {
+        color = props.activeColor;
+    }
+    return color;
+}
+
+const includesKnotenarm1and3 = computed(() => {
+    return (
+        props.knotenarme?.filter((k) => k.nummer === 1)[0] &&
+        props.knotenarme?.filter((k) => k.nummer === 3)[0]
+    );
+});
+const includesKnotenarm2and4 = computed(() => {
+    return (
+        props.knotenarme?.filter((k) => k.nummer === 2)[0] &&
+        props.knotenarme?.filter((k) => k.nummer === 4)[0]
+    );
+});
+const hasKnotenarme = computed(() => {
+    return props.knotenarme && props.knotenarme.length > 0;
+});
 </script>
