@@ -245,7 +245,6 @@
 </template>
 
 <script setup lang="ts">
-/* eslint-disable no-unused-vars */
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import { latLng, LatLng } from "leaflet";

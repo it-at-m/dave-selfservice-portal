@@ -25,53 +25,54 @@
     </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
-/* eslint-disable no-unused-vars */
+<script setup lang="ts">
 import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
 import SavedDTO from "@/domain/dto/SavedDTO";
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import Status from "@/domain/enums/Status";
 import { useEventbusStore } from "@/store/EventbusStore";
 import { useZaehlungStore } from "@/store/ZaehlungStore";
-/* eslint-enable no-unused-vars */
-@Component({
-    components: { ZaehlungForm },
-})
-export default class ZaehlungDialog extends Vue {
-    /**
-     * Steuerflag für den Dialog
-     */
-    @Prop() showDialog!: boolean;
+import { computed, watch } from "vue";
 
-    private eventbusStore = useEventbusStore();
+interface Props {
+    showDialog: boolean;
+}
 
-    private zaehlungStore = useZaehlungStore();
+const props = defineProps<Props>();
 
-    @Watch("showDialog")
-    openOrCloseDialog() {
-        // value === true, if open
-        // value === false, if close
-        this.eventbusStore.setResetFormEvent(!this.showDialog);
+const emits = defineEmits<{
+    (e: "saved", v: SavedDTO): void;
+    (e: "cancel"): void;
+}>();
+
+const eventbusStore = useEventbusStore();
+
+const zaehlungStore = useZaehlungStore();
+
+const showDialog = computed<boolean>(() => props.showDialog);
+
+const dialogtitle = computed<string>(() => {
+    const zaehlung: ZaehlungDTO = zaehlungStore.getZaehlung;
+    let dialogtitleText = "anzeigen";
+    if (zaehlung.status === Status.CORRECTION) {
+        dialogtitleText = "korrigieren";
+    } else if (zaehlung.status === Status.COUNTING) {
+        dialogtitleText = "bearbeiten";
     }
+    return `${zaehlung.zaehlstelleNummer} - Zählung ${dialogtitleText}`;
+});
 
-    cancelCreate(): void {
-        this.$emit("cancel");
-    }
+watch(showDialog, () => {
+    // value === true, if open
+    // value === false, if close
+    eventbusStore.setResetFormEvent(!props.showDialog);
+});
 
-    saved(savedDTO: SavedDTO): void {
-        this.$emit("saved", savedDTO);
-    }
+function cancelCreate(): void {
+    emits("cancel");
+}
 
-    get dialogtitle(): string {
-        const zaehlung: ZaehlungDTO = this.zaehlungStore.getZaehlung;
-        let dialogtitleText = "anzeigen";
-        if (zaehlung.status === Status.CORRECTION) {
-            dialogtitleText = "korrigieren";
-        } else if (zaehlung.status === Status.COUNTING) {
-            dialogtitleText = "bearbeiten";
-        }
-        return `${zaehlung.zaehlstelleNummer} - Zählung ${dialogtitleText}`;
-    }
+function saved(savedDTO: SavedDTO): void {
+    emits("saved", savedDTO);
 }
 </script>
