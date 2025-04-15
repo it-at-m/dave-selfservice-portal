@@ -129,7 +129,7 @@
                             dense
                             label="Zählart"
                             required
-                            @blur="updateStore"
+                            @blur="zaehlung"
                         ></v-autocomplete>
                         <lhm-text-field
                             v-else
@@ -157,7 +157,7 @@
                             dense
                             label="Wetter"
                             :disabled="isZaehlungReadonly"
-                            @blur="updateStore"
+                            @blur="updateZaehlungStoreWithZaehlung"
                         ></v-autocomplete>
                     </v-col>
                 </v-row>
@@ -176,7 +176,7 @@
                             counter="255"
                             maxlength="255"
                             disabled
-                            @blur="updateStore"
+                            @blur="updateZaehlungStoreWithZaehlung"
                         ></v-textarea>
                     </v-col>
                 </v-row>
@@ -195,7 +195,7 @@
                             counter="255"
                             maxlength="255"
                             :disabled="isZaehlungReadonly"
-                            @blur="updateStore"
+                            @blur="updateZaehlungStoreWithZaehlung"
                         ></v-textarea>
                     </v-col>
                 </v-row>
@@ -214,7 +214,7 @@
                             counter="255"
                             maxlength="255"
                             :disabled="isZaehlungReadonly"
-                            @blur="updateStore"
+                            @blur="updateZaehlungStoreWithZaehlung"
                         ></v-textarea>
                     </v-col>
                 </v-row>

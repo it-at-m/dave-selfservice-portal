@@ -151,7 +151,7 @@ import { LatLng } from "leaflet";
 import GeoPoint from "@/domain/GeoPoint";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
-import _ from "lodash";
+import _, { toArray } from "lodash";
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
 import FahrbeziehungComparator from "@/util/FahrbeziehungComparator";
@@ -228,7 +228,7 @@ const isZaehlungEditable = computed<boolean>(
 );
 
 const allFahrbeziehungen = computed<Array<FahrbeziehungDTO>>(() =>
-    zaehlung.value.fahrbeziehungen.sort(
+    toArray(zaehlung.value.fahrbeziehungen).sort(
         FahrbeziehungComparator.sortByActiveVonAndNach
     )
 );
