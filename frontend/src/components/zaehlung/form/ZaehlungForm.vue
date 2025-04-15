@@ -38,7 +38,7 @@
                 />
             </v-tab-item>
             <v-tab-item ref="knotenUndLage">
-                <knoten-richtung-form :height="SHEETHEIGHT" />
+                <knoten-lage-form :height="SHEETHEIGHT" />
             </v-tab-item>
             <v-tab-item ref="fahrzeuge">
                 <fahrzeuge-form :height="SHEETHEIGHT" />
@@ -49,7 +49,7 @@
             <v-spacer />
             <v-btn
                 color="secondary"
-                :disabled="!isZaehlungValid"
+                :disabled="!isAllgemeinFormValid"
                 @click="save()"
             >
                 Speichern
@@ -66,233 +66,203 @@
     </v-sheet>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-/* eslint-disable no-unused-vars */
+<script setup lang="ts">
 import { ApiError } from "@/api/error";
 import SavedDTO from "@/domain/dto/SavedDTO";
 import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
 import KnotenarmDTO from "@/domain/dto/KnotenarmDTO";
-import _ from "lodash";
+import { cloneDeep } from "lodash";
 import ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import {
     intervallnummern,
     StartUhrzeitEndeUhrzeit,
 } from "@/domain/enums/Intervallnummern";
 import FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
-/* eslint-enable no-unused-vars */
-// Components
-import AllgemeineInfoForm from "@/components/zaehlung/form/AllgemeineInfoForm.vue";
-import KontaktForm from "@/components/zaehlung/form/KontaktForm.vue";
-import KnotenRichtungForm from "@/components/zaehlung/form/KnotenLageForm.vue";
-import FahrzeugeForm from "@/components/zaehlung/form/FahrzeugeForm.vue";
-
-// Api
 import ZaehlungService from "@/api/service/ZaehlungService";
-import Loader from "@/components/common/Loader.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useEventbusStore } from "@/store/EventbusStore";
 import { useZaehlungStore } from "@/store/ZaehlungStore";
+import { ref } from "vue";
+import KnotenLageForm from "@/components/zaehlung/form/KnotenLageForm.vue";
+import FahrzeugeForm from "@/components/zaehlung/form/FahrzeugeForm.vue";
+import AllgemeineInfoForm from "@/components/zaehlung/form/AllgemeineInfoForm.vue";
 
-@Component({
-    components: {
-        Loader,
-        FahrzeugeForm,
-        KnotenRichtungForm,
-        KontaktForm,
-        AllgemeineInfoForm,
-    },
-})
-export default class ZaehlungForm extends Vue {
-    readonly SHEETHEIGHT: string = "580px";
+const emits = defineEmits<{
+    (e: "saved", v: SavedDTO): void;
+    (e: "cancel"): void;
+}>();
 
-    private readonly SEPARATOR: string = ";";
+const SHEETHEIGHT = "580px";
 
-    activeTab = 0;
-    private isAllgemeinFormValid = false;
+const SEPARATOR = ";";
 
-    loader = false;
+const activeTab = ref<number>(0);
 
-    private snackbarStore = useSnackbarStore();
+const isAllgemeinFormValid = ref<boolean>(false);
 
-    private eventbusStore = useEventbusStore();
+const loader = ref<boolean>(false);
 
-    private zaehlungStore = useZaehlungStore();
+const snackbarStore = useSnackbarStore();
 
-    get isZaehlungValid(): boolean {
-        return this.isAllgemeinFormValid;
+const eventbusStore = useEventbusStore();
+
+const zaehlungStore = useZaehlungStore();
+
+function save(): void {
+    loader.value = true;
+    const copy: ZaehlungDTO = cloneDeep(zaehlungStore.getZaehlung);
+    if (!copy.fahrbeziehungen) {
+        copy.fahrbeziehungen = [];
     }
+    prepareForSaveZaehlung(copy);
 
-    save(): void {
-        this.loader = true;
-        const copy: ZaehlungDTO = _.cloneDeep(this.zaehlungStore.getZaehlung);
-        if (!copy.fahrbeziehungen) {
-            copy.fahrbeziehungen = [];
-        }
-        this.prepareForSaveZaehlung(copy);
+    ZaehlungService.saveZaehlung(copy)
+        .then((savedDTO: SavedDTO) => {
+            savedDTO.response = "Die Zählung wurde aktualisiert.";
+            emits("saved", savedDTO);
+        })
+        .catch((error: ApiError) => {
+            snackbarStore.showApiError(error);
+        })
+        .finally(() => {
+            activeTab.value = 0;
+            loader.value = false;
+            eventbusStore.setResetFormEvent(true);
+        });
+}
 
-        ZaehlungService.saveZaehlung(copy)
-            .then((savedDTO: SavedDTO) => {
-                savedDTO.response = "Die Zählung wurde aktualisiert.";
-                this.$emit("saved", savedDTO);
-            })
-            .catch((error: ApiError) => {
-                this.snackbarStore.showApiError(error);
-            })
-            .finally(() => {
-                this.activeTab = 0;
-                this.loader = false;
-                this.eventbusStore.setResetFormEvent(true);
+/**
+ * Bereitet die tiefen Kopie auf das speichern vor.
+ * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
+ * und den Fahrbeziehungen zu geordnet.
+ * @param zaehlung zum speichern
+ * @private
+ */
+function prepareForSaveZaehlung(zaehlung: ZaehlungDTO) {
+    const zeitintervalleProFahrbeziehung: Map<
+        string,
+        Array<ZeitintervallDTO>
+    > = new Map<string, Array<ZeitintervallDTO>>();
+    zaehlung.knotenarme.forEach((arm: KnotenarmDTO) => {
+        if (arm.filename && arm.filedata && arm.filedata.length > 0) {
+            transformCsvDataToFahrbeziehung(arm).forEach((value, key) => {
+                zeitintervalleProFahrbeziehung.set(key, value);
             });
-    }
-
-    /**
-     * Bereitet die tiefen Kopie auf das speichern vor.
-     * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
-     * und den Fahrbeziehungen zu geordnet.
-     * @param zaehlung zum speichern
-     * @private
-     */
-    private prepareForSaveZaehlung(zaehlung: ZaehlungDTO) {
-        const zeitintervalleProFahrbeziehung: Map<
-            string,
-            Array<ZeitintervallDTO>
-        > = new Map<string, Array<ZeitintervallDTO>>();
-        zaehlung.knotenarme.forEach((arm: KnotenarmDTO) => {
-            if (arm.filename && arm.filedata && arm.filedata.length > 0) {
-                this.transformCsvDataToFahrbeziehung(arm).forEach(
-                    (value, key) => {
-                        zeitintervalleProFahrbeziehung.set(key, value);
-                    }
-                );
-            }
-        });
-
-        zaehlung.fahrbeziehungen.forEach((fz: FahrbeziehungDTO) => {
-            const key: string = this.getKeyOfFahrbeziehung(
-                fz,
-                zaehlung.kreisverkehr
-            );
-            if (zeitintervalleProFahrbeziehung.has(key)) {
-                fz.zeitintervalle = zeitintervalleProFahrbeziehung.get(key)!;
-            }
-            fz.isKreuzung = !zaehlung.kreisverkehr;
-        });
-    }
-
-    cancel(): void {
-        this.activeTab = 0;
-        this.eventbusStore.setResetFormEvent(true);
-        this.$emit("cancel");
-    }
-
-    setAllgemeineFormValid(isPartValid: boolean) {
-        this.isAllgemeinFormValid = isPartValid;
-    }
-
-    private getStartEndeOfIntervallnummer(
-        nummer: string
-    ): StartUhrzeitEndeUhrzeit {
-        return intervallnummern.get(nummer)!;
-    }
-
-    /**
-     * Wandelt die am Knotenarm hinterlegten Daten aus der CSV in ein Array vom Typ ZeitintervallDTO um.
-     * @param arm Knotenarm mit den Daten der csv
-     */
-    private transformCsvDataToFahrbeziehung(
-        arm: KnotenarmDTO
-    ): Map<string, Array<ZeitintervallDTO>> {
-        const fahrbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
-            string,
-            Array<ZeitintervallDTO>
-        >();
-        const zeitinervalleproNach: Map<
-            string,
-            Array<ZeitintervallDTO>
-        > = new Map<string, Array<ZeitintervallDTO>>();
-        // Ersten 3 Zeilen entfernen
-        arm.filedata.shift(); // Metda-Header
-        let knotenarmVon: string = arm.filedata
-            .shift()!
-            .split(this.SEPARATOR)[3];
-        arm.filedata.shift(); // Zaehlung-Header
-
-        // Alle weiteren Zeilen enthalten Zähldaten
-        arm.filedata.forEach((line: string) => {
-            if (line.trim().length === 0) {
-                // skip Leerzeilen
-            } else {
-                const values: Array<string> = line.split(this.SEPARATOR);
-                const startEndeOfIntervallnummer: StartUhrzeitEndeUhrzeit =
-                    this.getStartEndeOfIntervallnummer(values[0]);
-                // Bei Kreisverkehren steht hier e(infahrend), v(orbeifahrend) oder a(usfahrend) drinnen
-                const knotenarmNach: string = values[1];
-
-                // Wenn Nach noch nicht exisitert, dann leeres Array hinzufügen
-                if (!zeitinervalleproNach.has(knotenarmNach)) {
-                    zeitinervalleproNach.set(knotenarmNach, []);
-                }
-
-                const intervall: ZeitintervallDTO = {} as ZeitintervallDTO;
-                intervall.startUhrzeit =
-                    startEndeOfIntervallnummer.startUhrzeit;
-                intervall.endeUhrzeit = startEndeOfIntervallnummer.endeUhrzeit;
-
-                if (values[2].trim().length > 0) {
-                    intervall.pkw = parseInt(values[2]);
-                }
-                if (values[3].trim().length > 0) {
-                    intervall.lkw = parseInt(values[3]);
-                }
-                if (values[4].trim().length > 0) {
-                    intervall.lastzuege = parseInt(values[4]);
-                }
-                if (values[5].trim().length > 0) {
-                    intervall.busse = parseInt(values[5]);
-                }
-                if (values[6].trim().length > 0) {
-                    intervall.kraftraeder = parseInt(values[6]);
-                }
-                if (values[7].trim().length > 0) {
-                    intervall.fahrradfahrer = parseInt(values[7]);
-                }
-                if (values[8].trim().length > 0) {
-                    intervall.fussgaenger = parseInt(values[8]);
-                }
-                zeitinervalleproNach.get(knotenarmNach)!.push(intervall);
-            }
-        });
-
-        zeitinervalleproNach.forEach((value, key) => {
-            fahrbeziehungen.set(knotenarmVon + key, value);
-        });
-        return fahrbeziehungen;
-    }
-
-    /**
-     * Liefert den Schlüssel zum Speichern der Zeitintervalle an die jeweilige Fahrbeziehung zurück
-     * @param fz Fahrbeziehung
-     * @param isKreisverkehr andere Behandlung wenn true
-     * @private
-     */
-    private getKeyOfFahrbeziehung(
-        fz: FahrbeziehungDTO,
-        isKreisverkehr: boolean
-    ): string {
-        let key = `${fz.knotenarm}`;
-        if (isKreisverkehr) {
-            if (fz.hinein) {
-                key += "e";
-            } else if (fz.vorbei) {
-                key += "v";
-            } else if (fz.heraus) {
-                key += "a";
-            }
-        } else {
-            key = `${fz.von}${fz.nach}`;
         }
-        return key;
+    });
+
+    zaehlung.fahrbeziehungen.forEach((fz: FahrbeziehungDTO) => {
+        const key: string = getKeyOfFahrbeziehung(fz, zaehlung.kreisverkehr);
+        if (zeitintervalleProFahrbeziehung.has(key)) {
+            fz.zeitintervalle = zeitintervalleProFahrbeziehung.get(key)!;
+        }
+        fz.isKreuzung = !zaehlung.kreisverkehr;
+    });
+}
+
+function cancel(): void {
+    activeTab.value = 0;
+    eventbusStore.setResetFormEvent(true);
+    emits("cancel");
+}
+
+function setAllgemeineFormValid(isPartValid: boolean) {
+    isAllgemeinFormValid.value = isPartValid;
+}
+
+function getStartEndeOfIntervallnummer(
+    nummer: string
+): StartUhrzeitEndeUhrzeit {
+    return intervallnummern.get(nummer)!;
+}
+
+/**
+ * Wandelt die am Knotenarm hinterlegten Daten aus der CSV in ein Array vom Typ ZeitintervallDTO um.
+ * @param arm Knotenarm mit den Daten der csv
+ */
+function transformCsvDataToFahrbeziehung(
+    arm: KnotenarmDTO
+): Map<string, Array<ZeitintervallDTO>> {
+    const fahrbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
+        string,
+        Array<ZeitintervallDTO>
+    >();
+    const zeitinervalleProNach: Map<string, Array<ZeitintervallDTO>> = new Map<
+        string,
+        Array<ZeitintervallDTO>
+    >();
+    // Ersten 3 Zeilen entfernen
+    arm.filedata.shift(); // Metda-Header
+    let knotenarmVon: string = arm.filedata.shift()!.split(SEPARATOR)[3];
+    arm.filedata.shift(); // Zaehlung-Header
+
+    // Alle weiteren Zeilen enthalten Zähldaten
+    arm.filedata.forEach((line: string) => {
+        if (line.trim().length === 0) {
+            // skip Leerzeilen
+        } else {
+            const values: Array<string> = line.split(SEPARATOR);
+            const startEndeOfIntervallnummer: StartUhrzeitEndeUhrzeit =
+                getStartEndeOfIntervallnummer(values[0]);
+            // Bei Kreisverkehren steht hier e(infahrend), v(orbeifahrend) oder a(usfahrend) drinnen
+            const knotenarmNach: string = values[1];
+
+            // Wenn Nach noch nicht exisitert, dann leeres Array hinzufügen
+            if (!zeitinervalleProNach.has(knotenarmNach)) {
+                zeitinervalleProNach.set(knotenarmNach, []);
+            }
+
+            const intervall: ZeitintervallDTO = {} as ZeitintervallDTO;
+            intervall.startUhrzeit = startEndeOfIntervallnummer.startUhrzeit;
+            intervall.endeUhrzeit = startEndeOfIntervallnummer.endeUhrzeit;
+
+            if (values[2].trim().length > 0) {
+                intervall.pkw = parseInt(values[2]);
+            }
+            if (values[3].trim().length > 0) {
+                intervall.lkw = parseInt(values[3]);
+            }
+            if (values[4].trim().length > 0) {
+                intervall.lastzuege = parseInt(values[4]);
+            }
+            if (values[5].trim().length > 0) {
+                intervall.busse = parseInt(values[5]);
+            }
+            if (values[6].trim().length > 0) {
+                intervall.kraftraeder = parseInt(values[6]);
+            }
+            if (values[7].trim().length > 0) {
+                intervall.fahrradfahrer = parseInt(values[7]);
+            }
+            if (values[8].trim().length > 0) {
+                intervall.fussgaenger = parseInt(values[8]);
+            }
+            zeitinervalleProNach.get(knotenarmNach)!.push(intervall);
+        }
+    });
+
+    zeitinervalleProNach.forEach((value, key) => {
+        fahrbeziehungen.set(knotenarmVon + key, value);
+    });
+    return fahrbeziehungen;
+}
+
+function getKeyOfFahrbeziehung(
+    fz: FahrbeziehungDTO,
+    isKreisverkehr: boolean
+): string {
+    let key = `${fz.knotenarm}`;
+    if (isKreisverkehr) {
+        if (fz.hinein) {
+            key += "e";
+        } else if (fz.vorbei) {
+            key += "v";
+        } else if (fz.heraus) {
+            key += "a";
+        }
+    } else {
+        key = `${fz.von}${fz.nach}`;
     }
+    return key;
 }
 </script>
