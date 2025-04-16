@@ -14,12 +14,12 @@
     </v-overlay>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-
-@Component
-export default class Loader extends Vue {
-    // Properties
-    @Prop({ default: false }) value!: boolean;
+<script setup lang="ts">
+interface Props {
+    value?: boolean;
 }
+
+withDefaults(defineProps<Props>(), {
+    value: false,
+});
 </script>

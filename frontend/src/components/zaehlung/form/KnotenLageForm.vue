@@ -49,7 +49,7 @@
                         >
                             <lhm-text-field
                                 caption="Kreisverkehr"
-                                :text="knotenarme"
+                                :text="kreisverkehrText"
                             />
                         </v-col>
                         <v-col
@@ -203,6 +203,10 @@ const zaehlung = computed<ZaehlungDTO>({
 
 const knotenarme = computed<Array<KnotenarmDTO>>(
     () => zaehlung.value.knotenarme
+);
+
+const kreisverkehrText = computed<string>(() =>
+    zaehlung.value.kreisverkehr ? "Ja" : "Nein"
 );
 
 const coordsZaehlstelle = computed<LatLng>(() => {
