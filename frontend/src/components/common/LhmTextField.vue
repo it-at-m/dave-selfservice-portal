@@ -4,24 +4,28 @@
             v-if="showCaption"
             class="text-caption"
             >{{ caption }}</span
-        ><br />
-        <span class="text text-info">{{ text }}</span
-        ><br /><br />
+        >
+        <br />
+        <span class="text text-info">{{ text }}</span>
+        <br />
+        <br />
     </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
+import { computed } from "vue";
 
-@Component
-export default class LhmTextField extends Vue {
-    @Prop({ default: "" }) readonly caption!: string;
-    @Prop({ default: "" }) readonly text!: string;
-
-    get showCaption(): boolean {
-        return this.caption !== "";
-    }
+interface Props {
+    caption?: string;
+    text?: string;
 }
+
+const props = withDefaults(defineProps<Props>(), {
+    caption: "",
+    text: "",
+});
+
+const showCaption = computed<boolean>(() => props.caption !== "");
 </script>
 
 <style scoped>
