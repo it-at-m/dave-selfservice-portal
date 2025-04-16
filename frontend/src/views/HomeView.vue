@@ -1,55 +1,64 @@
 <template>
-    <v-container
-        fluid
-        class="pa-0"
-    >
-        <v-row dense>
-            <v-col
-                v-for="card in zaehlungCards"
-                :key="card.zaehlung.id"
-                :cols="card.flex"
-            >
-                <zaehlung-card
-                    :zaehlung="card.zaehlung"
-                    @openZaehlungDialog="openZaehlungDialog"
-                    @openChatDialog="openChatDialog"
-                    @saved="reloadDataAndCloseDialog"
-                />
-            </v-col>
-            <v-banner
-                v-if="hasNoZaehlung"
-                single-line
-                width="100%"
-            >
-                <v-icon
-                    slot="icon"
-                    color="error"
-                    size="36"
-                >
-                    mdi-alert-decagram-outline
-                </v-icon>
-                Es liegen aktuell keine Zählungen zur Bearbeitung vor.
-            </v-banner>
-        </v-row>
-
-        <zaehlung-dialog
-            :show-dialog="showZaehlungDialog"
-            @saved="reloadDataAndCloseDialog"
-            @cancel="cancelZaehlungDialog"
+  <v-container
+    fluid
+    class="pa-0"
+  >
+    <v-row dense>
+      <v-col
+        v-for="card in zaehlungCards"
+        :key="card.zaehlung.id"
+        :cols="card.flex"
+      >
+        <zaehlung-card
+          v-model="card.zaehlung"
+          @open-zaehlung-dialog="openZaehlungDialog"
+          @open-chat-dialog="openChatDialog"
+          @saved="reloadDataAndCloseDialog"
         />
-    </v-container>
+      </v-col>
+      <v-banner
+        v-if="hasNoZaehlung"
+        lines="one"
+        width="100%"
+        text="Es liegen aktuell keine Zählungen zur Bearbeitung vor."
+      >
+        <template #prepend>
+          <v-icon
+            icon="mdi-alert-decagram-outline"
+            size="36"
+            color="error"
+          />
+        </template>
+      </v-banner>
+    </v-row>
+
+    <zaehlung-dialog
+      :show-dialog="showZaehlungDialog"
+      @saved="reloadDataAndCloseDialog"
+      @cancel="cancelZaehlungDialog"
+    />
+
+    <chat-dialog
+      v-model="zaehlung"
+      :show-dialog="showChatDialog"
+      @close-dialog="closeChatDialog"
+    />
+  </v-container>
 </template>
 
 <script setup lang="ts">
-import ZaehlungService from "@/api/service/ZaehlungService";
-import ZaehlungDTO from "@/domain/dto/ZaehlungDTO";
-import ZaehlungCardObject from "@/domain/ZaehlungCardObject";
-import ZaehlungCardObjectComparator from "@/util/ZaehlungCardObjectComparator";
-import { Levels } from "@/api/error";
-import SavedDTO from "@/domain/dto/SavedDTO";
-import { isEmpty } from "lodash";
-import { useSnackbarStore } from "@/store/SnackbarStore";
+import type SavedDTO from "@/domain/dto/SavedDTO";
+import type ZaehlungCardObject from "@/domain/ZaehlungCardObject";
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+
+import { cloneDeep, isEmpty } from "lodash";
 import { computed, onMounted, ref } from "vue";
+
+import ZaehlungService from "@/api/service/ZaehlungService";
+import ChatDialog from "@/components/chat/ChatDialog.vue";
+import { useSnackbarStore } from "@/store/SnackbarStore";
+import DefaultObjectCreator from "@/util/DefaultObjectCreator";
+import ZaehlungCardObjectComparator from "@/util/ZaehlungCardObjectComparator";
 
 const zaehlungCards = ref<Array<ZaehlungCardObject>>([]);
 
@@ -57,48 +66,52 @@ const showZaehlungDialog = ref<boolean>(false);
 
 const showChatDialog = ref<boolean>(false);
 
+const zaehlung = ref<ZaehlungDTO>(
+  DefaultObjectCreator.createDefaultZaehlungDTO()
+);
+
 const snackbarStore = useSnackbarStore();
 
 onMounted(() => {
-    window.scrollTo(0, 0);
-    loadZaehlungen();
+  window.scrollTo(0, 0);
+  loadZaehlungen();
 });
 
 const hasNoZaehlung = computed<boolean>(() => isEmpty(zaehlungCards.value));
 
 function loadZaehlungen(): void {
-    zaehlungCards.value = [];
-    ZaehlungService.getAllRelevantZaehlungen()
-        .then((zaehlungen: Array<ZaehlungDTO>) => {
-            zaehlungen.forEach((zaehlung: ZaehlungDTO) => {
-                zaehlungCards.value.push({ flex: 3, zaehlung: zaehlung });
-            });
-            zaehlungCards.value.sort(
-                ZaehlungCardObjectComparator.sortByDatumDesc
-            );
-        })
-        .catch((error) => snackbarStore.showApiError(error));
+  zaehlungCards.value = [];
+  ZaehlungService.getAllRelevantZaehlungen()
+    .then((zaehlungen: Array<ZaehlungDTO>) => {
+      zaehlungen.forEach((zaehlung: ZaehlungDTO) => {
+        zaehlungCards.value.push({ flex: 3, zaehlung: zaehlung });
+      });
+      zaehlungCards.value.sort(ZaehlungCardObjectComparator.sortByDatumDesc);
+    })
+    .catch((error) => snackbarStore.showApiError(error));
 }
 
 function reloadDataAndCloseDialog(savedDTO: SavedDTO): void {
-    loadZaehlungen();
-    showZaehlungDialog.value = false;
-    snackbarStore.showToast(Levels.INFO, savedDTO.response);
+  loadZaehlungen();
+  showZaehlungDialog.value = false;
+  snackbarStore.showInfo(savedDTO.response);
 }
 
-function cancelZaehlungDialog(): void {
-    showZaehlungDialog.value = false;
+function cancelZaehlungDialog() {
+  showZaehlungDialog.value = false;
 }
 
-function openZaehlungDialog(): void {
-    showZaehlungDialog.value = true;
+function openZaehlungDialog(zaehlungToEdit: ZaehlungDTO) {
+  zaehlung.value = cloneDeep(zaehlungToEdit);
+  showZaehlungDialog.value = true;
 }
 
-function openChatDialog(): void {
-    showChatDialog.value = true;
+function openChatDialog(zaehlungToChat: ZaehlungDTO) {
+  zaehlung.value = cloneDeep(zaehlungToChat);
+  showChatDialog.value = true;
 }
 
-function closeChatDialog(): void {
-    showChatDialog.value = false;
+function closeChatDialog() {
+  showChatDialog.value = false;
 }
 </script>

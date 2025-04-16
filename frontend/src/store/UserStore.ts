@@ -1,4 +1,5 @@
-import SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
+import type SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
+
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
@@ -10,27 +11,27 @@ const rolePoweruser = "ROLE_POWERUSER";
  * der Oberfläche nur für bestimmte Rollen sichtbar sein sollen.
  */
 export const useUserStore = defineStore("userStore", () => {
-    const ssoUserInfoResponse = ref<SsoUserInfoResponse>(
-        {} as SsoUserInfoResponse
-    );
+  const ssoUserInfoResponse = ref<SsoUserInfoResponse>(
+    {} as SsoUserInfoResponse
+  );
 
-    const possibleRoles = ref<Array<string>>([rolePoweruser]);
+  const possibleRoles = ref<Array<string>>([rolePoweruser]);
 
-    const getName = computed(() => ssoUserInfoResponse.value.name);
+  const getName = computed(() => ssoUserInfoResponse.value.name);
 
-    const isPoweruser = computed(() =>
-        ssoUserInfoResponse.value.authorities?.includes(rolePoweruser)
-    );
+  const isPoweruser = computed(() =>
+    ssoUserInfoResponse.value.authorities?.includes(rolePoweruser)
+  );
 
-    // function()s become actions
-    function setSsoUserInfoResponse(payload: SsoUserInfoResponse) {
-        ssoUserInfoResponse.value = payload;
-    }
+  // function()s become actions
+  function setSsoUserInfoResponse(payload: SsoUserInfoResponse) {
+    ssoUserInfoResponse.value = payload;
+  }
 
-    return {
-        possibleRoles,
-        getName,
-        isPoweruser,
-        setSsoUserInfoResponse,
-    };
+  return {
+    possibleRoles,
+    getName,
+    isPoweruser,
+    setSsoUserInfoResponse,
+  };
 });

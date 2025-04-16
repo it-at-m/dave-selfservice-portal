@@ -1,70 +1,56 @@
 <template>
-    <base-icon
-        :small="small"
-        :color="color"
-        :icon="icon.iconPath"
-        :tooltip="icon.tooltip"
-    />
+  <tooltip-with-icon
+    :size="size"
+    :color="color"
+    :icon="icon.iconPath"
+    :tooltip="icon.tooltip"
+  />
 </template>
 <script setup lang="ts">
-import BaseIcon from "@/components/icons/TooltipWithIcon.vue";
-import IconOptions from "@/components/icons/IconOptions";
-import Wetter from "@/domain/enums/Wetter";
 import { computed } from "vue";
 
+import IconTooltip from "@/components/icons/IconTooltip";
+import TooltipWithIcon from "@/components/icons/TooltipWithIcon.vue";
+import Wetter from "@/types/enum/Wetter";
+
 interface Props {
-    small?: boolean;
-    color?: string;
-    wetter?: string;
+  size?: string;
+  color?: string;
+  wetter: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-    small: false,
-    color: "black",
-    wetter: "",
-});
-
-/**
- * Lädt das richtige MDI Icon aus der Liste.
- */
-const icon = computed<IconOptions>(() => {
-    let result = wetterIcons().get(props.wetter);
-    if (result === undefined) {
-        result = new IconOptions(
-            "mdi-cloud-question",
-            "Keine Information zum Wetter"
-        );
-    }
-    return result;
+  color: "black",
+  size: "default",
 });
 
 /**
  * Alle Wetter Icons zu den Schlüsseln.
  */
-function wetterIcons(): Map<string, IconOptions> {
-    return new Map([
-        [Wetter.SUNNY, new IconOptions("mdi-weather-sunny", "Sonnig")],
-        [
-            Wetter.SUNNY_COLD,
-            new IconOptions("mdi-weather-hazy", "Sonnig, kalt"),
-        ],
-        [
-            Wetter.CLOUDY,
-            new IconOptions("mdi-weather-partly-cloudy", "Bewölkt"),
-        ],
-        [
-            Wetter.RAINY,
-            new IconOptions("mdi-weather-rainy", "Regnerisch (Schauer)"),
-        ],
-        [
-            Wetter.CONTINUOUS_RAINY,
-            new IconOptions("mdi-weather-pouring", "Regnerisch (dauerhaft)"),
-        ],
-        [Wetter.FOGGY, new IconOptions("mdi-weather-fog", "Neblig")],
-        [
-            Wetter.SNOWY,
-            new IconOptions("mdi-weather-snowy-heavy", "Schneefall"),
-        ],
-    ]);
-}
+const wetterIcons: Map<string, IconTooltip> = new Map([
+  [Wetter.SUNNY, new IconTooltip("mdi-weather-sunny", "Sonnig")],
+  [Wetter.SUNNY_COLD, new IconTooltip("mdi-weather-hazy", "Sonnig, kalt")],
+  [Wetter.CLOUDY, new IconTooltip("mdi-weather-partly-cloudy", "Bewölkt")],
+  [Wetter.RAINY, new IconTooltip("mdi-weather-rainy", "Regnerisch (Schauer)")],
+  [
+    Wetter.CONTINUOUS_RAINY,
+    new IconTooltip("mdi-weather-pouring", "Regnerisch (dauerhaft)"),
+  ],
+  [Wetter.FOGGY, new IconTooltip("mdi-weather-fog", "Neblig")],
+  [Wetter.SNOWY, new IconTooltip("mdi-weather-snowy-heavy", "Schneefall")],
+]);
+
+/**
+ * Lädt das richtige MDI Icon aus der Liste.
+ */
+const icon = computed<IconTooltip>(() => {
+  let result = wetterIcons.get(props.wetter);
+  if (result === undefined) {
+    result = new IconTooltip(
+      "mdi-cloud-question",
+      "Keine Information zum Wetter"
+    );
+  }
+  return result;
+});
 </script>

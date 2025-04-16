@@ -1,39 +1,24 @@
 <template>
-    <v-tooltip bottom>
-        <template #activator="{ on, attrs }">
-            <v-icon
-                v-if="!small"
-                class="mr-1"
-                :color="color"
-                v-bind="attrs"
-                v-on="on"
-                >{{ icon }}
-            </v-icon>
-            <v-icon
-                v-if="small"
-                class="mr-1"
-                :color="color"
-                small
-                v-bind="attrs"
-                v-on="on"
-                >{{ icon }}
-            </v-icon>
-        </template>
-        <span>{{ tooltip }}</span>
-    </v-tooltip>
+  <v-icon
+    v-tooltip:bottom="tooltip"
+    class="mr-1"
+    :icon="icon"
+    :size="size"
+    :color="color"
+  />
 </template>
 <script setup lang="ts">
 interface Props {
-    small?: boolean;
-    color?: string;
-    icon?: string;
-    tooltip?: string;
+  color?: string;
+  icon?: string;
+  tooltip?: string;
+  size?: string;
 }
 
 withDefaults(defineProps<Props>(), {
-    small: false,
-    color: "black",
-    icon: "",
-    tooltip: "",
+  color: "black",
+  size: "default",
+  icon: undefined,
+  tooltip: undefined,
 });
 </script>
