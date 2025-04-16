@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Main from "./views/Main.vue";
+import HomeView from "@/views/HomeView.vue";
 
 Vue.use(Router);
 
@@ -31,7 +31,7 @@ export default new Router({
         {
             path: "/",
             name: "home",
-            component: Main,
+            component: HomeView,
         },
         { path: "*", redirect: "/" }, //Fallback 2
     ],
