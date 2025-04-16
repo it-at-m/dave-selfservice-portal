@@ -25,55 +25,59 @@
     </v-snackbar>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+<script setup lang="ts">
 import { Levels } from "@/api/error";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { isNil } from "lodash";
+import { computed, ref, watch } from "vue";
 
-@Component
-export default class TheSnackbar extends Vue {
-    private static defaultTimeout = 6000;
+const show = ref<boolean>(false);
 
-    show = false;
-    timeout: number = TheSnackbar.defaultTimeout;
-    snackbarTextPart1 = "";
-    snackbarTextPart2 = "";
-    color = "info";
+const timeout = ref<number>(6000);
 
-    private snackbarStore = useSnackbarStore();
+const snackbarTextPart1 = ref<string>("");
 
-    @Watch("snackbarStore.trigger")
-    setToast(): void {
-        this.show = false;
+const snackbarTextPart2 = ref<string>("");
+
+const color = ref<string>("info");
+
+const snackbarStore = useSnackbarStore();
+
+const isSnackbarTriggered = computed<boolean>(() => snackbarStore.trigger);
+
+watch(
+    isSnackbarTriggered,
+    () => {
+        show.value = false;
         setTimeout(() => {
-            this.snackbarTextPart1 = isNil(this.snackbarStore.getTextPart1)
+            snackbarTextPart1.value = isNil(snackbarStore.getTextPart1)
                 ? ""
-                : this.snackbarStore.getTextPart1;
-            this.snackbarTextPart2 = isNil(this.snackbarStore.getTextPart2)
+                : snackbarStore.getTextPart1;
+            snackbarTextPart2.value = isNil(snackbarStore.getTextPart2)
                 ? ""
-                : this.snackbarStore.getTextPart2;
-            this.color = this.snackbarStore.getLevel;
-            switch (this.color) {
+                : snackbarStore.getTextPart2;
+            color.value = snackbarStore.getLevel;
+            switch (color.value) {
                 case Levels.ERROR: {
-                    this.timeout = 0;
+                    timeout.value = 0;
                     break;
                 }
                 case Levels.WARNING: {
-                    this.timeout = 8000;
+                    timeout.value = 8000;
                     break;
                 }
                 case Levels.SUCCESS: {
-                    this.timeout = 4000;
+                    timeout.value = 4000;
                     break;
                 }
                 default: {
-                    this.timeout = 6000;
+                    timeout.value = 6000;
                     break;
                 }
             }
-            this.show = true;
+            show.value = true;
         }, 100);
-    }
-}
+    },
+    { immediate: true }
+);
 </script>
