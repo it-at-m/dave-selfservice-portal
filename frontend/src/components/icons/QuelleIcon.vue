@@ -4,7 +4,7 @@
         :color="color"
         :icon="icon.iconPath"
         :tooltip="icon.tooltip"
-    ></base-icon>
+    />
 </template>
 <script setup lang="ts">
 import BaseIcon from "@/components/icons/TooltipWithIcon.vue";
