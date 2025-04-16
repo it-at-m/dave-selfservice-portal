@@ -10,11 +10,11 @@
         >
             <v-card-title>
                 <v-icon left>mdi-alert-outline</v-icon>
-                {{ dialogtitle }}
+                {{ dialogTitle }}
             </v-card-title>
 
             <v-card-text class="text-body-1">
-                {{ dialogtext }}
+                {{ dialogText }}
             </v-card-text>
 
             <v-card-actions>
@@ -36,26 +36,34 @@
     </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
+<script setup lang="ts">
+import { ref } from "vue";
 
-@Component
-export default class SaveLeaveDialog extends Vue {
+interface Props {
     /**
      * Steuerflag für den Dialog
      */
-    @Prop() value!: boolean;
+    value?: string;
+}
 
-    dialogtitle = "Ungespeicherte Änderungen";
-    dialogtext =
-        "Es sind ungespeicherte Änderungen vorhanden. Wollen Sie die Seite wirklich verlassen?";
+defineProps<Props>();
 
-    no(): void {
-        this.$emit("no");
-    }
+const emits = defineEmits<{
+    (e: "no"): void;
+    (e: "yes"): void;
+}>();
 
-    yes(): void {
-        this.$emit("yes");
-    }
+const dialogTitle = ref<string>("Ungespeicherte Änderungen");
+
+const dialogText = ref<string>(
+    "Es sind ungespeicherte Änderungen vorhanden. Wollen Sie die Seite wirklich verlassen?"
+);
+
+function no(): void {
+    emits("no");
+}
+
+function yes(): void {
+    emits("yes");
 }
 </script>
