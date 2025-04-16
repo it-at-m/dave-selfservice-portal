@@ -44,76 +44,65 @@
     </v-app>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-// Komponenten
+<script setup lang="ts">
 import TheSnackbar from "@/components/common/TheSnackbar.vue";
-
-// API
 import SsoUserInfoService from "@/api/service/SsoUserInfoService";
 import VersionInfoService from "@/api/service/VersionInfoService";
-
-/* eslint-disable no-unused-vars */
 import SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
 import VersionInfoResponse from "@/domain/VersionInfoResponse";
 import { useUserStore } from "@/store/UserStore";
-/* eslint-enable no-unused-vars */
+import { ref } from "vue";
 
-@Component({
-    components: { TheSnackbar },
-})
-export default class App extends Vue {
-    private static readonly URL_HANDBUCH_LINK: string = "";
+const URL_HANDBUCH_LINK = "";
 
-    loggedInUser = "no-security";
+const loggedInUser = ref<string>("no-security");
 
-    // Versionen
-    private backendVersion = "";
+const backendVersion = ref<string>("");
 
-    private frontendVersion = "";
+const frontendVersion = ref<string>("");
 
-    private userStore = useUserStore();
+const userStore = useUserStore();
 
-    // Lifecycle hook
-    created() {
-        SsoUserInfoService.getUserInfo().then(
-            (ssoUserInfoResponse: SsoUserInfoResponse) => {
-                this.userStore.setSsoUserInfoResponse(ssoUserInfoResponse);
-                this.loggedInUser = this.userStore.getName;
-            }
-        );
-        this.getFrontendVersion().then((version: string) => {
-            this.frontendVersion = version;
+created();
+
+// Lifecycle hook
+function created() {
+    SsoUserInfoService.getUserInfo().then(
+        (ssoUserInfoResponse: SsoUserInfoResponse) => {
+            userStore.setSsoUserInfoResponse(ssoUserInfoResponse);
+            loggedInUser.value = userStore.getName;
+        }
+    );
+    getFrontendVersion().then((version: string) => {
+        frontendVersion.value = version;
+    });
+
+    getBackendVersion().then((version: string) => {
+        backendVersion.value = version;
+    });
+}
+
+async function getFrontendVersion(): Promise<string> {
+    return await VersionInfoService.getFrontendInfo()
+        .then((frontendInfoResponse: VersionInfoResponse) => {
+            return frontendInfoResponse.application.version;
+        })
+        .catch(() => {
+            return "error";
         });
+}
 
-        this.getBackendVersion().then((version: string) => {
-            this.backendVersion = version;
+async function getBackendVersion(): Promise<string> {
+    return await VersionInfoService.getBackendInfo()
+        .then((backendInfoResponse: VersionInfoResponse) => {
+            return backendInfoResponse.application.version;
+        })
+        .catch(() => {
+            return "error";
         });
-    }
+}
 
-    private async getFrontendVersion(): Promise<string> {
-        return await VersionInfoService.getFrontendInfo()
-            .then((frontendInfoResponse: VersionInfoResponse) => {
-                return frontendInfoResponse.application.version;
-            })
-            .catch(() => {
-                return "error";
-            });
-    }
-
-    private async getBackendVersion(): Promise<string> {
-        return await VersionInfoService.getBackendInfo()
-            .then((backendInfoResponse: VersionInfoResponse) => {
-                return backendInfoResponse.application.version;
-            })
-            .catch(() => {
-                return "error";
-            });
-    }
-
-    navigateToHandbuch() {
-        window.open(App.URL_HANDBUCH_LINK);
-    }
+function navigateToHandbuch() {
+    window.open(URL_HANDBUCH_LINK);
 }
 </script>
