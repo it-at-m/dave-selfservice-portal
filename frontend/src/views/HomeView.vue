@@ -37,11 +37,6 @@
             @saved="reloadDataAndCloseDialog"
             @cancel="cancelZaehlungDialog"
         />
-
-        <chat-dialog
-            :show-dialog="showChatDialog"
-            @closeDialog="closeChatDialog"
-        />
     </v-container>
 </template>
 
