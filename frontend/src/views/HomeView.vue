@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    fluid
-    class="pa-0"
-  >
+  <v-main class="dave-default">
     <v-row dense>
       <v-col
         v-for="card in zaehlungCards"
@@ -33,9 +30,10 @@
     </v-row>
 
     <zaehlung-dialog
+      v-model="zaehlung"
       :show-dialog="showZaehlungDialog"
       @saved="reloadDataAndCloseDialog"
-      @cancel="cancelZaehlungDialog"
+      @close-dialog="closeZaehlungDialog"
     />
 
     <chat-dialog
@@ -43,11 +41,10 @@
       :show-dialog="showChatDialog"
       @close-dialog="closeChatDialog"
     />
-  </v-container>
+  </v-main>
 </template>
 
 <script setup lang="ts">
-import type SavedDTO from "@/domain/dto/SavedDTO";
 import type ZaehlungCardObject from "@/domain/ZaehlungCardObject";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
@@ -56,6 +53,7 @@ import { computed, onMounted, ref } from "vue";
 
 import ZaehlungService from "@/api/service/ZaehlungService";
 import ChatDialog from "@/components/chat/ChatDialog.vue";
+import ZaehlungCard from "@/components/zaehlung/ZaehlungCard.vue";
 import ZaehlungDialog from "@/components/zaehlung/ZaehlungDialog.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
@@ -92,13 +90,12 @@ function loadZaehlungen(): void {
     .catch((error) => snackbarStore.showApiError(error));
 }
 
-function reloadDataAndCloseDialog(savedDTO: SavedDTO): void {
+function reloadDataAndCloseDialog(): void {
   loadZaehlungen();
   showZaehlungDialog.value = false;
-  snackbarStore.showInfo(savedDTO.response);
 }
 
-function cancelZaehlungDialog() {
+function closeZaehlungDialog() {
   showZaehlungDialog.value = false;
 }
 

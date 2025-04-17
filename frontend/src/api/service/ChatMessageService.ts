@@ -1,5 +1,6 @@
+import type ChatMessageDTO from "@/types/chat/ChatMessageDTO";
+
 import FetchService from "@/api/service/FetchService";
-import ChatMessageDTO from "@/types/chat/ChatMessageDTO";
 
 export default class ChatMessageService {
   private static readonly ENDPOINT: string =

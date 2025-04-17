@@ -238,7 +238,7 @@ import { zaehldauerText } from "@/types/enum/Zaehldauer";
 import ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 interface Props {
-  height?: string;
+  height: string;
 }
 
 defineProps<Props>();
@@ -256,10 +256,8 @@ const date = ref<string>(new Date().toISOString().substr(0, 10));
 const datepickerMenu = ref<boolean>(false);
 const validZaehlung = ref<boolean>(false);
 
-const zaehlungStore = useZaehlungStore();
-
-const zaehlung = computed<ZaehlungDTO>(() => {
-  return zaehlungStore.getZaehlung;
+const zaehlung = defineModel<ZaehlungDTO>({
+  required: true,
 });
 
 const getSonderzaehlungText = computed<string>(() => {
@@ -287,7 +285,7 @@ const getZaehlarten = computed<Array<KeyVal>>(() => {
 });
 
 const isZaehlungReadonly = computed<boolean>(() => {
-  return !zaehlungStore.isZaehlungEditable;
+  return ![Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
 const dateFormatted = computed<string | null>(() => {

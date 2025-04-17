@@ -40,7 +40,11 @@
           md="8"
         >
           <v-card-title>{{ zaehlung.projektName }}</v-card-title>
-          <v-card-subtitle>{{ datum }}</v-card-subtitle>
+          <v-card-subtitle>
+            <span>Zählstellennummer: {{ zaehlung.zaehlstelleNummer }}</span>
+            <br />
+            <span>{{ datum }}</span>
+          </v-card-subtitle>
         </v-col>
         <v-col
           cols="12"
@@ -189,7 +193,6 @@
 </template>
 
 <script setup lang="ts">
-import type SavedDTO from "@/domain/dto/SavedDTO";
 import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
@@ -219,7 +222,7 @@ const zaehlung = defineModel<ZaehlungDTO>({
 });
 
 const emits = defineEmits<{
-  (e: "saved", v: SavedDTO): void;
+  (e: "saved"): void;
   (e: "cancel"): void;
   (e: "openZaehlungDialog", zaehlung: ZaehlungDTO): void;
   (e: "openChatDialog", zaehlung: ZaehlungDTO): void;
@@ -313,9 +316,9 @@ function zaehlungAbschliessen(): void {
     updateZaehlung.zaehlungId = zaehlung.value.id;
     updateZaehlung.status = Status.ACCOMPLISHED;
     ZaehlungService.updateStatus(updateZaehlung)
-      .then((savedDTO: SavedDTO) => {
-        savedDTO.response = `Die Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`;
-        emits("saved", savedDTO);
+      .then(() => {
+        snackbarStore.showSuccess(`Die Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`);
+        emits("saved");
       })
       .catch((error: ApiError) => {
         snackbarStore.showApiError(error);
@@ -333,9 +336,9 @@ function zaehlungKorrigieren(): void {
     updateZaehlung.zaehlungId = zaehlung.value.id;
     updateZaehlung.status = Status.ACCOMPLISHED;
     ZaehlungService.updateStatus(updateZaehlung)
-      .then((savedDTO: SavedDTO) => {
-        savedDTO.response = `Die korrigierte Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`;
-        emits("saved", savedDTO);
+      .then(() => {
+        snackbarStore.showSuccess(`Die korrigierte Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`);
+        emits("saved");
       })
       .catch((error: ApiError) => {
         snackbarStore.showApiError(error);

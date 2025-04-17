@@ -26,12 +26,12 @@
         >
           <zaehlung-geometrie
             id="geo"
+            v-model="zaehlung.knotenarme"
             height="100%"
             width="100%"
             active-color="#1565C0"
             passive-color="#EEEEEE"
-            :knotenarme="knotenarme"
-          ></zaehlung-geometrie>
+          />
         </v-col>
       </v-row>
       <v-row dense>
@@ -66,16 +66,17 @@
               cols="12"
               md="1"
             >
-              <v-btn @click="fileUpload">
-                <v-icon>{{ appendIcon }}</v-icon>
-                Upload
-              </v-btn>
+              <v-btn
+                text="Upload"
+                :icon="appendIcon"
+                @click="fileUpload"
+              />
               <v-form ref="fileInputForm">
                 <v-file-input
                   :id="FILE_INPUT_FIELD_ID"
                   :key="resetFileInput"
                   style="display: none"
-                  dense
+                  density="compact"
                   single-line
                   multiple
                   accept=".csv"
@@ -96,8 +97,8 @@
             >
               <v-text-field
                 :value="arm.strassenname"
+                variant="underlined"
                 single-line
-                dense
                 readonly
                 color="black"
                 :prepend-icon="'mdi-numeric-' + arm.nummer"
@@ -112,7 +113,6 @@
                 v-model="arm.filename"
                 :style="getStyle(arm)"
                 single-line
-                dense
                 readonly
                 color="black"
                 clearable
@@ -129,8 +129,8 @@
         >
           <v-data-table
             v-if="isNotKreisverkehr"
-            dense
-            :headers="fahrbeziehungHeader"
+            density="compact"
+            :headers="fahrbeziehungHeader as Array<any>"
             :items="allFahrbeziehungen"
             item-key="id"
             :items-per-page="-1"
@@ -144,29 +144,33 @@
 </template>
 
 <script setup lang="ts">
+import type FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
+import type GeoPoint from "@/domain/GeoPoint";
+import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+
 import { LatLng } from "leaflet";
-import _, { toArray } from "lodash";
-import { computed, onMounted, ref, watch } from "vue";
+import {isNil, parseInt, toArray, toString} from "lodash";
+import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
-import FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
-import GeoPoint from "@/domain/GeoPoint";
 import { useSnackbarStore } from "@/store/SnackbarStore";
-import { useZaehlungStore } from "@/store/ZaehlungStore";
+import Status from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
-import KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import FahrbeziehungComparator from "@/util/FahrbeziehungComparator";
-import KnotenarmComparator from "@/util/KnotenarmComparator";
 
 interface Props {
-  height?: string;
+  height: string;
 }
 
 defineProps<Props>();
+
+const zaehlung = defineModel<ZaehlungDTO>({
+  required: true,
+});
 
 const EXPECTED_META_HEADER =
   "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;";
@@ -178,29 +182,13 @@ const SEPARATOR = ";";
 
 const FILE_INPUT_FIELD_ID = "fileInputField";
 
-onMounted(() => {
-  updateWorkingCopy();
-});
-
-const zaehlungStore = useZaehlungStore();
+// onMounted(() => {
+//   updateWorkingCopy();
+// });
 
 const snackbarStore = useSnackbarStore();
 
 const resetFileInput = ref<number>(0);
-
-const zaehlungWorkingCopy = ref<ZaehlungDTO>(
-  DefaultObjectCreator.createDefaultZaehlungDTO()
-);
-
-const zaehlung = computed<ZaehlungDTO>({
-  get() {
-    return zaehlungStore.getZaehlung;
-  },
-
-  set(zaehlungToSave: ZaehlungDTO) {
-    zaehlungStore.setZaehlung(zaehlungToSave);
-  },
-});
 
 const knotenarme = computed<Array<KnotenarmDTO>>(
   () => zaehlung.value.knotenarme
@@ -228,9 +216,9 @@ const coordsZaehlung = computed<LatLng>(() => {
   }
 });
 
-const isZaehlungEditable = computed<boolean>(
-  () => zaehlungStore.isZaehlungEditable
-);
+const isZaehlungEditable = computed<boolean>(() => {
+  return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
+});
 
 const allFahrbeziehungen = computed<Array<FahrbeziehungDTO>>(() =>
   toArray(zaehlung.value.fahrbeziehungen).sort(
@@ -240,40 +228,33 @@ const allFahrbeziehungen = computed<Array<FahrbeziehungDTO>>(() =>
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
 
-const fahrbeziehungHeader = computed<any>(() => {
-  return [
-    {
-      text: "Von",
-      align: "center",
-      sortable: false,
-      value: "von",
-      divider: "true",
-    },
-    {
-      text: "Nach",
-      align: "center",
-      sortable: false,
-      value: "nach",
-    },
-  ];
-});
-
-watch(
-  zaehlung,
-  () => {
-    updateWorkingCopy();
+const fahrbeziehungHeader = [
+  {
+    text: "Von",
+    align: "center",
+    sortable: false,
+    value: "von",
+    divider: "true",
   },
-  { deep: true, immediate: true }
-);
+  {
+    text: "Nach",
+    align: "center",
+    sortable: false,
+    value: "nach",
+  },
+];
 
-function updateWorkingCopy(): void {
-  zaehlungWorkingCopy.value = _.cloneDeep(zaehlung.value);
-  zaehlungWorkingCopy.value.knotenarme.sort(KnotenarmComparator.sortByNumber);
-}
-
-function updateStore(): void {
-  zaehlung.value = _.cloneDeep(zaehlungWorkingCopy.value);
-}
+// watch(
+//   zaehlung,
+//   () => {
+//     updateWorkingCopy();
+//   },
+//   { deep: true, immediate: true }
+// );
+//
+// function updateWorkingCopy(): void {
+//   zaehlung.value.knotenarme.sort(KnotenarmComparator.sortByNumber);
+// }
 
 function fileUpload(): void {
   if (isZaehlungEditable.value) {
@@ -292,7 +273,7 @@ function getStyle(arm: KnotenarmDTO): string {
 function onFileSelect(selectedFiles: Array<any>) {
   // wenn zu viele Files hochgeladen wurden, dann Abbrechen
   if (
-    !_.isNil(selectedFiles) &&
+    !isNil(selectedFiles) &&
     selectedFiles.length > zaehlung.value.knotenarme.length
   ) {
     // Damit nacheinander ein File mit identischem Namen hocheladen werden
@@ -338,7 +319,6 @@ function readFiles(selectedFiles: Array<any>) {
             if (isPlausible.length === 0) {
               zaehlungArm.filename = myFile.name;
               zaehlungArm.filedata = csv;
-              updateStore();
             } else {
               successfull = false;
               errorText = `${errorText} ${myFile.name}: ${isPlausible}\n`;
@@ -394,7 +374,6 @@ function deleteFile(nummer: number): void {
       arm.filedata = [];
     }
   });
-  updateStore();
 }
 
 function appendIcon(): string {
@@ -407,10 +386,10 @@ function appendIcon(): string {
 
 function getKnotenarmnummerOfCsv(csvData: Array<string>): number {
   // keine Daten vorhanden
-  if (_.isNil(csvData) || csvData.length < 4) {
+  if (isNil(csvData) || csvData.length < 4) {
     return 0;
   }
-  let metaData: string = csvData[1];
+  const metaData: string = csvData[1];
   // MetaHeader vorhanden?
   const metaDataSplitted: Array<string> = metaData.split(SEPARATOR);
   const armNummer: any = metaDataSplitted[3];
@@ -442,12 +421,12 @@ function checkUploadedFiledata(
   csvData: Array<string>
 ): string {
   // keine Daten vorhanden
-  if (_.isNil(csvData) || csvData.length < 4) {
+  if (isNil(csvData) || csvData.length < 4) {
     return "Die hochgeladene Datei enthält keine Zähldaten.";
   }
   const metaHeader: string = csvData[0];
   // MetaHeader vorhanden?
-  if (_.isNil(metaHeader)) {
+  if (isNil(metaHeader)) {
     return "Die Header der Metadaten fehlen in der hochgeladenen Datei.";
   }
   // MetaHeader korrekt?
@@ -457,7 +436,7 @@ function checkUploadedFiledata(
 
   const metaData: string = csvData[1];
   // MetaData vorhanden?
-  if (_.isNil(metaData)) {
+  if (isNil(metaData)) {
     return "Die Metadaten fehlen in der hochgeladenen Datei.";
   }
   // MetaData korrekt?
@@ -471,7 +450,7 @@ function checkUploadedFiledata(
 
   const zaehldatenHeader: string = csvData[2];
   // ZaehldatenHeader vorhanden und korrekt?
-  if (_.isNil(zaehldatenHeader)) {
+  if (isNil(zaehldatenHeader)) {
     return "Die Header der Zähldaten fehlen in der hochgeladenen Datei.";
   }
   // ZaehldatenHeader vorhanden und korrekt?
@@ -480,7 +459,7 @@ function checkUploadedFiledata(
   }
 
   // Plausiprüfung, ob nur Nummern enthalten sind in den Zähldaten
-  for (let [csvLineIndex, data] of csvData.entries()) {
+  for (const [csvLineIndex, data] of csvData.entries()) {
     // Prüfung ab Zeile 3 der CSV und für nicht leere Zeilen
     if (csvLineIndex > 2 && data.trim().length > 0) {
       const csvLineNumber: number = csvLineIndex + 1;
@@ -515,7 +494,7 @@ function checkUploadedFiledata(
             }
           );
         } else {
-          const nachArmNumber: number = _.parseInt(_.toString(nach.trim()));
+          const nachArmNumber: number = parseInt(toString(nach.trim()));
           fahrbeziehung = zaehlung.value.fahrbeziehungen.find(
             (fahrbeziehung) => {
               return (
@@ -525,7 +504,7 @@ function checkUploadedFiledata(
             }
           );
         }
-        if (_.isNil(fahrbeziehung)) {
+        if (isNil(fahrbeziehung)) {
           return `Für die Zähldaten in Zeile ${csvLineNumber} ist keine Fahrbeziehung existent oder aktiv.\nWar: ${splittedLine}`;
         }
       }
@@ -550,18 +529,18 @@ function checkUploadedFiledata(
           if (fieldValue.length >= 0) {
             if (isNaN(fieldValue)) {
               return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nur Nummern enthalten.\nWar: ${splittedLine}`;
-            } else if (_.parseInt(_.toString(fieldValue)) < 0) {
+            } else if (parseInt(toString(fieldValue)) < 0) {
               return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nicht negativ sein.\nWar: ${splittedLine}`;
             }
           }
         }
       } else {
-        for (let fieldValue of splittedLine) {
+        for (const fieldValue of splittedLine) {
           // Kreuzung: Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
           if (fieldValue.trim().length >= 0) {
             if (isNaN(fieldValue.trim())) {
               return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nur Nummern enthalten.\nWar: ${splittedLine}`;
-            } else if (_.parseInt(_.toString(fieldValue.trim())) < 0) {
+            } else if (parseInt(toString(fieldValue.trim())) < 0) {
               return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nicht negativ sein.\nWar: ${splittedLine}`;
             }
           }

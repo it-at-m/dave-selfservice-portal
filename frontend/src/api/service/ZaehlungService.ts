@@ -1,13 +1,13 @@
+import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+
 import FetchService from "@/api/service/FetchService";
-import SavedDTO from "@/domain/dto/SavedDTO";
-import UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
-import ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 export default class ZaehlungService {
   private static readonly ENDPOINT: string =
     "api/dave-backend-service/zaehlung";
 
-  static saveZaehlung(data: ZaehlungDTO): Promise<SavedDTO> {
+  static saveZaehlung(data: ZaehlungDTO): Promise<void> {
     return FetchService.postData(
       data,
       `${this.ENDPOINT}/saveExternal`,
@@ -22,7 +22,7 @@ export default class ZaehlungService {
     );
   }
 
-  static updateStatus(data: UpdateStatusDTO): Promise<SavedDTO> {
+  static updateStatus(data: UpdateStatusDTO): Promise<void> {
     return FetchService.postData(
       data,
       `${this.ENDPOINT}/updateStatus`,

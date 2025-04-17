@@ -13,8 +13,8 @@ export const useEventbusStore = defineStore("eventbusStore", () => {
   function setChangeTabEvent(payload: number) {
     changeTabEvent.value = payload;
   }
-  function setResetFormEvent(payload: boolean) {
-    resetFormEvent.value = payload;
+  function setResetFormEvent() {
+    resetFormEvent.value = !resetFormEvent.value;
   }
 
   return {

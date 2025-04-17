@@ -1,51 +1,58 @@
 <template>
   <v-app>
-    <TheSnackbar />
+    <the-snackbar />
 
     <!--  clipped-right: Gibt an, auf welcher Seite der Navigation-Drawer eingeblendet werden soll und dort soll die Toolbar bleiben  -->
     <v-app-bar
-      class="black--text"
-      app
-      clipped-right
       color="primary"
-      dark
+      height="50"
+      class="px-4"
     >
-      <router-link to="/">
-        <v-toolbar-title class="black--text">
-          <span class="font-weight-medium">DAVe</span>
-          <span class="font-weight-thin"> | Selfserviceportal</span>
-        </v-toolbar-title>
-      </router-link>
-      <v-spacer></v-spacer>
-      <v-spacer></v-spacer>
-      <v-tooltip bottom>
-        <template #activator="{ on, attrs }">
-          <v-btn
-            v-bind="attrs"
-            class="ml-2"
-            icon
-            color="black"
-            v-on="on"
-            @click="navigateToHandbuch"
+      <v-row align="center">
+        <v-col
+          cols="3"
+          class="d-flex align-center justify-start"
+        >
+          <router-link
+            to="/"
+            style="text-decoration: none"
           >
-            <v-icon>mdi-clippy</v-icon>
-          </v-btn>
-        </template>
-        <span> Anwenderhandbuch </span>
-      </v-tooltip>
-      <span> {{ loggedInUser }} </span>
+            <v-toolbar-title class="black font-weight-medium">
+              <span class="font-weight-medium">DAVe</span>
+              <span class="font-weight-thin"> | Selfserviceportal</span>
+            </v-toolbar-title>
+          </router-link>
+        </v-col>
+      </v-row>
+      <v-spacer />
+      <v-col
+        cols="3"
+        class="d-flex align-center justify-end"
+      >
+        <v-btn
+          v-tooltip:bottom="'Anwenderhandbuch'"
+          class="mr-3"
+          icon="mdi-clippy"
+          @click="navigateToHandbuch"
+        />
+        <span> {{ loggedInUser }} </span>
+      </v-col>
     </v-app-bar>
-    <v-main>
+
+    <router-view
+      v-slot="{ Component }"
+      :key="route.fullPath"
+    >
       <v-fade-transition mode="out-in">
-        <!--    Damit Seite auch bei ID Aenderung reloadet wird muss der :key angegeben werden -->
-        <router-view :key="$route.fullPath"></router-view>
+        <component :is="Component" />
       </v-fade-transition>
-    </v-main>
+    </router-view>
   </v-app>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useRoute } from "vue-router";
 
 import SsoUserInfoService from "@/api/service/SsoUserInfoService";
 import VersionInfoService from "@/api/service/VersionInfoService";
@@ -63,6 +70,7 @@ const backendVersion = ref<string>("");
 const frontendVersion = ref<string>("");
 
 const userStore = useUserStore();
+const route = useRoute();
 
 created();
 
@@ -74,32 +82,19 @@ function created() {
       loggedInUser.value = userStore.getName;
     }
   );
-  getFrontendVersion().then((version: string) => {
-    frontendVersion.value = version;
-  });
-
-  getBackendVersion().then((version: string) => {
-    backendVersion.value = version;
-  });
-}
-
-async function getFrontendVersion(): Promise<string> {
-  return await VersionInfoService.getFrontendInfo()
+  VersionInfoService.getFrontendInfo()
     .then((frontendInfoResponse: VersionInfoResponse) => {
-      return frontendInfoResponse.application.version;
+      frontendVersion.value = frontendInfoResponse.application.version;
     })
     .catch(() => {
-      return "error";
+      frontendVersion.value = "error";
     });
-}
-
-async function getBackendVersion(): Promise<string> {
-  return await VersionInfoService.getBackendInfo()
+  VersionInfoService.getBackendInfo()
     .then((backendInfoResponse: VersionInfoResponse) => {
-      return backendInfoResponse.application.version;
+      backendVersion.value = backendInfoResponse.application.version;
     })
     .catch(() => {
-      return "error";
+      backendVersion.value = "error";
     });
 }
 
@@ -107,3 +102,18 @@ function navigateToHandbuch() {
   window.open(URL_HANDBUCH_LINK);
 }
 </script>
+<style>
+/* Alle Hinweise werden nun rot eingefärbt */
+.v-messages {
+  color: #e57373 !important;
+}
+
+.dave-default {
+  --app-bar-height: 50px;
+  width: 100%;
+  height: 100%;
+  /* Um auf der Y-Achse direkt unter der App Bar zu liegen */
+  padding-top: var(--app-bar-height);
+  position: fixed;
+}
+</style>

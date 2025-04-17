@@ -1,39 +1,23 @@
-import Vue from "vue";
-import Router from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 
 import HomeView from "@/views/HomeView.vue";
 
-Vue.use(Router);
+const routes = [
+  {
+    path: "/",
+    name: "home",
+    component: HomeView,
+  },
+  { path: "/:catchAll(.*)*", redirect: "/" }, // CatchAll route
+];
 
-/*
- * Preventing "NavigationDuplicated" errors in console in Vue-router >= 3.1.0
- * https://github.com/vuejs/vue-router/issues/2881#issuecomment-520554378
- * */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-const routerMethods = ["push", "replace"];
-routerMethods.forEach((method: string) => {
-  const originalCall = (Router.prototype as any)[method];
-  (Router.prototype as any)[method] = function (
-    location: any,
-    onResolve: any,
-    onReject: any
-  ): Promise<any> {
-    if (onResolve || onReject) {
-      return originalCall.call(this, location, onResolve, onReject);
-    }
-    return originalCall.call(this, location).catch((err: any) => err);
-  };
+const router = createRouter({
+  history: createWebHashHistory(import.meta.env.BASE_URL),
+  /* eslint-disable  @typescript-eslint/no-unused-vars */
+  scrollBehavior(to, from, savedPosition) {
+    return { top: 0, left: 0 };
+  },
+  routes,
 });
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
-export default new Router({
-  base: import.meta.env.BASE_URL,
-  routes: [
-    {
-      path: "/",
-      name: "home",
-      component: HomeView,
-    },
-    { path: "*", redirect: "/" }, //Fallback 2
-  ],
-});
+export default router;

@@ -16,12 +16,11 @@
           no-gutters
           dense
         >
-          <span class="text-white">{{ dialogtitle }}</span>
+          <span>{{ dialogtitle }}</span>
           <v-spacer />
           <v-btn
             icon="mdi-close"
             variant="text"
-            class="text-white"
             @click="closeDialog"
           />
         </v-row>
@@ -151,7 +150,6 @@ import { computed, ref, watch } from "vue";
 import ChatMessageService from "@/api/service/ChatMessageService";
 import accountTieUrl from "@/assets/account-tie.png";
 import kindlUrl from "@/assets/kindl.jpg";
-import { useChatStore } from "@/store/ChatStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useDateUtils } from "@/util/DateUtils";
 
@@ -174,7 +172,6 @@ const MOBILITAETSREFERAT_ID = 2;
 const items = ref<Array<ChatMessageDTO>>([]);
 const message = ref("");
 const snackbarStore = useSnackbarStore();
-const chatStore = useChatStore();
 const dateUtils = useDateUtils();
 
 watch(
@@ -213,11 +210,7 @@ function loadMessages() {
     ChatMessageService.updateUnreadMessages(
       zaehlung.value.id,
       MOBILITAETSREFERAT_ID
-    )
-      .then(() => {
-        chatStore.resetNotificationsEventSwitch();
-      })
-      .catch((error) => snackbarStore.showApiError(error));
+    ) .catch((error) => snackbarStore.showApiError(error));
   } else {
     items.value = [];
   }
@@ -228,7 +221,7 @@ function sendMessage() {
   //Timestamp wird erst im Backend gesetzt (Zeitverzug ist unbedeutend)
   messageDTO.content = message.value;
   messageDTO.zaehlungId = zaehlung.value.id;
-  messageDTO.participantId = MOBILITAETSREFERAT_ID;
+  messageDTO.participantId = DIENSTLEISTER_ID;
   messageDTO.type = "text";
   messageDTO.uploaded = true;
   messageDTO.viewed = false;
