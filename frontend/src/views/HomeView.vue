@@ -56,6 +56,7 @@ import { computed, onMounted, ref } from "vue";
 
 import ZaehlungService from "@/api/service/ZaehlungService";
 import ChatDialog from "@/components/chat/ChatDialog.vue";
+import ZaehlungDialog from "@/components/zaehlung/ZaehlungDialog.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import ZaehlungCardObjectComparator from "@/util/ZaehlungCardObjectComparator";

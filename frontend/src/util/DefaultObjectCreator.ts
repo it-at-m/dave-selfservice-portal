@@ -1,9 +1,10 @@
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+
 import { LatLng } from "leaflet";
 
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import Wetter from "@/types/enum/Wetter";
-import ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 export default class DefaultObjectCreator {
   private static readonly MUNICH_CENTER_LATITUDE: number = 48.137227;

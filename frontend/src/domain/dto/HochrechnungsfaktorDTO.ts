@@ -1,4 +1,4 @@
-import BaseEntity from "@/types/common/BaseEntity";
+import type BaseEntity from "@/types/common/BaseEntity";
 
 export default interface HochrechnungsfaktorDTO extends BaseEntity {
   matrix: string;

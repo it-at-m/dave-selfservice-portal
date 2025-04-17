@@ -1,6 +1,6 @@
-import HochrechnungsfaktorDTO from "@/domain/dto/HochrechnungsfaktorDTO";
-import ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import BaseEntity from "@/types/common/BaseEntity";
+import type HochrechnungsfaktorDTO from "@/domain/dto/HochrechnungsfaktorDTO";
+import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
+import type BaseEntity from "@/types/common/BaseEntity";
 
 export default interface FahrbeziehungDTO extends BaseEntity {
   // Kreuzung

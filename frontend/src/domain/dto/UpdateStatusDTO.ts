@@ -1,4 +1,4 @@
-import Status from "@/types/enum/Status";
+import type Status from "@/types/enum/Status";
 
 export default interface UpdateStatusDTO {
   zaehlungId: string;

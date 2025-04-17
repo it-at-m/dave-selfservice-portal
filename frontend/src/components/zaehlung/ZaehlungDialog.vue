@@ -8,10 +8,13 @@
   >
     <v-card
       width="100%"
-      flat
+      variant="flat"
     >
       <v-card-title>
-        <v-icon left>mdi-calendar-edit</v-icon>
+        <v-icon
+          start
+          icon="mdi-calendar-edit"
+        />
         {{ dialogtitle }}
       </v-card-title>
 
@@ -26,14 +29,15 @@
 </template>
 
 <script setup lang="ts">
+import type SavedDTO from "@/domain/dto/SavedDTO";
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+
 import { computed, watch } from "vue";
 
 import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
-import SavedDTO from "@/domain/dto/SavedDTO";
 import { useEventbusStore } from "@/store/EventbusStore";
 import { useZaehlungStore } from "@/store/ZaehlungStore";
 import Status from "@/types/enum/Status";
-import ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 interface Props {
   showDialog: boolean;
