@@ -199,7 +199,7 @@ import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
-import { cloneDeep } from "lodash";
+import { cloneDeep, isEmpty, isNil } from "lodash";
 import { computed, ref } from "vue";
 
 import { ApiError } from "@/api/error";
@@ -294,13 +294,13 @@ const showButtonAbschliessen = computed<boolean>(() => {
 });
 
 const hasUploadedFile = computed<boolean>(() => {
-  // TODO umstellen auf filter
-  let hasFile = false;
-  zaehlung.value.knotenarme.forEach((arm: KnotenarmDTO) => {
-    hasFile =
-      hasFile || (arm.filename != undefined && arm.filename.trim().length > 0);
-  });
-  return hasFile;
+  return isEmpty(
+    zaehlung.value.knotenarme.filter((arm: KnotenarmDTO) => {
+      return (
+        !isNil(arm) && (isNil(arm.filename) || isEmpty(arm.filename.trim()))
+      );
+    })
+  );
 });
 
 // Erzeugt aus den String Koordinaten ein Objekt von Typ LatLng
@@ -317,7 +317,9 @@ function zaehlungAbschliessen(): void {
     updateZaehlung.status = Status.ACCOMPLISHED;
     ZaehlungService.updateStatus(updateZaehlung)
       .then(() => {
-        snackbarStore.showSuccess(`Die Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`);
+        snackbarStore.showSuccess(
+          `Die Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`
+        );
         emits("saved");
       })
       .catch((error: ApiError) => {
@@ -337,7 +339,9 @@ function zaehlungKorrigieren(): void {
     updateZaehlung.status = Status.ACCOMPLISHED;
     ZaehlungService.updateStatus(updateZaehlung)
       .then(() => {
-        snackbarStore.showSuccess(`Die korrigierte Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`);
+        snackbarStore.showSuccess(
+          `Die korrigierte Zählung vom ${datum.value} wurde an den Auftraggeber übermittelt.`
+        );
         emits("saved");
       })
       .catch((error: ApiError) => {
