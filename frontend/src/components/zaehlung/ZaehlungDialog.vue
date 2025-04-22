@@ -18,10 +18,7 @@
       </v-card-title>
 
       <v-card-text class="py-0">
-        <zaehlung-form
-          v-model="zaehlung"
-          @is-valid="setAllgemeineFormValid"
-        />
+        <zaehlung-form v-model="zaehlung" />
       </v-card-text>
       <v-card-actions>
         <v-spacer />
@@ -29,7 +26,6 @@
           color="secondary"
           text="Speichern"
           variant="elevated"
-          :disabled="!isValid"
           @click="save()"
         />
         <v-btn
@@ -50,7 +46,7 @@ import type { StartUhrzeitEndeUhrzeit } from "@/types/enum/Intervallnummern";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
-import { computed, ref, watch } from "vue";
+import { computed, watch } from "vue";
 
 import { ApiError } from "@/api/error";
 import ZaehlungService from "@/api/service/ZaehlungService";
@@ -77,8 +73,6 @@ const zaehlung = defineModel<ZaehlungDTO>({
 
 const SEPARATOR = ";";
 
-const isValid = ref(false);
-
 const eventbusStore = useEventbusStore();
 const snackbarStore = useSnackbarStore();
 
@@ -101,10 +95,6 @@ const dialogtitle = computed<string>(() => {
   return `${zaehlung.value.zaehlstelleNummer} - Zählung ${dialogtitleText}`;
 });
 
-function setAllgemeineFormValid(isPartValid: boolean) {
-  isValid.value = isPartValid;
-}
-
 function save(): void {
   prepareForSaveZaehlung();
 
@@ -125,8 +115,6 @@ function save(): void {
  * Bereitet die tiefen Kopie auf das speichern vor.
  * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
  * und den Fahrbeziehungen zu geordnet.
- * @param zaehlung zum speichern
- * @private
  */
 function prepareForSaveZaehlung() {
   const zeitintervalleProFahrbeziehung: Map<
