@@ -88,6 +88,10 @@ export default createVuetify({
       variant: "elevated",
       density: "compact",
     },
+    VTextarea: {
+      density: "compact",
+      variant: "outlined",
+    },
     VTextField: {
       density: "compact",
       variant: "outlined",
