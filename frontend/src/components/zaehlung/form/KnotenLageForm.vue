@@ -75,12 +75,13 @@
                 <v-file-input
                   :id="FILE_INPUT_FIELD_ID"
                   :key="resetFileInput"
+                  v-model="files"
                   style="display: none"
                   density="compact"
                   single-line
                   multiple
                   accept=".csv"
-                  @change="onFileSelect($event)"
+                  @update:model-value="onFileSelect()"
                 />
               </v-form>
             </v-col>
@@ -186,6 +187,8 @@ const snackbarStore = useSnackbarStore();
 
 const resetFileInput = ref<number>(0);
 
+const files = ref<Array<File>>([]);
+
 const knotenarme = computed<Array<KnotenarmDTO>>(
   () => zaehlung.value.knotenarme
 );
@@ -256,98 +259,6 @@ function getStyle(arm: KnotenarmDTO): string {
     style = "";
   }
   return style;
-}
-
-function onFileSelect(selectedFiles: Array<any>) {
-  // wenn zu viele Files hochgeladen wurden, dann Abbrechen
-  if (
-    !isNil(selectedFiles) &&
-    selectedFiles.length > zaehlung.value.knotenarme.length
-  ) {
-    // Damit nacheinander ein File mit identischem Namen hocheladen werden
-    // kann, wird immer der FileInput zurückgesetzt
-    resetFileInput.value = Math.floor(Math.random() * 10001);
-    snackbarStore.showError(
-      `Zu viele Dateien`,
-      `Es darf pro Knotenarm nur eine Datei hochgeladen werden.`
-    );
-  } else {
-    // Einlesen
-    readFiles(selectedFiles);
-  }
-}
-
-/**
- * Methode zum Einlesen der Files.
- */
-function readFiles(selectedFiles: Array<any>) {
-  let successfull = true;
-  let errorText = "";
-  let itemsProcessed = 0;
-
-  selectedFiles.forEach((myFile) => {
-    const fileReader = new FileReader();
-    // Eventlistener hinzufügen und angeben, was passieren soll, wenn ein File geladen wurde ('load'-Event)
-    fileReader.addEventListener(
-      "load",
-      function () {
-        const csv: Array<string> = (fileReader.result as string).split(
-          /\r\n|\n/
-        );
-        const knotenarmnummerOfCsv: number = getKnotenarmnummerOfCsv(csv);
-        itemsProcessed++;
-        zaehlung.value.knotenarme.forEach((zaehlungArm: KnotenarmDTO) => {
-          if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
-            // Plausibilitätscheck
-            const isPlausible: string = checkUploadedFiledata(
-              knotenarmnummerOfCsv,
-              csv
-            );
-            if (isPlausible.length === 0) {
-              zaehlungArm.filename = myFile.name;
-              zaehlungArm.filedata = csv;
-            } else {
-              successfull = false;
-              errorText = `${errorText} ${myFile.name}: ${isPlausible}\n`;
-            }
-
-            // Wenn alle Files eingelesen wurden, dann zeige das Ergebnis an
-            if (itemsProcessed === selectedFiles.length) {
-              // Damit nacheinander ein File mit identischem Namen hocheladen werden
-              // kann, wird immer der FileInput zurückgesetzt
-              resetFileInput.value = Math.floor(Math.random() * 10001);
-              if (successfull) {
-                snackbarStore.showSuccess(
-                  `Alle Dateien konnten einem Knotenarm zugeordnet werden.`
-                );
-              } else {
-                snackbarStore.showError(
-                  `Folgende Dateien wurden abgelehnt:`,
-                  errorText
-                );
-              }
-            }
-          }
-        });
-      },
-      false
-    );
-
-    if (myFile) {
-      if (wrongFileType(myFile)) {
-        snackbarStore.showWarning(
-          `Ungültiges Dateiformat.`,
-          `Es werden nur CSV-Dateien unterstützt und keine ${myFile.name
-            .split(".")
-            .pop()
-            .toUpperCase()}-Dateien.`
-        );
-      } else {
-        // Das 'load'-Event wird ausgelöst, sobald der FileReader das Laden beendet hat.
-        fileReader.readAsText(myFile);
-      }
-    }
-  });
 }
 
 function wrongFileType(file: File): boolean {
@@ -530,5 +441,94 @@ function checkUploadedFiledata(
     }
   }
   return "";
+}
+
+function onFileSelect() {
+  // wenn zu viele Files hochgeladen wurden, dann Abbrechen
+  if (
+    !isNil(files.value) &&
+    files.value.length > zaehlung.value.knotenarme.length
+  ) {
+    // Damit nacheinander ein File mit identischem Namen hocheladen werden
+    // kann, wird immer der FileInput zurückgesetzt
+    resetFileInput.value = Math.floor(Math.random() * 10001);
+    snackbarStore.showError(
+      `Zu viele Dateien`,
+      `Es darf pro Knotenarm nur eine Datei hochgeladen werden.`
+    );
+  } else {
+    // Einlesen
+    readFiles();
+  }
+}
+
+/**
+ * Methode zum Einlesen der Files.
+ */
+function readFiles() {
+  let successfull = true;
+  let errorText = "";
+  let itemsProcessed = 0;
+
+  files.value.forEach((myFile) => {
+    const fileReader = new FileReader();
+    // Eventlistener hinzufügen und angeben, was passieren soll, wenn ein File geladen wurde ('load'-Event)
+    fileReader.addEventListener(
+      "load",
+      function () {
+        const csv: Array<string> = (fileReader.result as string).split(
+          /\r\n|\n/
+        );
+        const knotenarmnummerOfCsv: number = getKnotenarmnummerOfCsv(csv);
+        itemsProcessed++;
+        zaehlung.value.knotenarme.forEach((zaehlungArm: KnotenarmDTO) => {
+          if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
+            // Plausibilitätscheck
+            const isPlausible: string = checkUploadedFiledata(
+              knotenarmnummerOfCsv,
+              csv
+            );
+            if (isPlausible.length === 0) {
+              zaehlungArm.filename = myFile.name;
+              zaehlungArm.filedata = csv;
+            } else {
+              successfull = false;
+              errorText = `${errorText} ${myFile.name}: ${isPlausible}\n`;
+            }
+
+            // Wenn alle Files eingelesen wurden, dann zeige das Ergebnis an
+            if (itemsProcessed === files.value.length) {
+              // Damit nacheinander ein File mit identischem Namen hocheladen werden
+              // kann, wird immer der FileInput zurückgesetzt
+              resetFileInput.value = Math.floor(Math.random() * 10001);
+              if (successfull) {
+                snackbarStore.showSuccess(
+                  `Alle Dateien konnten einem Knotenarm zugeordnet werden.`
+                );
+              } else {
+                snackbarStore.showError(
+                  `Folgende Dateien wurden abgelehnt:`,
+                  errorText
+                );
+              }
+            }
+          }
+        });
+      },
+      false
+    );
+
+    if (myFile) {
+      if (wrongFileType(myFile)) {
+        snackbarStore.showWarning(
+          `Ungültiges Dateiformat.`,
+          `Es werden nur CSV-Dateien unterstützt.`
+        );
+      } else {
+        // Das 'load'-Event wird ausgelöst, sobald der FileReader das Laden beendet hat.
+        fileReader.readAsText(myFile);
+      }
+    }
+  });
 }
 </script>
