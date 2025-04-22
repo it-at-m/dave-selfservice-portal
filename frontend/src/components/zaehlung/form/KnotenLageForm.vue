@@ -68,7 +68,7 @@
             >
               <v-btn
                 text="Upload"
-                :icon="appendIcon"
+                :prepend-icon="uploadIcon"
                 @click="fileUpload"
               />
               <v-form ref="fileInputForm">
@@ -150,7 +150,7 @@ import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
-import {isNil, parseInt, toArray, toString} from "lodash";
+import { isNil, parseInt, toArray, toString } from "lodash";
 import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
@@ -182,10 +182,6 @@ const SEPARATOR = ";";
 
 const FILE_INPUT_FIELD_ID = "fileInputField";
 
-// onMounted(() => {
-//   updateWorkingCopy();
-// });
-
 const snackbarStore = useSnackbarStore();
 
 const resetFileInput = ref<number>(0);
@@ -196,6 +192,10 @@ const knotenarme = computed<Array<KnotenarmDTO>>(
 
 const kreisverkehrText = computed<string>(() =>
   zaehlung.value.kreisverkehr ? "Ja" : "Nein"
+);
+
+const uploadIcon = computed<string>(() =>
+  isZaehlungEditable.value ? "mdi-upload" : ""
 );
 
 const coordsZaehlstelle = computed<LatLng>(() => {
@@ -244,18 +244,6 @@ const fahrbeziehungHeader = [
   },
 ];
 
-// watch(
-//   zaehlung,
-//   () => {
-//     updateWorkingCopy();
-//   },
-//   { deep: true, immediate: true }
-// );
-//
-// function updateWorkingCopy(): void {
-//   zaehlung.value.knotenarme.sort(KnotenarmComparator.sortByNumber);
-// }
-
 function fileUpload(): void {
   if (isZaehlungEditable.value) {
     document.getElementById(FILE_INPUT_FIELD_ID)?.click();
@@ -292,7 +280,6 @@ function onFileSelect(selectedFiles: Array<any>) {
 /**
  * Methode zum Einlesen der Files.
  */
-/* eslint-disable @typescript-eslint/no-this-alias */
 function readFiles(selectedFiles: Array<any>) {
   let successfull = true;
   let errorText = "";
@@ -376,14 +363,6 @@ function deleteFile(nummer: number): void {
   });
 }
 
-function appendIcon(): string {
-  if (isZaehlungEditable.value) {
-    return "mdi-upload";
-  } else {
-    return "";
-  }
-}
-
 function getKnotenarmnummerOfCsv(csvData: Array<string>): number {
   // keine Daten vorhanden
   if (isNil(csvData) || csvData.length < 4) {
@@ -413,7 +392,7 @@ function getKnotenarmnummerOfCsv(csvData: Array<string>): number {
  * Ab Zeile 4:
  *      nur noch dazugehörige Werte
  *
- * @param arm aktueller Knotenarm
+ * @param armNummer aktueller Knotenarm
  * @param csvData File as Array<string>
  */
 function checkUploadedFiledata(
