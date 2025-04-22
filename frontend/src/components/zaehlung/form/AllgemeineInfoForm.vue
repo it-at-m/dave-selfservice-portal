@@ -6,236 +6,214 @@
     class="overflow-y-auto"
   >
     <v-card-text>
-      <v-form
-        ref="form"
-        v-model="validZaehlung"
-      >
-        <v-row dense>
-          <v-col
-            cols="12"
-            md="4"
+      <v-row dense>
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <lhm-text-field
+            caption="Projektnummer"
+            :text="zaehlung.projektNummer"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <lhm-text-field
+            caption="Projektname"
+            :text="zaehlung.projektName"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <lhm-text-field
+            caption="Sonderzählung"
+            :text="getSonderzaehlungText"
+          />
+        </v-col>
+      </v-row>
+      <v-row dense>
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <v-menu
+            v-if="isZaehlungInstructed"
+            v-model="datepickerMenuModel"
+            :close-on-content-click="false"
           >
-            <lhm-text-field
-              caption="Projektnummer"
-              :text="zaehlung.projektNummer"
-            />
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <lhm-text-field
-              caption="Projektname"
-              :text="zaehlung.projektName"
-            />
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <lhm-text-field
-              caption="Sonderzählung"
-              :text="getSonderzaehlungText"
-            />
-          </v-col>
-        </v-row>
-        <v-row dense>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <v-menu
-              v-if="isZaehlungInstructed"
-              v-model="datepickerMenu"
-              :close-on-content-click="false"
-              :close-on-click="false"
-              transition="scale-transition"
-              offset-y
-              max-width="290px"
-              min-width="auto"
-            >
-              <template #activator="{ on, attrs }">
-                <v-text-field
-                  v-model="dateFormatted"
-                  label="Datum"
-                  prepend-inner-icon="mdi-calendar"
-                  readonly
-                  outlined
-                  dense
-                  v-bind="attrs"
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker
-                v-model="date"
-                no-title
-                :min="getActualDate"
-                locale="de"
-                :first-day-of-week="1"
-              >
-                <v-spacer></v-spacer>
+            <template #activator="{ props }">
+              <v-text-field
+                v-bind="props"
+                :model-value="formattedDate"
+                prepend-inner-icon="mdi-calendar"
+                readonly
+              />
+            </template>
+            <v-card>
+              <v-card-text>
+                <v-row style="justify-content: center">
+                  <v-date-picker
+                    v-model="datepickerModel"
+                    width="300"
+                    header=""
+                    title="Datum auswählen"
+                    border
+                    show-adjacent-months
+                    color="primary"
+                  />
+                </v-row>
+              </v-card-text>
+              <v-card-actions>
+                <v-spacer />
                 <v-btn
-                  text
-                  color="primary"
+                  text="OK"
+                  color="secondary"
+                  variant="elevated"
                   @click="saveDate"
-                >
-                  OK
-                </v-btn>
+                />
                 <v-btn
-                  text
-                  color="primary"
+                  text="Abbrechen"
+                  color="grey-lighten-1"
+                  variant="elevated"
                   @click="closeMenu"
-                >
-                  Abbrechen
-                </v-btn>
-              </v-date-picker>
-            </v-menu>
-            <lhm-text-field
-              v-else
-              caption="Zählung am"
-              :text="formattedDateAsText"
-            />
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <lhm-text-field
-              caption="Zähldauer"
-              :text="getZaehldauer"
-            />
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <lhm-text-field
-              caption="Zählintervall"
-              :text="getZaehlintervall"
-            />
-          </v-col>
-          <v-spacer />
-        </v-row>
-        <v-row dense>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <v-autocomplete
-              v-if="isZaehlungInstructed"
-              v-model="zaehlung.zaehlart"
-              outlined
-              :items="getZaehlarten"
-              dense
-              label="Zählart"
-              required
-              @blur="zaehlung"
-            ></v-autocomplete>
-            <lhm-text-field
-              v-else
-              caption="Zählart"
-              :text="getZaehlart"
-            />
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <lhm-text-field
-              caption="Quelle"
-              :text="getQuelle"
-            />
-          </v-col>
-          <v-col
-            cols="12"
-            md="4"
-          >
-            <v-autocomplete
-              v-model="zaehlung.wetter"
-              outlined
-              :items="getWetter"
-              dense
-              label="Wetter"
-              :disabled="isZaehlungReadonly"
-              @blur="updateZaehlungStoreWithZaehlung"
-            ></v-autocomplete>
-          </v-col>
-        </v-row>
-        <v-row dense>
-          <v-col
-            cols="12"
-            md="12"
-          >
-            <v-textarea
-              v-model="zaehlung.kommentar"
-              label="Kommentar"
-              outlined
-              dense
-              rows="2"
-              row-height="10"
-              counter="255"
-              maxlength="255"
-              disabled
-              @blur="updateZaehlungStoreWithZaehlung"
-            ></v-textarea>
-          </v-col>
-        </v-row>
-        <v-row dense>
-          <v-col
-            cols="12"
-            md="12"
-          >
-            <v-textarea
-              v-model="zaehlung.zaehlsituation"
-              label="Zählsituation"
-              outlined
-              dense
-              rows="2"
-              row-height="10"
-              counter="255"
-              maxlength="255"
-              :disabled="isZaehlungReadonly"
-              @blur="updateZaehlungStoreWithZaehlung"
-            ></v-textarea>
-          </v-col>
-        </v-row>
-        <v-row dense>
-          <v-col
-            cols="12"
-            md="12"
-          >
-            <v-textarea
-              v-model="zaehlung.zaehlsituationErweitert"
-              label="erweiterte Zählsituation"
-              outlined
-              dense
-              rows="2"
-              row-height="10"
-              counter="255"
-              maxlength="255"
-              :disabled="isZaehlungReadonly"
-              @blur="updateZaehlungStoreWithZaehlung"
-            ></v-textarea>
-          </v-col>
-        </v-row>
-      </v-form>
+                />
+              </v-card-actions>
+            </v-card>
+          </v-menu>
+          <lhm-text-field
+            v-else
+            caption="Zählung am"
+            :text="formattedDateAsText"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <lhm-text-field
+            caption="Zähldauer"
+            :text="getZaehldauer"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <lhm-text-field
+            caption="Zählintervall"
+            :text="getZaehlintervall"
+          />
+        </v-col>
+        <v-spacer />
+      </v-row>
+      <v-row dense>
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <v-autocomplete
+            v-if="isZaehlungInstructed"
+            v-model="zaehlung.zaehlart"
+            :items="getZaehlarten"
+            label="Zählart"
+            required
+          />
+          <lhm-text-field
+            v-else
+            caption="Zählart"
+            :text="getZaehlart"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <lhm-text-field
+            caption="Quelle"
+            :text="getQuelle"
+          />
+        </v-col>
+        <v-col
+          cols="12"
+          md="4"
+        >
+          <v-autocomplete
+            v-model="zaehlung.wetter"
+            :items="getWetter"
+            label="Wetter"
+            :disabled="isZaehlungReadonly"
+          />
+        </v-col>
+      </v-row>
+      <v-row dense>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <v-textarea
+            v-model="zaehlung.kommentar"
+            label="Kommentar"
+            rows="2"
+            row-height="10"
+            counter="255"
+            maxlength="255"
+            disabled
+          />
+        </v-col>
+      </v-row>
+      <v-row dense>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <v-textarea
+            v-model="zaehlung.zaehlsituation"
+            label="Zählsituation"
+            rows="2"
+            row-height="10"
+            counter="255"
+            maxlength="255"
+            :disabled="isZaehlungReadonly"
+          />
+        </v-col>
+      </v-row>
+      <v-row dense>
+        <v-col
+          cols="12"
+          md="12"
+        >
+          <v-textarea
+            v-model="zaehlung.zaehlsituationErweitert"
+            label="erweiterte Zählsituation"
+            rows="2"
+            row-height="10"
+            counter="255"
+            maxlength="255"
+            :disabled="isZaehlungReadonly"
+          />
+        </v-col>
+      </v-row>
     </v-card-text>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import _, { cloneDeep } from "lodash";
-import { computed, onMounted, ref, watch } from "vue";
+import type KeyVal from "@/types/common/KeyVal";
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+
+import { computed, onMounted, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
-import { useZaehlungStore } from "@/store/ZaehlungStore";
-import KeyVal from "@/types/common/KeyVal";
 import { quelleText } from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import { wetterDropDown } from "@/types/enum/Wetter";
 import { zaehlartenDropDown, zaehlartText } from "@/types/enum/Zaehlart";
 import { zaehldauerText } from "@/types/enum/Zaehldauer";
-import ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import { useDateUtils } from "@/util/DateUtils";
 
 interface Props {
   height: string;
@@ -243,18 +221,14 @@ interface Props {
 
 defineProps<Props>();
 
-const emits = defineEmits<{
-  (e: "isValid", v: boolean): void;
-}>();
+const datepickerMenuModel = ref<boolean>(false);
+const datepickerModel = ref<Date>(new Date());
+
+const dateUtils = useDateUtils();
 
 onMounted(() => {
-  validZaehlung.value = false;
-  updateWorkingCopy();
+  resetDatum();
 });
-
-const date = ref<string>(new Date().toISOString().substr(0, 10));
-const datepickerMenu = ref<boolean>(false);
-const validZaehlung = ref<boolean>(false);
 
 const zaehlung = defineModel<ZaehlungDTO>({
   required: true,
@@ -288,8 +262,8 @@ const isZaehlungReadonly = computed<boolean>(() => {
   return ![Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
-const dateFormatted = computed<string | null>(() => {
-  return formatDate(date.value);
+const formattedDate = computed(() => {
+  return datepickerModel.value.toLocaleDateString();
 });
 
 const isZaehlungInstructed = computed<boolean>(() => {
@@ -297,74 +271,24 @@ const isZaehlungInstructed = computed<boolean>(() => {
 });
 
 const formattedDateAsText = computed<string>(() => {
-  if (!zaehlung.value.datum) {
-    return "";
-  }
-  const [year, month, day] = zaehlung.value.datum.split("-");
-  return `${day}.${month}.${year}`;
+  return dateUtils.formatDate(zaehlung.value.datum);
 });
 
 const getZaehlart = computed<string | undefined>(() => {
   return zaehlartText.get(zaehlung.value.zaehlart);
 });
 
-watch(
-  zaehlung,
-  () => {
-    updateWorkingCopy();
-  },
-  { immediate: true }
-);
-
-watch(
-  validZaehlung,
-  () => {
-    emits("isValid", validZaehlung.value);
-  },
-  { immediate: true }
-);
+function resetDatum(): void {
+  datepickerModel.value = dateUtils.getDatumOfString(zaehlung.value.datum);
+}
 
 function saveDate(): void {
-  datepickerMenu.value = false;
-  zaehlung.value.datum = formatDateForBackend();
-  updateZaehlungStoreWithZaehlung();
+  datepickerMenuModel.value = false;
+  zaehlung.value.datum = dateUtils.formatDateForBackend(datepickerModel.value);
 }
 
 function closeMenu(): void {
-  datepickerMenu.value = false;
+  datepickerMenuModel.value = false;
   resetDatum();
-}
-
-function updateWorkingCopy(): void {
-  updateZaehlungStoreWithZaehlung();
-  resetDatum();
-}
-
-function resetDatum(): void {
-  date.value = zaehlung.value.datum.substr(0, 10);
-}
-
-function updateZaehlungStoreWithZaehlung(): void {
-  zaehlungStore.setZaehlung(cloneDeep(zaehlung.value));
-}
-
-function formatDate(date: string): string | null {
-  if (!date) {
-    return null;
-  }
-  const [year, month, day] = date.split("-");
-  return `${day}.${month}.${year}`;
-}
-
-function formatDateForBackend(): string {
-  let time = new Date().toLocaleTimeString(navigator.language, {
-    hour: "2-digit",
-    minute: "2-digit",
-  });
-  return new Date(date.value + "T" + time).toISOString();
-}
-
-function getActualDate(): string {
-  return new Date().toISOString().substr(0, 10);
 }
 </script>
