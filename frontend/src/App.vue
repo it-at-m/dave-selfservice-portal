@@ -59,6 +59,7 @@ import VersionInfoService from "@/api/service/VersionInfoService";
 import TheSnackbar from "@/components/common/TheSnackbar.vue";
 import SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
 import VersionInfoResponse from "@/domain/VersionInfoResponse";
+import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useUserStore } from "@/store/UserStore";
 
 const URL_HANDBUCH_LINK = "";
@@ -71,17 +72,21 @@ const frontendVersion = ref<string>("");
 
 const userStore = useUserStore();
 const route = useRoute();
+const snackbarStore = useSnackbarStore();
 
 created();
 
 // Lifecycle hook
 function created() {
-  SsoUserInfoService.getUserInfo().then(
-    (ssoUserInfoResponse: SsoUserInfoResponse) => {
+  SsoUserInfoService.getUserInfo()
+    .then((ssoUserInfoResponse: SsoUserInfoResponse) => {
       userStore.setSsoUserInfoResponse(ssoUserInfoResponse);
       loggedInUser.value = userStore.getName;
-    }
-  );
+    })
+    .catch((error) => {
+      snackbarStore.showApiError(error);
+      return false;
+    });
   VersionInfoService.getFrontendInfo()
     .then((frontendInfoResponse: VersionInfoResponse) => {
       frontendVersion.value = frontendInfoResponse.application.version;
