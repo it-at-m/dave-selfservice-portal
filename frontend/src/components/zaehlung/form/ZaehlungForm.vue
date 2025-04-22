@@ -33,11 +33,10 @@
     >
       <!-- Inhalte -->
       <v-tabs-window-item :value="TAB_INFO">
-<!--        <allgemeine-info-form-->
-<!--          v-model="zaehlung"-->
-<!--          :height="contentHeight"-->
-<!--          @is-valid="setAllgemeineFormValid"-->
-<!--        />-->
+        <allgemeine-info-form
+          v-model="zaehlung"
+          :height="contentHeight"
+        />
       </v-tabs-window-item>
       <v-tabs-window-item :value="TAB_KNOTEN">
         <knoten-lage-form
@@ -60,6 +59,7 @@ import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { computed, ref, watch } from "vue";
 
+import AllgemeineInfoForm from "@/components/zaehlung/form/AllgemeineInfoForm.vue";
 import FahrzeugeForm from "@/components/zaehlung/form/FahrzeugeForm.vue";
 import KnotenLageForm from "@/components/zaehlung/form/KnotenLageForm.vue";
 import { useEventbusStore } from "@/store/EventbusStore";
@@ -68,10 +68,6 @@ import { useDaveUtils } from "@/util/DaveUtils";
 const zaehlung = defineModel<ZaehlungDTO>({
   required: true,
 });
-
-const emits = defineEmits<{
-  (e: "isValid", payload: boolean): void;
-}>();
 
 const daveUtils = useDaveUtils();
 const eventbus = useEventbusStore();
@@ -97,8 +93,4 @@ const contentHeight = computed(() => {
     daveUtils.cardactionHeight.value;
   return `${height}vh`;
 });
-
-function setAllgemeineFormValid(isPartValid: boolean) {
-  emits("isValid", isPartValid);
-}
 </script>
