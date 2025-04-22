@@ -1,46 +1,52 @@
 <template>
   <v-main class="dave-default">
-    <v-row dense>
-      <v-col
-        v-for="card in zaehlungCards"
-        :key="card.zaehlung.id"
-        :cols="card.flex"
-      >
-        <zaehlung-card
-          v-model="card.zaehlung"
-          @open-zaehlung-dialog="openZaehlungDialog"
-          @open-chat-dialog="openChatDialog"
-          @saved="reloadDataAndCloseDialog"
-        />
-      </v-col>
-      <v-banner
-        v-if="hasNoZaehlung"
-        lines="one"
-        width="100%"
-        text="Es liegen aktuell keine Zählungen zur Bearbeitung vor."
-      >
-        <template #prepend>
-          <v-icon
-            icon="mdi-alert-decagram-outline"
-            size="36"
-            color="error"
+    <v-sheet
+      class="overflow-y-auto overflow-x-hidden"
+      :height="contentHeight"
+      width="100%"
+    >
+      <v-row dense>
+        <v-col
+          v-for="card in zaehlungCards"
+          :key="card.zaehlung.id"
+          :cols="card.flex"
+        >
+          <zaehlung-card
+            v-model="card.zaehlung"
+            @open-zaehlung-dialog="openZaehlungDialog"
+            @open-chat-dialog="openChatDialog"
+            @saved="reloadDataAndCloseDialog"
           />
-        </template>
-      </v-banner>
-    </v-row>
+        </v-col>
+        <v-banner
+          v-if="hasNoZaehlung"
+          lines="one"
+          width="100%"
+          text="Es liegen aktuell keine Zählungen zur Bearbeitung vor."
+        >
+          <template #prepend>
+            <v-icon
+              icon="mdi-alert-decagram-outline"
+              size="36"
+              color="error"
+            />
+          </template>
+        </v-banner>
+      </v-row>
 
-    <zaehlung-dialog
-      v-model="zaehlung"
-      :show-dialog="showZaehlungDialog"
-      @saved="reloadDataAndCloseDialog"
-      @close-dialog="closeZaehlungDialog"
-    />
+      <zaehlung-dialog
+        v-model="zaehlung"
+        :show-dialog="showZaehlungDialog"
+        @saved="reloadDataAndCloseDialog"
+        @close-dialog="closeZaehlungDialog"
+      />
 
-    <chat-dialog
-      v-model="zaehlung"
-      :show-dialog="showChatDialog"
-      @close-dialog="closeChatDialog"
-    />
+      <chat-dialog
+        v-model="zaehlung"
+        :show-dialog="showChatDialog"
+        @close-dialog="closeChatDialog"
+      />
+    </v-sheet>
   </v-main>
 </template>
 
@@ -56,6 +62,7 @@ import ChatDialog from "@/components/chat/ChatDialog.vue";
 import ZaehlungCard from "@/components/zaehlung/ZaehlungCard.vue";
 import ZaehlungDialog from "@/components/zaehlung/ZaehlungDialog.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
+import { useDaveUtils } from "@/util/DaveUtils";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import ZaehlungCardObjectComparator from "@/util/ZaehlungCardObjectComparator";
 
@@ -69,6 +76,7 @@ const zaehlung = ref<ZaehlungDTO>(
   DefaultObjectCreator.createDefaultZaehlungDTO()
 );
 
+const daveUtils = useDaveUtils();
 const snackbarStore = useSnackbarStore();
 
 onMounted(() => {
@@ -77,6 +85,11 @@ onMounted(() => {
 });
 
 const hasNoZaehlung = computed<boolean>(() => isEmpty(zaehlungCards.value));
+
+const contentHeight = computed(() => {
+  const height = 100 - daveUtils.appBarHeight.value;
+  return `${height}vh`;
+});
 
 function loadZaehlungen(): void {
   zaehlungCards.value = [];
