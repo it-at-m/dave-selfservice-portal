@@ -1,17 +1,8 @@
 <template>
   <v-card
-    :loading="loading"
     class="mx-auto my-12"
     max-width="374"
   >
-    <template #loader>
-      <v-progress-linear
-        color="deep-purple"
-        height="10"
-        indeterminate
-      ></v-progress-linear>
-    </template>
-
     <zaehlung-card-map
       :lat-lng-zaehlstelle="coordsZaehlstelle"
       :lat-lng-zaehlung="coordsZaehlung"
@@ -28,6 +19,13 @@
       position="absolute"
       class="ml-2 mt-2"
       style="z-index: 400; cursor: default"
+    />
+
+    <v-progress-linear
+      v-if="loading"
+      color="deep-purple"
+      height="10"
+      indeterminate
     />
 
     <div
