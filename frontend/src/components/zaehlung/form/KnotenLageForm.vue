@@ -237,7 +237,7 @@ const fahrbeziehungHeader = [
     align: "center",
     sortable: false,
     value: "von",
-    lastFixed: "true",
+    lastFixed: true,
   },
   {
     title: "Nach",
