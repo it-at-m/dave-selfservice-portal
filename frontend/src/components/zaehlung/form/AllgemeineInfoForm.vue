@@ -161,7 +161,7 @@
             row-height="10"
             counter="255"
             maxlength="255"
-            disabled
+            readonly
           />
         </v-col>
       </v-row>
