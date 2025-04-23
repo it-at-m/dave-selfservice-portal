@@ -282,8 +282,7 @@ function getKnotenarmnummerOfCsv(csvData: Array<string>): number {
   const metaData: string = csvData[1];
   // MetaHeader vorhanden?
   const metaDataSplitted: Array<string> = metaData.split(SEPARATOR);
-  const armNummer: any = metaDataSplitted[3];
-  if (isNaN(armNummer)) {
+  if (isNaN(Number(metaDataSplitted[3]))) {
     return 0;
   }
   return parseInt(metaDataSplitted[3].trim());
@@ -353,13 +352,13 @@ function checkUploadedFiledata(
     // Prüfung ab Zeile 3 der CSV und für nicht leere Zeilen
     if (csvLineIndex > 2 && data.trim().length > 0) {
       const csvLineNumber: number = csvLineIndex + 1;
-      const splittedLine: Array<any> = data.split(SEPARATOR);
+      const splittedLine: Array<string> = data.split(SEPARATOR);
       if (splittedLine.length !== 9) {
         return `Je Zeile müssen 9 Spalten enthalten sein.`;
       }
 
       // Intervallnummer muss eine Zahl sein zwischen 1 und 96 (eingeschlossen) sein
-      if (isNaN(splittedLine[0].trim())) {
+      if (isNaN(Number(splittedLine[0].trim()))) {
         return `Die Intervallnummer in Zeile ${csvLineNumber} muss eine Zahl zwischen 1 und 96 (eingeschlossen) sein.`;
       } else {
         const nr: number = parseInt(splittedLine[0].trim());
@@ -415,9 +414,9 @@ function checkUploadedFiledata(
           columnIndex++
         ) {
           // Kreisverkehr: Ab Spalte 3 dürfen Zähldaten nur nicht negative Zahlen enthalten oder müssen leer sein.
-          const fieldValue: any = splittedLine[columnIndex].trim();
+          const fieldValue: string = splittedLine[columnIndex].trim();
           if (fieldValue.length >= 0) {
-            if (isNaN(fieldValue)) {
+            if (isNaN(Number(fieldValue))) {
               return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nur Nummern enthalten.\nWar: ${splittedLine}`;
             } else if (parseInt(toString(fieldValue)) < 0) {
               return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nicht negativ sein.\nWar: ${splittedLine}`;
@@ -428,7 +427,7 @@ function checkUploadedFiledata(
         for (const fieldValue of splittedLine) {
           // Kreuzung: Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
           if (fieldValue.trim().length >= 0) {
-            if (isNaN(fieldValue.trim())) {
+            if (isNaN(Number(fieldValue.trim()))) {
               return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nur Nummern enthalten.\nWar: ${splittedLine}`;
             } else if (parseInt(toString(fieldValue.trim())) < 0) {
               return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nicht negativ sein.\nWar: ${splittedLine}`;
