@@ -210,7 +210,7 @@ function loadMessages() {
     ChatMessageService.updateUnreadMessages(
       zaehlung.value.id,
       MOBILITAETSREFERAT_ID
-    ) .catch((error) => snackbarStore.showApiError(error));
+    ).catch((error) => snackbarStore.showApiError(error));
   } else {
     items.value = [];
   }
