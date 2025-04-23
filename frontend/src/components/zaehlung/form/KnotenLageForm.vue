@@ -233,14 +233,14 @@ const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
 
 const fahrbeziehungHeader = [
   {
-    text: "Von",
+    title: "Von",
     align: "center",
     sortable: false,
     value: "von",
-    divider: "true",
+    lastFixed: "true",
   },
   {
-    text: "Nach",
+    title: "Nach",
     align: "center",
     sortable: false,
     value: "nach",
