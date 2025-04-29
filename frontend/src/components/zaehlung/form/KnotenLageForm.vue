@@ -64,7 +64,7 @@
             <v-col
               v-if="isZaehlungEditable"
               cols="12"
-              md="1"
+              md="2"
             >
               <v-btn
                 text="Upload"
