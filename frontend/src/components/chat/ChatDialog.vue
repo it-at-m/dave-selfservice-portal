@@ -149,8 +149,8 @@
           rows="1"
           auto-grow
           single-line
-          @keyup.enter.exact.prevent="sendMessage"
-          @keyup.enter.shift.exact.prevent="addNewLine"
+          @keydown.enter.exact.prevent="sendMessage"
+          @keydown.enter.shift.exact.prevent="addNewLine"
         >
           <template #append-inner>
             <v-btn
@@ -283,6 +283,6 @@ function scrollToEnd() {
 }
 
 function addNewLine() {
-  message.value = `${message.value} \n`;
+  message.value = `${message.value}\n`;
 }
 </script>
