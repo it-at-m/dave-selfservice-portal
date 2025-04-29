@@ -145,6 +145,7 @@
 import type ChatMessageDTO from "@/types/chat/ChatMessageDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
+import { isEmpty, isNil } from "lodash";
 import { computed, ref, watch } from "vue";
 
 import ChatMessageService from "@/api/service/ChatMessageService";
@@ -217,6 +218,10 @@ function loadMessages() {
 }
 
 function sendMessage() {
+  if (isNil(message.value) || isEmpty(message.value.trim())) {
+    // Keine Nachricht senden, wenn kein Text eingegeben wurde
+    return;
+  }
   const messageDTO: ChatMessageDTO = {} as ChatMessageDTO;
   //Timestamp wird erst im Backend gesetzt (Zeitverzug ist unbedeutend)
   messageDTO.content = message.value;
