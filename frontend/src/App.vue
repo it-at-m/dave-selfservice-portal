@@ -17,7 +17,7 @@
             to="/"
             style="text-decoration: none"
           >
-            <v-toolbar-title class="black font-weight-medium">
+            <v-toolbar-title class="text-black font-weight-medium">
               <span class="font-weight-medium">DAVe</span>
               <span class="font-weight-thin"> | Selfserviceportal</span>
             </v-toolbar-title>
