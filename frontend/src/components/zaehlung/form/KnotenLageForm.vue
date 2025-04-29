@@ -162,6 +162,7 @@ import Status from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import FahrbeziehungComparator from "@/util/FahrbeziehungComparator";
+import KnotenarmComparator from "@/util/KnotenarmComparator";
 
 interface Props {
   height: string;
@@ -189,9 +190,10 @@ const resetFileInput = ref<number>(0);
 
 const files = ref<Array<File>>([]);
 
-const knotenarme = computed<Array<KnotenarmDTO>>(
-  () => zaehlung.value.knotenarme
-);
+const knotenarme = computed<Array<KnotenarmDTO>>(() => {
+  const knotenarme = zaehlung.value.knotenarme;
+  return knotenarme.sort(KnotenarmComparator.sortByNumber);
+});
 
 const kreisverkehrText = computed<string>(() =>
   zaehlung.value.kreisverkehr ? "Ja" : "Nein"
