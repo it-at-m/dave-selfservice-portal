@@ -1,35 +1,24 @@
 <template>
-    <v-tooltip bottom>
-        <template #activator="{ on, attrs }">
-            <v-icon
-                v-if="!small"
-                class="mr-1"
-                :color="color"
-                v-bind="attrs"
-                v-on="on"
-                >{{ icon }}
-            </v-icon>
-            <v-icon
-                v-if="small"
-                class="mr-1"
-                :color="color"
-                small
-                v-bind="attrs"
-                v-on="on"
-                >{{ icon }}
-            </v-icon>
-        </template>
-        <span>{{ tooltip }}</span>
-    </v-tooltip>
+  <v-icon
+    v-tooltip:bottom="tooltip"
+    class="mr-1"
+    :icon="icon"
+    :size="size"
+    :color="color"
+  />
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-
-@Component
-export default class TooltipWithIcon extends Vue {
-    @Prop({ default: false }) small?: boolean;
-    @Prop({ default: "black" }) color?: string;
-    @Prop() icon?: string;
-    @Prop() tooltip?: string;
+<script setup lang="ts">
+interface Props {
+  color?: string;
+  icon?: string;
+  tooltip?: string;
+  size?: string;
 }
+
+withDefaults(defineProps<Props>(), {
+  color: "black",
+  size: "default",
+  icon: undefined,
+  tooltip: undefined,
+});
 </script>

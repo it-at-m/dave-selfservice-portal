@@ -1,103 +1,107 @@
 import "@mdi/font/css/materialdesignicons.css";
-import Vue from "vue";
-import Vuetify, { colors } from "vuetify/lib";
 
-// Zaehldauer
-import Zaehldauer2x4h from "@/components/icons/ZaehldauerIcons/Zaehldauer2x4hIcon.vue";
-import Zaehldauer24h from "@/components/icons/ZaehldauerIcons/Zaehldauer24hIcon.vue";
-import Zaehldauer16h from "@/components/icons/ZaehldauerIcons/Zaehldauer16hIcon.vue";
-import Zaehldauer13h from "@/components/icons/ZaehldauerIcons/Zaehldauer13hIcon.vue";
-import ZaehldauerSoZ from "@/components/icons/ZaehldauerIcons/ZaehldauerSoZIcon.vue";
+import { createVuetify } from "vuetify";
+import colors from "vuetify/util/colors";
+
+import "@fontsource/roboto";
+import "vuetify/styles";
+
+import { mdi, aliases as mdiAliases } from "vuetify/iconsets/mdi";
+import { de } from "vuetify/locale";
 
 // Zaehlart
-import ArtN from "@/components/icons/ArtIcons/ArtN.vue";
-import ArtH from "@/components/icons/ArtIcons/ArtH.vue";
-import ArtQ from "@/components/icons/ArtIcons/ArtQ.vue";
-import ArtQB from "@/components/icons/ArtIcons/ArtQB.vue";
-import ArtQH from "@/components/icons/ArtIcons/ArtQH.vue";
-import ArtQI from "@/components/icons/ArtIcons/ArtQI.vue";
-import ArtQR from "@/components/icons/ArtIcons/ArtQR.vue";
-import ArtQS from "@/components/icons/ArtIcons/ArtQS.vue";
-import ArtQSt from "@/components/icons/ArtIcons/ArtQSt.vue";
-import ArtQT from "@/components/icons/ArtIcons/ArtQT.vue";
-import ArtR from "@/components/icons/ArtIcons/ArtR.vue";
-import ArtT from "@/components/icons/ArtIcons/ArtT.vue";
-import ArtTK from "@/components/icons/ArtIcons/ArtTK.vue";
-
-Vue.use(Vuetify);
+import artH from "@/components/icons/ArtIcons/ArtH.vue";
+import artN from "@/components/icons/ArtIcons/ArtN.vue";
+import artQ from "@/components/icons/ArtIcons/ArtQ.vue";
+import artQB from "@/components/icons/ArtIcons/ArtQB.vue";
+import artQH from "@/components/icons/ArtIcons/ArtQH.vue";
+import artQI from "@/components/icons/ArtIcons/ArtQI.vue";
+import artQR from "@/components/icons/ArtIcons/ArtQR.vue";
+import artQS from "@/components/icons/ArtIcons/ArtQS.vue";
+import artQSt from "@/components/icons/ArtIcons/ArtQSt.vue";
+import artQT from "@/components/icons/ArtIcons/ArtQT.vue";
+import artR from "@/components/icons/ArtIcons/ArtR.vue";
+import artT from "@/components/icons/ArtIcons/ArtT.vue";
+import artTK from "@/components/icons/ArtIcons/ArtTK.vue";
+// Zaehldauer
+import zaehldauer2x4h from "@/components/icons/ZaehldauerIcons/Zaehldauer2x4hIcon.vue";
+import zaehldauer13h from "@/components/icons/ZaehldauerIcons/Zaehldauer13hIcon.vue";
+import zaehldauer16h from "@/components/icons/ZaehldauerIcons/Zaehldauer16hIcon.vue";
+import zaehldauer24h from "@/components/icons/ZaehldauerIcons/Zaehldauer24hIcon.vue";
+import zaehldauerSoZ from "@/components/icons/ZaehldauerIcons/ZaehldauerSoZIcon.vue";
 
 const theme = {
-    themes: {
-        light: {
-            primary: colors.yellow.darken1,
-            secondary: colors.orange.darken2,
-            accent: colors.blue.darken4,
-            success: colors.green.lighten2,
-            error: colors.red.lighten2,
-        },
+  themes: {
+    light: {
+      colors: {
+        primary: colors.yellow.darken1,
+        secondary: colors.orange.darken2,
+        accent: colors.blue.darken4,
+        success: colors.green.lighten2,
+        error: colors.red.lighten2,
+      },
     },
+  },
 };
 
-export default new Vuetify({
-    theme: theme,
-    icons: {
-        values: {
-            // Zaehlart
-            artN: {
-                component: ArtN,
-            },
-            artH: {
-                component: ArtH,
-            },
-            artQ: {
-                component: ArtQ,
-            },
-            artQB: {
-                component: ArtQB,
-            },
-            artQH: {
-                component: ArtQH,
-            },
-            artQI: {
-                component: ArtQI,
-            },
-            artQR: {
-                component: ArtQR,
-            },
-            artQS: {
-                component: ArtQS,
-            },
-            artQSt: {
-                component: ArtQSt,
-            },
-            artQT: {
-                component: ArtQT,
-            },
-            artR: {
-                component: ArtR,
-            },
-            artT: {
-                component: ArtT,
-            },
-            artTK: {
-                component: ArtTK,
-            },
-            // Zaehldauer
-            zaehldauer2x4h: {
-                component: Zaehldauer2x4h,
-            },
-            zaehldauer24h: {
-                component: Zaehldauer24h,
-            },
-            zaehldauer16h: {
-                component: Zaehldauer16h,
-            },
-            zaehldauer13h: {
-                component: Zaehldauer13h,
-            },
-            zaehldauerSoZ: {
-                component: ZaehldauerSoZ,
-            },
-        },
+export default createVuetify({
+  theme: theme,
+  icons: {
+    defaultSet: "mdi",
+    sets: {
+      mdi,
     },
+    aliases: {
+      ...mdiAliases,
+      // Zaehldauer
+      zaehldauer2x4h,
+      zaehldauer24h,
+      zaehldauer16h,
+      zaehldauer13h,
+      zaehldauerSoZ,
+      // Zaehlart
+      artN,
+      artH,
+      artQ,
+      artQB,
+      artQH,
+      artQI,
+      artQR,
+      artQS,
+      artQSt,
+      artQT,
+      artR,
+      artT,
+      artTK,
+    },
+  },
+  locale: {
+    locale: "de",
+    messages: { de },
+  },
+  defaults: {
+    VSelect: {
+      itemColor: "primary",
+    },
+    VBtn: {
+      class: "text-none",
+      variant: "elevated",
+      density: "compact",
+    },
+    VTextarea: {
+      density: "compact",
+      variant: "outlined",
+    },
+    VTextField: {
+      density: "compact",
+      variant: "outlined",
+    },
+    VAutocomplete: {
+      density: "compact",
+      variant: "outlined",
+    },
+    VCheckbox: {
+      density: "compact",
+    },
+  },
 });
