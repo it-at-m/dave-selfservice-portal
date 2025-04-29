@@ -26,7 +26,10 @@
         </v-row>
       </v-card-title>
 
-      <v-card-text class="overflow-y-auto">
+      <v-card-text
+        id="chat-v-card-text"
+        class="overflow-y-auto"
+      >
         <v-container class="fill-height">
           <v-row
             class="fill-height pb-14"
@@ -206,7 +209,10 @@ function loadMessages() {
       .then((messageDTOs) => {
         items.value = messageDTOs;
       })
-      .catch((error) => snackbarStore.showApiError(error));
+      .catch((error) => snackbarStore.showApiError(error))
+      .finally(() => {
+        scrolltoEnd();
+      });
 
     ChatMessageService.updateUnreadMessages(
       zaehlung.value.id,
@@ -237,10 +243,20 @@ function sendMessage() {
       items.value.push(response);
       message.value = "";
     })
-    .catch((error) => snackbarStore.showApiError(error));
+    .catch((error) => snackbarStore.showApiError(error))
+    .finally(() => {
+      scrolltoEnd();
+    });
 }
 
 function closeDialog(): void {
   emits("closeDialog");
+}
+
+function scrolltoEnd() {
+  const elementById = document.getElementById("chat-v-card-text");
+  if (elementById) {
+    elementById.scrollTo(0, elementById.scrollHeight);
+  }
 }
 </script>
