@@ -481,6 +481,11 @@ function readFiles() {
           /\r\n|\n/
         );
         const knotenarmnummerOfCsv: number = getKnotenarmnummerOfCsv(csv);
+        if (knotenarmnummerOfCsv === 0) {
+          snackbarStore.showError(
+            `Die Datei ${myFile.name} konnte keinem Knotenarm zugeordnet werden. Metadaten prüfen`
+          );
+        }
         itemsProcessed++;
         zaehlung.value.knotenarme.forEach((zaehlungArm: KnotenarmDTO) => {
           if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
