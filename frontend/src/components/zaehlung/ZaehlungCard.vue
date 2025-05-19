@@ -12,14 +12,19 @@
     <v-btn
       v-tooltip:bottom="statusDesign.tooltip"
       :color="statusDesign.color"
-      :icon="statusDesign.iconPath"
+      icon
       :size="56"
       elevation="6"
       location="top start"
       position="absolute"
       class="ml-2 mt-2"
       style="z-index: 400; cursor: default"
-    />
+    >
+      <v-icon
+        :size="42"
+        :icon="statusDesign.iconPath"
+      />
+    </v-btn>
 
     <v-progress-linear
       v-if="loading"
