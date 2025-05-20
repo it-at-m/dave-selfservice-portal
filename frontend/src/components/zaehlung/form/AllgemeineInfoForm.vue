@@ -59,8 +59,7 @@
                   <v-date-picker
                     v-model="datepickerModel"
                     width="300"
-                    header=""
-                    title="Datum auswählen"
+                    hide-header
                     border
                     show-adjacent-months
                     color="primary"
