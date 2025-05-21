@@ -3,6 +3,7 @@ name: build maven and image
 on:
   push:
     branches: ["main-ng", "sprint", "main", "dev"]
+
   workflow_dispatch:
     inputs:
       tag:

@@ -44,7 +44,7 @@ export const statusIcon = new Map<string, IconOptions>([
     Status.CREATED,
     {
       iconPath: "mdi-calendar-edit",
-      color: "blue lighten-4",
+      color: "blue-lighten-4",
       tooltip: "Geplant",
     },
   ],
@@ -52,7 +52,7 @@ export const statusIcon = new Map<string, IconOptions>([
     Status.INSTRUCTED,
     {
       iconPath: "mdi-calendar-account",
-      color: "purple lighten-4",
+      color: "purple-lighten-4",
       tooltip: "Beauftragt",
     },
   ],
@@ -60,7 +60,7 @@ export const statusIcon = new Map<string, IconOptions>([
     Status.COUNTING,
     {
       iconPath: "mdi-calendar-search",
-      color: "amber lighten-4",
+      color: "amber-lighten-4",
       tooltip: "Wird durchgeführt",
     },
   ],
@@ -68,7 +68,7 @@ export const statusIcon = new Map<string, IconOptions>([
     Status.CORRECTION,
     {
       iconPath: "mdi-calendar-alert",
-      color: "red lighten-4",
+      color: "red-lighten-4",
       tooltip: "Korrektur",
     },
   ],
@@ -76,7 +76,7 @@ export const statusIcon = new Map<string, IconOptions>([
     Status.ACTIVE,
     {
       iconPath: "mdi-calendar-check",
-      color: "green lighten-4",
+      color: "green-lighten-4",
       tooltip: "Freigegeben",
     },
   ],
@@ -84,7 +84,7 @@ export const statusIcon = new Map<string, IconOptions>([
     Status.ACCOMPLISHED,
     {
       iconPath: "mdi-calendar-remove",
-      color: "grey lighten-4",
+      color: "grey-lighten-4",
       tooltip: "Abgeschlossen",
     },
   ],
