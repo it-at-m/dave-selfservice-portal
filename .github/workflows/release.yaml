@@ -6,11 +6,17 @@ on:
       releaseVersion:
         description: "Version to use when preparing a release (e.g., 1.2.3)"
         required: true
-        default: "2.0.0"
+        default: "2.1.0"
       developmentVersion:
         description: "Version to use for new local working copy (e.g., 1.2.4-SNAPSHOT)"
         required: true
-        default: "2.0.1-SNAPSHOT"
+        default: "2.2.0-SNAPSHOT"
+      use-pr:
+        description: "Use PR for version bump instead of direct push"
+        default: "true"
+
+env:
+  IMAGE_NAME: "dave-selfserviceportal"
 
 jobs:
   release-maven:
@@ -39,13 +45,13 @@ jobs:
       - uses: it-at-m/lhm_actions/action-templates/actions/action-build-image@b2b49a8b4344e3b5ac90dd1ee9a0c59860c41383 # v1.0.16
         with:
           path: .
-          image-name: "dave-backend"
+          image-name: ${{ env.IMAGE_NAME }}
           artifact-name: ${{ needs.release-maven.outputs.ARTIFACT_NAME }}
           registry-username: ${{ github.actor }}
           registry-password: ${{ secrets.GITHUB_TOKEN }}
           image-tags: |
             type=semver,pattern={{version}},value=${{ github.event.inputs.releaseVersion }}
-          labels: |
+          image-labels: |
             maintainer=it@m, Landeshauptstadt Muenchen (LHM)
 
   create-github-release:
