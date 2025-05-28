@@ -86,7 +86,6 @@ export default createVuetify({
     VBtn: {
       class: "text-none",
       variant: "elevated",
-      density: "compact",
     },
     VTextarea: {
       density: "compact",

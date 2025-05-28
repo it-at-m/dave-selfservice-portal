@@ -32,6 +32,7 @@
         <v-btn
           v-tooltip:bottom="'Anwenderhandbuch'"
           class="mr-3"
+          density="compact"
           icon="mdi-clippy"
           @click="navigateToHandbuch"
         />

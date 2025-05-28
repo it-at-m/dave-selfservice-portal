@@ -20,6 +20,7 @@
           <v-spacer />
           <v-btn
             icon="mdi-close"
+            density="compact"
             variant="text"
             @click="closeDialog"
           />
@@ -156,6 +157,7 @@
             <v-btn
               icon="mdi-send"
               variant="text"
+              density="compact"
               color="secondary"
               @click="sendMessage"
             />
