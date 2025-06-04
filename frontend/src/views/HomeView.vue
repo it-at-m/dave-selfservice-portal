@@ -9,7 +9,10 @@
         <v-col
           v-for="card in zaehlungCards"
           :key="card.zaehlung.id"
-          :cols="colums"
+          cols="12"
+          md="6"
+          lg="4"
+          xl="3"
         >
           <zaehlung-card
             v-model="card.zaehlung"
@@ -62,7 +65,6 @@ import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { cloneDeep, isEmpty } from "lodash";
 import { computed, onMounted, ref } from "vue";
-import { useDisplay } from "vuetify";
 
 import ZaehlungService from "@/api/service/ZaehlungService";
 import ChatDialog from "@/components/chat/ChatDialog.vue";
@@ -85,7 +87,6 @@ const zaehlung = ref<ZaehlungDTO>(
 
 const daveUtils = useDaveUtils();
 const snackbarStore = useSnackbarStore();
-const { smAndDown, mdAndDown, lgAndDown } = useDisplay();
 
 onMounted(() => {
   window.scrollTo(0, 0);
@@ -97,18 +98,6 @@ const hasNoZaehlung = computed<boolean>(() => isEmpty(zaehlungCards.value));
 const contentHeight = computed(() => {
   const height = 100 - daveUtils.appBarHeight.value;
   return `${height}vh`;
-});
-
-const colums = computed(() => {
-  let cols = 3;
-  if (smAndDown.value) {
-    cols = 12;
-  } else if (mdAndDown.value) {
-    cols = 6;
-  } else if (lgAndDown.value) {
-    cols = 4;
-  }
-  return cols;
 });
 
 function loadZaehlungen(): void {

@@ -8,8 +8,8 @@
     <v-card-text>
       <v-row dense>
         <v-col
-          cols="12"
-          md="4"
+          cols="6"
+          sm="4"
         >
           <lhm-text-field
             caption="Projektnummer"
@@ -17,8 +17,8 @@
           />
         </v-col>
         <v-col
-          cols="12"
-          md="4"
+          cols="6"
+          sm="4"
         >
           <lhm-text-field
             caption="Projektname"
@@ -26,8 +26,8 @@
           />
         </v-col>
         <v-col
-          cols="12"
-          md="4"
+          cols="6"
+          sm="4"
         >
           <lhm-text-field
             caption="Sonderzählung"
@@ -37,8 +37,8 @@
       </v-row>
       <v-row dense>
         <v-col
-          cols="12"
-          md="4"
+          cols="6"
+          sm="4"
         >
           <v-menu
             v-if="isZaehlungInstructed"
@@ -90,8 +90,8 @@
           />
         </v-col>
         <v-col
-          cols="12"
-          md="4"
+          cols="6"
+          sm="4"
         >
           <lhm-text-field
             caption="Zähldauer"
@@ -99,8 +99,8 @@
           />
         </v-col>
         <v-col
-          cols="12"
-          md="4"
+          cols="6"
+          sm="4"
         >
           <lhm-text-field
             caption="Zählintervall"
@@ -111,8 +111,8 @@
       </v-row>
       <v-row dense>
         <v-col
-          cols="12"
-          md="4"
+          cols="6"
+          sm="4"
         >
           <v-autocomplete
             v-if="isZaehlungInstructed"
@@ -128,8 +128,8 @@
           />
         </v-col>
         <v-col
-          cols="12"
-          md="4"
+          cols="6"
+          sm="4"
         >
           <lhm-text-field
             caption="Quelle"
@@ -137,8 +137,8 @@
           />
         </v-col>
         <v-col
-          cols="12"
-          md="4"
+          cols="6"
+          sm="4"
         >
           <v-autocomplete
             v-model="zaehlung.wetter"
@@ -149,10 +149,7 @@
         </v-col>
       </v-row>
       <v-row dense>
-        <v-col
-          cols="12"
-          md="12"
-        >
+        <v-col cols="12">
           <v-textarea
             v-model="zaehlung.kommentar"
             label="Kommentar"
@@ -165,10 +162,7 @@
         </v-col>
       </v-row>
       <v-row dense>
-        <v-col
-          cols="12"
-          md="12"
-        >
+        <v-col cols="12">
           <v-textarea
             v-model="zaehlung.zaehlsituation"
             label="Zählsituation"
@@ -181,10 +175,7 @@
         </v-col>
       </v-row>
       <v-row dense>
-        <v-col
-          cols="12"
-          md="12"
-        >
+        <v-col cols="12">
           <v-textarea
             v-model="zaehlung.zaehlsituationErweitert"
             label="erweiterte Zählsituation"

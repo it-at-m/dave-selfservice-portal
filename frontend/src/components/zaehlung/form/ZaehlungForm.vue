@@ -58,6 +58,7 @@
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { computed, ref, watch } from "vue";
+import { useDisplay } from "vuetify";
 
 import AllgemeineInfoForm from "@/components/zaehlung/form/AllgemeineInfoForm.vue";
 import FahrzeugeForm from "@/components/zaehlung/form/FahrzeugeForm.vue";
@@ -69,6 +70,7 @@ const zaehlung = defineModel<ZaehlungDTO>({
   required: true,
 });
 
+const { mobile, height } = useDisplay();
 const daveUtils = useDaveUtils();
 const eventbus = useEventbusStore();
 
@@ -86,11 +88,11 @@ watch(
 );
 
 const contentHeight = computed(() => {
-  const height =
-    daveUtils.pxToVh(800) -
+  const calculated =
+    daveUtils.pxToVh(mobile.value ? height.value : 800) -
     daveUtils.cardtitleHeight.value -
     daveUtils.tabHeight.value -
     daveUtils.cardactionHeight.value;
-  return `${height}vh`;
+  return `${calculated}vh`;
 });
 </script>
