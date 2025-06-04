@@ -2,8 +2,7 @@
   <v-dialog
     v-model="showDialog"
     persistent
-    max-width="70%"
-    height="800px"
+    :fullscreen="mobile"
   >
     <v-card
       width="100%"
@@ -47,6 +46,7 @@ import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { computed, watch } from "vue";
+import { useDisplay } from "vuetify";
 
 import { ApiError } from "@/api/error";
 import ZaehlungService from "@/api/service/ZaehlungService";
@@ -73,6 +73,7 @@ const zaehlung = defineModel<ZaehlungDTO>({
 
 const SEPARATOR = ";";
 
+const { mobile } = useDisplay();
 const eventbusStore = useEventbusStore();
 const snackbarStore = useSnackbarStore();
 
