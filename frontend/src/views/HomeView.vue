@@ -9,10 +9,12 @@
         <v-col
           v-for="card in zaehlungCards"
           :key="card.zaehlung.id"
-          :cols="card.flex"
+          :cols="colums"
         >
           <zaehlung-card
             v-model="card.zaehlung"
+            class="mx-auto my-12"
+            max-width="374"
             @open-zaehlung-dialog="openZaehlungDialog"
             @open-chat-dialog="openChatDialog"
             @saved="reloadDataAndCloseDialog"
@@ -56,6 +58,7 @@ import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { cloneDeep, isEmpty } from "lodash";
 import { computed, onMounted, ref } from "vue";
+import { useDisplay } from "vuetify";
 
 import ZaehlungService from "@/api/service/ZaehlungService";
 import ChatDialog from "@/components/chat/ChatDialog.vue";
@@ -78,6 +81,7 @@ const zaehlung = ref<ZaehlungDTO>(
 
 const daveUtils = useDaveUtils();
 const snackbarStore = useSnackbarStore();
+const { smAndDown, mdAndDown, lgAndDown } = useDisplay();
 
 onMounted(() => {
   window.scrollTo(0, 0);
@@ -91,12 +95,24 @@ const contentHeight = computed(() => {
   return `${height}vh`;
 });
 
+const colums = computed(() => {
+  let cols = 3;
+  if (smAndDown.value) {
+    cols = 12;
+  } else if (mdAndDown.value) {
+    cols = 6;
+  } else if (lgAndDown.value) {
+    cols = 4;
+  }
+  return cols;
+});
+
 function loadZaehlungen(): void {
   zaehlungCards.value = [];
   ZaehlungService.getAllRelevantZaehlungen()
     .then((zaehlungen: Array<ZaehlungDTO>) => {
       zaehlungen.forEach((zaehlung: ZaehlungDTO) => {
-        zaehlungCards.value.push({ flex: 3, zaehlung: zaehlung });
+        zaehlungCards.value.push({ zaehlung: zaehlung });
       });
       zaehlungCards.value.sort(ZaehlungCardObjectComparator.sortByDatumDesc);
     })
