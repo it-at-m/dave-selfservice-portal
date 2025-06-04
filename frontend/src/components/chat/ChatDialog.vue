@@ -2,6 +2,7 @@
   <v-dialog
     v-model="showDialogModel"
     persistent
+    :fullscreen="mobile"
     max-width="50%"
     height="600px"
   >
@@ -53,7 +54,7 @@
                   variant="elevated"
                   density="compact"
                   class="mr-2"
-                  width="30%"
+                  :width="itemWidth"
                 >
                   <template #title>
                     <span style="font-size: medium; font-weight: bold">{{
@@ -101,7 +102,7 @@
                   rounded
                   variant="elevated"
                   class="ml-2"
-                  width="30%"
+                  :width="itemWidth"
                 >
                   <template #title>
                     <span style="font-size: medium; font-weight: bold">{{
@@ -174,6 +175,7 @@ import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { isEmpty, isNil } from "lodash";
 import { computed, ref, watch } from "vue";
+import { useDisplay } from "vuetify/framework";
 
 import ChatMessageService from "@/api/service/ChatMessageService";
 import accountTieUrl from "@/assets/account-tie.png";
@@ -199,6 +201,8 @@ const MOBILITAETSREFERAT_ID = 2;
 
 const items = ref<Array<ChatMessageDTO>>([]);
 const message = ref("");
+
+const { mobile } = useDisplay();
 const snackbarStore = useSnackbarStore();
 const dateUtils = useDateUtils();
 
@@ -215,6 +219,10 @@ const showDialogModel = computed(() => {
 
 const dialogtitle = computed(() => {
   return `${zaehlung.value.projektName} - ${dateUtils.getShortVersionOfDate(zaehlung.value.datum)}`;
+});
+
+const itemWidth = computed(() => {
+  return mobile.value ? "90%" : "30%";
 });
 
 function getTitle(item: ChatMessageDTO) {
