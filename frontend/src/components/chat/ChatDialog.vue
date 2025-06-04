@@ -3,8 +3,6 @@
     v-model="showDialogModel"
     persistent
     :fullscreen="mobile"
-    max-width="50%"
-    height="600px"
   >
     <v-card
       width="100%"

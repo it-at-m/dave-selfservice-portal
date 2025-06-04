@@ -38,6 +38,8 @@
 
       <zaehlung-dialog
         v-model="zaehlung"
+        max-width="70%"
+        height="800px"
         :show-dialog="showZaehlungDialog"
         @saved="reloadDataAndCloseDialog"
         @close-dialog="closeZaehlungDialog"
@@ -45,6 +47,8 @@
 
       <chat-dialog
         v-model="zaehlung"
+        max-width="50%"
+        height="600px"
         :show-dialog="showChatDialog"
         @close-dialog="closeChatDialog"
       />
