@@ -91,6 +91,7 @@
             v-for="arm in knotenarme"
             :key="arm.id"
             dense
+            no-gutters
           >
             <v-col
               cols="12"
@@ -112,6 +113,7 @@
             >
               <v-text-field
                 v-model="arm.filename"
+                class="ml-5"
                 :style="getStyle(arm)"
                 single-line
                 readonly
@@ -123,7 +125,6 @@
             <v-spacer />
           </v-row>
         </v-col>
-        <v-spacer />
         <v-col
           cols="4"
           sm="2"
