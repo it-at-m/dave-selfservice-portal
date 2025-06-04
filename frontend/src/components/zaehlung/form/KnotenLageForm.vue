@@ -8,8 +8,8 @@
     <v-card-text>
       <v-row dense>
         <v-col
-          cols="12"
-          md="10"
+          cols="8"
+          sm="10"
         >
           <zaehlung-card-map
             height="200px"
@@ -21,8 +21,8 @@
           />
         </v-col>
         <v-col
-          cols="12"
-          md="2"
+          cols="4"
+          sm="2"
         >
           <zaehlung-geometrie
             id="geo"
@@ -36,8 +36,8 @@
       </v-row>
       <v-row dense>
         <v-col
-          cols="12"
-          md="10"
+          cols="8"
+          sm="10"
         >
           <v-row
             dense
@@ -45,7 +45,7 @@
           >
             <v-col
               cols="12"
-              md="2"
+              sm="2"
             >
               <lhm-text-field
                 caption="Kreisverkehr"
@@ -54,7 +54,7 @@
             </v-col>
             <v-col
               cols="12"
-              md="8"
+              sm="8"
             >
               <lhm-text-field
                 caption="Kreuzungsname"
@@ -64,7 +64,7 @@
             <v-col
               v-if="isZaehlungEditable"
               cols="12"
-              md="2"
+              sm="2"
             >
               <v-btn
                 text="Upload"
@@ -94,7 +94,7 @@
           >
             <v-col
               cols="12"
-              md="6"
+              sm="6"
             >
               <v-text-field
                 :value="arm.strassenname"
@@ -108,7 +108,7 @@
 
             <v-col
               cols="12"
-              md="5"
+              sm="5"
             >
               <v-text-field
                 v-model="arm.filename"
@@ -125,8 +125,8 @@
         </v-col>
         <v-spacer />
         <v-col
-          cols="12"
-          md="2"
+          cols="4"
+          sm="2"
         >
           <v-data-table
             v-if="isNotKreisverkehr"
