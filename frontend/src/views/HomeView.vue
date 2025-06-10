@@ -9,10 +9,15 @@
         <v-col
           v-for="card in zaehlungCards"
           :key="card.zaehlung.id"
-          :cols="card.flex"
+          cols="12"
+          md="6"
+          lg="4"
+          xl="3"
         >
           <zaehlung-card
             v-model="card.zaehlung"
+            class="mx-auto my-12"
+            max-width="374"
             @open-zaehlung-dialog="openZaehlungDialog"
             @open-chat-dialog="openChatDialog"
             @saved="reloadDataAndCloseDialog"
@@ -36,6 +41,8 @@
 
       <zaehlung-dialog
         v-model="zaehlung"
+        max-width="70%"
+        height="800px"
         :show-dialog="showZaehlungDialog"
         @saved="reloadDataAndCloseDialog"
         @close-dialog="closeZaehlungDialog"
@@ -43,6 +50,8 @@
 
       <chat-dialog
         v-model="zaehlung"
+        max-width="50%"
+        height="600px"
         :show-dialog="showChatDialog"
         @close-dialog="closeChatDialog"
       />
@@ -96,7 +105,7 @@ function loadZaehlungen(): void {
   ZaehlungService.getAllRelevantZaehlungen()
     .then((zaehlungen: Array<ZaehlungDTO>) => {
       zaehlungen.forEach((zaehlung: ZaehlungDTO) => {
-        zaehlungCards.value.push({ flex: 3, zaehlung: zaehlung });
+        zaehlungCards.value.push({ zaehlung: zaehlung });
       });
       zaehlungCards.value.sort(ZaehlungCardObjectComparator.sortByDatumDesc);
     })

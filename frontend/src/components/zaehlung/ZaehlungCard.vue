@@ -1,8 +1,5 @@
 <template>
-  <v-card
-    class="mx-auto my-12"
-    max-width="374"
-  >
+  <v-card>
     <zaehlung-card-map
       :lat-lng-zaehlstelle="coordsZaehlstelle"
       :lat-lng-zaehlung="coordsZaehlung"
@@ -38,10 +35,7 @@
       @click="openZaehlungDialog"
     >
       <v-row>
-        <v-col
-          cols="12"
-          md="8"
-        >
+        <v-col cols="8">
           <v-card-title>{{ zaehlung.projektName }}</v-card-title>
           <v-card-subtitle>
             <span>Zählstellennummer: {{ zaehlung.zaehlstelleNummer }}</span>
@@ -49,10 +43,7 @@
             <span>{{ datum }}</span>
           </v-card-subtitle>
         </v-col>
-        <v-col
-          cols="12"
-          md="4"
-        >
+        <v-col cols="4">
           <v-card-title>
             <zaehlung-geometrie
               v-model="zaehlung.knotenarme"
@@ -72,40 +63,28 @@
           no-gutters
         >
           <v-spacer />
-          <v-col
-            cols="12"
-            md="1"
-          >
+          <v-col cols="1">
             <zaehlart-icon
               :zaehlart="zaehlung.zaehlart"
               :color="ICON_COLOR"
             ></zaehlart-icon>
           </v-col>
           <v-spacer />
-          <v-col
-            cols="12"
-            md="1"
-          >
+          <v-col cols="1">
             <wetter-icon
               :wetter="zaehlung.wetter"
               :color="ICON_COLOR"
             ></wetter-icon>
           </v-col>
           <v-spacer />
-          <v-col
-            cols="12"
-            md="1"
-          >
+          <v-col cols="1">
             <zaehldauer-icon
               :zaehldauer="zaehlung.zaehldauer"
               :color="ICON_COLOR"
             ></zaehldauer-icon>
           </v-col>
           <v-spacer />
-          <v-col
-            cols="12"
-            md="1"
-          >
+          <v-col cols="1">
             <quelle-icon
               :quelle="zaehlung.quelle"
               :color="ICON_COLOR"

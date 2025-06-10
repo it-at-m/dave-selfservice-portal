@@ -6,8 +6,14 @@
     class="overflow-y-auto"
   >
     <v-card-text>
-      <v-row dense>
-        <v-col>
+      <v-row
+        dense
+        no-gutters
+      >
+        <v-col
+          cols="12"
+          sm="6"
+        >
           <v-checkbox
             v-model="pkw"
             label="Personenkraftwagen (Pkw)"
@@ -38,7 +44,10 @@
             readonly
           />
         </v-col>
-        <v-col>
+        <v-col
+          cols="12"
+          sm="6"
+        >
           <v-checkbox
             v-model="krad"
             label="Krafträder (Krad)"
