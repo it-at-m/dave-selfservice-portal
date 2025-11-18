@@ -176,6 +176,7 @@
 </template>
 
 <script setup lang="ts">
+import type FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
 import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
@@ -268,17 +269,37 @@ const statusDesign = computed(() => {
 });
 
 const showButtonKorrektur = computed<boolean>(() => {
-  return hasUploadedFile.value && zaehlung.value.status === Status.CORRECTION;
+  return hasUploadedData.value && zaehlung.value.status === Status.CORRECTION;
 });
 
 const showButtonAbschliessen = computed<boolean>(() => {
-  // Wenn alle Knotenarme einen Filename beinhalten, darf man diesen Button sehen
-  return hasUploadedFile.value && zaehlung.value.status === Status.COUNTING;
+  return hasUploadedData.value && zaehlung.value.status === Status.COUNTING;
 });
 
-const hasUploadedFile = computed<boolean>(() => {
+// Liefert nur die Knotenarme zurueck, die ausgehenden Verkehr haben
+const knotenarmeWithOutgoingTraffic = computed<Array<KnotenarmDTO>>(() => {
+  const outgoingKnotenarme = zaehlung.value.fahrbeziehungen.map(
+    (fahrbeziehung: FahrbeziehungDTO) => {
+      if (zaehlung.value.kreisverkehr) {
+        return fahrbeziehung.knotenarm;
+      } else {
+        return fahrbeziehung.von;
+      }
+    }
+  );
+  return zaehlung.value.knotenarme.filter((arm: KnotenarmDTO) => {
+    return (
+      !isNil(arm) &&
+      !isNil(outgoingKnotenarme) &&
+      outgoingKnotenarme.includes(arm.nummer)
+    );
+  });
+});
+
+const hasUploadedData = computed<boolean>(() => {
+  // Jeder Knotenarm mit ausgehendem Verkehr braucht eine Datei mit den Zaehldaten
   return isEmpty(
-    zaehlung.value.knotenarme.filter((arm: KnotenarmDTO) => {
+    knotenarmeWithOutgoingTraffic.value.filter((arm: KnotenarmDTO) => {
       return (
         !isNil(arm) && (isNil(arm.filename) || isEmpty(arm.filename.trim()))
       );
@@ -294,7 +315,7 @@ function createLatLngFromString(lat: string, lng: string): LatLng {
 function zaehlungAbschliessen(): void {
   loading.value = true;
   // Wenn alle Knotenarme einen Filename beinhalten, darf man diesen Button drücken
-  if (hasUploadedFile.value) {
+  if (hasUploadedData.value) {
     const updateZaehlung: UpdateStatusDTO = {} as UpdateStatusDTO;
     updateZaehlung.zaehlungId = zaehlung.value.id;
     updateZaehlung.status = Status.ACCOMPLISHED;
@@ -316,7 +337,7 @@ function zaehlungAbschliessen(): void {
 
 function zaehlungKorrigieren(): void {
   loading.value = true;
-  if (hasUploadedFile.value) {
+  if (hasUploadedData.value) {
     const updateZaehlung: UpdateStatusDTO = {} as UpdateStatusDTO;
     updateZaehlung.zaehlungId = zaehlung.value.id;
     updateZaehlung.status = Status.ACCOMPLISHED;
