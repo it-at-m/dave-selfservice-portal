@@ -278,7 +278,7 @@ const showButtonAbschliessen = computed<boolean>(() => {
 
 // Liefert nur die Knotenarme zurueck, die ausgehenden Verkehr haben
 const knotenarmeWithOutgoingTraffic = computed<Array<KnotenarmDTO>>(() => {
-  const outgoingKnotenarme = zaehlung.value.fahrbeziehungen.map(
+  const outgoingKnotenarmnummern = zaehlung.value.fahrbeziehungen.map(
     (fahrbeziehung: FahrbeziehungDTO) => {
       if (zaehlung.value.kreisverkehr) {
         return fahrbeziehung.knotenarm;
@@ -288,11 +288,7 @@ const knotenarmeWithOutgoingTraffic = computed<Array<KnotenarmDTO>>(() => {
     }
   );
   return zaehlung.value.knotenarme.filter((arm: KnotenarmDTO) => {
-    return (
-      !isNil(arm) &&
-      !isNil(outgoingKnotenarme) &&
-      outgoingKnotenarme.includes(arm.nummer)
-    );
+    return !isNil(arm) && outgoingKnotenarmnummern.includes(arm.nummer);
   });
 });
 
