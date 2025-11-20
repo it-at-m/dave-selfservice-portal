@@ -343,26 +343,77 @@ function openZaehlungDialog() {
 function downloadDummyCsv(): void {
   // Beispiel: 62301Q_20210423_Knotenarm2.csv
   const zaehlstelleNummer: string = zaehlung.value.zaehlstelleNummer;
-  const zaehlart: string =
+  const zaehlartForFileContent: string =
     zaehlung.value.zaehlart === Zaehlart.N ? "" : zaehlung.value.zaehlart;
-  const filename = `${zaehlstelleNummer}${zaehlart}_${zaehlung.value.datum.replace(
+  const filename = `${zaehlstelleNummer}${zaehlartForFileContent}_${zaehlung.value.datum.replace(
     "-",
     ""
   )}_Knotenarm_X.csv`;
 
-  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
-  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlung.value.datum};<von-Knotenarmnr>;;;;;\n`;
-  const zaehlungHeader = "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
+  let csvFileContent: string;
+  if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+    csvFileContent = getCsvContentForZaehlartFjs(
+      zaehlstelleNummer,
+      zaehlartForFileContent,
+      zaehlung.value.datum
+    );
+  } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
+    csvFileContent = getCsvContentForZaehlartQu(
+      zaehlstelleNummer,
+      zaehlartForFileContent,
+      zaehlung.value.datum
+    );
+  } else {
+    csvFileContent = getCsvContentForAllZaehlartenExceptFjsAndQu(
+      zaehlstelleNummer,
+      zaehlartForFileContent,
+      zaehlung.value.datum
+    );
+  }
 
-  const csvContent =
-    "data:text/csv;charset=utf-8," + metaHeader + metaData + zaehlungHeader;
-  const encodedUri = encodeURI(csvContent);
+  const csvContentWithFileMetadata =
+    "data:text/csv;charset=utf-8," + csvFileContent;
+
+  const encodedUri = encodeURI(csvContentWithFileMetadata);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
   link.setAttribute("download", filename);
   document.body.appendChild(link); // Required for FF
 
   link.click();
+}
+
+function getCsvContentForAllZaehlartenExceptFjsAndQu(
+  zaehlstelleNummer: string,
+  zaehlart: string,
+  zaehlungDatum: string
+): string {
+  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
+  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<von-Knotenarmnr>;;;;;\n`;
+  const zaehlungHeader = "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
+  return metaHeader + metaData + zaehlungHeader;
+}
+
+function getCsvContentForZaehlartFjs(
+  zaehlstelleNummer: string,
+  zaehlart: string,
+  zaehlungDatum: string
+): string {
+  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
+  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<von-Knotenarmnr>;;;;;\n`;
+  const zaehlungHeader = "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
+  return metaHeader + metaData + zaehlungHeader;
+}
+
+function getCsvContentForZaehlartQu(
+  zaehlstelleNummer: string,
+  zaehlart: string,
+  zaehlungDatum: string
+): string {
+  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
+  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<von-Knotenarmnr>;;;;;\n`;
+  const zaehlungHeader = "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
+  return metaHeader + metaData + zaehlungHeader;
 }
 
 function openChatDialog() {
