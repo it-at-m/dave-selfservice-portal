@@ -350,27 +350,11 @@ function downloadDummyCsv(): void {
     ""
   )}_Knotenarm_X.csv`;
 
-  let csvFileContent: string;
-  if (zaehlung.value.zaehlart === Zaehlart.FJS) {
-    csvFileContent = getCsvContentForZaehlartFjs(
-      zaehlstelleNummer,
-      zaehlartForFileContent,
-      zaehlung.value.datum
-    );
-  } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
-    csvFileContent = getCsvContentForZaehlartQu(
-      zaehlstelleNummer,
-      zaehlartForFileContent,
-      zaehlung.value.datum
-    );
-  } else {
-    csvFileContent = getCsvContentForAllZaehlartenExceptFjsAndQu(
-      zaehlstelleNummer,
-      zaehlartForFileContent,
-      zaehlung.value.datum
-    );
-  }
-
+  const csvFileContent = getCsvContentForAllZaehlarten(
+    zaehlstelleNummer,
+    zaehlartForFileContent,
+    zaehlung.value.datum
+  );
   const csvContentWithFileMetadata =
     "data:text/csv;charset=utf-8," + csvFileContent;
 
@@ -383,36 +367,15 @@ function downloadDummyCsv(): void {
   link.click();
 }
 
-function getCsvContentForAllZaehlartenExceptFjsAndQu(
+function getCsvContentForAllZaehlarten(
   zaehlstelleNummer: string,
   zaehlart: string,
   zaehlungDatum: string
 ): string {
   const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
   const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<von-Knotenarmnr>;;;;;\n`;
-  const zaehlungHeader = "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
-  return metaHeader + metaData + zaehlungHeader;
-}
-
-function getCsvContentForZaehlartFjs(
-  zaehlstelleNummer: string,
-  zaehlart: string,
-  zaehlungDatum: string
-): string {
-  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
-  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<von-Knotenarmnr>;;;;;\n`;
-  const zaehlungHeader = "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
-  return metaHeader + metaData + zaehlungHeader;
-}
-
-function getCsvContentForZaehlartQu(
-  zaehlstelleNummer: string,
-  zaehlart: string,
-  zaehlungDatum: string
-): string {
-  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
-  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<von-Knotenarmnr>;;;;;\n`;
-  const zaehlungHeader = "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
+  const zaehlungHeader =
+    "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
   return metaHeader + metaData + zaehlungHeader;
 }
 
