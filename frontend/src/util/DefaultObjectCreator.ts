@@ -1,3 +1,6 @@
+import type ConfigurationDTO from "@/types/configuration/ConfigurationDTO";
+import type MapConfigurationDTO from "@/types/configuration/MapConfigurationDTO";
+import type ZaehlstelleConfigurationDTO from "@/types/configuration/ZaehlstelleConfigurationDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
@@ -27,5 +30,27 @@ export default class DefaultObjectCreator {
     zaehlung.kreisverkehr = false;
     zaehlung.sonderzaehlung = false;
     return zaehlung;
+  }
+
+  public static createDefaultConfigurationDTO(): ConfigurationDTO {
+    return {
+      map: this.createDefaultMapConfigurationDTO(),
+      zaehlstelle: this.createDefaultZaehlstelleConfigurationDTO(),
+    };
+  }
+
+  public static createDefaultZaehlstelleConfigurationDTO(): ZaehlstelleConfigurationDTO {
+    return {
+      automaticNumberAssignment: true,
+    };
+  }
+
+  public static createDefaultMapConfigurationDTO(): MapConfigurationDTO {
+    return {
+      // München Zentrum
+      lat: "48.137227",
+      lng: "11.575517",
+      zoom: 12,
+    };
   }
 }

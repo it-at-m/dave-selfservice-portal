@@ -52,14 +52,18 @@
 </template>
 
 <script setup lang="ts">
+import type ConfigurationDTO from "@/types/configuration/ConfigurationDTO";
+
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
+import ConfigurationService from "@/api/service/ConfigurationService";
 import SsoUserInfoService from "@/api/service/SsoUserInfoService";
 import VersionInfoService from "@/api/service/VersionInfoService";
 import TheSnackbar from "@/components/common/TheSnackbar.vue";
 import SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
 import VersionInfoResponse from "@/domain/VersionInfoResponse";
+import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useUserStore } from "@/store/UserStore";
 
@@ -74,6 +78,7 @@ const frontendVersion = ref<string>("");
 const userStore = useUserStore();
 const route = useRoute();
 const snackbarStore = useSnackbarStore();
+const configurationStore = useConfigurationStore();
 
 created();
 
@@ -102,6 +107,11 @@ function created() {
     .catch(() => {
       backendVersion.value = "error";
     });
+  ConfigurationService.getConfiguration().then(
+    (configuration: ConfigurationDTO) => {
+      configurationStore.setConfiguration(configuration);
+    }
+  );
 }
 
 function navigateToHandbuch() {

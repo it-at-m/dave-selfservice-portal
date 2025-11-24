@@ -161,6 +161,16 @@
         <v-list density="compact">
           <v-list-item density="compact">
             <v-btn
+              v-tooltip:end="'Link zur Dokumentation der CSV-Datei'"
+              class="ml-2 mr-2"
+              icon="mdi-information-box"
+              variant="text"
+              color="secondary"
+              @click="openCsvDokumentation"
+            />
+          </v-list-item>
+          <v-list-item density="compact">
+            <v-btn
               v-tooltip:end="'CSV-Muster herunterladen'"
               class="ml-2 mr-2"
               icon="mdi-download"
@@ -194,6 +204,7 @@ import ZaehlartIcon from "@/components/icons/ZaehlartIcon.vue";
 import ZaehldauerIcon from "@/components/icons/ZaehldauerIcon.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
+import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Status, { statusIcon } from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
@@ -216,6 +227,7 @@ const ICON_COLOR = "black";
 const loading = ref<boolean>(false);
 
 const snackbarStore = useSnackbarStore();
+const configurationStore = useConfigurationStore();
 const dateUtils = useDateUtils();
 
 const coordsZaehlstelle = computed<LatLng>(() => {
@@ -382,5 +394,9 @@ function getCsvContentForAllZaehlarten(
 function openChatDialog() {
   zaehlung.value.unreadMessagesDienstleister = false;
   emits("openChatDialog", zaehlung.value);
+}
+
+function openCsvDokumentation(): void {
+  window.open(configurationStore.getZaehlstelleConfiguration);
 }
 </script>
