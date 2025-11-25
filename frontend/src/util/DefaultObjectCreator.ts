@@ -42,6 +42,7 @@ export default class DefaultObjectCreator {
   public static createDefaultZaehlstelleConfigurationDTO(): ZaehlstelleConfigurationDTO {
     return {
       automaticNumberAssignment: true,
+      linkDocumentationCsvFileForUploadZaehlung: "",
     };
   }
 
