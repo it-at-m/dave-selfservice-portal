@@ -163,7 +163,7 @@
             <v-btn
               v-tooltip:end="'Link zur Dokumentation der CSV-Datei'"
               class="ml-2 mr-2"
-              icon="mdi-information-box"
+              icon="mdi-information"
               variant="text"
               color="secondary"
               @click="openCsvDokumentation"
@@ -397,6 +397,11 @@ function openChatDialog() {
 }
 
 function openCsvDokumentation(): void {
-  window.open(configurationStore.getZaehlstelleConfiguration);
+  const linkCsvFile =
+    configurationStore.getZaehlstelleConfiguration
+      .linkDocumentationCsvFileForUploadZaehlung;
+  if (!isEmpty(linkCsvFile)) {
+    window.open(linkCsvFile);
+  }
 }
 </script>
