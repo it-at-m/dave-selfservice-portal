@@ -384,13 +384,8 @@ function getCsvContentForAllZaehlarten(
   zaehlart: string,
   zaehlungDatum: string
 ): string {
-  const placeHolderKnotenarm =
-    zaehlart.toUpperCase() === Zaehlart.FJS.toUpperCase() ||
-    zaehlart.toUpperCase() === Zaehlart.QU.toUpperCase()
-      ? ""
-      : "<von-Knotenarmnr>";
   const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
-  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};${placeHolderKnotenarm};;;;;\n`;
+  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<von-Knotenarmnr>;;;;;\n`;
   const zaehlungHeader =
     "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
   return metaHeader + metaData + zaehlungHeader;
