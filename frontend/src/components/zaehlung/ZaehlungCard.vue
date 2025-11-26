@@ -385,7 +385,7 @@ function getCsvContentForAllZaehlarten(
   zaehlungDatum: string
 ): string {
   const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
-  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<von-Knotenarmnr>;;;;;\n`;
+  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<knotenarmnummer>;;;;;\n`;
   const zaehlungHeader =
     "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
   return metaHeader + metaData + zaehlungHeader;
