@@ -23,6 +23,12 @@ enum Zaehlart {
   QR = "QR",
   // Radverkehrszählung
   R = "R",
+  // Querschnitt je Straßenseite
+  QJS = "QJS",
+  // Fuß & Rad je Straßenseite
+  FJS = "FJS",
+  // Querung
+  QU = "QU",
   // Tunnel / Unterführung / Tief
   T = "T",
   // Teilknoten
@@ -43,6 +49,9 @@ export const zaehlartText = new Map<string, string>([
   [Zaehlart.QT, "Querschnitt Tunnel/Unterführung/Tief"],
   [Zaehlart.QR, "Querschnitt Radverkehr"],
   [Zaehlart.R, "Radverkehrszählung"],
+  [Zaehlart.QJS, "Querschnitt je Straßenseite"],
+  [Zaehlart.FJS, "Fußverkehr/Radverkehr je Straßenseite"],
+  [Zaehlart.QU, "Querung"],
   [Zaehlart.T, "Tunnel / Unterführung / Tief"],
   [Zaehlart.TK, "Teilknoten"],
 ]);
@@ -59,6 +68,9 @@ export const zaehlartenDropDown = new Array<KeyVal>(
   { value: Zaehlart.QT, title: zaehlartText.get(Zaehlart.QT)! },
   { value: Zaehlart.QR, title: zaehlartText.get(Zaehlart.QR)! },
   { value: Zaehlart.R, title: zaehlartText.get(Zaehlart.R)! },
+  { value: Zaehlart.QJS, title: zaehlartText.get(Zaehlart.QJS)! },
+  { value: Zaehlart.FJS, title: zaehlartText.get(Zaehlart.FJS)! },
+  { value: Zaehlart.QU, title: zaehlartText.get(Zaehlart.QU)! },
   { value: Zaehlart.T, title: zaehlartText.get(Zaehlart.T)! },
   { value: Zaehlart.TK, title: zaehlartText.get(Zaehlart.TK)! }
 );
