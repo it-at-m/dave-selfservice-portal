@@ -161,6 +161,16 @@
         <v-list density="compact">
           <v-list-item density="compact">
             <v-btn
+              v-tooltip:end="'Link zur Dokumentation der CSV-Datei'"
+              class="ml-2 mr-2"
+              icon="mdi-information"
+              variant="text"
+              color="secondary"
+              @click="openCsvDokumentation"
+            />
+          </v-list-item>
+          <v-list-item density="compact">
+            <v-btn
               v-tooltip:end="'CSV-Muster herunterladen'"
               class="ml-2 mr-2"
               icon="mdi-download"
@@ -194,6 +204,7 @@ import ZaehlartIcon from "@/components/icons/ZaehlartIcon.vue";
 import ZaehldauerIcon from "@/components/icons/ZaehldauerIcon.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
+import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Status, { statusIcon } from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
@@ -216,6 +227,7 @@ const ICON_COLOR = "black";
 const loading = ref<boolean>(false);
 
 const snackbarStore = useSnackbarStore();
+const configurationStore = useConfigurationStore();
 const dateUtils = useDateUtils();
 
 const coordsZaehlstelle = computed<LatLng>(() => {
@@ -343,20 +355,22 @@ function openZaehlungDialog() {
 function downloadDummyCsv(): void {
   // Beispiel: 62301Q_20210423_Knotenarm2.csv
   const zaehlstelleNummer: string = zaehlung.value.zaehlstelleNummer;
-  const zaehlart: string =
+  const zaehlartForFileContent: string =
     zaehlung.value.zaehlart === Zaehlart.N ? "" : zaehlung.value.zaehlart;
-  const filename = `${zaehlstelleNummer}${zaehlart}_${zaehlung.value.datum.replace(
+  const filename = `${zaehlstelleNummer}${zaehlartForFileContent}_${zaehlung.value.datum.replace(
     "-",
     ""
   )}_Knotenarm_X.csv`;
 
-  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
-  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlung.value.datum};<von-Knotenarmnr>;;;;;\n`;
-  const zaehlungHeader = "Intervallnummer;nach;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
+  const csvFileContent = getCsvContentForAllZaehlarten(
+    zaehlstelleNummer,
+    zaehlartForFileContent,
+    zaehlung.value.datum
+  );
+  const csvContentWithFileMetadata =
+    "data:text/csv;charset=utf-8," + csvFileContent;
 
-  const csvContent =
-    "data:text/csv;charset=utf-8," + metaHeader + metaData + zaehlungHeader;
-  const encodedUri = encodeURI(csvContent);
+  const encodedUri = encodeURI(csvContentWithFileMetadata);
   const link = document.createElement("a");
   link.setAttribute("href", encodedUri);
   link.setAttribute("download", filename);
@@ -365,8 +379,29 @@ function downloadDummyCsv(): void {
   link.click();
 }
 
+function getCsvContentForAllZaehlarten(
+  zaehlstelleNummer: string,
+  zaehlart: string,
+  zaehlungDatum: string
+): string {
+  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
+  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<knotenarmnummer>;;;;;\n`;
+  const zaehlungHeader =
+    "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
+  return metaHeader + metaData + zaehlungHeader;
+}
+
 function openChatDialog() {
   zaehlung.value.unreadMessagesDienstleister = false;
   emits("openChatDialog", zaehlung.value);
+}
+
+function openCsvDokumentation(): void {
+  const linkCsvFile =
+    configurationStore.getZaehlstelleConfiguration
+      .linkDocumentationCsvFileForUploadZaehlung;
+  if (!isEmpty(linkCsvFile)) {
+    window.open(linkCsvFile);
+  }
 }
 </script>
