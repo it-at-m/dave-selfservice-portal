@@ -4,7 +4,7 @@
 
     <groupId>de.muenchen.dave.frontend</groupId>
     <artifactId>dave-selfserviceportal-frontend</artifactId>
-    <version>2.1.2-SNAPSHOT</version>
+    <version>3.0.0</version>
     <packaging>jar</packaging>
     <name>dave_selfserviceportal_frontend</name>
 
