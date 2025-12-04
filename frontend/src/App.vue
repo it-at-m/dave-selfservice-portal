@@ -1,121 +1,125 @@
 <template>
-    <v-app>
-        <TheSnackbar />
+  <v-app>
+    <the-snackbar />
 
-        <!--  clipped-right: Gibt an, auf welcher Seite der Navigation-Drawer eingeblendet werden soll und dort soll die Toolbar bleiben  -->
-        <v-app-bar
-            class="black--text"
-            app
-            clipped-right
-            color="primary"
-            dark
+    <!--  clipped-right: Gibt an, auf welcher Seite der Navigation-Drawer eingeblendet werden soll und dort soll die Toolbar bleiben  -->
+    <v-app-bar
+      color="primary"
+      height="50"
+      class="px-4"
+    >
+      <v-row align="center">
+        <v-col
+          cols="3"
+          class="d-flex align-center justify-start"
         >
-            <router-link to="/">
-                <v-toolbar-title class="black--text">
-                    <span class="font-weight-medium">DAVe</span>
-                    <span class="font-weight-thin"> | Selfserviceportal</span>
-                </v-toolbar-title>
-            </router-link>
-            <v-spacer></v-spacer>
-            <v-spacer></v-spacer>
-            <v-tooltip bottom>
-                <template #activator="{ on, attrs }">
-                    <v-btn
-                        v-bind="attrs"
-                        class="ml-2"
-                        icon
-                        color="black"
-                        v-on="on"
-                        @click="navigateToHandbuch"
-                    >
-                        <v-icon>mdi-clippy</v-icon>
-                    </v-btn>
-                </template>
-                <span> Anwenderhandbuch </span>
-            </v-tooltip>
-            <span> {{ loggedInUser }} </span>
-        </v-app-bar>
-        <v-main>
-            <v-fade-transition mode="out-in">
-                <!--    Damit Seite auch bei ID Aenderung reloadet wird muss der :key angegeben werden -->
-                <router-view :key="$route.fullPath"></router-view>
-            </v-fade-transition>
-        </v-main>
-    </v-app>
+          <router-link
+            to="/"
+            style="text-decoration: none"
+          >
+            <v-toolbar-title class="text-black font-weight-medium">
+              <span class="font-weight-medium">DAVe</span>
+              <span class="font-weight-thin"> | Selfserviceportal</span>
+            </v-toolbar-title>
+          </router-link>
+        </v-col>
+      </v-row>
+      <v-spacer />
+      <v-col
+        cols="3"
+        class="d-flex align-center justify-end"
+      >
+        <v-btn
+          v-tooltip:bottom="'Anwenderhandbuch'"
+          class="mr-3"
+          density="compact"
+          icon="mdi-clippy"
+          @click="navigateToHandbuch"
+        />
+        <span> {{ loggedInUser }} </span>
+      </v-col>
+    </v-app-bar>
+
+    <router-view
+      v-slot="{ Component }"
+      :key="route.fullPath"
+    >
+      <v-fade-transition mode="out-in">
+        <component :is="Component" />
+      </v-fade-transition>
+    </router-view>
+  </v-app>
 </template>
 
-<script lang="ts">
-import Vue from "vue";
-import Component from "vue-class-component";
-// Komponenten
-import TheSnackbar from "@/components/common/TheSnackbar.vue";
+<script setup lang="ts">
+import { ref } from "vue";
+import { useRoute } from "vue-router";
 
-// API
 import SsoUserInfoService from "@/api/service/SsoUserInfoService";
 import VersionInfoService from "@/api/service/VersionInfoService";
-
-/* eslint-disable no-unused-vars */
+import TheSnackbar from "@/components/common/TheSnackbar.vue";
 import SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
 import VersionInfoResponse from "@/domain/VersionInfoResponse";
-/* eslint-enable no-unused-vars */
+import { useSnackbarStore } from "@/store/SnackbarStore";
+import { useUserStore } from "@/store/UserStore";
 
-@Component({
-    components: { TheSnackbar },
-})
-export default class App extends Vue {
-    private static readonly URL_HANDBUCH_LINK: string = "";
+const URL_HANDBUCH_LINK = "";
 
-    loggedInUser = "no-security";
+const loggedInUser = ref<string>("no-security");
 
-    // Versionen
-    private backendVersion = "";
+const backendVersion = ref<string>("");
 
-    private frontendVersion = "";
+const frontendVersion = ref<string>("");
 
-    // Lifecycle hook
-    created() {
-        SsoUserInfoService.getUserInfo()
-            .then((ssoUserInfoResponse: SsoUserInfoResponse) => {
-                this.$store.dispatch(
-                    "user/setSsoUserInfoResponse",
-                    ssoUserInfoResponse
-                );
-                this.loggedInUser = this.$store.getters["user/getName"];
-            })
-            .catch(() => {
-                return false;
-            });
-        this.getFrontendVersion().then((version: string) => {
-            this.frontendVersion = version;
-        });
+const userStore = useUserStore();
+const route = useRoute();
+const snackbarStore = useSnackbarStore();
 
-        this.getBackendVersion().then((version: string) => {
-            this.backendVersion = version;
-        });
-    }
+created();
 
-    private async getFrontendVersion(): Promise<string> {
-        return await VersionInfoService.getFrontendInfo()
-            .then((frontendInfoResponse: VersionInfoResponse) => {
-                return frontendInfoResponse.application.version;
-            })
-            .catch(() => {
-                return "error";
-            });
-    }
+// Lifecycle hook
+function created() {
+  SsoUserInfoService.getUserInfo()
+    .then((ssoUserInfoResponse: SsoUserInfoResponse) => {
+      userStore.setSsoUserInfoResponse(ssoUserInfoResponse);
+      loggedInUser.value = userStore.getName;
+    })
+    .catch((error) => {
+      snackbarStore.showApiError(error);
+      return false;
+    });
+  VersionInfoService.getFrontendInfo()
+    .then((frontendInfoResponse: VersionInfoResponse) => {
+      frontendVersion.value = frontendInfoResponse.application.version;
+    })
+    .catch(() => {
+      frontendVersion.value = "error";
+    });
+  VersionInfoService.getBackendInfo()
+    .then((backendInfoResponse: VersionInfoResponse) => {
+      backendVersion.value = backendInfoResponse.application.version;
+    })
+    .catch(() => {
+      backendVersion.value = "error";
+    });
+}
 
-    private async getBackendVersion(): Promise<string> {
-        return await VersionInfoService.getBackendInfo()
-            .then((backendInfoResponse: VersionInfoResponse) => {
-                return backendInfoResponse.application.version;
-            })
-            .catch(() => {
-                return "error";
-            });
-    }
-
-    navigateToHandbuch() {
-        window.open(App.URL_HANDBUCH_LINK);
-    }
+function navigateToHandbuch() {
+  window.open(URL_HANDBUCH_LINK);
 }
 </script>
+<style>
+/* Alle Hinweise werden nun rot eingefärbt */
+.v-messages {
+  color: #e57373 !important;
+}
+
+.dave-default {
+  --app-bar-height: 50px;
+  width: 100%;
+  height: 100%;
+  /* Um auf der Y-Achse direkt unter der App Bar zu liegen */
+  padding-top: var(--app-bar-height);
+  position: fixed;
+}
+</style>

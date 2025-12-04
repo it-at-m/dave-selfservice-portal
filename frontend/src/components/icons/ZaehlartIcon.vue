@@ -1,81 +1,68 @@
 <template>
-    <base-icon
-        :small="small"
-        :color="color"
-        :icon="icon.iconPath"
-        :tooltip="icon.tooltip"
-    ></base-icon>
+  <tooltip-with-icon
+    :size="size"
+    :color="color"
+    :icon="icon.iconPath"
+    :tooltip="icon.tooltip"
+  />
 </template>
-<script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import BaseIcon from "@/components/icons/TooltipWithIcon.vue";
-import IconOptions from "@/components/icons/IconOptions";
-import Zaehlart from "@/domain/enums/Zaehlart";
+<script setup lang="ts">
+import { computed } from "vue";
 
-@Component({
-    components: {
-        BaseIcon,
-    },
-})
-export default class ZaehlartIcon extends Vue {
-    @Prop({ default: false }) small?: boolean;
-    @Prop({ default: "black" }) color?: string;
-    @Prop() zaehlart!: string;
+import IconTooltip from "@/components/icons/IconTooltip";
+import TooltipWithIcon from "@/components/icons/TooltipWithIcon.vue";
+import Zaehlart from "@/types/enum/Zaehlart";
 
-    /**
-     * Lädt das richtige MDI Icon aus der Liste.
-     */
-    get icon(): IconOptions {
-        let result = ZaehlartIcon.zaehlartIcons().get(this.zaehlart);
-        if (result === undefined) {
-            result = new IconOptions(
-                "mdi-help-box",
-                "Keine Information zur Zählart"
-            );
-        }
-        return result;
-    }
-
-    /**
-     * Alle Zählarten Icons zu den Schlüsseln
-     */
-    static zaehlartIcons(): Map<string, IconOptions> {
-        return new Map([
-            [Zaehlart.N, new IconOptions("$artN", "Standardzählung")],
-            [
-                Zaehlart.H,
-                new IconOptions(
-                    "$artH",
-                    "Hauptverkehrsrichtung/Oberfläche/Hoch"
-                ),
-            ],
-            [Zaehlart.Q, new IconOptions("$artQ", "Querschnitt")],
-            [Zaehlart.QB, new IconOptions("$artQB", "Bahnschnitt")],
-            [
-                Zaehlart.QH,
-                new IconOptions(
-                    "$artQH",
-                    "Querschnitt/Hauptverkehrsrichtung/Oberfläche/Hoch"
-                ),
-            ],
-            [Zaehlart.QI, new IconOptions("$artQI", "Isarschnitt")],
-            [Zaehlart.QR, new IconOptions("$artQR", "Querschnitt Radverkehr")],
-            [Zaehlart.QS, new IconOptions("$artQSt", "Stadtgrenzzählung")],
-            [
-                Zaehlart.Q_,
-                new IconOptions("$artQS", "Querschnitt/Sonderzählung"),
-            ],
-            [
-                Zaehlart.QT,
-                new IconOptions(
-                    "$artQT",
-                    "Querschnitt Tunnel/Unterführung/Tief"
-                ),
-            ],
-            [Zaehlart.R, new IconOptions("$artR", "Radverkehrszählung")],
-            [Zaehlart.T, new IconOptions("$artT", "Tunnel/Unterführung/Tief")],
-            [Zaehlart.TK, new IconOptions("$artTK", "Teilknoten")],
-        ]);
-    }
+interface Props {
+  size?: string;
+  color?: string;
+  zaehlart: string;
 }
+
+const props = withDefaults(defineProps<Props>(), {
+  color: "black",
+  size: "default",
+});
+
+/**
+ * Alle Zählarten Icons zu den Schlüsseln
+ */
+const zaehlartIcons: Map<string, IconTooltip> = new Map([
+  [Zaehlart.N, new IconTooltip("$artN", "Standardzählung")],
+  [
+    Zaehlart.H,
+    new IconTooltip("$artH", "Hauptverkehrsrichtung/Oberfläche/Hoch"),
+  ],
+  [Zaehlart.Q, new IconTooltip("$artQ", "Querschnitt")],
+  [Zaehlart.QB, new IconTooltip("$artQB", "Bahnschnitt")],
+  [
+    Zaehlart.QH,
+    new IconTooltip(
+      "$artQH",
+      "Querschnitt/Hauptverkehrsrichtung/Oberfläche/Hoch"
+    ),
+  ],
+  [Zaehlart.QI, new IconTooltip("$artQI", "Isarschnitt")],
+  [Zaehlart.QR, new IconTooltip("$artQR", "Querschnitt Radverkehr")],
+  [Zaehlart.QS, new IconTooltip("$artQSt", "Stadtgrenzzählung")],
+  [Zaehlart.Q_, new IconTooltip("$artQS", "Querschnitt/Sonderzählung")],
+  [
+    Zaehlart.QT,
+    new IconTooltip("$artQT", "Querschnitt Tunnel/Unterführung/Tief"),
+  ],
+  [Zaehlart.R, new IconTooltip("$artR", "Radverkehrszählung")],
+  [Zaehlart.T, new IconTooltip("$artT", "Tunnel/Unterführung/Tief")],
+  [Zaehlart.TK, new IconTooltip("$artTK", "Teilknoten")],
+]);
+
+/**
+ * Lädt das richtige MDI Icon aus der Liste.
+ */
+const icon = computed<IconTooltip>(() => {
+  let result = zaehlartIcons.get(props.zaehlart);
+  if (result === undefined) {
+    result = new IconTooltip("mdi-help-box", "Keine Information zur Zählart");
+  }
+  return result;
+});
 </script>
