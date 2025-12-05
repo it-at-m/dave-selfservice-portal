@@ -4,14 +4,14 @@
 
     <groupId>de.muenchen.dave</groupId>
     <artifactId>dave-selfservice-portal</artifactId>
-    <version>3.0.0</version>
+    <version>3.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>dave_selfserviceportal_frontend</name>
 
     <scm>
         <connection>scm:git:https://github.com/it-at-m/dave-selfservice-portal.git</connection>
         <developerConnection>scm:git:https://github.com/it-at-m/dave-selfservice-portal.git</developerConnection>
-        <tag>dave-selfservice-portal-3.0.0</tag>
+        <tag>dave-frontend-1.9.0</tag>
     </scm>
 
     <build>
