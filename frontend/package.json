@@ -24,7 +24,7 @@
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "4.4.1",
     "@muenchen/prettier-codeformat": "1.0.2",
-    "@svgdotjs/svg.js": "3.2.4",
+    "@svgdotjs/svg.js": "3.2.5",
     "@types/jsdom": "21.1.7",
     "@types/leaflet": "1.9.17",
     "@types/leaflet.fullscreen": "3.0.2",
