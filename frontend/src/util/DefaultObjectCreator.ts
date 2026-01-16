@@ -58,7 +58,7 @@ export default class DefaultObjectCreator {
 
   public static createDefaultTenantConfigurationDTO(): TenantConfigurationDTO {
     return {
-      datenportalHeader: "Datenportal",
+      datenportalHeader: "",
       mapConfiguration: this.createDefaultMapConfigurationDTO(),
     };
   }
