@@ -336,10 +336,7 @@ function checkUploadedFiledata(
     return "Die Metadaten fehlen in der hochgeladenen Datei.";
   }
   // MetaData korrekt?
-
-  const expectedMetaData = `${zaehlung.value.zaehlstelleNummer};${
-    zaehlung.value.zaehlart === Zaehlart.N ? "" : zaehlung.value.zaehlart
-  };${zaehlung.value.datum};${armNummer};;;;;`;
+  const expectedMetaData = buildExpectedMetaData(armNummer);
   if (metaData!.trim() !== expectedMetaData) {
     return `Die Metadaten in der hochgeladenen Datei sind nicht korrekt.\nErwartet: ${expectedMetaData}`;
   }
@@ -401,6 +398,29 @@ function checkUploadedFiledata(
     }
   }
   return "";
+}
+
+/**
+ * Erstellung der erwarteten Metadaten.
+ *
+ * @param armNummer Nummer des Knotenarms
+ * @return Erwartete Metadaten
+ */
+function buildExpectedMetaData(armNummer: number): string {
+  const metaZaehlart =
+    zaehlung.value.zaehlart === Zaehlart.N ? "" : zaehlung.value.zaehlart;
+  const expectedMetaDataArray = [
+    zaehlung.value.zaehlstelleNummer,
+    metaZaehlart,
+    zaehlung.value.datum,
+    armNummer,
+  ];
+  // Fülle das Array mit leeren Feldern, bis die Länge den erwarteten Spalten entspricht
+  while (expectedMetaDataArray.length < COLUMN_COUNT) {
+    expectedMetaDataArray.push("");
+  }
+  // Erstelle den finalen String
+  return expectedMetaDataArray.join(";");
 }
 
 /**
@@ -565,7 +585,8 @@ function checkFussverkehrData(
     if (splittedLine[3] !== Richtung.EIN && splittedLine[3] !== Richtung.AUS) {
       return `Richtung ${splittedLine[3]} ist ungültig für Zählart ${Zaehlart.FJS}.`;
     }
-  } else { // Zaehlart.QJS
+  } else {
+    // Zaehlart.QJS
     if (splittedLine[3]) {
       return `Richtung muss leer sein für Zählart ${zaehlart}.`;
     }
