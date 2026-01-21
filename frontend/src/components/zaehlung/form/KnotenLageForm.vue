@@ -532,40 +532,43 @@ function checkFussverkehrData(
     }
   }
 
-  if (!StrassenseiteText.has(splittedLine[2])) {
-    return `Strassenseite ist ungültig: ${splittedLine[2]}.`;
-  }
+  // Prüfung der Strassenseite
+  if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
+    if (!StrassenseiteText.has(splittedLine[2])) {
+      return `Strassenseite ist ungültig: ${splittedLine[2]}.`;
+    }
 
-  if (
-    (armNummer === 1 || armNummer === 3) &&
-    splittedLine[2] !== Strassenseite.W &&
-    splittedLine[2] !== Strassenseite.O
-  ) {
-    return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 1 und 3.`;
-  }
+    if (
+      (armNummer === 1 || armNummer === 3) &&
+      splittedLine[2] !== Strassenseite.W &&
+      splittedLine[2] !== Strassenseite.O
+    ) {
+      return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 1 und 3.`;
+    }
 
-  if (
-    (armNummer === 2 || armNummer === 4) &&
-    splittedLine[2] !== Strassenseite.N &&
-    splittedLine[2] !== Strassenseite.S
-  ) {
-    return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 2 und 4.`;
-  }
+    if (
+      (armNummer === 2 || armNummer === 4) &&
+      splittedLine[2] !== Strassenseite.N &&
+      splittedLine[2] !== Strassenseite.S
+    ) {
+      return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 2 und 4.`;
+    }
 
-  if (
-    (armNummer === 5 || armNummer === 7) &&
-    splittedLine[2] !== Strassenseite.NW &&
-    splittedLine[2] !== Strassenseite.SO
-  ) {
-    return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 5 und 7.`;
-  }
+    if (
+      (armNummer === 5 || armNummer === 7) &&
+      splittedLine[2] !== Strassenseite.NW &&
+      splittedLine[2] !== Strassenseite.SO
+    ) {
+      return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 5 und 7.`;
+    }
 
-  if (
-    (armNummer === 6 || armNummer === 8) &&
-    splittedLine[2] !== Strassenseite.NO &&
-    splittedLine[2] !== Strassenseite.SW
-  ) {
-    return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 6 und 8.`;
+    if (
+      (armNummer === 6 || armNummer === 8) &&
+      splittedLine[2] !== Strassenseite.NO &&
+      splittedLine[2] !== Strassenseite.SW
+    ) {
+      return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 6 und 8.`;
+    }
   }
 
   if (zaehlart === Zaehlart.QU) {
