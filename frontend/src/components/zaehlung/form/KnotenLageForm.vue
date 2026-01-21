@@ -161,7 +161,7 @@ import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Richtung from "@/types/enum/Richtung";
 import Status from "@/types/enum/Status";
-import Strassenseite from "@/types/enum/Strassenseite";
+import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import FahrbeziehungComparator from "@/util/FahrbeziehungComparator";
@@ -498,32 +498,21 @@ function checkFussverkehrData(
   armNummer: number,
   splittedLine: Array<string>
 ): string {
+  const zaehlart = zaehlung.value.zaehlart;
   if (splittedLine[1]) {
     return "Zielknotenarm darf nicht gefüllt sein.";
   }
   if (!splittedLine[2]) {
-    if (
-      zaehlung.value.zaehlart === Zaehlart.FJS ||
-      zaehlung.value.zaehlart === Zaehlart.QJS
-    ) {
+    if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
       return "Strassenseite darf nicht leer sein.";
     }
   } else {
-    if (zaehlung.value.zaehlart === Zaehlart.QU && splittedLine[2]) {
+    if (zaehlart === Zaehlart.QU && splittedLine[2]) {
       return "Strassenseite muss leer sein.";
     }
   }
 
-  if (
-    splittedLine[2] !== Strassenseite.N &&
-    splittedLine[2] !== Strassenseite.S &&
-    splittedLine[2] !== Strassenseite.W &&
-    splittedLine[2] !== Strassenseite.O &&
-    splittedLine[2] !== Strassenseite.NO &&
-    splittedLine[2] !== Strassenseite.NW &&
-    splittedLine[2] !== Strassenseite.SO &&
-    splittedLine[2] !== Strassenseite.SW
-  ) {
+  if (!StrassenseiteText.has(splittedLine[2])) {
     return `Strassenseite ist ungültig: ${splittedLine[2]}.`;
   }
 
@@ -559,7 +548,7 @@ function checkFussverkehrData(
     return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 6 und 8.`;
   }
 
-  if (zaehlung.value.zaehlart === Zaehlart.QU) {
+  if (zaehlart === Zaehlart.QU) {
     if (
       splittedLine[3] !== Richtung.N &&
       splittedLine[3] !== Richtung.O &&
@@ -572,23 +561,18 @@ function checkFussverkehrData(
     ) {
       return `Richtung ${splittedLine[3]} ist ungültig für Zählart ${Zaehlart.QU}.`;
     }
-  } else if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+  } else if (zaehlart === Zaehlart.FJS) {
     if (splittedLine[3] !== Richtung.EIN && splittedLine[3] !== Richtung.AUS) {
       return `Richtung ${splittedLine[3]} ist ungültig für Zählart ${Zaehlart.FJS}.`;
     }
-  } else {
+  } else { // Zaehlart.QJS
     if (splittedLine[3]) {
-      return `Richtung muss leer sein für Zählart ${zaehlung.value.zaehlart}.`;
+      return `Richtung muss leer sein für Zählart ${zaehlart}.`;
     }
   }
 
-  if (
-    splittedLine[4] ||
-    splittedLine[5] ||
-    splittedLine[6] ||
-    splittedLine[7] ||
-    splittedLine[8]
-  ) {
+  // Hat mindestens ein Element im Array[KFZ bis Krad] einen Wert.
+  if (splittedLine.slice(4, 9).some(Boolean)) {
     return "Fahrzeugarten sind ungültig für Fussverkehrszählungen.";
   }
 

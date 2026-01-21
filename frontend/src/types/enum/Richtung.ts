@@ -1,8 +1,4 @@
 enum Richtung {
-  // EIN
-  EIN = "EIN",
-  // AUS
-  AUS = "AUS",
   // Nord
   N = "N",
   // Süd
@@ -19,6 +15,10 @@ enum Richtung {
   SW = "SW",
   // Südost
   SO = "SO",
+  // EIN
+  EIN = "EIN",
+  // AUS
+  AUS = "AUS",
 }
 
 export default Richtung;
