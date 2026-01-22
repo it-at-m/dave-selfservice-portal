@@ -542,34 +542,26 @@ function checkFussverkehrData(
       isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
         armNummer,
-        1,
-        3,
-        Strassenseite.W,
-        Strassenseite.O
+        [1, 3],
+        [Strassenseite.W, Strassenseite.O]
       ) ||
       isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
         armNummer,
-        2,
-        4,
-        Strassenseite.N,
-        Strassenseite.S
+        [2, 4],
+        [Strassenseite.N, Strassenseite.S]
       ) ||
       isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
         armNummer,
-        5,
-        7,
-        Strassenseite.NW,
-        Strassenseite.SO
+        [5, 7],
+        [Strassenseite.NW, Strassenseite.SO]
       ) ||
       isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
         armNummer,
-        6,
-        8,
-        Strassenseite.NO,
-        Strassenseite.SW
+        [6, 8],
+        [Strassenseite.NO, Strassenseite.SW]
       )
     ) {
       return `Strassenseite ${splittedLine[2]} ist ungültig für den Knotenarm.`;
@@ -648,27 +640,22 @@ function onFileSelect() {
 }
 
 /**
- * Prüfung der Validität der Kombination von Strassenseite und Armnummer.
+ * Prüfung der Validität von Strassenseite und Armnummer.
  *
- * @param strassenSeite zu prüfende Strassenseite
+ * @param strassenseite zu prüfende Strassenseite
  * @param armNummer Nummer des aktuellen Knotenarms
- * @param validArmnummer1 valide erste Armnummer
- * @param validArmnummer2 valide zweite Armnummer
- * @param validStrassenseite1 valide erste Strassenseite
- * @param validStrassenseite2 valide zweite Strassenseite
+ * @param validArmNummern valide Armnummern
+ * @param validStrassenseiten valide Strassenseiten
  */
 function isArmnummerAndStrassenseiteInvalid(
-  strassenSeite: string,
+  strassenseite: string,
   armNummer: number,
-  validArmnummer1: number,
-  validArmnummer2: number,
-  validStrassenseite1: Strassenseite,
-  validStrassenseite2: Strassenseite
+  validArmNummern: Array<number>,
+  validStrassenseiten: Array<Strassenseite>
 ) {
   return (
-    ![validStrassenseite1, validStrassenseite2].includes(
-      strassenSeite.trim() as Strassenseite
-    ) && [validArmnummer1, validArmnummer2].includes(armNummer)
+    validArmNummern.includes(armNummer) &&
+    !validStrassenseiten.includes(strassenseite as Strassenseite)
   );
 }
 
