@@ -152,7 +152,7 @@ import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
-import { isNil, parseInt, toArray, toString } from "lodash";
+import { isEmpty, isNil, parseInt, toArray, toString } from "lodash";
 import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
@@ -519,75 +519,86 @@ function checkFussverkehrData(
   splittedLine: Array<string>
 ): string {
   const zaehlart = zaehlung.value.zaehlart;
-  if (splittedLine[1]) {
+  if (splittedLine[1].trim()) {
     return "Zielknotenarm darf nicht gefüllt sein.";
   }
-    if ( [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) && isEmpty(splittedLine[2]) ) {
-      return "Strassenseite darf nicht leer sein.";
-    }
- if (zaehlart === Zaehlart.QU && splittedLine[2]) {
-      return "Strassenseite muss leer sein.";
-    }
+  if (
+    [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
+    isEmpty(splittedLine[2])
+  ) {
+    return "Strassenseite darf nicht leer sein.";
+  }
+  if (zaehlart === Zaehlart.QU && splittedLine[2].trim()) {
+    return "Strassenseite muss leer sein.";
+  }
 
   // Prüfung der Strassenseite
   if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
-    if (!StrassenseiteText.has(splittedLine[2])) {
+    if (!StrassenseiteText.has(splittedLine[2].trim())) {
       return `Strassenseite ist ungültig: ${splittedLine[2]}.`;
     }
 
     if (
-      (armNummer === 1 || armNummer === 3) &&
-      splittedLine[2] !== Strassenseite.W &&
-      splittedLine[2] !== Strassenseite.O
+      isArmnummerAndStrassenseiteInvalid(
+        splittedLine[2],
+        armNummer,
+        1,
+        3,
+        Strassenseite.W,
+        Strassenseite.O
+      ) ||
+      isArmnummerAndStrassenseiteInvalid(
+        splittedLine[2],
+        armNummer,
+        2,
+        4,
+        Strassenseite.N,
+        Strassenseite.S
+      ) ||
+      isArmnummerAndStrassenseiteInvalid(
+        splittedLine[2],
+        armNummer,
+        5,
+        7,
+        Strassenseite.NW,
+        Strassenseite.SO
+      ) ||
+      isArmnummerAndStrassenseiteInvalid(
+        splittedLine[2],
+        armNummer,
+        6,
+        8,
+        Strassenseite.NO,
+        Strassenseite.SW
+      )
     ) {
-      return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 1 und 3.`;
-    }
-
-    if (
-      (armNummer === 2 || armNummer === 4) &&
-      splittedLine[2] !== Strassenseite.N &&
-      splittedLine[2] !== Strassenseite.S
-    ) {
-      return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 2 und 4.`;
-    }
-
-    if (
-      (armNummer === 5 || armNummer === 7) &&
-      splittedLine[2] !== Strassenseite.NW &&
-      splittedLine[2] !== Strassenseite.SO
-    ) {
-      return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 5 und 7.`;
-    }
-
-    if (
-      (armNummer === 6 || armNummer === 8) &&
-      splittedLine[2] !== Strassenseite.NO &&
-      splittedLine[2] !== Strassenseite.SW
-    ) {
-      return `Strassenseite ${splittedLine[2]} ist ungültig für Knotenarme 6 und 8.`;
+      return `Strassenseite ${splittedLine[2]} ist ungültig für den Knotenarm.`;
     }
   }
 
   if (zaehlart === Zaehlart.QU) {
     if (
-      splittedLine[3] !== Richtung.N &&
-      splittedLine[3] !== Richtung.O &&
-      splittedLine[3] !== Richtung.S &&
-      splittedLine[3] !== Richtung.W &&
-      splittedLine[3] !== Richtung.NO &&
-      splittedLine[3] !== Richtung.SO &&
-      splittedLine[3] !== Richtung.SW &&
-      splittedLine[3] !== Richtung.NW
+      splittedLine[3].trim() !== Richtung.N &&
+      splittedLine[3].trim() !== Richtung.O &&
+      splittedLine[3].trim() !== Richtung.S &&
+      splittedLine[3].trim() !== Richtung.W &&
+      splittedLine[3].trim() !== Richtung.NO &&
+      splittedLine[3].trim() !== Richtung.SO &&
+      splittedLine[3].trim() !== Richtung.SW &&
+      splittedLine[3].trim() !== Richtung.NW
     ) {
       return `Richtung ${splittedLine[3]} ist ungültig für Zählart ${Zaehlart.QU}.`;
     }
   } else if (zaehlart === Zaehlart.FJS) {
-    if (splittedLine[3] !== Richtung.EIN && splittedLine[3] !== Richtung.AUS) {
+    if (
+      splittedLine[3].trim() !== Richtung.EIN &&
+      splittedLine[3].trim() !== Richtung.AUS
+    ) {
       return `Richtung ${splittedLine[3]} ist ungültig für Zählart ${Zaehlart.FJS}.`;
     }
   } else {
     // Zaehlart.QJS
-    if (splittedLine[3]) {
+    if (splittedLine[3].trim()) {
       return `Richtung muss leer sein für Zählart ${zaehlart}.`;
     }
   }
@@ -597,7 +608,7 @@ function checkFussverkehrData(
     return "Fahrzeugarten sind ungültig für Fussverkehrszählungen.";
   }
 
-  if (!splittedLine[9] && !splittedLine[10]) {
+  if (isEmpty(splittedLine[9]) && isEmpty(splittedLine[10])) {
     return "Fussverkehrszähldaten dürfen nicht leer sein.";
   }
 
@@ -633,6 +644,31 @@ function onFileSelect() {
     // Einlesen
     readFiles();
   }
+}
+
+/**
+ * Prüfung der Validität der Kombination von Strassenseite und Armnummer.
+ *
+ * @param strassenSeite zu prüfende Strassenseite
+ * @param armNummer Nummer des aktuellen Knotenarms
+ * @param validArmnummer1 valide erste Armnummer
+ * @param validArmnummer2 valide zweite Armnummer
+ * @param validStrassenseite1 valide erste Strassenseite
+ * @param validStrassenseite2 valide zweite Strassenseite
+ */
+function isArmnummerAndStrassenseiteInvalid(
+  strassenSeite: string,
+  armNummer: number,
+  validArmnummer1: number,
+  validArmnummer2: number,
+  validStrassenseite1: Strassenseite,
+  validStrassenseite2: Strassenseite
+) {
+  return !(
+    (armNummer === validArmnummer1 || armNummer === validArmnummer2) &&
+    strassenSeite.trim() !== validStrassenseite1 &&
+    strassenSeite.trim() !== validStrassenseite2
+  );
 }
 
 /**
