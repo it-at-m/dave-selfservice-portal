@@ -578,21 +578,22 @@ function checkFussverkehrData(
 
   if (zaehlart === Zaehlart.QU) {
     if (
-      splittedLine[3].trim() !== Richtung.N &&
-      splittedLine[3].trim() !== Richtung.O &&
-      splittedLine[3].trim() !== Richtung.S &&
-      splittedLine[3].trim() !== Richtung.W &&
-      splittedLine[3].trim() !== Richtung.NO &&
-      splittedLine[3].trim() !== Richtung.SO &&
-      splittedLine[3].trim() !== Richtung.SW &&
-      splittedLine[3].trim() !== Richtung.NW
+      ![
+        Richtung.N,
+        Richtung.O,
+        Richtung.S,
+        Richtung.W,
+        Richtung.NO,
+        Richtung.SO,
+        Richtung.NW,
+        Richtung.SW,
+      ].includes(splittedLine[3].trim() as Richtung)
     ) {
       return `Richtung ${splittedLine[3]} ist ungültig für Zählart ${Zaehlart.QU}.`;
     }
   } else if (zaehlart === Zaehlart.FJS) {
     if (
-      splittedLine[3].trim() !== Richtung.EIN &&
-      splittedLine[3].trim() !== Richtung.AUS
+      ![Richtung.EIN, Richtung.AUS].includes(splittedLine[3].trim() as Richtung)
     ) {
       return `Richtung ${splittedLine[3]} ist ungültig für Zählart ${Zaehlart.FJS}.`;
     }
@@ -664,10 +665,10 @@ function isArmnummerAndStrassenseiteInvalid(
   validStrassenseite1: Strassenseite,
   validStrassenseite2: Strassenseite
 ) {
-  return !(
-    (armNummer === validArmnummer1 || armNummer === validArmnummer2) &&
-    strassenSeite.trim() !== validStrassenseite1 &&
-    strassenSeite.trim() !== validStrassenseite2
+  return (
+    ![validStrassenseite1, validStrassenseite2].includes(
+      strassenSeite.trim() as Strassenseite
+    ) && [validArmnummer1, validArmnummer2].includes(armNummer)
   );
 }
 
