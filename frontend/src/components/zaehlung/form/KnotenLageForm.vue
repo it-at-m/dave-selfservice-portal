@@ -522,15 +522,12 @@ function checkFussverkehrData(
   if (splittedLine[1]) {
     return "Zielknotenarm darf nicht gefüllt sein.";
   }
-  if (!splittedLine[2]) {
-    if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
+    if ( [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) && isEmpty(splittedLine[2]) ) {
       return "Strassenseite darf nicht leer sein.";
     }
-  } else {
-    if (zaehlart === Zaehlart.QU && splittedLine[2]) {
+ if (zaehlart === Zaehlart.QU && splittedLine[2]) {
       return "Strassenseite muss leer sein.";
     }
-  }
 
   // Prüfung der Strassenseite
   if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
