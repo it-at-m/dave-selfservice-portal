@@ -39,7 +39,7 @@
 </template>
 
 <script setup lang="ts">
-import type FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type { StartUhrzeitEndeUhrzeit } from "@/types/enum/Intervallnummern";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
@@ -115,25 +115,25 @@ function save(): void {
 /**
  * Bereitet die tiefen Kopie auf das speichern vor.
  * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
- * und den Fahrbeziehungen zu geordnet.
+ * und den Verkehrsbeziehungen zu geordnet.
  */
 function prepareForSaveZaehlung() {
-  const zeitintervalleProFahrbeziehung: Map<
+  const zeitintervalleProVerkehrsbeziehung: Map<
     string,
     Array<ZeitintervallDTO>
   > = new Map<string, Array<ZeitintervallDTO>>();
   zaehlung.value.knotenarme.forEach((arm: KnotenarmDTO) => {
     if (arm.filename && arm.filedata && arm.filedata.length > 0) {
-      transformCsvDataToFahrbeziehung(arm).forEach((value, key) => {
-        zeitintervalleProFahrbeziehung.set(key, value);
+      transformCsvDataToVerkehrsbeziehung(arm).forEach((value, key) => {
+        zeitintervalleProVerkehrsbeziehung.set(key, value);
       });
     }
   });
 
-  zaehlung.value.fahrbeziehungen.forEach((fz: FahrbeziehungDTO) => {
-    const key: string = getKeyOfFahrbeziehung(fz, zaehlung.value.kreisverkehr);
-    if (zeitintervalleProFahrbeziehung.has(key)) {
-      fz.zeitintervalle = zeitintervalleProFahrbeziehung.get(key)!;
+  zaehlung.value.verkehrsbeziehungen.forEach((fz: VerkehrsbeziehungDTO) => {
+    const key: string = getKeyOfVerkehrsbeziehung(fz, zaehlung.value.kreisverkehr);
+    if (zeitintervalleProVerkehrsbeziehung.has(key)) {
+      fz.zeitintervalle = zeitintervalleProVerkehrsbeziehung.get(key)!;
     }
     fz.isKreuzung = !zaehlung.value.kreisverkehr;
   });
@@ -143,10 +143,10 @@ function prepareForSaveZaehlung() {
  * Wandelt die am Knotenarm hinterlegten Daten aus der CSV in ein Array vom Typ ZeitintervallDTO um.
  * @param arm Knotenarm mit den Daten der csv
  */
-function transformCsvDataToFahrbeziehung(
+function transformCsvDataToVerkehrsbeziehung(
   arm: KnotenarmDTO
 ): Map<string, Array<ZeitintervallDTO>> {
-  const fahrbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
+  const verkehrsbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
     string,
     Array<ZeitintervallDTO>
   >();
@@ -205,13 +205,13 @@ function transformCsvDataToFahrbeziehung(
   });
 
   zeitinervalleProNach.forEach((value, key) => {
-    fahrbeziehungen.set(knotenarmVon + key, value);
+    verkehrsbeziehungen.set(knotenarmVon + key, value);
   });
-  return fahrbeziehungen;
+  return verkehrsbeziehungen;
 }
 
-function getKeyOfFahrbeziehung(
-  fz: FahrbeziehungDTO,
+function getKeyOfVerkehrsbeziehung(
+  fz: VerkehrsbeziehungDTO,
   isKreisverkehr: boolean
 ): string {
   let key = `${fz.knotenarm}`;
