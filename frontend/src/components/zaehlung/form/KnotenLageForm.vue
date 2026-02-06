@@ -384,7 +384,7 @@ function checkUploadedFiledata(
           splittedLine
         );
       } else {
-        invalidityReason = checkFahrbeziehungData(
+        invalidityReason = checkVerkehrsbeziehungData(
           csvLineIndex,
           armNummer,
           splittedLine
@@ -424,23 +424,23 @@ function buildExpectedMetaData(armNummer: number): string {
 }
 
 /**
- * Prüfung der Knotenarme in Zähldaten auf Übereinstimmung mit vorhandenen Fahrbeziehungen.
+ * Prüfung der Knotenarme in Zähldaten auf Übereinstimmung mit vorhandenen Verkehrsbeziehungen.
  *
  * @param csvLineIndex aktueller Zeilenindex
  * @param armNummer Nummer des aktuellen Knotenarms
  * @param splittedLine Array der Zeilenspalten
  * @return Grund der Invalidität
  */
-function checkFahrbeziehungData(
+function checkVerkehrsbeziehungData(
   csvLineIndex: number,
   armNummer: number,
   splittedLine: Array<string>
 ): string {
   if (csvLineIndex > 3) {
     const nach: string = splittedLine[1];
-    let fahrbeziehung: VerkehrsbeziehungDTO | undefined;
+    let verkehrsbeziehung: VerkehrsbeziehungDTO | undefined;
     if (zaehlung.value.kreisverkehr) {
-      fahrbeziehung = zaehlung.value.verkehrsbeziehungen.find((verkehrsbeziehung) => {
+      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find((verkehrsbeziehung) => {
         return (
             verkehrsbeziehung.knotenarm === armNummer &&
           ((nach === "e" && verkehrsbeziehung.hinein) ||
@@ -450,15 +450,15 @@ function checkFahrbeziehungData(
       });
     } else {
       const nachArmNumber: number = parseInt(toString(nach.trim()));
-      fahrbeziehung = zaehlung.value.verkehrsbeziehungen.find((verkehrsbeziehung) => {
+      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find((verkehrsbeziehung) => {
         return (
           armNummer === verkehrsbeziehung.von &&
-          nachArmNumber === fahrbeziehung.nach
+          nachArmNumber === verkehrsbeziehung.nach
         );
       });
     }
-    if (isNil(fahrbeziehung)) {
-      return `Für die Zähldaten in Zeile ${csvLineIndex + 1} ist keine Fahrbeziehung existent oder aktiv.\nWar: ${splittedLine}`;
+    if (isNil(verkehrsbeziehung)) {
+      return `Für die Zähldaten in Zeile ${csvLineIndex + 1} ist keine Verkehrsbeziehung existent oder aktiv.\nWar: ${splittedLine}`;
     }
   }
 
