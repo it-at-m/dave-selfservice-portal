@@ -186,7 +186,7 @@
 </template>
 
 <script setup lang="ts">
-import type FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
@@ -290,12 +290,12 @@ const showButtonAbschliessen = computed<boolean>(() => {
 
 // Liefert nur die Knotenarme zurueck, die ausgehenden Verkehr haben
 const knotenarmeWithOutgoingTraffic = computed<Array<KnotenarmDTO>>(() => {
-  const outgoingKnotenarmnummern = zaehlung.value.fahrbeziehungen.map(
-    (fahrbeziehung: FahrbeziehungDTO) => {
+  const outgoingKnotenarmnummern = zaehlung.value.verkehrsbeziehungen.map(
+    (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
       if (zaehlung.value.kreisverkehr) {
-        return fahrbeziehung.knotenarm;
+        return verkehrsbeziehung.knotenarm;
       } else {
-        return fahrbeziehung.von;
+        return verkehrsbeziehung.von;
       }
     }
   );

@@ -2,7 +2,7 @@ import type HochrechnungsfaktorDTO from "@/domain/dto/HochrechnungsfaktorDTO";
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type BaseEntity from "@/types/common/BaseEntity";
 
-export default interface FahrbeziehungDTO extends BaseEntity {
+export default interface VerkehrsbeziehungDTO extends BaseEntity {
   // Kreuzung
   von: number;
   nach: number;

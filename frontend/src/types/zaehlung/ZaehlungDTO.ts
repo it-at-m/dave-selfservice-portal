@@ -1,4 +1,4 @@
-import type FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type BaseEntity from "@/types/common/BaseEntity";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
@@ -28,7 +28,7 @@ export default interface ZaehlungDTO extends BaseEntity {
   zaehldauer: Zaehldauer;
   kommentar: string;
   knotenarme: KnotenarmDTO[];
-  fahrbeziehungen: FahrbeziehungDTO[];
+  verkehrsbeziehungen: VerkehrsbeziehungDTO[];
   // Zaehlstelle
   zaehlstelleNummer: string;
   zaehlstelleStadtbezirk: string;
