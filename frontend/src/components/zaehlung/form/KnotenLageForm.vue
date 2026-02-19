@@ -527,7 +527,7 @@ function checkFussverkehrData(
   ) {
     return "Zielknotenarm (nach) darf nicht gefüllt sein.";
   }
-  if (zaehlart === Zaehlart.QJS && isEmpty(splittedLine[1])) {
+  if (zaehlart === Zaehlart.QJS && !splittedLine[1].trim()) {
     return "Zielknotenarm (nach) darf nicht leer sein.";
   }
 
