@@ -519,9 +519,19 @@ function checkFussverkehrData(
   splittedLine: Array<string>
 ): string {
   const zaehlart = zaehlung.value.zaehlart;
-  if (splittedLine[1].trim()) {
-    return "Zielknotenarm darf nicht gefüllt sein.";
+
+  // Prüfung des Zielknotenarms (nach)
+  if (
+    [Zaehlart.FJS, Zaehlart.QU].includes(zaehlart) &&
+    splittedLine[1].trim()
+  ) {
+    return "Zielknotenarm (nach) darf nicht gefüllt sein.";
   }
+  if (zaehlart === Zaehlart.QJS && !splittedLine[1].trim()) {
+    return "Zielknotenarm (nach) darf nicht leer sein.";
+  }
+
+  // Prüfung der Strassenseite
   if (
     [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
     isEmpty(splittedLine[2])
@@ -531,13 +541,10 @@ function checkFussverkehrData(
   if (zaehlart === Zaehlart.QU && splittedLine[2].trim()) {
     return "Strassenseite muss leer sein.";
   }
-
-  // Prüfung der Strassenseite
   if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
     if (!StrassenseiteText.has(splittedLine[2].trim())) {
       return `Strassenseite ist ungültig: ${splittedLine[2]}.`;
     }
-
     if (
       isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
@@ -568,6 +575,7 @@ function checkFussverkehrData(
     }
   }
 
+  // Prüfung der Richtung
   if (zaehlart === Zaehlart.QU) {
     if (
       ![
