@@ -132,8 +132,8 @@
           <v-data-table
             v-if="isNotKreisverkehr"
             density="compact"
-            :headers="fahrbeziehungHeader as Array<any>"
-            :items="allFahrbeziehungen"
+            :headers="verkehrsbeziehungHeader as Array<any>"
+            :items="allVerkehrsbeziehungen"
             item-key="id"
             :items-per-page="-1"
             hide-default-footer
@@ -146,7 +146,7 @@
 </template>
 
 <script setup lang="ts">
-import type FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
@@ -164,7 +164,7 @@ import Status from "@/types/enum/Status";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
-import FahrbeziehungComparator from "@/util/FahrbeziehungComparator";
+import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 
 interface Props {
@@ -230,15 +230,15 @@ const isZaehlungEditable = computed<boolean>(() => {
   return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
-const allFahrbeziehungen = computed<Array<FahrbeziehungDTO>>(() =>
-  toArray(zaehlung.value.fahrbeziehungen).sort(
-    FahrbeziehungComparator.sortByActiveVonAndNach
+const allVerkehrsbeziehungen = computed<Array<VerkehrsbeziehungDTO>>(() =>
+  toArray(zaehlung.value.verkehrsbeziehungen).sort(
+      VerkehrsbeziehungComparator.sortByActiveVonAndNach
   )
 );
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
 
-const fahrbeziehungHeader = [
+const verkehrsbeziehungHeader = [
   {
     title: "Von",
     align: "center",
@@ -384,7 +384,7 @@ function checkUploadedFiledata(
           splittedLine
         );
       } else {
-        invalidityReason = checkFahrbeziehungData(
+        invalidityReason = checkVerkehrsbeziehungData(
           csvLineIndex,
           armNummer,
           splittedLine
@@ -424,41 +424,41 @@ function buildExpectedMetaData(armNummer: number): string {
 }
 
 /**
- * Prüfung der Knotenarme in Zähldaten auf Übereinstimmung mit vorhandenen Fahrbeziehungen.
+ * Prüfung der Knotenarme in Zähldaten auf Übereinstimmung mit vorhandenen Verkehrsbeziehungen.
  *
  * @param csvLineIndex aktueller Zeilenindex
  * @param armNummer Nummer des aktuellen Knotenarms
  * @param splittedLine Array der Zeilenspalten
  * @return Grund der Invalidität
  */
-function checkFahrbeziehungData(
+function checkVerkehrsbeziehungData(
   csvLineIndex: number,
   armNummer: number,
   splittedLine: Array<string>
 ): string {
   if (csvLineIndex > 3) {
     const nach: string = splittedLine[1];
-    let fahrbeziehung: FahrbeziehungDTO | undefined;
+    let verkehrsbeziehung: VerkehrsbeziehungDTO | undefined;
     if (zaehlung.value.kreisverkehr) {
-      fahrbeziehung = zaehlung.value.fahrbeziehungen.find((fahrbeziehung) => {
+      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find((verkehrsbeziehung) => {
         return (
-          fahrbeziehung.knotenarm === armNummer &&
-          ((nach === "e" && fahrbeziehung.hinein) ||
-            (nach === "v" && fahrbeziehung.vorbei) ||
-            (nach === "a" && fahrbeziehung.heraus))
+            verkehrsbeziehung.knotenarm === armNummer &&
+          ((nach === "e" && verkehrsbeziehung.hinein) ||
+            (nach === "v" && verkehrsbeziehung.vorbei) ||
+            (nach === "a" && verkehrsbeziehung.heraus))
         );
       });
     } else {
       const nachArmNumber: number = parseInt(toString(nach.trim()));
-      fahrbeziehung = zaehlung.value.fahrbeziehungen.find((fahrbeziehung) => {
+      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find((verkehrsbeziehung) => {
         return (
-          armNummer === fahrbeziehung.von &&
-          nachArmNumber === fahrbeziehung.nach
+          armNummer === verkehrsbeziehung.von &&
+          nachArmNumber === verkehrsbeziehung.nach
         );
       });
     }
-    if (isNil(fahrbeziehung)) {
-      return `Für die Zähldaten in Zeile ${csvLineIndex + 1} ist keine Fahrbeziehung existent oder aktiv.\nWar: ${splittedLine}`;
+    if (isNil(verkehrsbeziehung)) {
+      return `Für die Zähldaten in Zeile ${csvLineIndex + 1} ist keine Verkehrsbeziehung existent oder aktiv.\nWar: ${splittedLine}`;
     }
   }
 
@@ -519,9 +519,19 @@ function checkFussverkehrData(
   splittedLine: Array<string>
 ): string {
   const zaehlart = zaehlung.value.zaehlart;
-  if (splittedLine[1].trim()) {
-    return "Zielknotenarm darf nicht gefüllt sein.";
+
+  // Prüfung des Zielknotenarms (nach)
+  if (
+    [Zaehlart.FJS, Zaehlart.QU].includes(zaehlart) &&
+    splittedLine[1].trim()
+  ) {
+    return "Zielknotenarm (nach) darf nicht gefüllt sein.";
   }
+  if (zaehlart === Zaehlart.QJS && !splittedLine[1].trim()) {
+    return "Zielknotenarm (nach) darf nicht leer sein.";
+  }
+
+  // Prüfung der Strassenseite
   if (
     [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
     isEmpty(splittedLine[2])
@@ -531,13 +541,10 @@ function checkFussverkehrData(
   if (zaehlart === Zaehlart.QU && splittedLine[2].trim()) {
     return "Strassenseite muss leer sein.";
   }
-
-  // Prüfung der Strassenseite
   if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
     if (!StrassenseiteText.has(splittedLine[2].trim())) {
       return `Strassenseite ist ungültig: ${splittedLine[2]}.`;
     }
-
     if (
       isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
@@ -568,6 +575,7 @@ function checkFussverkehrData(
     }
   }
 
+  // Prüfung der Richtung
   if (zaehlart === Zaehlart.QU) {
     if (
       ![

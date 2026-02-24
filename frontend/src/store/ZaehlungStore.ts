@@ -1,4 +1,4 @@
-import type FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
@@ -29,8 +29,8 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     zaehlung.value.knotenarme ? zaehlung.value.knotenarme : []
   );
 
-  const getFahrbeziehungen = computed(() =>
-    zaehlung.value.fahrbeziehungen ? zaehlung.value.fahrbeziehungen : []
+  const getVerkehrsbeziehungen = computed(() =>
+    zaehlung.value.verkehrsbeziehungen ? zaehlung.value.verkehrsbeziehungen : []
   );
 
   const getKategorien = computed(() =>
@@ -109,114 +109,114 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     zaehlung.value.kategorien = [];
   }
 
-  function addAllFahrbeziehungen(payload: Array<FahrbeziehungDTO>) {
-    zaehlung.value.fahrbeziehungen = [];
-    payload.forEach((fahrbeziehungDTO: FahrbeziehungDTO) => {
-      zaehlung.value.fahrbeziehungen.push(fahrbeziehungDTO);
+  function addAllVerkehrsbeziehungen(payload: Array<VerkehrsbeziehungDTO>) {
+    zaehlung.value.verkehrsbeziehungen = [];
+    payload.forEach((verkehrsbeziehungDTO: VerkehrsbeziehungDTO) => {
+      zaehlung.value.verkehrsbeziehungen.push(verkehrsbeziehungDTO);
     });
   }
 
-  function deleteFahrbeziehungByKnotenarmnummer(payload: number) {
-    const toDelete: Array<FahrbeziehungDTO> = [];
-    // Alle zu löschenden Fahrbeziehungen entfernen
-    zaehlung.value.fahrbeziehungen.forEach((fz: FahrbeziehungDTO) => {
-      // Vom Knotenarm ausgehende Fahrbeziehungen heraussuchen
+  function deleteVerkehrsbeziehungByKnotenarmnummer(payload: number) {
+    const toDelete: Array<VerkehrsbeziehungDTO> = [];
+    // Alle zu löschenden Verkehrsbeziehungen entfernen
+    zaehlung.value.verkehrsbeziehungen.forEach((fz: VerkehrsbeziehungDTO) => {
+      // Vom Knotenarm ausgehende Verkehrsbeziehungen heraussuchen
       if (fz.von === payload) {
         toDelete.push(fz);
       }
-      // In den Knotenarm eingehende Fahrbeziehungen heraussuchen
+      // In den Knotenarm eingehende Verkehrsbeziehungen heraussuchen
       // U-Turn wird oben schon entfernt
       if (fz.von !== fz.nach && fz.nach === payload) {
         toDelete.push(fz);
       }
     });
-    // Alle gefundenen Fahrbeziehungen entfernen
-    toDelete.forEach((deleteMe: FahrbeziehungDTO) => {
-      const index: number = zaehlung.value.fahrbeziehungen.indexOf(deleteMe);
+    // Alle gefundenen Verkehrsbeziehungen entfernen
+    toDelete.forEach((deleteMe: VerkehrsbeziehungDTO) => {
+      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(deleteMe);
       if (index > -1) {
-        zaehlung.value.fahrbeziehungen.splice(index, 1);
+        zaehlung.value.verkehrsbeziehungen.splice(index, 1);
       }
     });
   }
 
-  function updateFahrbeziehung(payload: FahrbeziehungDTO) {
-    let toUpdate: FahrbeziehungDTO | undefined = undefined;
+  function updateVerkehrsbeziehung(payload: VerkehrsbeziehungDTO) {
+    let toUpdate: VerkehrsbeziehungDTO | undefined = undefined;
     // Zu aktualisierendes Element suchen
-    zaehlung.value.fahrbeziehungen.forEach(
-      (fahrbeziehung: FahrbeziehungDTO) => {
+    zaehlung.value.verkehrsbeziehungen.forEach(
+      (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
         if (
-          fahrbeziehung.von === payload.von &&
-          fahrbeziehung.nach === payload.nach
+            verkehrsbeziehung.von === payload.von &&
+            verkehrsbeziehung.nach === payload.nach
         ) {
-          toUpdate = fahrbeziehung;
+          toUpdate = verkehrsbeziehung;
         }
       }
     );
     // Wenn das Element existiert, wird dieses im Array durch das Aktualiserte ersetzt
     if (toUpdate) {
-      const index: number = zaehlung.value.fahrbeziehungen.indexOf(toUpdate);
+      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
       if (index > -1) {
-        zaehlung.value.fahrbeziehungen[index] = payload;
+        zaehlung.value.verkehrsbeziehungen[index] = payload;
       }
     } else {
-      // Ansonsten wird eine neue Fahrbeziehung hinzugefügt
-      zaehlung.value.fahrbeziehungen.push(payload);
+      // Ansonsten wird eine neue Verkehrsbeziehung hinzugefügt
+      zaehlung.value.verkehrsbeziehungen.push(payload);
     }
   }
 
-  function deleteFahrbeziehung(payload: FahrbeziehungDTO) {
-    let toDelete: FahrbeziehungDTO | undefined = undefined;
-    // Alle zu löschenden Fahrbeziehungen entfernen
-    zaehlung.value.fahrbeziehungen.forEach((fz: FahrbeziehungDTO) => {
-      // Vom Knotenarm ausgehende Fahrbeziehungen heraussuchen
+  function deleteVerkehrsbeziehung(payload: VerkehrsbeziehungDTO) {
+    let toDelete: VerkehrsbeziehungDTO | undefined = undefined;
+    // Alle zu löschenden Verkehrsbeziehungen entfernen
+    zaehlung.value.verkehrsbeziehungen.forEach((fz: VerkehrsbeziehungDTO) => {
+      // Vom Knotenarm ausgehende Verkehrsbeziehungen heraussuchen
       if (fz.von === payload.von && fz.nach === payload.nach) {
         toDelete = fz;
       }
     });
     if (toDelete) {
-      const index: number = zaehlung.value.fahrbeziehungen.indexOf(toDelete);
+      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
       if (index > -1) {
-        zaehlung.value.fahrbeziehungen.splice(index, 1);
+        zaehlung.value.verkehrsbeziehungen.splice(index, 1);
       }
     }
   }
 
-  function deleteAllFahrbeziehungen() {
-    zaehlung.value.fahrbeziehungen = [];
+  function deleteAllVerkehrsbeziehungen() {
+    zaehlung.value.verkehrsbeziehungen = [];
   }
 
-  function updateFahrbeziehungKreisverkehr(payload: FahrbeziehungDTO) {
-    let toUpdate: FahrbeziehungDTO | undefined = undefined;
+  function updateVerkehrsbeziehungKreisverkehr(payload: VerkehrsbeziehungDTO) {
+    let toUpdate: VerkehrsbeziehungDTO | undefined = undefined;
     // Zu aktualisierendes Element suchen
-    zaehlung.value.fahrbeziehungen.forEach(
-      (fahrbeziehung: FahrbeziehungDTO) => {
+    zaehlung.value.verkehrsbeziehungen.forEach(
+      (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
         if (
-          fahrbeziehung.knotenarm === payload.knotenarm &&
-          fahrbeziehung.heraus === payload.heraus &&
-          fahrbeziehung.hinein === payload.hinein &&
-          fahrbeziehung.vorbei === payload.vorbei
+            verkehrsbeziehung.knotenarm === payload.knotenarm &&
+            verkehrsbeziehung.heraus === payload.heraus &&
+            verkehrsbeziehung.hinein === payload.hinein &&
+            verkehrsbeziehung.vorbei === payload.vorbei
         ) {
-          toUpdate = fahrbeziehung;
+          toUpdate = verkehrsbeziehung;
         }
       }
     );
     // Wenn das Element existiert, wird dieses im Array durch das Aktualiserte ersetzt
     if (toUpdate) {
-      const index: number = zaehlung.value.fahrbeziehungen.indexOf(toUpdate);
+      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
       if (index > -1) {
-        zaehlung.value.fahrbeziehungen[index] = payload;
+        zaehlung.value.verkehrsbeziehungen[index] = payload;
       }
     } else {
-      // Ansonsten wird eine neue Fahrbeziehung hinzugefügt
-      zaehlung.value.fahrbeziehungen.push(payload);
+      // Ansonsten wird eine neue Verkehrsbeziehung hinzugefügt
+      zaehlung.value.verkehrsbeziehungen.push(payload);
     }
   }
 
-  function deleteFahrbeziehungKreisverkehr(payload: FahrbeziehungDTO) {
-    let toDelete: FahrbeziehungDTO | undefined = undefined;
-    // Alle zu löschenden Fahrbeziehungen entfernen
-    zaehlung.value.fahrbeziehungen.forEach((fz: FahrbeziehungDTO) => {
-      // Vom Knotenarm ausgehende Fahrbeziehungen heraussuchen
+  function deleteVerkehrsbeziehungKreisverkehr(payload: VerkehrsbeziehungDTO) {
+    let toDelete: VerkehrsbeziehungDTO | undefined = undefined;
+    // Alle zu löschenden Verkehrsbeziehungen entfernen
+    zaehlung.value.verkehrsbeziehungen.forEach((fz: VerkehrsbeziehungDTO) => {
+      // Vom Knotenarm ausgehende Verkehrsbeziehungen heraussuchen
       if (
         fz.knotenarm === payload.knotenarm &&
         fz.heraus === payload.heraus &&
@@ -227,9 +227,9 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
       }
     });
     if (toDelete) {
-      const index: number = zaehlung.value.fahrbeziehungen.indexOf(toDelete);
+      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
       if (index > -1) {
-        zaehlung.value.fahrbeziehungen.splice(index, 1);
+        zaehlung.value.verkehrsbeziehungen.splice(index, 1);
       }
     }
   }
@@ -239,7 +239,7 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     isHochrechnungsfaktorEditable,
     isZaehlungEditable,
     getKnotenarme,
-    getFahrbeziehungen,
+    getVerkehrsbeziehungen,
     getKategorien,
     setZaehlung,
     setKnotenarme,
@@ -250,12 +250,12 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     deleteKategorie,
     addAllKategorien,
     deleteAllKategorien,
-    addAllFahrbeziehungen,
-    deleteFahrbeziehungByKnotenarmnummer,
-    updateFahrbeziehung,
-    deleteFahrbeziehung,
-    deleteAllFahrbeziehungen,
-    updateFahrbeziehungKreisverkehr,
-    deleteFahrbeziehungKreisverkehr,
+    addAllVerkehrsbeziehungen,
+    deleteVerkehrsbeziehungByKnotenarmnummer,
+    updateVerkehrsbeziehung,
+    deleteVerkehrsbeziehung,
+    deleteAllVerkehrsbeziehungen,
+    updateVerkehrsbeziehungKreisverkehr,
+    deleteVerkehrsbeziehungKreisverkehr,
   };
 });

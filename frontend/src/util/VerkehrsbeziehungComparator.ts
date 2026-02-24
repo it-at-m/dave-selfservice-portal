@@ -1,6 +1,6 @@
-import type FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 
-export default class FahrbeziehungComparator {
+export default class VerkehrsbeziehungComparator {
   /**
    * Sortiert eine Liste von Knotenarmen nach der Nummer
    *
@@ -8,8 +8,8 @@ export default class FahrbeziehungComparator {
    * @param b
    */
   public static sortByActiveVonAndNach(
-    a: FahrbeziehungDTO,
-    b: FahrbeziehungDTO
+    a: VerkehrsbeziehungDTO,
+    b: VerkehrsbeziehungDTO
   ): number {
     // beide sind aktiv, dann nach von und dann nach nach
     if (a.active && b.active) {
