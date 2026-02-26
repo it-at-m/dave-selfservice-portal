@@ -24,7 +24,7 @@
       </v-tab>
       <v-tab :value="TAB_FAHRZEUGE">
         <v-icon icon="mdi-car-multiple" />
-        Fahrzeuge
+        Verkehrsarten
       </v-tab>
     </v-tabs>
     <v-tabs-window
