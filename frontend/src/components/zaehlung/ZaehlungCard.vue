@@ -186,8 +186,8 @@
 </template>
 
 <script setup lang="ts">
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";

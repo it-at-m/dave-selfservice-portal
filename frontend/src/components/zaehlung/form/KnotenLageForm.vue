@@ -164,8 +164,8 @@ import Status from "@/types/enum/Status";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
-import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
+import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
 
 interface Props {
   height: string;
@@ -232,7 +232,7 @@ const isZaehlungEditable = computed<boolean>(() => {
 
 const allVerkehrsbeziehungen = computed<Array<VerkehrsbeziehungDTO>>(() =>
   toArray(zaehlung.value.verkehrsbeziehungen).sort(
-      VerkehrsbeziehungComparator.sortByActiveVonAndNach
+    VerkehrsbeziehungComparator.sortByActiveVonAndNach
   )
 );
 
@@ -440,22 +440,26 @@ function checkVerkehrsbeziehungData(
     const nach: string = splittedLine[1];
     let verkehrsbeziehung: VerkehrsbeziehungDTO | undefined;
     if (zaehlung.value.kreisverkehr) {
-      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find((verkehrsbeziehung) => {
-        return (
+      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find(
+        (verkehrsbeziehung) => {
+          return (
             verkehrsbeziehung.knotenarm === armNummer &&
-          ((nach === "e" && verkehrsbeziehung.hinein) ||
-            (nach === "v" && verkehrsbeziehung.vorbei) ||
-            (nach === "a" && verkehrsbeziehung.heraus))
-        );
-      });
+            ((nach === "e" && verkehrsbeziehung.hinein) ||
+              (nach === "v" && verkehrsbeziehung.vorbei) ||
+              (nach === "a" && verkehrsbeziehung.heraus))
+          );
+        }
+      );
     } else {
       const nachArmNumber: number = parseInt(toString(nach.trim()));
-      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find((verkehrsbeziehung) => {
-        return (
-          armNummer === verkehrsbeziehung.von &&
-          nachArmNumber === verkehrsbeziehung.nach
-        );
-      });
+      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find(
+        (verkehrsbeziehung) => {
+          return (
+            armNummer === verkehrsbeziehung.von &&
+            nachArmNumber === verkehrsbeziehung.nach
+          );
+        }
+      );
     }
     if (isNil(verkehrsbeziehung)) {
       return `Für die Zähldaten in Zeile ${csvLineIndex + 1} ist keine Verkehrsbeziehung existent oder aktiv.\nWar: ${splittedLine}`;

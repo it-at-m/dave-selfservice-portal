@@ -1,8 +1,7 @@
 import type HochrechnungsfaktorDTO from "@/domain/dto/HochrechnungsfaktorDTO";
-import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import type BaseEntity from "@/types/common/BaseEntity";
+import type BewegungsbeziehungDTO from "@/types/zaehlung/BewegungsbeziehungDTO";
 
-export default interface VerkehrsbeziehungDTO extends BaseEntity {
+export default interface VerkehrsbeziehungDTO extends BewegungsbeziehungDTO {
   // Kreuzung
   von: number;
   nach: number;
@@ -14,8 +13,6 @@ export default interface VerkehrsbeziehungDTO extends BaseEntity {
   vorbei: boolean;
 
   hochrechnungsfaktor: HochrechnungsfaktorDTO;
-
-  zeitintervalle: Array<ZeitintervallDTO>;
 
   isKreuzung: boolean;
 
