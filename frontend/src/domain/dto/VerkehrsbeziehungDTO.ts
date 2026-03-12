@@ -1,6 +1,8 @@
 import type HochrechnungsfaktorDTO from "@/domain/dto/HochrechnungsfaktorDTO";
 import type BewegungsbeziehungDTO from "@/types/zaehlung/BewegungsbeziehungDTO";
 
+import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
+
 export default interface VerkehrsbeziehungDTO extends BewegungsbeziehungDTO {
   // Kreuzung
   von: number;
@@ -15,6 +17,8 @@ export default interface VerkehrsbeziehungDTO extends BewegungsbeziehungDTO {
   hochrechnungsfaktor: HochrechnungsfaktorDTO;
 
   isKreuzung: boolean;
+
+  strassenseite: Himmelsrichtung;
 
   active: boolean;
 }
