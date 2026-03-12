@@ -129,14 +129,16 @@ function save(): void {
  * und den Verkehrsbeziehungen zu geordnet. Für alle Zählarten außer FJS und QU.
  */
 function prepareForSaveZaehlung() {
-  const zeitintervalleProVerkehrsbeziehung: Map<
+  //[verkehrsbeziehung][strassenseite][zeitintervalle]
+  const zeitintervalleProStrassenseiteProVerkehrsbeziehung: Map<
     string,
-    Array<ZeitintervallDTO>
-  > = new Map<string, Array<ZeitintervallDTO>>();
+    Map<string, Array<ZeitintervallDTO>>
+  > = new Map<string, Map<string, Array<ZeitintervallDTO>>>();
+
   zaehlung.value.knotenarme.forEach((arm: KnotenarmDTO) => {
     if (arm.filename && arm.filedata && arm.filedata.length > 0) {
       transformCsvDataToVerkehrsbeziehung(arm).forEach((value, key) => {
-        zeitintervalleProVerkehrsbeziehung.set(key, value);
+        zeitintervalleProStrassenseiteProVerkehrsbeziehung.set(key, value);
       });
     }
   });
@@ -146,8 +148,11 @@ function prepareForSaveZaehlung() {
       fz,
       zaehlung.value.kreisverkehr
     );
-    if (zeitintervalleProVerkehrsbeziehung.has(key)) {
-      fz.zeitintervalle = zeitintervalleProVerkehrsbeziehung.get(key)!;
+    if (zeitintervalleProStrassenseiteProVerkehrsbeziehung.has(key)) {
+      const zeitintervalleProStrassenseite: Map<string, Array<ZeitintervallDTO>> = zeitintervalleProStrassenseiteProVerkehrsbeziehung.get(key)!;
+      if (zeitintervalleProStrassenseite.has(fz.strassenseite)) {
+        fz.zeitintervalle = zeitintervalleProStrassenseite.get(fz.strassenseite.toString())!;
+      }
     }
     fz.isKreuzung = !zaehlung.value.kreisverkehr;
   });
@@ -372,21 +377,22 @@ function prepareForSaveZaehlungQU() {
  * Wandelt die am Knotenarm hinterlegten Daten aus der CSV in ein Array vom Typ ZeitintervallDTO um.
  * @param arm Knotenarm mit den Daten der csv
  */
+//TODO in die Struktur der return Map die Strassenseite einbauen [verkehrsbeziehung][strassenseite][zeitintervalle]
 function transformCsvDataToVerkehrsbeziehung(
-  arm: KnotenarmDTO
-): Map<string, Array<ZeitintervallDTO>> {
+arm: KnotenarmDTO
+): Map<string, Map<string, Array<ZeitintervallDTO>>> {
+
   const verkehrsbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
     string,
     Array<ZeitintervallDTO>
   >();
-  const zeitinervalleProNach: Map<string, Array<ZeitintervallDTO>> = new Map<
+
+  const zeitintervalleProNach: Map<string, Array<ZeitintervallDTO>> = new Map<
     string,
     Array<ZeitintervallDTO>
   >();
-  // Ersten 3 Zeilen entfernen
-  arm.filedata.shift(); // Meta-Header
-  const knotenarmVon: string = arm.filedata.shift()!.split(SEPARATOR)[3];
-  arm.filedata.shift(); // Zaehlung-Header
+
+  const knotenarmVon: string = removeCsvHeaderAndRetrieveKnotenarmNr(arm);
 
   // Alle weiteren Zeilen enthalten Zähldaten
   arm.filedata.forEach((line: string) => {
@@ -402,8 +408,8 @@ function transformCsvDataToVerkehrsbeziehung(
       const knotenarmNach: string = values[1];
 
       // Wenn Nach noch nicht exisitert, dann leeres Array hinzufügen
-      if (!zeitinervalleProNach.has(knotenarmNach)) {
-        zeitinervalleProNach.set(knotenarmNach, []);
+      if (!zeitintervalleProNach.has(knotenarmNach)) {
+        zeitintervalleProNach.set(knotenarmNach, []);
       }
 
       if (values[4].trim().length > 0) {
@@ -427,11 +433,11 @@ function transformCsvDataToVerkehrsbeziehung(
       if (values[10].trim().length > 0) {
         intervall.fussgaenger = parseInt(values[10]);
       }
-      zeitinervalleProNach.get(knotenarmNach)!.push(intervall);
+      zeitintervalleProNach.get(knotenarmNach)!.push(intervall);
     }
   });
 
-  zeitinervalleProNach.forEach((value, key) => {
+  zeitintervalleProNach.forEach((value, key) => {
     verkehrsbeziehungen.set(knotenarmVon + key, value);
   });
   return verkehrsbeziehungen;
