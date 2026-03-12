@@ -149,9 +149,14 @@ function prepareForSaveZaehlung() {
       zaehlung.value.kreisverkehr
     );
     if (zeitintervalleProStrassenseiteProVerkehrsbeziehung.has(key)) {
-      const zeitintervalleProStrassenseite: Map<string, Array<ZeitintervallDTO>> = zeitintervalleProStrassenseiteProVerkehrsbeziehung.get(key)!;
+      const zeitintervalleProStrassenseite: Map<
+        string,
+        Array<ZeitintervallDTO>
+      > = zeitintervalleProStrassenseiteProVerkehrsbeziehung.get(key)!;
       if (zeitintervalleProStrassenseite.has(fz.strassenseite)) {
-        fz.zeitintervalle = zeitintervalleProStrassenseite.get(fz.strassenseite.toString())!;
+        fz.zeitintervalle = zeitintervalleProStrassenseite.get(
+          fz.strassenseite.toString()
+        )!;
       }
     }
     fz.isKreuzung = !zaehlung.value.kreisverkehr;
@@ -377,8 +382,9 @@ function prepareForSaveZaehlungQU() {
  * Wandelt die am Knotenarm hinterlegten Daten aus der CSV in ein Array vom Typ ZeitintervallDTO um.
  * @param arm Knotenarm mit den Daten der csv
  */
-function transformCsvDataToVerkehrsbeziehung(arm: KnotenarmDTO): Map<string, Array<ZeitintervallDTO>> {
-
+function transformCsvDataToVerkehrsbeziehung(
+  arm: KnotenarmDTO
+): Map<string, Array<ZeitintervallDTO>> {
   const verkehrsbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
     string,
     Array<ZeitintervallDTO>
