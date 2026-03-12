@@ -377,10 +377,7 @@ function prepareForSaveZaehlungQU() {
  * Wandelt die am Knotenarm hinterlegten Daten aus der CSV in ein Array vom Typ ZeitintervallDTO um.
  * @param arm Knotenarm mit den Daten der csv
  */
-//TODO in die Struktur der return Map die Strassenseite einbauen [verkehrsbeziehung][strassenseite][zeitintervalle]
-function transformCsvDataToVerkehrsbeziehung(
-arm: KnotenarmDTO
-): Map<string, Map<string, Array<ZeitintervallDTO>>> {
+function transformCsvDataToVerkehrsbeziehung(arm: KnotenarmDTO): Map<string, Array<ZeitintervallDTO>> {
 
   const verkehrsbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
     string,
