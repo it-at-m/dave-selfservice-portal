@@ -103,9 +103,11 @@ function save(): void {
   const zaehlart = zaehlung.value.zaehlart;
 
   if (zaehlart === Zaehlart.FJS) {
-    prepareForSaveZaehlungFJS();
+    prepareForSaveZaehlungFjs();
   } else if (zaehlart === Zaehlart.QU) {
-    prepareForSaveZaehlungQU();
+    prepareForSaveZaehlungQu();
+  } else if (zaehlart === Zaehlart.QJS) {
+    prepareForSaveZaehlungQjs();
   } else {
     prepareForSaveZaehlung();
   }
@@ -126,7 +128,7 @@ function save(): void {
 /**
  * Bereitet die tiefen Kopie auf das Speichern vor.
  * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
- * und den Verkehrsbeziehungen zu geordnet. Für alle Zählarten außer FJS und QU.
+ * und den Verkehrsbeziehungen zu geordnet. Für alle Zählarten außer FJS, QJS und QU.
  */
 function prepareForSaveZaehlung() {
   //[verkehrsbeziehung][strassenseite][zeitintervalle]
@@ -165,9 +167,8 @@ function prepareForSaveZaehlung() {
 
 /**
  * Diese Funktion bereitet die FJS-Daten für die Speicherung vor.
- *
  */
-function prepareForSaveZaehlungFJS() {
+function prepareForSaveZaehlungFjs() {
   // Map[knotenarmnr][richtung][strassenseite][zeitintervalle]
   const zeitintervalleProStrassenseiteProRichtungProKnotenarm: Map<
     string,
@@ -283,22 +284,133 @@ function prepareForSaveZaehlungFJS() {
       }
     }
   });
-
-  // Zeitintervalle in bereits vorhandene Längsverkehre einsortieren
-  //zaehlung.value.laengsverkehr.forEach((lv: LaengsverkehrDTO) => {
-  //  lv.zeitintervalle = zeitintervalleProStrassenseiteProRichtungProKnotenarm
-  //    .get(lv.knotenarm.toString())!
-  //    .get(lv.richtung.toString())!
-  //    .get(lv.strassenseite)!;
-  //});
 }
 
 /**
- * Bereitet die Querungsverkehrsdaten für das Speichern vor.
- *
- *
+ * Diese Funktion bereitet die QJS-Daten für die Speicherung vor.
  */
-function prepareForSaveZaehlungQU() {
+function prepareForSaveZaehlungQjs() {
+  // Map[knotenarmnr][zielknotenarmnr (nach)][strassenseite][zeitintervalle]
+  const zeitintervalleProKnotenarmProZielknotenarmProStrassenseite: Map<
+    string,
+    Map<string, Map<string, Array<ZeitintervallDTO>>>
+  > = new Map<string, Map<string, Map<string, Array<ZeitintervallDTO>>>>();
+
+  zaehlung.value.knotenarme.forEach((knotenarm: KnotenarmDTO) => {
+    if (
+      knotenarm.filename &&
+      knotenarm.filedata &&
+      knotenarm.filedata.length > 0
+    ) {
+      const knotenarmNr: string =
+        removeCsvHeaderAndRetrieveKnotenarmNr(knotenarm);
+
+      // Alle weiteren Zeilen enthalten Zähldaten
+      knotenarm.filedata.forEach((line: string) => {
+        if (line.trim().length === 0) {
+          // skip Leerzeilen
+        } else {
+          const values: Array<string> = line.split(SEPARATOR);
+
+          const intervall: ZeitintervallDTO =
+            createZeitinvervallFromIntervallNr(values[0]);
+
+          if (values[9].trim().length > 0) {
+            intervall.fahrradfahrer = parseInt(values[9]);
+          }
+
+          if (values[10].trim().length > 0) {
+            intervall.fussgaenger = parseInt(values[10]);
+          }
+
+          // Zielknotenarm (nach) auslesen
+          let zielknotenarm: string = {} as string;
+          if (values[1].trim().length > 0) {
+            zielknotenarm = values[1];
+          }
+
+          // Straßenseite auslesen
+          let strassenseite: string = {} as string;
+          if (values[2].trim().length > 0) {
+            strassenseite = values[2];
+          }
+
+          if (
+            !zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.has(
+              knotenarmNr
+            )
+          ) {
+            zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.set(
+              knotenarmNr,
+              new Map<string, Map<string, Array<ZeitintervallDTO>>>()
+            );
+          }
+          if (
+            !zeitintervalleProKnotenarmProZielknotenarmProStrassenseite
+              .get(knotenarmNr)!
+              .has(zielknotenarm)
+          ) {
+            zeitintervalleProKnotenarmProZielknotenarmProStrassenseite
+              .get(knotenarmNr)!
+              .set(zielknotenarm, new Map<string, Array<ZeitintervallDTO>>());
+          }
+          if (
+            !zeitintervalleProKnotenarmProZielknotenarmProStrassenseite
+              .get(knotenarmNr)!
+              .get(zielknotenarm)!
+              .has(strassenseite)
+          ) {
+            zeitintervalleProKnotenarmProZielknotenarmProStrassenseite
+              .get(knotenarmNr)!
+              .get(zielknotenarm)!
+              .set(strassenseite, new Array<ZeitintervallDTO>());
+          }
+          zeitintervalleProKnotenarmProZielknotenarmProStrassenseite
+            .get(knotenarmNr)!
+            .get(zielknotenarm)!
+            .get(strassenseite)!
+            .push(intervall);
+        }
+      });
+    }
+  });
+
+  // Zeitintervalle in bereits vorhandene Längsverkehre einsortieren
+  zaehlung.value.verkehrsbeziehungen.forEach((vz: VerkehrsbeziehungDTO) => {
+    if (
+      zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.has(
+        vz.von.toString()
+      )
+    ) {
+      const zeitintervalleProZielknotenarmProStrassenseite: Map<
+        string,
+        Map<string, Array<ZeitintervallDTO>>
+      > = zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.get(
+        vz.von.toString()
+      )!;
+      if (
+        zeitintervalleProZielknotenarmProStrassenseite.has(vz.nach.toString())
+      ) {
+        const zeitintervalleProStrassenseite: Map<
+          string,
+          Array<ZeitintervallDTO>
+        > = zeitintervalleProZielknotenarmProStrassenseite.get(
+          vz.nach.toString()
+        )!;
+        if (zeitintervalleProStrassenseite.has(vz.strassenseite.toString())) {
+          vz.zeitintervalle = zeitintervalleProStrassenseite.get(
+            vz.strassenseite.toString()
+          )!;
+        }
+      }
+    }
+  });
+}
+
+/**
+ * Bereitet die QJS-Daten für das Speichern vor.
+ */
+function prepareForSaveZaehlungQu() {
   // Map[knotenarmnr][richtung][zeitintervalle]
   const zeitintervalleProRichtungProKnotenarm: Map<
     string,
@@ -372,9 +484,6 @@ function prepareForSaveZaehlungQU() {
         )!;
       }
     }
-    //qu.zeitintervalle = zeitintervalleProRichtungProKnotenarm
-    //  .get(qu.knotenarm.toString())!
-    //  .get(qu.richtung.toString())!;
   });
 }
 
