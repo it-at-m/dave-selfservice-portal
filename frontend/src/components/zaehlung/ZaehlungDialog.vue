@@ -265,11 +265,11 @@ function prepareForSaveZaehlungFjs() {
           string,
           Array<ZeitintervallDTO>
         > = zeitintervalleProStrassenseiteProRichtung.get(
-          lv.strassenseite.toString()
+          lv.richtung.toString()
         )!;
         if (zeitintervalleProStrassenseite.has(lv.strassenseite.toString())) {
           lv.zeitintervalle = zeitintervalleProStrassenseite.get(
-            lv.richtung.toString()
+            lv.strassenseite.toString()
           )!;
         }
       }
