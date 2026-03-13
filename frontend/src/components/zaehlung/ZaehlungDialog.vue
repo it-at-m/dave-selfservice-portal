@@ -131,16 +131,14 @@ function save(): void {
  * und den Verkehrsbeziehungen zu geordnet. Für alle Zählarten außer FJS, QJS und QU.
  */
 function prepareForSaveZaehlung() {
-  //[verkehrsbeziehung][strassenseite][zeitintervalle]
-  const zeitintervalleProStrassenseiteProVerkehrsbeziehung: Map<
+  const zeitintervalleProVerkehrsbeziehung: Map<
     string,
-    Map<string, Array<ZeitintervallDTO>>
-  > = new Map<string, Map<string, Array<ZeitintervallDTO>>>();
-
+    Array<ZeitintervallDTO>
+  > = new Map<string, Array<ZeitintervallDTO>>();
   zaehlung.value.knotenarme.forEach((arm: KnotenarmDTO) => {
     if (arm.filename && arm.filedata && arm.filedata.length > 0) {
       transformCsvDataToVerkehrsbeziehung(arm).forEach((value, key) => {
-        zeitintervalleProStrassenseiteProVerkehrsbeziehung.set(key, value);
+        zeitintervalleProVerkehrsbeziehung.set(key, value);
       });
     }
   });
@@ -150,16 +148,8 @@ function prepareForSaveZaehlung() {
       fz,
       zaehlung.value.kreisverkehr
     );
-    if (zeitintervalleProStrassenseiteProVerkehrsbeziehung.has(key)) {
-      const zeitintervalleProStrassenseite: Map<
-        string,
-        Array<ZeitintervallDTO>
-      > = zeitintervalleProStrassenseiteProVerkehrsbeziehung.get(key)!;
-      if (zeitintervalleProStrassenseite.has(fz.strassenseite)) {
-        fz.zeitintervalle = zeitintervalleProStrassenseite.get(
-          fz.strassenseite.toString()
-        )!;
-      }
+    if (zeitintervalleProVerkehrsbeziehung.has(key)) {
+      fz.zeitintervalle = zeitintervalleProVerkehrsbeziehung.get(key)!;
     }
     fz.isKreuzung = !zaehlung.value.kreisverkehr;
   });
@@ -498,7 +488,6 @@ function transformCsvDataToVerkehrsbeziehung(
     string,
     Array<ZeitintervallDTO>
   >();
-
   const zeitintervalleProNach: Map<string, Array<ZeitintervallDTO>> = new Map<
     string,
     Array<ZeitintervallDTO>
