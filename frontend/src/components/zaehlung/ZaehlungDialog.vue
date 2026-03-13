@@ -109,6 +109,7 @@ function save(): void {
   } else if (zaehlart === Zaehlart.QJS) {
     prepareForSaveZaehlungQjs();
   } else {
+    // alle anderen Zählarten
     prepareForSaveZaehlung();
   }
 
