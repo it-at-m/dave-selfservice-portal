@@ -158,6 +158,8 @@ function prepareForSaveZaehlung() {
 
 /**
  * Diese Funktion bereitet die FJS-Daten für die Speicherung vor.
+ * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
+ * und den Längsverkehren zu geordnet.
  */
 function prepareForSaveZaehlungFjs() {
   // Map[knotenarmnr][richtung][strassenseite][zeitintervalle]
@@ -205,6 +207,7 @@ function prepareForSaveZaehlungFjs() {
             richtung = values[3];
           }
 
+          // Maps erstellen
           if (
             !zeitintervalleProStrassenseiteProRichtungProKnotenarm.has(
               knotenarmNr
@@ -235,6 +238,8 @@ function prepareForSaveZaehlungFjs() {
               .get(richtung)!
               .set(strassenseite, new Array<ZeitintervallDTO>());
           }
+
+          // Zeitintervalle hinzufügen
           zeitintervalleProStrassenseiteProRichtungProKnotenarm
             .get(knotenarmNr)!
             .get(richtung)!
@@ -279,6 +284,8 @@ function prepareForSaveZaehlungFjs() {
 
 /**
  * Diese Funktion bereitet die QJS-Daten für die Speicherung vor.
+ * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
+ * und den Verkehrsbeziehungen zu geordnet.
  */
 function prepareForSaveZaehlungQjs() {
   // Map[knotenarmnr][zielknotenarmnr (nach)][strassenseite][zeitintervalle]
@@ -326,6 +333,7 @@ function prepareForSaveZaehlungQjs() {
             strassenseite = values[2];
           }
 
+          // Verschachtelte Maps erstellen
           if (
             !zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.has(
               knotenarmNr
@@ -356,6 +364,8 @@ function prepareForSaveZaehlungQjs() {
               .get(zielknotenarm)!
               .set(strassenseite, new Array<ZeitintervallDTO>());
           }
+
+          // Zeitintervalle hinzufügen
           zeitintervalleProKnotenarmProZielknotenarmProStrassenseite
             .get(knotenarmNr)!
             .get(zielknotenarm)!
@@ -366,7 +376,7 @@ function prepareForSaveZaehlungQjs() {
     }
   });
 
-  // Zeitintervalle in bereits vorhandene Längsverkehre einsortieren
+  // Zeitintervalle in bereits vorhandenen Verkehrsbeziehungen einsortieren
   zaehlung.value.verkehrsbeziehungen.forEach((vz: VerkehrsbeziehungDTO) => {
     if (
       zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.has(
@@ -399,7 +409,9 @@ function prepareForSaveZaehlungQjs() {
 }
 
 /**
- * Bereitet die QJS-Daten für das Speichern vor.
+ * Bereitet die QU-Daten für das Speichern vor.
+ * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
+ * und den Querungsverkehren zu geordnet.
  */
 function prepareForSaveZaehlungQu() {
   // Map[knotenarmnr][richtung][zeitintervalle]
@@ -438,6 +450,7 @@ function prepareForSaveZaehlungQu() {
             richtung = values[3];
           }
 
+          // Maps erstellen
           if (!zeitintervalleProRichtungProKnotenarm.has(knotenarmNr)) {
             zeitintervalleProRichtungProKnotenarm.set(
               knotenarmNr,
@@ -453,6 +466,8 @@ function prepareForSaveZaehlungQu() {
               .get(knotenarmNr)!
               .set(richtung, new Array<ZeitintervallDTO>());
           }
+
+          // Zeitintervalle hinzufügenn
           zeitintervalleProRichtungProKnotenarm
             .get(knotenarmNr)!
             .get(richtung)!
@@ -545,6 +560,10 @@ function transformCsvDataToVerkehrsbeziehung(
   return verkehrsbeziehungen;
 }
 
+/**
+ * Entfernt den dreizeiligen CSV-Header und gibt die Knotenarmnummer aus dem Header zurück.
+ * @param knotenarm
+ */
 function removeCsvHeaderAndRetrieveKnotenarmNr(
   knotenarm: KnotenarmDTO
 ): string {
@@ -555,6 +574,10 @@ function removeCsvHeaderAndRetrieveKnotenarmNr(
   return knotenarmNr;
 }
 
+/**
+ * Erstellt ein ZeitintervallDTO mit Start- und Endeuhrzeit auf Basis einer Intervallnr.
+ * @param intervallNr
+ */
 function createZeitinvervallFromIntervallNr(
   intervallNr: string
 ): ZeitintervallDTO {
