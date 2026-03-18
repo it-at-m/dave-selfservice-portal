@@ -211,6 +211,7 @@ import Status, { statusIcon } from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
 import { useDateUtils } from "@/util/DateUtils";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
+import {getCsvContentForAllZaehlarten} from "@/components/zaehlung/ZaehlungCsvHeader";
 
 const zaehlung = defineModel<ZaehlungDTO>({
   required: true,
@@ -394,18 +395,6 @@ function downloadDummyCsv(): void {
   document.body.appendChild(link); // Required for FF
 
   link.click();
-}
-
-function getCsvContentForAllZaehlarten(
-  zaehlstelleNummer: string,
-  zaehlart: string,
-  zaehlungDatum: string
-): string {
-  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
-  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<knotenarmnummer>;;;;;\n`;
-  const zaehlungHeader =
-    "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
-  return metaHeader + metaData + zaehlungHeader;
 }
 
 function openChatDialog() {
