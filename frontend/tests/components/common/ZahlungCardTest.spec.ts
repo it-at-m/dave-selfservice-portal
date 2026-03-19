@@ -10,7 +10,7 @@ Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss
 `);
 
         const semicolonCount = (result.match(/;/g) || []).length;
-        expect(semicolonCount, "Each of the 3 csv header templates should have 10 semicolons — for a total of 30.").toBe(30);
+        expect(semicolonCount, "Die 3 CSV Header Templates sollten jeweils 10 Semicolons haben - in der Summe dann 30.").toBe(30);
 
     });
 });
