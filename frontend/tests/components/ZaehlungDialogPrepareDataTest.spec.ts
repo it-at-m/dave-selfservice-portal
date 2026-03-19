@@ -13,14 +13,13 @@ import Zaehldauer from "@/types/enum/Zaehldauer";
 
 describe("prepareForSaveZaehlung", () => {
   it("should properly transform CSV data into time intervals", () => {
-    // Create a sample ZaehlungDTO object
     const zaehlung: ZaehlungDTO = {
       id: "1",
       entityVersion: 0,
       createdTime: "0",
       datum: "2026-03-10",
       zaehlart: Zaehlart.FJS,
-      punkt: { lat: "0", lon: "0" }, // assuming GeoPoint has latitude and longitude
+      punkt: { lat: "0", lon: "0" },
       projektNummer: "P123",
       projektName: "Project Name",
       kreuzungsname: "Intersection Name",
@@ -49,7 +48,10 @@ describe("prepareForSaveZaehlung", () => {
             "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
             "1;2;;;1;2;3;4;5;6;0",
             "2;2;;;1;1;1;1;1;1;0",
-            // Add more rows as needed
+            "3;2;;;2;2;2;2;2;2;0",
+            "4;2;;;3;3;3;3;3;3;0",
+            "5;2;;;4;4;4;4;4;4;0",
+            "6;2;;;5;5;5;5;5;5;0",
           ],
         },
         {
@@ -65,7 +67,10 @@ describe("prepareForSaveZaehlung", () => {
             "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
             "1;1;;;7;6;5;4;3;2;1",
             "2;1;;;2;2;2;2;2;2;2",
-            // Add more rows as needed
+            "3;1;;;3;3;3;3;3;3;3",
+            "4;1;;;4;4;4;4;4;4;4",
+            "5;1;;;5;5;5;5;5;5;5",
+            "6;1;;;6;6;6;6;6;6;6",
           ],
         },
       ],
@@ -130,14 +135,11 @@ describe("prepareForSaveZaehlung", () => {
       unreadMessagesDienstleister: false,
     };
 
-    // Call the function being tested
     prepareForSaveZaehlung(zaehlung);
 
-    // Assertions to check if the time intervals were set correctly
     expect(zaehlung.verkehrsbeziehungen).toBeDefined();
     expect(zaehlung.verkehrsbeziehungen.length).toBe(2);
 
-    // Check if the time intervals were created correctly
     const expectedTimeIntervals1: ZeitintervallDTO[] = [
       {
         startUhrzeit: "00:00",
@@ -161,10 +163,52 @@ describe("prepareForSaveZaehlung", () => {
         fahrradfahrer: 1,
         fussgaenger: 0,
       },
-      // Add more expected intervals based on your CSV data
+      {
+        startUhrzeit: "00:30",
+        endeUhrzeit: "00:45",
+        pkw: 2,
+        lkw: 2,
+        lastzuege: 2,
+        busse: 2,
+        kraftraeder: 2,
+        fahrradfahrer: 2,
+        fussgaenger: 0,
+      },
+      {
+        startUhrzeit: "00:45",
+        endeUhrzeit: "01:00",
+        pkw: 3,
+        lkw: 3,
+        lastzuege: 3,
+        busse: 3,
+        kraftraeder: 3,
+        fahrradfahrer: 3,
+        fussgaenger: 0,
+      },
+      {
+        startUhrzeit: "01:00",
+        endeUhrzeit: "01:15",
+        pkw: 4,
+        lkw: 4,
+        lastzuege: 4,
+        busse: 4,
+        kraftraeder: 4,
+        fahrradfahrer: 4,
+        fussgaenger: 0,
+      },
+      {
+        startUhrzeit: "01:15",
+        endeUhrzeit: "01:30",
+        pkw: 5,
+        lkw: 5,
+        lastzuege: 5,
+        busse: 5,
+        kraftraeder: 5,
+        fahrradfahrer: 5,
+        fussgaenger: 0,
+      },
     ];
 
-    // Check if the time intervals were created correctly
     const expectedTimeIntervals2: ZeitintervallDTO[] = [
       {
         startUhrzeit: "00:00",
@@ -188,9 +232,51 @@ describe("prepareForSaveZaehlung", () => {
         fahrradfahrer: 2,
         fussgaenger: 2,
       },
-      // Add more expected intervals based on your CSV data
+      {
+        startUhrzeit: "00:30",
+        endeUhrzeit: "00:45",
+        pkw: 3,
+        lkw: 3,
+        lastzuege: 3,
+        busse: 3,
+        kraftraeder: 3,
+        fahrradfahrer: 3,
+        fussgaenger: 3,
+      },
+      {
+        startUhrzeit: "00:45",
+        endeUhrzeit: "01:00",
+        pkw: 4,
+        lkw: 4,
+        lastzuege: 4,
+        busse: 4,
+        kraftraeder: 4,
+        fahrradfahrer: 4,
+        fussgaenger: 4,
+      },
+      {
+        startUhrzeit: "01:00",
+        endeUhrzeit: "01:15",
+        pkw: 5,
+        lkw: 5,
+        lastzuege: 5,
+        busse: 5,
+        kraftraeder: 5,
+        fahrradfahrer: 5,
+        fussgaenger: 5,
+      },
+      {
+        startUhrzeit: "01:15",
+        endeUhrzeit: "01:30",
+        pkw: 6,
+        lkw: 6,
+        lastzuege: 6,
+        busse: 6,
+        kraftraeder: 6,
+        fahrradfahrer: 6,
+        fussgaenger: 6,
+      },
     ];
-
     expect(zaehlung.verkehrsbeziehungen[0].zeitintervalle).toEqual(
       expectedTimeIntervals1
     );
