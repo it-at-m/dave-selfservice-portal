@@ -168,7 +168,7 @@ export function prepareForSaveZaehlung(zaehlung: ZaehlungDTO) {
  * und den Längsverkehren zu geordnet.
  * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
  */
-function prepareForSaveZaehlungFjs(zaehlung: ZaehlungDTO) {
+export function prepareForSaveZaehlungFjs(zaehlung: ZaehlungDTO) {
   // Map[knotenarmnr][richtung][strassenseite][zeitintervalle]
   const zeitintervalleProStrassenseiteProRichtungProKnotenarm: Map<
     string,
@@ -295,7 +295,7 @@ function prepareForSaveZaehlungFjs(zaehlung: ZaehlungDTO) {
  * und den Verkehrsbeziehungen zu geordnet.
  * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
  */
-function prepareForSaveZaehlungQjs(zaehlung: ZaehlungDTO) {
+export function prepareForSaveZaehlungQjs(zaehlung: ZaehlungDTO) {
   // Map[knotenarmnr][zielknotenarmnr (nach)][strassenseite][zeitintervalle]
   const zeitintervalleProKnotenarmProZielknotenarmProStrassenseite: Map<
     string,
@@ -422,7 +422,7 @@ function prepareForSaveZaehlungQjs(zaehlung: ZaehlungDTO) {
  * und den Querungsverkehren zu geordnet.
  * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
  */
-function prepareForSaveZaehlungQu(zaehlung: ZaehlungDTO) {
+export function prepareForSaveZaehlungQu(zaehlung: ZaehlungDTO) {
   // Map[knotenarmnr][richtung][zeitintervalle]
   const zeitintervalleProRichtungProKnotenarm: Map<
     string,
