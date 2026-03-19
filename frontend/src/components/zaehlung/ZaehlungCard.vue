@@ -186,8 +186,8 @@
 </template>
 
 <script setup lang="ts">
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
@@ -204,6 +204,7 @@ import WetterIcon from "@/components/icons/WetterIcon.vue";
 import ZaehlartIcon from "@/components/icons/ZaehlartIcon.vue";
 import ZaehldauerIcon from "@/components/icons/ZaehldauerIcon.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
+import { getCsvContentForAllZaehlarten } from "@/components/zaehlung/ZaehlungCsvHeader";
 import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
 import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
@@ -211,7 +212,6 @@ import Status, { statusIcon } from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
 import { useDateUtils } from "@/util/DateUtils";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
-import {getCsvContentForAllZaehlarten} from "@/components/zaehlung/ZaehlungCsvHeader";
 
 const zaehlung = defineModel<ZaehlungDTO>({
   required: true,

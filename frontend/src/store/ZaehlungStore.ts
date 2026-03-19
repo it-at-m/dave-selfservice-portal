@@ -132,7 +132,8 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     });
     // Alle gefundenen Verkehrsbeziehungen entfernen
     toDelete.forEach((deleteMe: VerkehrsbeziehungDTO) => {
-      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(deleteMe);
+      const index: number =
+        zaehlung.value.verkehrsbeziehungen.indexOf(deleteMe);
       if (index > -1) {
         zaehlung.value.verkehrsbeziehungen.splice(index, 1);
       }
@@ -145,8 +146,8 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     zaehlung.value.verkehrsbeziehungen.forEach(
       (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
         if (
-            verkehrsbeziehung.von === payload.von &&
-            verkehrsbeziehung.nach === payload.nach
+          verkehrsbeziehung.von === payload.von &&
+          verkehrsbeziehung.nach === payload.nach
         ) {
           toUpdate = verkehrsbeziehung;
         }
@@ -154,7 +155,8 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     );
     // Wenn das Element existiert, wird dieses im Array durch das Aktualiserte ersetzt
     if (toUpdate) {
-      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
+      const index: number =
+        zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
       if (index > -1) {
         zaehlung.value.verkehrsbeziehungen[index] = payload;
       }
@@ -174,7 +176,8 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
       }
     });
     if (toDelete) {
-      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
+      const index: number =
+        zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
       if (index > -1) {
         zaehlung.value.verkehrsbeziehungen.splice(index, 1);
       }
@@ -191,10 +194,10 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     zaehlung.value.verkehrsbeziehungen.forEach(
       (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
         if (
-            verkehrsbeziehung.knotenarm === payload.knotenarm &&
-            verkehrsbeziehung.heraus === payload.heraus &&
-            verkehrsbeziehung.hinein === payload.hinein &&
-            verkehrsbeziehung.vorbei === payload.vorbei
+          verkehrsbeziehung.knotenarm === payload.knotenarm &&
+          verkehrsbeziehung.heraus === payload.heraus &&
+          verkehrsbeziehung.hinein === payload.hinein &&
+          verkehrsbeziehung.vorbei === payload.vorbei
         ) {
           toUpdate = verkehrsbeziehung;
         }
@@ -202,7 +205,8 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     );
     // Wenn das Element existiert, wird dieses im Array durch das Aktualiserte ersetzt
     if (toUpdate) {
-      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
+      const index: number =
+        zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
       if (index > -1) {
         zaehlung.value.verkehrsbeziehungen[index] = payload;
       }
@@ -227,7 +231,8 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
       }
     });
     if (toDelete) {
-      const index: number = zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
+      const index: number =
+        zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
       if (index > -1) {
         zaehlung.value.verkehrsbeziehungen.splice(index, 1);
       }
