@@ -506,21 +506,20 @@ export function prepareForSaveZaehlungQu(zaehlung: ZaehlungDTO) {
   });
 }
 
-
 /**
  * Wandelt die am Knotenarm hinterlegten Daten aus der CSV in ein Array vom Typ ZeitintervallDTO um.
  * @param arm Knotenarm mit den Daten der csv
  */
 function transformCsvDataToVerkehrsbeziehung(
-    arm: KnotenarmDTO
+  arm: KnotenarmDTO
 ): Map<string, Array<ZeitintervallDTO>> {
   const verkehrsbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
-      string,
-      Array<ZeitintervallDTO>
+    string,
+    Array<ZeitintervallDTO>
   >();
   const zeitintervalleProNach: Map<string, Array<ZeitintervallDTO>> = new Map<
-      string,
-      Array<ZeitintervallDTO>
+    string,
+    Array<ZeitintervallDTO>
   >();
 
   const knotenarmVon: string = removeCsvHeaderAndRetrieveKnotenarmNr(arm);
@@ -532,7 +531,7 @@ function transformCsvDataToVerkehrsbeziehung(
     } else {
       const values: Array<string> = line.split(SEPARATOR);
       const intervall: ZeitintervallDTO = createZeitinvervallFromIntervallNr(
-          values[0]
+        values[0]
       );
 
       // Bei Kreisverkehren steht hier e(infahrend), v(orbeifahrend) oder a(usfahrend) drinnen
