@@ -449,6 +449,10 @@ export function prepareForSaveZaehlungQu(zaehlung: ZaehlungDTO) {
           const intervall: ZeitintervallDTO =
             createZeitinvervallFromIntervallNr(values[0]);
 
+          if (values[9].trim().length > 0) {
+            intervall.fahrradfahrer = parseInt(values[9]);
+          }
+
           if (values[10].trim().length > 0) {
             intervall.fussgaenger = parseInt(values[10]);
           }
