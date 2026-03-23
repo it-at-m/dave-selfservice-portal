@@ -186,8 +186,8 @@
 </template>
 
 <script setup lang="ts">
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
@@ -204,6 +204,7 @@ import WetterIcon from "@/components/icons/WetterIcon.vue";
 import ZaehlartIcon from "@/components/icons/ZaehlartIcon.vue";
 import ZaehldauerIcon from "@/components/icons/ZaehldauerIcon.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
+import { getCsvContentForAllZaehlarten } from "@/components/zaehlung/ZaehlungCsvHeader";
 import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
 import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
@@ -394,18 +395,6 @@ function downloadDummyCsv(): void {
   document.body.appendChild(link); // Required for FF
 
   link.click();
-}
-
-function getCsvContentForAllZaehlarten(
-  zaehlstelleNummer: string,
-  zaehlart: string,
-  zaehlungDatum: string
-): string {
-  const metaHeader = "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;\n";
-  const metaData = `${zaehlstelleNummer};${zaehlart};${zaehlungDatum};<knotenarmnummer>;;;;;\n`;
-  const zaehlungHeader =
-    "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss\n";
-  return metaHeader + metaData + zaehlungHeader;
 }
 
 function openChatDialog() {
