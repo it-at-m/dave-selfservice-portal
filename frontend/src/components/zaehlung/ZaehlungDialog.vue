@@ -203,13 +203,13 @@ export function prepareForSaveZaehlungFjs(zaehlung: ZaehlungDTO) {
           }
 
           // Straßenseite auslesen
-          let strassenseite: string = {} as string;
+          let strassenseite: string = "";
           if (values[2].trim().length > 0) {
             strassenseite = values[2];
           }
 
           // Himmelsrichtung auslesen
-          let richtung: string = {} as string;
+          let richtung: string = "";
           if (values[3].trim().length > 0) {
             richtung = values[3];
           }
@@ -330,13 +330,13 @@ export function prepareForSaveZaehlungQjs(zaehlung: ZaehlungDTO) {
           }
 
           // Zielknotenarm (nach) auslesen
-          let zielknotenarm: string = {} as string;
+          let zielknotenarm: string = "";
           if (values[1].trim().length > 0) {
             zielknotenarm = values[1];
           }
 
           // Straßenseite auslesen
-          let strassenseite: string = {} as string;
+          let strassenseite: string = "";
           if (values[2].trim().length > 0) {
             strassenseite = values[2];
           }
@@ -458,7 +458,7 @@ export function prepareForSaveZaehlungQu(zaehlung: ZaehlungDTO) {
           }
 
           // Himmelsrichtung auslesen
-          let richtung: string = {} as string;
+          let richtung: string = "";
           if (values[3].trim().length > 0) {
             richtung = values[3];
           }
