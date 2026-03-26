@@ -39,6 +39,12 @@
 </template>
 
 <script setup lang="ts">
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
+import type { StartUhrzeitEndeUhrzeit } from "@/types/enum/Intervallnummern";
+import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { computed, watch } from "vue";
@@ -49,6 +55,7 @@ import ZaehlungService from "@/api/service/ZaehlungService";
 import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
 import { useEventbusStore } from "@/store/EventbusStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
+import { intervallnummern } from "@/types/enum/Intervallnummern";
 import Status from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
 
@@ -70,6 +77,8 @@ const zaehlung = defineModel<ZaehlungDTO>({
 const { mobile } = useDisplay();
 const eventbusStore = useEventbusStore();
 const snackbarStore = useSnackbarStore();
+
+const SEPARATOR = ";";
 
 watch(
   () => props.showDialog,
@@ -121,26 +130,14 @@ function cancel(): void {
   eventbusStore.setResetFormEvent();
   emits("close-dialog");
 }
-</script>
 
-<script lang="ts">
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import type { StartUhrzeitEndeUhrzeit } from "@/types/enum/Intervallnummern";
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
-
-import { intervallnummern } from "@/types/enum/Intervallnummern";
-
-const SEPARATOR = ";";
 /**
  * Bereitet die tiefen Kopie auf das Speichern vor.
  * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
  * und den Verkehrsbeziehungen zu geordnet. Für alle Zählarten außer FJS, QJS und QU.
  * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
  */
-export function prepareForSaveZaehlung(zaehlung: ZaehlungDTO) {
+function prepareForSaveZaehlung(zaehlung: ZaehlungDTO) {
   const zeitintervalleProVerkehrsbeziehung: Map<
     string,
     Array<ZeitintervallDTO>
@@ -168,7 +165,7 @@ export function prepareForSaveZaehlung(zaehlung: ZaehlungDTO) {
  * und den Längsverkehren zu geordnet.
  * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
  */
-export function prepareForSaveZaehlungFjs(zaehlung: ZaehlungDTO) {
+function prepareForSaveZaehlungFjs(zaehlung: ZaehlungDTO) {
   // Map[knotenarmnr][richtung][strassenseite][zeitintervalle]
   const zeitintervalleProStrassenseiteProRichtungProKnotenarm: Map<
     string,
@@ -295,7 +292,7 @@ export function prepareForSaveZaehlungFjs(zaehlung: ZaehlungDTO) {
  * und den Verkehrsbeziehungen zu geordnet.
  * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
  */
-export function prepareForSaveZaehlungQjs(zaehlung: ZaehlungDTO) {
+function prepareForSaveZaehlungQjs(zaehlung: ZaehlungDTO) {
   // Map[knotenarmnr][zielknotenarmnr (nach)][strassenseite][zeitintervalle]
   const zeitintervalleProKnotenarmProZielknotenarmProStrassenseite: Map<
     string,
@@ -422,7 +419,7 @@ export function prepareForSaveZaehlungQjs(zaehlung: ZaehlungDTO) {
  * und den Querungsverkehren zu geordnet.
  * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
  */
-export function prepareForSaveZaehlungQu(zaehlung: ZaehlungDTO) {
+function prepareForSaveZaehlungQu(zaehlung: ZaehlungDTO) {
   // Map[knotenarmnr][richtung][zeitintervalle]
   const zeitintervalleProRichtungProKnotenarm: Map<
     string,

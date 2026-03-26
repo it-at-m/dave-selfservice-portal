@@ -3,18 +3,50 @@ import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
-import { describe, expect, it } from "vitest";
+import { mount, VueWrapper } from "@vue/test-utils";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
+import { createVuetify } from "vuetify";
 
-import { prepareForSaveZaehlungQjs } from "@/components/zaehlung/ZaehlungDialog.vue";
+import ZaehlungDialog from "@/components/zaehlung/ZaehlungDialog.vue";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import Wetter from "@/types/enum/Wetter";
 import Zaehlart from "@/types/enum/Zaehlart";
 import Zaehldauer from "@/types/enum/Zaehldauer";
+import DefaultObjectCreator from "@/util/DefaultObjectCreator";
+
+const vuetify = createVuetify();
+
+global.ResizeObserver = class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+};
 
 describe("prepareForSaveZaehlungQjs", () => {
+  let wrapper: VueWrapper;
+
+  beforeEach(() => {
+    const pinia = createPinia();
+    setActivePinia(pinia);
+
+    wrapper = mount(ZaehlungDialog, {
+      global: {
+        plugins: [vuetify, pinia],
+      },
+      props: {
+        modelValue: DefaultObjectCreator.createDefaultZaehlungDTO(),
+        showDialog: true,
+      },
+    });
+  });
+
   it("should properly transform CSV data into time intervals", () => {
+    const instance = wrapper.vm as unknown as {
+      prepareForSaveZaehlungQjs: (zaehlung: ZaehlungDTO) => void;
+    };
     const hfexample: HochrechnungsfaktorDTO = {
       id: "1",
       entityVersion: 0,
@@ -161,7 +193,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       unreadMessagesDienstleister: false,
     };
 
-    prepareForSaveZaehlungQjs(zaehlung);
+    instance.prepareForSaveZaehlungQjs(zaehlung);
 
     expect(zaehlung.verkehrsbeziehungen).toBeDefined();
     expect(zaehlung.verkehrsbeziehungen.length).toBe(4);
