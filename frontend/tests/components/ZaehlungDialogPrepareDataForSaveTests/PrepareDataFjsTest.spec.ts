@@ -210,7 +210,7 @@ describe("prepareForSaveZaehlungFjs", () => {
       fussgaenger: 2,
     });
 
-    // O/EIN
+    // O/AUS
     const oAus = zaehlung.laengsverkehr.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.O &&
@@ -272,6 +272,7 @@ describe("prepareForSaveZaehlungFjs", () => {
       fussgaenger: 1,
     });
 
+    // W/EIN
     const wEin = zaehlung.laengsverkehr.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.W &&
