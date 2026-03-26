@@ -62,7 +62,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       entityVersion: 0,
       createdTime: "0",
       datum: "2026-03-10",
-      zaehlart: Zaehlart.FJS,
+      zaehlart: Zaehlart.QJS,
       punkt: { lat: "0", lon: "0" },
       projektNummer: "P123",
       projektName: "Project Name",
