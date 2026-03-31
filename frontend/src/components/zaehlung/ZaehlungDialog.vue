@@ -131,7 +131,10 @@ function prepareForSaveZaehlung() {
   });
 
   zaehlung.value.verkehrsbeziehungen.forEach((fz: VerkehrsbeziehungDTO) => {
-    const key: string = getKeyOfVerkehrsbeziehung(fz, zaehlung.value.kreisverkehr);
+    const key: string = getKeyOfVerkehrsbeziehung(
+      fz,
+      zaehlung.value.kreisverkehr
+    );
     if (zeitintervalleProVerkehrsbeziehung.has(key)) {
       fz.zeitintervalle = zeitintervalleProVerkehrsbeziehung.get(key)!;
     }
