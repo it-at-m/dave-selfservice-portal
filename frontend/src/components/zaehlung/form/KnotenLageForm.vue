@@ -130,7 +130,7 @@
           sm="2"
         >
           <v-data-table
-            v-if="isNotZaehlartFjsOrQu && isNotKreisverkehr"
+            v-if="isNotKreisverkehr && isNotZaehlartFjsOrQu"
             density="compact"
             :headers="verkehrsbeziehungHeader as Array<any>"
             :items="allVerkehrsbeziehungen"
