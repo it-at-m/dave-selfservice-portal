@@ -2,6 +2,8 @@ import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type BaseEntity from "@/types/common/BaseEntity";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
@@ -29,6 +31,8 @@ export default interface ZaehlungDTO extends BaseEntity {
   kommentar: string;
   knotenarme: KnotenarmDTO[];
   verkehrsbeziehungen: VerkehrsbeziehungDTO[];
+  querungsverkehr: QuerungsverkehrDTO[];
+  laengsverkehr: LaengsverkehrDTO[];
   // Zaehlstelle
   zaehlstelleNummer: string;
   zaehlstelleStadtbezirk: string;

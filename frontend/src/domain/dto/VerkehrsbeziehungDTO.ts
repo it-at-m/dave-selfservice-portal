@@ -1,8 +1,9 @@
 import type HochrechnungsfaktorDTO from "@/domain/dto/HochrechnungsfaktorDTO";
-import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import type BaseEntity from "@/types/common/BaseEntity";
+import type BewegungsbeziehungDTO from "@/types/zaehlung/BewegungsbeziehungDTO";
 
-export default interface VerkehrsbeziehungDTO extends BaseEntity {
+import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
+
+export default interface VerkehrsbeziehungDTO extends BewegungsbeziehungDTO {
   // Kreuzung
   von: number;
   nach: number;
@@ -15,9 +16,9 @@ export default interface VerkehrsbeziehungDTO extends BaseEntity {
 
   hochrechnungsfaktor: HochrechnungsfaktorDTO;
 
-  zeitintervalle: Array<ZeitintervallDTO>;
-
   isKreuzung: boolean;
+
+  strassenseite: Himmelsrichtung;
 
   active: boolean;
 }
