@@ -388,14 +388,11 @@ function openZaehlungDialog() {
 }
 
 function downloadDummyCsv(): void {
-  // Beispiel: 62301Q_20210423_Knotenarm2.csv
+  // Beispiel: 62301Q_2021-04-23_Knotenarm_X.csv
   const zaehlstelleNummer: string = zaehlung.value.zaehlstelleNummer;
   const zaehlartForFileContent: string =
     zaehlung.value.zaehlart === Zaehlart.N ? "" : zaehlung.value.zaehlart;
-  const filename = `${zaehlstelleNummer}${zaehlartForFileContent}_${zaehlung.value.datum.replace(
-    "-",
-    ""
-  )}_Knotenarm_X.csv`;
+  const filename = `${zaehlstelleNummer}${zaehlartForFileContent}_${zaehlung.value.datum}_Knotenarm_X.csv`;
 
   const csvFileContent = getCsvContentForAllZaehlarten(
     zaehlstelleNummer,
