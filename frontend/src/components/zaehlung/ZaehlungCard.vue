@@ -190,6 +190,8 @@ import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
@@ -291,15 +293,30 @@ const showButtonAbschliessen = computed<boolean>(() => {
 
 // Liefert nur die Knotenarme zurueck, die ausgehenden Verkehr haben
 const knotenarmeWithOutgoingTraffic = computed<Array<KnotenarmDTO>>(() => {
-  const outgoingKnotenarmnummern = zaehlung.value.verkehrsbeziehungen.map(
-    (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
-      if (zaehlung.value.kreisverkehr) {
-        return verkehrsbeziehung.knotenarm;
-      } else {
-        return verkehrsbeziehung.von;
+  let outgoingKnotenarmnummern = [];
+  if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+    outgoingKnotenarmnummern = zaehlung.value.laengsverkehr.map(
+      (laengsverkehr: LaengsverkehrDTO) => {
+        return laengsverkehr.knotenarm;
       }
-    }
-  );
+    );
+  } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
+    outgoingKnotenarmnummern = zaehlung.value.querungsverkehr.map(
+      (querungsverkehr: QuerungsverkehrDTO) => {
+        return querungsverkehr.knotenarm;
+      }
+    );
+  } else {
+    outgoingKnotenarmnummern = zaehlung.value.verkehrsbeziehungen.map(
+      (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
+        if (zaehlung.value.kreisverkehr) {
+          return verkehrsbeziehung.knotenarm;
+        } else {
+          return verkehrsbeziehung.von;
+        }
+      }
+    );
+  }
   return zaehlung.value.knotenarme.filter((arm: KnotenarmDTO) => {
     return !isNil(arm) && outgoingKnotenarmnummern.includes(arm.nummer);
   });
@@ -371,14 +388,11 @@ function openZaehlungDialog() {
 }
 
 function downloadDummyCsv(): void {
-  // Beispiel: 62301Q_20210423_Knotenarm2.csv
+  // Beispiel: 62301Q_2021-04-23_Knotenarm_X.csv
   const zaehlstelleNummer: string = zaehlung.value.zaehlstelleNummer;
   const zaehlartForFileContent: string =
     zaehlung.value.zaehlart === Zaehlart.N ? "" : zaehlung.value.zaehlart;
-  const filename = `${zaehlstelleNummer}${zaehlartForFileContent}_${zaehlung.value.datum.replace(
-    "-",
-    ""
-  )}_Knotenarm_X.csv`;
+  const filename = `${zaehlstelleNummer}${zaehlartForFileContent}_${zaehlung.value.datum}_Knotenarm_X.csv`;
 
   const csvFileContent = getCsvContentForAllZaehlarten(
     zaehlstelleNummer,

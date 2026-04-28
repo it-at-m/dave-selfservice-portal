@@ -130,7 +130,7 @@
           sm="2"
         >
           <v-data-table
-            v-if="isNotKreisverkehr"
+            v-if="isNotKreisverkehr && isNotZaehlartFjsOrQu"
             density="compact"
             :headers="verkehrsbeziehungHeader as Array<any>"
             :items="allVerkehrsbeziehungen"
@@ -237,6 +237,13 @@ const allVerkehrsbeziehungen = computed<Array<VerkehrsbeziehungDTO>>(() =>
 );
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
+
+const isNotZaehlartFjsOrQu = computed<boolean>(() => {
+  return !(
+    zaehlung.value.zaehlart === Zaehlart.FJS ||
+    zaehlung.value.zaehlart === Zaehlart.QU
+  );
+});
 
 const verkehrsbeziehungHeader = [
   {
