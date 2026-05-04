@@ -20,13 +20,13 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 import markerIconRed from "@/assets/marker-icon-red.png";
 import { useEventbusStore } from "@/store/EventbusStore";
+import { useMapConfigStore } from "@/store/MapConfigStore";
 
 interface Props {
   height?: string;
   width?: string;
   minheight?: string;
   editZaehlungMarker?: boolean;
-  showLuftbild: boolean;
   latLngZaehlstelle: LatLng;
   latLngZaehlung: LatLng;
 }
@@ -38,8 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
   editZaehlungMarker: false,
 });
 
-const mapAttribution =
-  '&copy; <a href="https://stadt.muenchen.de/infos/geobasisdaten.html">GeodatenService München</a>';
+const mapConfigStore = useMapConfigStore();
 
 const cardmapRef = ref<HTMLDivElement | null>(null);
 
@@ -90,26 +89,17 @@ function createLayersAndAddToMap(): void {
 }
 
 function createBaseLayers(): L.Control.LayersObject {
-  const stadtkarteGesamt = L.tileLayer.wms(
-    "https://geoportal.muenchen.de/geoserver/gsm/wms?",
-    {
-      layers: "gsm:g_stadtkarte_gesamt",
-      className: "Stadtkarte",
-      attribution: mapAttribution,
-    }
-  );
+  const baseLayers = mapConfigStore.getMapConfig.baseLayers;
+  let layerConfig = baseLayers[0];
 
-  const luftbild = L.tileLayer.wms(
-    "https://geoportal.muenchen.de/geoserver/gsm/wms?",
-    {
-      layers: "gsm:g_luftbild",
-      className: "Luftbild",
-      attribution: mapAttribution,
-    }
-  );
+  const layer = L.tileLayer.wms(layerConfig.baseUrl, {
+    layers: layerConfig.layerName,
+    className: layerConfig.layerName,
+    attribution: layerConfig.attribution,
+  });
 
   return {
-    BaseLayer: props.showLuftbild ? luftbild : stadtkarteGesamt,
+    BaseLayer: layer,
   };
 }
 
