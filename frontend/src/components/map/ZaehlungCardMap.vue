@@ -96,6 +96,7 @@ function createBaseLayers(): L.Control.LayersObject {
     layers: layerConfig.layerName,
     className: layerConfig.layerName,
     attribution: layerConfig.attribution,
+    referrerPolicy: "strict-origin-when-cross-origin",
   });
 
   return {
