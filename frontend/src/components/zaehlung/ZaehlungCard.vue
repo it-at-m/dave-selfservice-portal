@@ -3,7 +3,6 @@
     <zaehlung-card-map
       :lat-lng-zaehlstelle="coordsZaehlstelle"
       :lat-lng-zaehlung="coordsZaehlung"
-      :show-luftbild="true"
     />
 
     <v-btn
