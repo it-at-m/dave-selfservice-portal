@@ -1,3 +1,4 @@
+import type MapConfigDTO from "@/types/karte/MapConfigDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
@@ -27,5 +28,16 @@ export default class DefaultObjectCreator {
     zaehlung.kreisverkehr = false;
     zaehlung.sonderzaehlung = false;
     return zaehlung;
+  }
+
+  public static createDefaultMapConfigDTO(): MapConfigDTO {
+    return {
+      // München Zentrum
+      lat: "48.137227",
+      lng: "11.575517",
+      zoom: 12,
+      baseLayers: [],
+      overlayLayers: [],
+    };
   }
 }

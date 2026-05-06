@@ -52,14 +52,18 @@
 </template>
 
 <script setup lang="ts">
+import type MapConfigDTO from "@/types/karte/MapConfigDTO";
+
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
+import MapConfigService from "@/api/service/MapConfigService";
 import SsoUserInfoService from "@/api/service/SsoUserInfoService";
 import VersionInfoService from "@/api/service/VersionInfoService";
 import TheSnackbar from "@/components/common/TheSnackbar.vue";
 import SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
 import VersionInfoResponse from "@/domain/VersionInfoResponse";
+import { useMapConfigStore } from "@/store/MapConfigStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useUserStore } from "@/store/UserStore";
 
@@ -74,6 +78,7 @@ const frontendVersion = ref<string>("");
 const userStore = useUserStore();
 const route = useRoute();
 const snackbarStore = useSnackbarStore();
+const mapConfigStore = useMapConfigStore();
 
 created();
 
@@ -102,6 +107,9 @@ function created() {
     .catch(() => {
       backendVersion.value = "error";
     });
+  MapConfigService.getMapConfig().then((res: MapConfigDTO) => {
+    mapConfigStore.setMapConfig(res);
+  });
 }
 
 function navigateToHandbuch() {
