@@ -684,6 +684,8 @@ function readFiles() {
   let successfull = true;
   let errorText = "";
   let itemsProcessed = 0;
+  let knotenarmeWithUploadedFiles = new Map();
+  let errorTextKnotenarmnummer = "";
 
   files.value.forEach((myFile) => {
     const fileReader = new FileReader();
@@ -706,6 +708,30 @@ function readFiles() {
             `Die Datei ${myFile.name} konnte keinem Knotenarm zugeordnet werden. Metadaten prüfen`
           );
         }
+
+        // Plausibilisierung: Wurden mehrere Dateien mit dieser Knotenarmnummer hochgeladen?
+        if (knotenarmeWithUploadedFiles.has(knotenarmnummerOfCsv)) {
+          if (
+            !errorTextKnotenarmnummer.includes(
+              knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv).name
+            )
+          ) {
+            errorTextKnotenarmnummer = `${errorTextKnotenarmnummer}\n - ${knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv).name}: Knotenarmnummer ${knotenarmnummerOfCsv}\n`;
+          }
+          errorTextKnotenarmnummer = `${errorTextKnotenarmnummer}\n - ${myFile.name}: Knotenarmnummer ${knotenarmnummerOfCsv}\n`;
+
+          itemsProcessed--; // notwendig, damit die Fehlermeldung angezeigt wird
+        } else {
+          knotenarmeWithUploadedFiles.set(knotenarmnummerOfCsv, myFile);
+        }
+
+        if (errorTextKnotenarmnummer.length > 0) {
+          snackbarStore.showError(
+            `Mehrere Dateien enthalten die gleiche Knotenarmnummer:`,
+            errorTextKnotenarmnummer
+          );
+        }
+
         itemsProcessed++;
         zaehlung.value.knotenarme.forEach((zaehlungArm: KnotenarmDTO) => {
           if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
