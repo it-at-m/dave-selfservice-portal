@@ -705,7 +705,7 @@ function readFiles() {
           )
         ) {
           snackbarStore.showError(
-            `Die Datei ${myFile.name} konnte keinem Knotenarm zugeordnet werden. Metadaten prüfen`
+            `Die Datei ${myFile.name} konnte keinem Knotenarm zugeordnet werden. Knotenarmnummer prüfen!`
           );
         }
 
