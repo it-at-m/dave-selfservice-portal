@@ -47,7 +47,7 @@ const color = ref(Levels.INFO);
 const snackbarStore = useSnackbarStore();
 
 const formattedSnackbarTextPart2 = computed(() =>
-  snackbarTextPart2.value?.split("\n")
+  snackbarTextPart2.value?.split("\n") ?? []
 );
 
 watch(
