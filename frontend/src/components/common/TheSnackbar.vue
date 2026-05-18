@@ -46,8 +46,8 @@ const color = ref(Levels.INFO);
 
 const snackbarStore = useSnackbarStore();
 
-const formattedSnackbarTextPart2 = computed(() =>
-  snackbarTextPart2.value?.split("\n")
+const formattedSnackbarTextPart2 = computed<string[]>(() =>
+  snackbarTextPart2.value ? snackbarTextPart2.value.split(/\r?\n/) : []
 );
 
 watch(
