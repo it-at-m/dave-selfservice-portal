@@ -684,7 +684,7 @@ function readFiles() {
   let successfull = true;
   let errorText = "";
   let itemsProcessed = 0;
-  let knotenarmeWithUploadedFiles = new Map();
+  let knotenarmeWithUploadedFiles = new Map<number, File>();
   let errorTextKnotenarmnummer = "";
 
   files.value.forEach((myFile) => {
@@ -713,10 +713,10 @@ function readFiles() {
         if (knotenarmeWithUploadedFiles.has(knotenarmnummerOfCsv)) {
           if (
             !errorTextKnotenarmnummer.includes(
-              knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv).name
+              knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv)?.name ?? ""
             )
           ) {
-            errorTextKnotenarmnummer = `${errorTextKnotenarmnummer}\n - ${knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv).name}: Knotenarmnummer ${knotenarmnummerOfCsv}\n`;
+            errorTextKnotenarmnummer = `${errorTextKnotenarmnummer}\n - ${knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv)?.name}: Knotenarmnummer ${knotenarmnummerOfCsv}\n`;
           }
           errorTextKnotenarmnummer = `${errorTextKnotenarmnummer}\n - ${myFile.name}: Knotenarmnummer ${knotenarmnummerOfCsv}\n`;
 
