@@ -678,6 +678,18 @@ function isArmnummerAndStrassenseiteInvalid(
 }
 
 /**
+ * Prüft, ob die aktuelle Zählung einen Knotenarm mit der übergebenen Knotenarmnummer enthält.
+ *
+ * @param knotenarmnummer zu prüfende Knotenarmnummer.
+ * @returns true, wenn die Knotenarmnummer in der Zählung enthalten ist.
+ */
+function isKnotenarmnummerInZaehlung(knotenarmnummer: number): boolean {
+  return zaehlung.value.knotenarme.some(
+    (zaehlungArm: KnotenarmDTO) => zaehlungArm.nummer === knotenarmnummer
+  );
+}
+
+/**
  * Methode zum Einlesen der Files.
  */
 function readFiles() {
@@ -698,12 +710,7 @@ function readFiles() {
         );
         const knotenarmnummerOfCsv: number = getKnotenarmnummerOfCsv(csv);
         // Plausibilisierung: Kann die Datei einem Knotenarm der Zählung zugeordnet werden?
-        if (
-          !zaehlung.value.knotenarme.some(
-            (zaehlungArm: KnotenarmDTO) =>
-              zaehlungArm.nummer === knotenarmnummerOfCsv
-          )
-        ) {
+        if (!isKnotenarmnummerInZaehlung(knotenarmnummerOfCsv)) {
           snackbarStore.showError(
             `Die Datei ${myFile.name} konnte keinem Knotenarm zugeordnet werden. Knotenarmnummer prüfen!`
           );
