@@ -4,7 +4,7 @@
 
     <groupId>de.muenchen.dave</groupId>
     <artifactId>dave-selfservice-portal</artifactId>
-    <version>7.0.1-SNAPSHOT</version>
+    <version>8.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>dave_selfserviceportal_frontend</name>
 
