@@ -104,7 +104,7 @@ function save(): void {
 
 
   /*
-   TODO: Validierung entsprechend der Zählart hier implementieren. ZeitintervallDTO um Intervallnummer erweitern.
+   TODO: Validierung für FV-341 entsprechend der Zählart hier implementieren. ZeitintervallDTO um Intervallnummer erweitern.
    */
 
   if (zaehlart === Zaehlart.FJS) {
