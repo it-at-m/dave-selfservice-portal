@@ -102,6 +102,11 @@ const dialogtitle = computed<string>(() => {
 function save(): void {
   const zaehlart = zaehlung.value.zaehlart;
 
+
+  /*
+   TODO: Validierung entsprechend der Zählart hier implementieren. ZeitintervallDTO um Intervallnummer erweitern.
+   */
+
   if (zaehlart === Zaehlart.FJS) {
     prepareForSaveZaehlungFjs(zaehlung.value);
   } else if (zaehlart === Zaehlart.QU) {
