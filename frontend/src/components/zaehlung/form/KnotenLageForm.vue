@@ -162,6 +162,7 @@ import Richtung from "@/types/enum/Richtung";
 import Status from "@/types/enum/Status";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
+import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
@@ -189,6 +190,9 @@ const COLUMN_COUNT = EXPECTED_ZAEHLDATEN_HEADER.split(SEPARATOR).length;
 const FILE_INPUT_FIELD_ID = "fileInputField";
 
 const snackbarStore = useSnackbarStore();
+
+const csvToZeitintervallTransformationUtils =
+  useCsvToZeitintervallTransformationUtils();
 
 const resetFileInput = ref<number>(0);
 
@@ -696,7 +700,7 @@ function readFiles() {
   let successfull = true;
   let errorText = "";
   let itemsProcessed = 0;
-  let knotenarmeWithUploadedFiles = new Map<number, File>();
+  const knotenarmeWithUploadedFiles = new Map<number, File>();
   let errorTextKnotenarmnummer = "";
 
   files.value.forEach((myFile) => {
@@ -781,6 +785,10 @@ function readFiles() {
         fileReader.readAsText(myFile);
       }
     }
+
+    csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
+      zaehlung.value
+    );
   });
 }
 </script>
