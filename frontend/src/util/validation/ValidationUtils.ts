@@ -1,7 +1,12 @@
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import type Zaehldauer from "@/types/enum/Zaehldauer";
+import type { StartIntervallnummerEndeIntervallnummer } from "@/types/common/StartIntervallnummerEndeIntervallnummer";
 
-import { join } from "lodash";
+import { difference, join, sum, toArray } from "lodash";
+
+import {
+  Zaehldauer,
+  zaehldauerIntervallnummern,
+} from "@/types/enum/Zaehldauer";
 
 export function useValidationUtils() {
   /**
@@ -17,7 +22,7 @@ export function useValidationUtils() {
     >();
 
     intervalle.forEach((interval: ZeitintervallDTO) => {
-      const startEndeUhrzeit = `Intervallnummer ${interval.intervallnummer} von ${interval.startUhrzeit} bis ${interval.endeUhrzeit}`;
+      const startEndeUhrzeit = startEndeUhrzeitString(interval);
       if (intervalleByStartEndeUhrzeit.has(startEndeUhrzeit)) {
         intervalleByStartEndeUhrzeit.get(startEndeUhrzeit)?.push(interval);
       } else {
@@ -43,7 +48,58 @@ export function useValidationUtils() {
   function checkForCorrectNumberOfIntervalsAccordingZaehldauer(
     intervalle: Array<ZeitintervallDTO>,
     zaehldauer: Zaehldauer
-  ) {}
+  ): string {
+    const startIntervallnummerEndeIntervallnummer =
+      zaehldauerIntervallnummern.get(zaehldauer);
+
+    const numberOfIntervallsAccordingZaehldauer = sum(
+      toArray(startIntervallnummerEndeIntervallnummer).map(
+        (startIntervallnummerEndeIntervallnummer) =>
+          startIntervallnummerEndeIntervallnummer.numberOfIntervals
+      )
+    );
+
+    const intervalleWithin = toArray(
+      startIntervallnummerEndeIntervallnummer
+    ).flatMap((startIntervallnummerEndeIntervallnummer) =>
+      intervalle.filter((intervall) =>
+        isZeitintervallWithinStartIntervallnummerEndeIntervallnummer(
+          intervall,
+          startIntervallnummerEndeIntervallnummer
+        )
+      )
+    );
+
+    const intervalleNotWithin = difference(intervalle, intervalleWithin).map(
+      (interval) => startEndeUhrzeitString(interval)
+    );
+
+    if (zaehldauer != Zaehldauer.SONSTIGE) {
+      if (intervalleNotWithin.length > 0) {
+        return `Zeitintervalle in CSV-Datei welche sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${join(intervalleNotWithin, ", ")}`;
+      }
+      if (numberOfIntervallsAccordingZaehldauer != intervalleWithin.length) {
+        return "Die Anzahl der Zeitintervalle in der CSV-Datei entsprechen nicht der erwarteten Intervalle der Zähldauer.";
+      }
+    }
+    return "";
+  }
+
+  function isZeitintervallWithinStartIntervallnummerEndeIntervallnummer(
+    interval: ZeitintervallDTO,
+    startIntervallnummerEndeIntervallnummer: StartIntervallnummerEndeIntervallnummer
+  ): boolean {
+    return (
+      startIntervallnummerEndeIntervallnummer.startIntervallnummer >=
+        interval.intervallnummer &&
+      startIntervallnummerEndeIntervallnummer.endeIntervallnummer <=
+        interval.intervallnummer
+    );
+  }
+
+  function startEndeUhrzeitString(interval: ZeitintervallDTO) {
+    return `Intervallnummer ${interval.intervallnummer} von ${interval.startUhrzeit} bis ${interval.endeUhrzeit}`;
+  }
 
   return {
     checkForIdenticalZeitintervalleAccordingStartUhrzeitAndEndeUhrzeit,
