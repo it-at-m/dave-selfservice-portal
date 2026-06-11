@@ -1,6 +1,5 @@
 import type KeyVal from "@/types/common/KeyVal";
 import type { StartIntervallnummerEndeIntervallnummer } from "@/types/common/StartIntervallnummerEndeIntervallnummer";
-import type { StartUhrzeitEndeUhrzeit } from "@/types/common/StartUhrzeitEndeUhrzeit";
 
 export enum Zaehldauer {
   /**
