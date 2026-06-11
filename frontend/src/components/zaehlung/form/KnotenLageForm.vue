@@ -771,10 +771,10 @@ function readFiles() {
         fileReader.readAsText(myFile);
       }
     }
-
-    csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
-      zaehlung.value
-    );
   });
+
+  csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
+    zaehlung.value
+  );
 }
 </script>
