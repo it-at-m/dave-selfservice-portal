@@ -335,7 +335,7 @@ function checkUploadedFiledata(
   const metaHeader: string = csvData[0];
   // MetaHeader vorhanden?
   if (isNil(metaHeader)) {
-    return "Die Header der Metadaten fehlen in der hochgeladenen Datei ${filename}.";
+    return `Die Header der Metadaten fehlen in der hochgeladenen Datei ${filename}.`;
   }
   // MetaHeader korrekt?
   if (metaHeader!.trim() !== EXPECTED_META_HEADER) {
