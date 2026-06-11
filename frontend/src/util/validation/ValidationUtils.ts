@@ -1,10 +1,9 @@
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
+import type Zaehldauer from "@/types/enum/Zaehldauer";
 
 import { join } from "lodash";
 
 export function useValidationUtils() {
-
-
   /**
    *
    * @param intervalle
@@ -18,7 +17,7 @@ export function useValidationUtils() {
     >();
 
     intervalle.forEach((interval: ZeitintervallDTO) => {
-      const startEndeUhrzeit = `${interval.startUhrzeit} bis ${interval.endeUhrzeit}`;
+      const startEndeUhrzeit = `Intervallnummer ${interval.intervallnummer} von ${interval.startUhrzeit} bis ${interval.endeUhrzeit}`;
       if (intervalleByStartEndeUhrzeit.has(startEndeUhrzeit)) {
         intervalleByStartEndeUhrzeit.get(startEndeUhrzeit)?.push(interval);
       } else {
@@ -41,7 +40,13 @@ export function useValidationUtils() {
     return "";
   }
 
+  function checkForCorrectNumberOfIntervalsAccordingZaehldauer(
+    intervalle: Array<ZeitintervallDTO>,
+    zaehldauer: Zaehldauer
+  ) {}
+
   return {
     checkForIdenticalZeitintervalleAccordingStartUhrzeitAndEndeUhrzeit,
+    checkForCorrectNumberOfIntervalsAccordingZaehldauer,
   };
 }

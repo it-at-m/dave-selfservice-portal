@@ -1,6 +1,6 @@
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import type { StartUhrzeitEndeUhrzeit } from "@/types/enum/Intervallnummern";
+import type { StartUhrzeitEndeUhrzeit } from "@/types/common/StartUhrzeitEndeUhrzeit";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
 import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
