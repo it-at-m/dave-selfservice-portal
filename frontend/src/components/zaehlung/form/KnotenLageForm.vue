@@ -506,7 +506,7 @@ function checkVerkehrsbeziehungData(
 
   for (let i = 4; i <= 8; i++) {
     // Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
-    if (splittedLine[i].trim().length >= 0) {
+    if (splittedLine[i].trim().length > 0) {
       if (
         !validationUtils.isWholeNonNegativeIntegerString(splittedLine[i].trim())
       ) {
@@ -631,7 +631,7 @@ function checkFussverkehrData(
   const csvLineNumber: number = csvLineIndex + 1;
   for (let i = 9; i <= 10; i++) {
     // Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
-    if (splittedLine[i].trim().length >= 0) {
+    if (splittedLine[i].trim().length > 0) {
       if (
         !validationUtils.isWholeNonNegativeIntegerString(splittedLine[i].trim())
       ) {
