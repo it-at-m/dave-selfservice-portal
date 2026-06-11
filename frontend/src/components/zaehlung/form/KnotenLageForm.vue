@@ -164,6 +164,7 @@ import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
+import { useValidationUtils } from "@/util/validation/ValidationUtils";
 import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
 
 interface Props {
@@ -189,6 +190,8 @@ const COLUMN_COUNT = EXPECTED_ZAEHLDATEN_HEADER.split(SEPARATOR).length;
 const FILE_INPUT_FIELD_ID = "fileInputField";
 
 const snackbarStore = useSnackbarStore();
+
+const validationUtils = useValidationUtils();
 
 const resetFileInput = ref<number>(0);
 
@@ -317,63 +320,65 @@ function getKnotenarmnummerOfCsv(csvData: Array<string>): number {
  *
  * @param armNummer aktueller Knotenarm
  * @param csvData File as Array<string>
+ * @param filename Name der geprüften Datei
+ *
  */
 function checkUploadedFiledata(
   armNummer: number,
-  csvData: Array<string>
+  csvData: Array<string>,
+  filename: string
 ): string {
   // keine Daten vorhanden
   if (isNil(csvData) || csvData.length < 4) {
-    return "Die hochgeladene Datei enthält keine Zähldaten.";
+    return `Die hochgeladene Datei ${filename} enthält keine Zähldaten.`;
   }
   const metaHeader: string = csvData[0];
   // MetaHeader vorhanden?
   if (isNil(metaHeader)) {
-    return "Die Header der Metadaten fehlen in der hochgeladenen Datei.";
+    return "Die Header der Metadaten fehlen in der hochgeladenen Datei ${filename}.";
   }
   // MetaHeader korrekt?
   if (metaHeader!.trim() !== EXPECTED_META_HEADER) {
-    return `Die Header der Metadaten in der hochgeladenen Datei sind nicht korrekt.\nErwartet: ${EXPECTED_META_HEADER}`;
+    return `Die Header der Metadaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${EXPECTED_META_HEADER}`;
   }
 
   const metaData: string = csvData[1];
   // MetaData vorhanden?
   if (isNil(metaData)) {
-    return "Die Metadaten fehlen in der hochgeladenen Datei.";
+    return "Die Metadaten fehlen in der hochgeladenen Datei ${filename}.";
   }
   // MetaData korrekt?
   const expectedMetaData = buildExpectedMetaData(armNummer);
   if (metaData!.trim() !== expectedMetaData) {
-    return `Die Metadaten in der hochgeladenen Datei sind nicht korrekt.\nErwartet: ${expectedMetaData}`;
+    return `Die Metadaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${expectedMetaData}`;
   }
 
   const zaehldatenHeader: string = csvData[2];
   // ZaehldatenHeader vorhanden und korrekt?
   if (isNil(zaehldatenHeader)) {
-    return "Die Header der Zähldaten fehlen in der hochgeladenen Datei.";
+    return "Die Header der Zähldaten fehlen in der hochgeladenen Datei ${filename}.";
   }
   // ZaehldatenHeader vorhanden und korrekt?
   if (zaehldatenHeader!.trim() !== EXPECTED_ZAEHLDATEN_HEADER) {
-    return `Die Header der Zähldaten in der hochgeladenen Datei sind nicht korrekt.\nErwartet: ${EXPECTED_ZAEHLDATEN_HEADER}`;
+    return `Die Header der Zähldaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${EXPECTED_ZAEHLDATEN_HEADER}`;
   }
 
-  // Plausiprüfung, ob nur Nummern enthalten sind in den Zähldaten
   for (const [csvLineIndex, data] of csvData.entries()) {
     // Prüfung ab Zeile 4 der CSV und für nicht leere Zeilen
     if (csvLineIndex > 2 && data.trim().length > 0) {
       const csvLineNumber: number = csvLineIndex + 1;
       const splittedLine: Array<string> = data.split(SEPARATOR);
       if (splittedLine.length !== COLUMN_COUNT) {
-        return `Je Zeile müssen ${COLUMN_COUNT} Spalten enthalten sein.`;
+        return `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei ${filename} enthalten sein.`;
       }
 
       // Intervallnummer muss eine Zahl sein zwischen 1 und 96 (eingeschlossen) sein
-      if (isNaN(Number(splittedLine[0].trim()))) {
-        return `Die Intervallnummer in Zeile ${csvLineNumber} muss eine Zahl zwischen 1 und 96 (eingeschlossen) sein.`;
+      if (!validationUtils.isWholeNonNegativeIntegerString(splittedLine[0])) {
+        return `Die Intervallnummer in Zeile ${csvLineNumber} der Datei ${filename} muss eine Zahl zwischen 1 und 96 (eingeschlossen) sein.`;
       } else {
         const nr: number = parseInt(splittedLine[0].trim());
         if (nr < 1 || nr > 96) {
-          return `Die Intervallnummer in Zeile ${csvLineNumber} muss zwischen 1 und 96 (eingeschlossen) liegen.`;
+          return `Die Intervallnummer in Zeile ${csvLineNumber} in Datei ${filename} muss zwischen 1 und 96 (eingeschlossen) liegen.`;
         }
       }
 
@@ -387,13 +392,15 @@ function checkUploadedFiledata(
         invalidityReason = checkFussverkehrData(
           csvLineIndex,
           armNummer,
-          splittedLine
+          splittedLine,
+          filename
         );
       } else {
         invalidityReason = checkVerkehrsbeziehungData(
           csvLineIndex,
           armNummer,
-          splittedLine
+          splittedLine,
+          filename
         );
       }
       if (invalidityReason.length !== 0) {
@@ -430,18 +437,21 @@ function buildExpectedMetaData(armNummer: number): string {
 }
 
 /**
- * Prüfung der Knotenarme in Zähldaten auf Übereinstimmung mit vorhandenen Verkehrsbeziehungen.
+ * Prüfung der Verkehrsbeziehungen und Zähldaten.
  *
  * @param csvLineIndex aktueller Zeilenindex
  * @param armNummer Nummer des aktuellen Knotenarms
  * @param splittedLine Array der Zeilenspalten
+ * @param filename Name der geprüften Datei
  * @return Grund der Invalidität
  */
 function checkVerkehrsbeziehungData(
   csvLineIndex: number,
   armNummer: number,
-  splittedLine: Array<string>
+  splittedLine: Array<string>,
+  filename: string
 ): string {
+  const csvLineNumber: number = csvLineIndex + 1;
   if (csvLineIndex > 3) {
     const nach: string = splittedLine[1];
     let verkehrsbeziehung: VerkehrsbeziehungDTO | undefined;
@@ -456,6 +466,7 @@ function checkVerkehrsbeziehungData(
           );
         }
       );
+      // kein Kreisverkehr
     } else {
       const nachArmNumber: number = parseInt(toString(nach.trim()));
       verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find(
@@ -468,12 +479,20 @@ function checkVerkehrsbeziehungData(
       );
     }
     if (isNil(verkehrsbeziehung)) {
-      return `Für die Zähldaten in Zeile ${csvLineIndex + 1} ist keine Verkehrsbeziehung existent oder aktiv.\nWar: ${splittedLine}`;
+      return `Für die Zähldaten in Zeile ${csvLineNumber} der Datei ${filename} ist keine Verkehrsbeziehung existent oder aktiv.\nWar: ${splittedLine}`;
     }
   }
 
-  // Prüfung der Zähldaten auf Korrektheit
-  const csvLineNumber: number = csvLineIndex + 1;
+  if (
+    isEmpty(splittedLine[4]) &&
+    isEmpty(splittedLine[5]) &&
+    isEmpty(splittedLine[6]) &&
+    isEmpty(splittedLine[7]) &&
+    isEmpty(splittedLine[8])
+  ) {
+    return `Die Zähldaten in Zeile ${csvLineNumber} in der Datei ${filename} dürfen nicht leer sein.`;
+  }
+
   if (zaehlung.value.kreisverkehr) {
     // e = einfahrend, a = abfahrend und v = vorbeifahrend
     if (
@@ -481,33 +500,17 @@ function checkVerkehrsbeziehungData(
       splittedLine[1] !== "v" &&
       splittedLine[1] !== "a"
     ) {
-      return `Die 'nach'-Spalte in Zeile ${csvLineNumber} darf nur 'e', 'v' oder 'a' enthalten.\nWar: ${splittedLine}`;
+      return `Die 'nach'-Spalte in Zeile ${csvLineNumber} der Datei ${filename} darf nur 'e', 'v' oder 'a' enthalten.\nWar: ${splittedLine}`;
     }
-    for (
-      let columnIndex = 2;
-      columnIndex < splittedLine.length;
-      columnIndex++
-    ) {
-      // Kreisverkehr: Ab Spalte 3 dürfen Zähldaten nur nicht negative Zahlen enthalten oder müssen leer sein.
-      const fieldValue: string = splittedLine[columnIndex].trim();
-      if (fieldValue.length >= 0) {
-        if (isNaN(Number(fieldValue))) {
-          return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nur Nummern enthalten.\nWar: ${splittedLine}`;
-        } else if (parseInt(toString(fieldValue)) < 0) {
-          return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nicht negativ sein.\nWar: ${splittedLine}`;
-        }
-      }
-    }
-    // kein Kreisverkehr
-  } else {
-    for (let i = 4; i <= 8; i++) {
-      // Kreuzung: Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
-      if (splittedLine[i].trim().length >= 0) {
-        if (isNaN(Number(splittedLine[i].trim()))) {
-          return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nur Nummern enthalten.\nWar: ${splittedLine}`;
-        } else if (parseInt(toString(splittedLine[i].trim())) < 0) {
-          return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nicht negativ sein.\nWar: ${splittedLine}`;
-        }
+  }
+
+  for (let i = 4; i <= 8; i++) {
+    // Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
+    if (splittedLine[i].trim().length >= 0) {
+      if (
+        !validationUtils.isWholeNonNegativeIntegerString(splittedLine[i].trim())
+      ) {
+        return `Die Zähldaten in Zeile ${csvLineNumber} der Datei ${filename} dürfen nur nicht-negative, ganze Zahlen enthalten.\nWar: ${splittedLine}`;
       }
     }
   }
@@ -521,12 +524,14 @@ function checkVerkehrsbeziehungData(
  * @param csvLineIndex Index der aktuellen Zeile
  * @param armNummer Nummer des aktuellen Knotenarms
  * @param splittedLine Array der Zeilenspalten
+ * @param filename Name der geprüften Datei
  * @return Grund der Invalidität
  */
 function checkFussverkehrData(
   csvLineIndex: number,
   armNummer: number,
-  splittedLine: Array<string>
+  splittedLine: Array<string>,
+  filename: string
 ): string {
   const zaehlart = zaehlung.value.zaehlart;
 
@@ -535,10 +540,10 @@ function checkFussverkehrData(
     [Zaehlart.FJS, Zaehlart.QU].includes(zaehlart) &&
     splittedLine[1].trim()
   ) {
-    return "Zielknotenarm (nach) darf nicht gefüllt sein.";
+    return "Der Zielknotenarm (nach) in der Datei ${filename} darf nicht gefüllt sein.";
   }
   if (zaehlart === Zaehlart.QJS && !splittedLine[1].trim()) {
-    return "Zielknotenarm (nach) darf nicht leer sein.";
+    return "Der Zielknotenarm (nach) in der Datei ${filename} darf nicht leer sein.";
   }
 
   // Prüfung der Strassenseite
@@ -546,42 +551,42 @@ function checkFussverkehrData(
     [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
     isEmpty(splittedLine[2])
   ) {
-    return "Strassenseite darf nicht leer sein.";
+    return "Die Strassenseite in der Datei ${filename} darf nicht leer sein.";
   }
   if (zaehlart === Zaehlart.QU && splittedLine[2].trim()) {
-    return "Strassenseite muss leer sein.";
+    return "Die Strassenseite in der Datei ${filename} muss leer sein.";
   }
   if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
     if (!StrassenseiteText.has(splittedLine[2].trim())) {
-      return `Strassenseite ist ungültig: ${splittedLine[2]}.`;
+      return `Die Strassenseite in der Datei ${filename} ist ungültig: ${splittedLine[2]}.`;
     }
     if (
-      isArmnummerAndStrassenseiteInvalid(
+      validationUtils.isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
         armNummer,
         [1, 3],
         [Strassenseite.W, Strassenseite.O]
       ) ||
-      isArmnummerAndStrassenseiteInvalid(
+      validationUtils.isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
         armNummer,
         [2, 4],
         [Strassenseite.N, Strassenseite.S]
       ) ||
-      isArmnummerAndStrassenseiteInvalid(
+      validationUtils.isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
         armNummer,
         [5, 7],
         [Strassenseite.NW, Strassenseite.SO]
       ) ||
-      isArmnummerAndStrassenseiteInvalid(
+      validationUtils.isArmnummerAndStrassenseiteInvalid(
         splittedLine[2],
         armNummer,
         [6, 8],
         [Strassenseite.NO, Strassenseite.SW]
       )
     ) {
-      return `Strassenseite ${splittedLine[2]} ist ungültig für den Knotenarm.`;
+      return `Die Strassenseite ${splittedLine[2]} in der Datei ${filename} ist ungültig für den Knotenarm.`;
     }
   }
 
@@ -599,38 +604,38 @@ function checkFussverkehrData(
         Richtung.SW,
       ].includes(splittedLine[3].trim() as Richtung)
     ) {
-      return `Richtung ${splittedLine[3]} ist ungültig für Zählart ${Zaehlart.QU}.`;
+      return `Die Richtung ${splittedLine[3]} in der Datei ${filename} ist ungültig für Zählart ${Zaehlart.QU}.`;
     }
   } else if (zaehlart === Zaehlart.FJS) {
     if (
       ![Richtung.EIN, Richtung.AUS].includes(splittedLine[3].trim() as Richtung)
     ) {
-      return `Richtung ${splittedLine[3]} ist ungültig für Zählart ${Zaehlart.FJS}.`;
+      return `Die Richtung ${splittedLine[3]} in der Datei ${filename} ist ungültig für Zählart ${Zaehlart.FJS}.`;
     }
   } else {
     // Zaehlart.QJS
     if (splittedLine[3].trim()) {
-      return `Richtung muss leer sein für Zählart ${zaehlart}.`;
+      return `Die Richtung in der Datei ${filename} muss leer sein für Zählart ${zaehlart}.`;
     }
   }
 
   // Hat mindestens ein Element im Array[KFZ bis Krad] einen Wert.
   if (splittedLine.slice(4, 9).some(Boolean)) {
-    return "Fahrzeugarten sind ungültig für Fussverkehrszählungen.";
+    return "Die Fahrzeugarten in der Datei ${filename} sind ungültig für Fussverkehrszählungen.";
   }
 
   if (isEmpty(splittedLine[9]) && isEmpty(splittedLine[10])) {
-    return "Fussverkehrszähldaten dürfen nicht leer sein.";
+    return "Die Fussverkehrszähldaten in der Datei ${filename} dürfen nicht leer sein.";
   }
 
   const csvLineNumber: number = csvLineIndex + 1;
   for (let i = 9; i <= 10; i++) {
-    // Kreuzung: Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
+    // Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
     if (splittedLine[i].trim().length >= 0) {
-      if (isNaN(Number(splittedLine[i].trim()))) {
-        return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nur Nummern enthalten.\nWar: ${splittedLine}`;
-      } else if (parseInt(toString(splittedLine[i].trim())) < 0) {
-        return `Die Zähldaten in Zeile ${csvLineNumber} dürfen nicht negativ sein.\nWar: ${splittedLine}`;
+      if (
+        !validationUtils.isWholeNonNegativeIntegerString(splittedLine[i].trim())
+      ) {
+        return `Die Zähldaten in Zeile ${csvLineNumber} der Datei ${filename} dürfen nur nicht-negative, ganze Zahlen enthalten.\nWar: ${splittedLine}`;
       }
     }
   }
@@ -658,26 +663,6 @@ function onFileSelect() {
 }
 
 /**
- * Prüfung der Validität von Strassenseite und Armnummer.
- *
- * @param strassenseite zu prüfende Strassenseite
- * @param armNummer Nummer des aktuellen Knotenarms
- * @param validArmNummern valide Armnummern
- * @param validStrassenseiten valide Strassenseiten
- */
-function isArmnummerAndStrassenseiteInvalid(
-  strassenseite: string,
-  armNummer: number,
-  validArmNummern: Array<number>,
-  validStrassenseiten: Array<Strassenseite>
-) {
-  return (
-    validArmNummern.includes(armNummer) &&
-    !validStrassenseiten.includes(strassenseite as Strassenseite)
-  );
-}
-
-/**
  * Prüft, ob die aktuelle Zählung einen Knotenarm mit der übergebenen Knotenarmnummer enthält.
  *
  * @param knotenarmnummer zu prüfende Knotenarmnummer.
@@ -696,7 +681,7 @@ function readFiles() {
   let successfull = true;
   let errorText = "";
   let itemsProcessed = 0;
-  let knotenarmeWithUploadedFiles = new Map<number, File>();
+  const knotenarmeWithUploadedFiles = new Map<number, File>();
   let errorTextKnotenarmnummer = "";
 
   files.value.forEach((myFile) => {
@@ -737,7 +722,8 @@ function readFiles() {
               // Plausibilitätscheck
               const isPlausible: string = checkUploadedFiledata(
                 knotenarmnummerOfCsv,
-                csv
+                csv,
+                myFile.name
               );
               if (isPlausible.length === 0) {
                 zaehlungArm.filename = myFile.name;
