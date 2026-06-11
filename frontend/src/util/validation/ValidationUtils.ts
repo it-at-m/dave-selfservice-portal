@@ -137,10 +137,10 @@ export function useValidationUtils() {
     startIntervallnummerEndeIntervallnummer: StartIntervallnummerEndeIntervallnummer
   ): boolean {
     return (
-      startIntervallnummerEndeIntervallnummer.startIntervallnummer >=
-        interval.intervallnummer &&
-      startIntervallnummerEndeIntervallnummer.endeIntervallnummer <=
-        interval.intervallnummer
+      interval.intervallnummer >=
+        startIntervallnummerEndeIntervallnummer.startIntervallnummer &&
+      interval.intervallnummer <=
+        startIntervallnummerEndeIntervallnummer.endeIntervallnummer
     );
   }
 
