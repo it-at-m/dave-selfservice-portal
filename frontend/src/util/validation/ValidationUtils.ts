@@ -3,9 +3,11 @@ import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import { join } from "lodash";
 
 export function useValidationUtils() {
+
+
   /**
    *
-   * @param Array
+   * @param intervalle
    */
   function checkForIdenticalZeitintervalleAccordingStartUhrzeitAndEndeUhrzeit(
     intervalle: Array<ZeitintervallDTO>
