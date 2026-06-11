@@ -102,9 +102,8 @@ const dialogtitle = computed<string>(() => {
 function save(): void {
   const zaehlart = zaehlung.value.zaehlart;
 
-
   /*
-   TODO: Validierung für FV-341 entsprechend der Zählart hier implementieren. ZeitintervallDTO um Intervallnummer erweitern.
+   TODO: Umziehen der Tranformatione in Zeitintervalle nach KnotenLageForm
    */
 
   if (zaehlart === Zaehlart.FJS) {
