@@ -45,9 +45,12 @@ export function useValidationUtils() {
     // Nur Ziffern zulassen: keine Dezimalstellen, kein Komma, keine Buchstaben, kein Vorzeichen
     return /^\d+$/.test(value);
   }
+
   /**
+   * Prüft ob in den gegebenen Zeitintervalle mehrere Zeitintervalle
+   * mit der selben Startuhrzeit sowie der selben Endeuhrzeit existieren.
    *
-   * @param intervalle
+   * @param intervalle zum prüfen.
    */
   function checkForIdenticalZeitintervalleAccordingStartUhrzeitAndEndeUhrzeit(
     intervalle: Array<ZeitintervallDTO>
@@ -81,6 +84,14 @@ export function useValidationUtils() {
     return "";
   }
 
+  /**
+   * Prüft ob die gegebenen Zeitintervalle der Anzahl an erwarteten Zeitintervalle entsprechen.
+   * Die Anzahl der Zeitintervalle muss der Zähldauer entsprechend und es dürfen keine Zeitintervalle
+   * existieren, welche ausserhalb des Zählzeitraums der Zähldauer existieren.
+   *
+   * @param intervalle zum prüfen.
+   * @param zaehldauer zur Prüfung der Anzahl.
+   */
   function checkForCorrectNumberOfIntervalsAccordingZaehldauer(
     intervalle: Array<ZeitintervallDTO>,
     zaehldauer: Zaehldauer
