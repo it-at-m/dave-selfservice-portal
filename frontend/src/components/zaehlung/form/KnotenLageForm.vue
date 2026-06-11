@@ -162,7 +162,6 @@ import Richtung from "@/types/enum/Richtung";
 import Status from "@/types/enum/Status";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
-import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
@@ -193,9 +192,6 @@ const FILE_INPUT_FIELD_ID = "fileInputField";
 const snackbarStore = useSnackbarStore();
 
 const validationUtils = useValidationUtils();
-
-const csvToZeitintervallTransformationUtils =
-  useCsvToZeitintervallTransformationUtils();
 
 const resetFileInput = ref<number>(0);
 
@@ -772,9 +768,5 @@ function readFiles() {
       }
     }
   });
-
-  csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
-    zaehlung.value
-  );
 }
 </script>

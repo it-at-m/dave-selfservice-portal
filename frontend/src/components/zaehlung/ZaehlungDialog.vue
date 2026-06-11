@@ -50,6 +50,7 @@ import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
 import { useEventbusStore } from "@/store/EventbusStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Status from "@/types/enum/Status";
+import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
 interface Props {
   showDialog: boolean;
@@ -69,6 +70,8 @@ const zaehlung = defineModel<ZaehlungDTO>({
 const { mobile } = useDisplay();
 const eventbusStore = useEventbusStore();
 const snackbarStore = useSnackbarStore();
+const csvToZeitintervallTransformationUtils =
+  useCsvToZeitintervallTransformationUtils();
 
 watch(
   () => props.showDialog,
@@ -90,6 +93,10 @@ const dialogtitle = computed<string>(() => {
 });
 
 function save(): void {
+  csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
+    zaehlung.value
+  );
+
   ZaehlungService.saveZaehlung(zaehlung.value)
     .then(() => {
       snackbarStore.showSuccess("Die Zählung wurde aktualisiert.");
