@@ -663,15 +663,12 @@ function onFileSelect() {
   } else {
     // Einlesen
     readFiles();
-    csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
-      zaehlung.value
-    );
 
     let successfulValidated = true;
     // TODO validaiton
 
     if (
-      successfullValidated &&
+      successfulValidated &&
       validationUtils.isFileForEachKnotenarmUploaded(zaehlung.value)
     ) {
       // TODO: Event zur Freigabe des Buttons
