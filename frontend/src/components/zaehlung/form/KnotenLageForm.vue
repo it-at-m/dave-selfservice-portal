@@ -663,10 +663,16 @@ function onFileSelect() {
   } else {
     // Einlesen
     readFiles();
+    csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
+        zaehlung.value
+    );
+
+    // TODO: Validierung
+
+    if (validationUtils.isFileForEachKnotenarmUploaded(zaehlung.value)) {
+      // TODO: Event zur Freigabe des Buttons
+    }
   }
-  csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
-    zaehlung.value
-  );
 }
 
 /**

@@ -2,12 +2,13 @@ import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type { StartIntervallnummerEndeIntervallnummer } from "@/types/common/StartIntervallnummerEndeIntervallnummer";
 import type Strassenseite from "@/types/enum/Strassenseite";
 
-import { difference, join, sum, toArray } from "lodash";
+import {difference, isEmpty, join, sum, toArray} from "lodash";
 
 import {
   Zaehldauer,
   zaehldauerIntervallnummern,
 } from "@/types/enum/Zaehldauer";
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 export function useValidationUtils() {
   /**
@@ -23,7 +24,7 @@ export function useValidationUtils() {
     armNummer: number,
     validArmNummern: Array<number>,
     validStrassenseiten: Array<Strassenseite>
-  ) {
+  ): boolean {
     return (
       validArmNummern.includes(armNummer) &&
       !validStrassenseiten.includes(strassenseite as Strassenseite)
@@ -44,6 +45,13 @@ export function useValidationUtils() {
     const value = rawValue.trim();
     // Nur Ziffern zulassen: keine Dezimalstellen, kein Komma, keine Buchstaben, kein Vorzeichen
     return /^\d+$/.test(value);
+  }
+
+  function isFileForEachKnotenarmUploaded(zaehlung: ZaehlungDTO): boolean {
+    const knotenarmeWithoutFile = toArray(zaehlung.knotenarme)
+      // nach Knotenarme ohne hochgeladene Dateien suchen.
+      .filter(knotenarm => isEmpty(knotenarm.filename) && isEmpty(knotenarm.filedata));
+    return isEmpty(knotenarmeWithoutFile);
   }
 
   /**
@@ -149,9 +157,10 @@ export function useValidationUtils() {
   }
 
   return {
-    checkForIdenticalZeitintervalleAccordingStartUhrzeitAndEndeUhrzeit,
-    checkForCorrectNumberOfIntervalsAccordingZaehldauer,
     isArmnummerAndStrassenseiteInvalid,
     isWholeNonNegativeIntegerString,
+    isFileForEachKnotenarmUploaded,
+    checkForIdenticalZeitintervalleAccordingStartUhrzeitAndEndeUhrzeit,
+    checkForCorrectNumberOfIntervalsAccordingZaehldauer,
   };
 }
