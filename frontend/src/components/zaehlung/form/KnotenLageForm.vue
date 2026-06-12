@@ -667,7 +667,7 @@ function onFileSelect() {
       zaehlung.value
     );
 
-    let successfullValidated = true;
+    let successfulValidated = true;
     // TODO validaiton
 
     if (
