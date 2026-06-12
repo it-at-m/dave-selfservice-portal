@@ -663,16 +663,6 @@ function onFileSelect() {
   } else {
     // Einlesen
     readFiles();
-
-    let successfulValidated = true;
-    // TODO validaiton
-
-    if (
-      successfulValidated &&
-      validationUtils.isFileForEachKnotenarmUploaded(zaehlung.value)
-    ) {
-      // TODO: Event zur Freigabe des Buttons
-    }
   }
 }
 

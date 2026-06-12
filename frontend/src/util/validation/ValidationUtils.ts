@@ -162,7 +162,6 @@ export function useValidationUtils() {
   return {
     isArmnummerAndStrassenseiteInvalid,
     isWholeNonNegativeIntegerString,
-    isFileForEachKnotenarmUploaded,
     checkForIdenticalZeitintervalleAccordingStartUhrzeitAndEndeUhrzeit,
     checkForCorrectNumberOfIntervalsAccordingZaehldauer,
   };
