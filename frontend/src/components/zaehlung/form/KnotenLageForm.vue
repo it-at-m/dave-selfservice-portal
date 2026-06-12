@@ -544,10 +544,10 @@ function checkFussverkehrData(
     [Zaehlart.FJS, Zaehlart.QU].includes(zaehlart) &&
     splittedLine[1].trim()
   ) {
-    return "Der Zielknotenarm (nach) in der Datei ${filename} darf nicht gefüllt sein.";
+    return `Der Zielknotenarm (nach) in der Datei ${filename} darf nicht gefüllt sein.`;
   }
   if (zaehlart === Zaehlart.QJS && !splittedLine[1].trim()) {
-    return "Der Zielknotenarm (nach) in der Datei ${filename} darf nicht leer sein.";
+    return `Der Zielknotenarm (nach) in der Datei ${filename} darf nicht leer sein.`;
   }
 
   // Prüfung der Strassenseite
@@ -555,10 +555,10 @@ function checkFussverkehrData(
     [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
     isEmpty(splittedLine[2])
   ) {
-    return "Die Strassenseite in der Datei ${filename} darf nicht leer sein.";
+    return `Die Strassenseite in der Datei ${filename} darf nicht leer sein.`;
   }
   if (zaehlart === Zaehlart.QU && splittedLine[2].trim()) {
-    return "Die Strassenseite in der Datei ${filename} muss leer sein.";
+    return `Die Strassenseite in der Datei ${filename} muss leer sein.`;
   }
   if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
     if (!StrassenseiteText.has(splittedLine[2].trim())) {
@@ -625,11 +625,11 @@ function checkFussverkehrData(
 
   // Hat mindestens ein Element im Array[KFZ bis Krad] einen Wert.
   if (splittedLine.slice(4, 9).some(Boolean)) {
-    return "Die Fahrzeugarten in der Datei ${filename} sind ungültig für Fussverkehrszählungen.";
+    return `Die Fahrzeugarten in der Datei ${filename} sind ungültig für Fussverkehrszählungen.`;
   }
 
   if (isEmpty(splittedLine[9]) && isEmpty(splittedLine[10])) {
-    return "Die Fussverkehrszähldaten in der Datei ${filename} dürfen nicht leer sein.";
+    return `Die Fussverkehrszähldaten in der Datei ${filename} dürfen nicht leer sein.`;
   }
 
   const csvLineNumber: number = csvLineIndex + 1;
