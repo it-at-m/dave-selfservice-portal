@@ -664,12 +664,16 @@ function onFileSelect() {
     // Einlesen
     readFiles();
     csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
-        zaehlung.value
+      zaehlung.value
     );
 
-    // TODO: Validierung
+    let successfullValidated = true;
+    // TODO validaiton
 
-    if (validationUtils.isFileForEachKnotenarmUploaded(zaehlung.value)) {
+    if (
+      successfullValidated &&
+      validationUtils.isFileForEachKnotenarmUploaded(zaehlung.value)
+    ) {
       // TODO: Event zur Freigabe des Buttons
     }
   }

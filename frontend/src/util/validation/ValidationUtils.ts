@@ -1,14 +1,14 @@
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type { StartIntervallnummerEndeIntervallnummer } from "@/types/common/StartIntervallnummerEndeIntervallnummer";
 import type Strassenseite from "@/types/enum/Strassenseite";
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
-import {difference, isEmpty, join, sum, toArray} from "lodash";
+import { difference, isEmpty, join, sum, toArray } from "lodash";
 
 import {
   Zaehldauer,
   zaehldauerIntervallnummern,
 } from "@/types/enum/Zaehldauer";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 export function useValidationUtils() {
   /**
@@ -50,7 +50,10 @@ export function useValidationUtils() {
   function isFileForEachKnotenarmUploaded(zaehlung: ZaehlungDTO): boolean {
     const knotenarmeWithoutFile = toArray(zaehlung.knotenarme)
       // nach Knotenarme ohne hochgeladene Dateien suchen.
-      .filter(knotenarm => isEmpty(knotenarm.filename) && isEmpty(knotenarm.filedata));
+      .filter(
+        (knotenarm) =>
+          isEmpty(knotenarm.filename) && isEmpty(knotenarm.filedata)
+      );
     return isEmpty(knotenarmeWithoutFile);
   }
 
