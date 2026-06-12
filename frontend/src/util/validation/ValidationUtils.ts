@@ -47,16 +47,6 @@ export function useValidationUtils() {
     return /^\d+$/.test(value);
   }
 
-  function isFileForEachKnotenarmUploaded(zaehlung: ZaehlungDTO): boolean {
-    const knotenarmeWithoutFile = toArray(zaehlung.knotenarme)
-      // nach Knotenarme ohne hochgeladene Dateien suchen.
-      .filter(
-        (knotenarm) =>
-          isEmpty(knotenarm.filename) && isEmpty(knotenarm.filedata)
-      );
-    return isEmpty(knotenarmeWithoutFile);
-  }
-
   /**
    * Prüft ob in den gegebenen Zeitintervalle mehrere Zeitintervalle
    * mit der selben Startuhrzeit sowie der selben Endeuhrzeit existieren.
