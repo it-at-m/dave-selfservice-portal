@@ -151,7 +151,7 @@ import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
-import { isEmpty, isNil, parseInt, toArray, toString } from "lodash";
+import { isEmpty, isNil, parseInt, slice, toArray, toString } from "lodash";
 import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
@@ -366,20 +366,9 @@ function checkUploadedFiledata(
   for (const [csvLineIndex, data] of csvData.entries()) {
     // Prüfung ab Zeile 4 der CSV und für nicht leere Zeilen
     if (csvLineIndex > 2 && data.trim().length > 0) {
-      const csvLineNumber: number = csvLineIndex + 1;
       const splittedLine: Array<string> = data.split(SEPARATOR);
       if (splittedLine.length !== COLUMN_COUNT) {
         return `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei ${filename} enthalten sein.`;
-      }
-
-      // Intervallnummer muss eine Zahl sein zwischen 1 und 96 (eingeschlossen) sein
-      if (!validationUtils.isWholeNonNegativeIntegerString(splittedLine[0])) {
-        return `Die Intervallnummer in Zeile ${csvLineNumber} der Datei ${filename} muss eine Zahl zwischen 1 und 96 (eingeschlossen) sein.`;
-      } else {
-        const nr: number = parseInt(splittedLine[0].trim());
-        if (nr < 1 || nr > 96) {
-          return `Die Intervallnummer in Zeile ${csvLineNumber} in Datei ${filename} muss zwischen 1 und 96 (eingeschlossen) liegen.`;
-        }
       }
 
       // Unterscheidung zw. Fussverkehrszählung und anderen Zählungen
@@ -410,6 +399,16 @@ function checkUploadedFiledata(
       // skip Meta and Header
     }
   }
+
+  // Prüfung auf doppelte Intervallnummern
+  const csvDataWithoutHeader = csvData.slice(3, csvData.length);
+
+  const identicalIntervallnummer =
+    validationUtils.checkForIdenticalIntervallnummer(csvDataWithoutHeader);
+  if (!isEmpty(identicalIntervallnummer)) {
+    return identicalIntervallnummer;
+  }
+
   return "";
 }
 

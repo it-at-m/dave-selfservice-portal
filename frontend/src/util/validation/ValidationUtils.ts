@@ -1,7 +1,6 @@
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type { StartIntervallnummerEndeIntervallnummer } from "@/types/common/StartIntervallnummerEndeIntervallnummer";
 import type Strassenseite from "@/types/enum/Strassenseite";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { difference, isEmpty, join, sum, toArray } from "lodash";
 
@@ -47,40 +46,30 @@ export function useValidationUtils() {
     return /^\d+$/.test(value);
   }
 
-  /**
-   * Prüft ob in den gegebenen Zeitintervalle mehrere Zeitintervalle
-   * mit der selben Startuhrzeit sowie der selben Endeuhrzeit existieren.
-   *
-   * @param intervalle zum prüfen.
-   */
-  function checkForIdenticalZeitintervalleAccordingStartUhrzeitAndEndeUhrzeit(
-    intervalle: Array<ZeitintervallDTO>
+  function checkForIdenticalIntervallnummer(
+    csvDataWithoutHeader: Array<string>
   ): string {
-    const intervalleByStartEndeUhrzeit = new Map<
-      string,
-      Array<ZeitintervallDTO>
-    >();
+    const csvLinesByIntervallnummer = new Map<string, Array<string>>();
 
-    intervalle.forEach((interval: ZeitintervallDTO) => {
-      const startEndeUhrzeit = startEndeUhrzeitString(interval);
-      if (intervalleByStartEndeUhrzeit.has(startEndeUhrzeit)) {
-        intervalleByStartEndeUhrzeit.get(startEndeUhrzeit)?.push(interval);
+    csvDataWithoutHeader.forEach((csvLine: string) => {
+      const intervalnummer = csvLine.split(";")[0];
+      if (csvLinesByIntervallnummer.has(intervalnummer)) {
+        csvLinesByIntervallnummer.get(intervalnummer)?.push(csvLine);
       } else {
-        intervalleByStartEndeUhrzeit.set(startEndeUhrzeit, [interval]);
+        csvLinesByIntervallnummer.set(intervalnummer, [csvLine]);
       }
     });
 
-    const startEndeUhrzeitWithMutlipleIntervals = Array.from(
-      intervalleByStartEndeUhrzeit.entries()
+    const intervallnummerWithMultipleLines = Array.from(
+      csvLinesByIntervallnummer.entries()
     )
       .filter(
-        (intervallsOfStartEndeUhrzeit) =>
-          intervallsOfStartEndeUhrzeit[1].length > 1
+        (csvLindesOfIntervallnummer) => csvLindesOfIntervallnummer[1].length > 1
       )
-      .map((intervallsOfStartEndeUhrzeit) => intervallsOfStartEndeUhrzeit[0]);
+      .map((csvLindesOfIntervallnummer) => csvLindesOfIntervallnummer[0]);
 
-    if (startEndeUhrzeitWithMutlipleIntervals.length > 0) {
-      return `In CSV-Datei doppelt vorhandenen Zeitintervalle: ${join(startEndeUhrzeitWithMutlipleIntervals, ", ")}`;
+    if (intervallnummerWithMultipleLines.length > 0) {
+      return `In CSV-Datei mehrfach vorhandenen Zeitintervalle: ${join(intervallnummerWithMultipleLines, ", ")}`;
     }
     return "";
   }
@@ -152,7 +141,7 @@ export function useValidationUtils() {
   return {
     isArmnummerAndStrassenseiteInvalid,
     isWholeNonNegativeIntegerString,
-    checkForIdenticalZeitintervalleAccordingStartUhrzeitAndEndeUhrzeit,
+    checkForIdenticalIntervallnummer,
     checkForCorrectNumberOfIntervalsAccordingZaehldauer,
   };
 }

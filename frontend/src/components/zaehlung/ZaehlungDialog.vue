@@ -50,7 +50,7 @@ import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
 import { useEventbusStore } from "@/store/EventbusStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Status from "@/types/enum/Status";
-import {useCsvToZeitintervallTransformationUtils} from "@/util/CsvToZeitintervallTransformationUtils";
+import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
 interface Props {
   showDialog: boolean;
@@ -72,7 +72,7 @@ const eventbusStore = useEventbusStore();
 const snackbarStore = useSnackbarStore();
 
 const csvToZeitintervallTransformationUtils =
-    useCsvToZeitintervallTransformationUtils();
+  useCsvToZeitintervallTransformationUtils();
 
 watch(
   () => props.showDialog,
@@ -94,7 +94,6 @@ const dialogtitle = computed<string>(() => {
 });
 
 function save(): void {
-
   csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
     zaehlung.value
   );
