@@ -410,7 +410,7 @@ function checkUploadedFiledata(
     return identicalIntervallnummer;
   }
 
-  // Prüfung auf die korrekte Anzahl und Ausprägungen der Intervallnummern
+  // Prüfung auf die korrekte Anzahl und Ausprägungen der Intervallnummern entsprechend der Zähldauer
   const zaehldauer = zaehlung.value.zaehldauer;
   const incorrectNumberOfIntervals =
     validationUtils.checkForCorrectNumberOfIntervalsAccordingZaehldauer(
