@@ -1,8 +1,7 @@
-import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type { StartIntervallnummerEndeIntervallnummer } from "@/types/common/StartIntervallnummerEndeIntervallnummer";
 import type Strassenseite from "@/types/enum/Strassenseite";
 
-import { difference, isEmpty, join, sum, toArray } from "lodash";
+import { difference, join, sum, toArray } from "lodash";
 
 import {
   Zaehldauer,
@@ -105,12 +104,15 @@ export function useValidationUtils() {
 
     const csvLinesWithin = startIntervallnummerEndeIntervallnummer.flatMap(
       (startIntervallnummerEndeIntervallnummer) =>
-        csvDataWithoutHeader.filter((csvLine) =>
-          isZeitintervallWithinStartIntervallnummerEndeIntervallnummer(
-            csvLine,
-            startIntervallnummerEndeIntervallnummer
-          )
-        )
+        csvDataWithoutHeader.filter((csvLine) => {
+          const intervallnummer = parseInt(csvLine.split(";")[0]);
+          return (
+            intervallnummer >=
+              startIntervallnummerEndeIntervallnummer.startIntervallnummer &&
+            intervallnummer <=
+              startIntervallnummerEndeIntervallnummer.endeIntervallnummer
+          );
+        })
     );
 
     const intervalsNotWithin = difference(
@@ -127,19 +129,6 @@ export function useValidationUtils() {
       }
     }
     return "";
-  }
-
-  function isZeitintervallWithinStartIntervallnummerEndeIntervallnummer(
-    csvLine: string,
-    startIntervallnummerEndeIntervallnummer: StartIntervallnummerEndeIntervallnummer
-  ): boolean {
-    const intervallnummer = parseInt(csvLine.split(";")[0]);
-    return (
-      intervallnummer >=
-        startIntervallnummerEndeIntervallnummer.startIntervallnummer &&
-      intervallnummer <=
-        startIntervallnummerEndeIntervallnummer.endeIntervallnummer
-    );
   }
 
   return {
