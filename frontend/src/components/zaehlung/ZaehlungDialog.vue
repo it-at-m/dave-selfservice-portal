@@ -95,7 +95,7 @@ const dialogtitle = computed<string>(() => {
 
 function save(): void {
 
-  csvToZeitintervallTransformationUtils.transformCsvToZeitintervalleAndAddToZaehlung(
+  csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
     zaehlung.value
   );
 

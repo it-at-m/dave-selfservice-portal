@@ -14,7 +14,7 @@ import Zaehlart from "@/types/enum/Zaehlart";
 const SEPARATOR = ";";
 
 export function useCsvToZeitintervallTransformationUtils() {
-  function transformCsvToZeitintervalleAndAddToZaehlung(zaehlung: ZaehlungDTO) {
+  function transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(zaehlung: ZaehlungDTO) {
     const zaehlart = zaehlung.zaehlart;
 
     if (zaehlart === Zaehlart.FJS) {
@@ -525,6 +525,6 @@ export function useCsvToZeitintervallTransformationUtils() {
   }
 
   return {
-    transformCsvToZeitintervalleAndAddToZaehlung,
+    transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung,
   };
 }
