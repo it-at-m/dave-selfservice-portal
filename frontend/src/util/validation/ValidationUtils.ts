@@ -1,4 +1,3 @@
-import type { StartIntervallnummerEndeIntervallnummer } from "@/types/common/StartIntervallnummerEndeIntervallnummer";
 import type Strassenseite from "@/types/enum/Strassenseite";
 
 import { difference, join, sum, toArray } from "lodash";
