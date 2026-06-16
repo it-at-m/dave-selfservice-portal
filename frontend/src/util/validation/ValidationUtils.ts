@@ -90,36 +90,36 @@ export function useValidationUtils() {
     csvDataWithoutHeader: Array<string>,
     zaehldauer: Zaehldauer
   ): string {
-    const startIntervallnummerEndeIntervallnummer = toArray(
-      zaehldauerIntervallnummern.get(zaehldauer)
-    );
-
-    const numberOfIntervalsAccordingZaehldauer = sum(
-      startIntervallnummerEndeIntervallnummer.map(
-        (startIntervallnummerEndeIntervallnummer) =>
-          startIntervallnummerEndeIntervallnummer.numberOfIntervals
-      )
-    );
-
-    const csvLinesWithin = startIntervallnummerEndeIntervallnummer.flatMap(
-      (startIntervallnummerEndeIntervallnummer) =>
-        csvDataWithoutHeader.filter((csvLine) => {
-          const intervallnummer = parseInt(csvLine.split(";")[0]);
-          return (
-            intervallnummer >=
-              startIntervallnummerEndeIntervallnummer.startIntervallnummer &&
-            intervallnummer <=
-              startIntervallnummerEndeIntervallnummer.endeIntervallnummer
-          );
-        })
-    );
-
-    const intervalsNotWithin = difference(
-      csvDataWithoutHeader,
-      csvLinesWithin
-    ).map((csvLine: string) => parseInt(csvLine.split(";")[0]));
-
     if (zaehldauer != Zaehldauer.SONSTIGE) {
+      const startIntervallnummerEndeIntervallnummer = toArray(
+        zaehldauerIntervallnummern.get(zaehldauer)
+      );
+
+      const numberOfIntervalsAccordingZaehldauer = sum(
+        startIntervallnummerEndeIntervallnummer.map(
+          (startIntervallnummerEndeIntervallnummer) =>
+            startIntervallnummerEndeIntervallnummer.numberOfIntervals
+        )
+      );
+
+      const csvLinesWithin = startIntervallnummerEndeIntervallnummer.flatMap(
+        (startIntervallnummerEndeIntervallnummer) =>
+          csvDataWithoutHeader.filter((csvLine) => {
+            const intervallnummer = parseInt(csvLine.split(";")[0]);
+            return (
+              intervallnummer >=
+                startIntervallnummerEndeIntervallnummer.startIntervallnummer &&
+              intervallnummer <=
+                startIntervallnummerEndeIntervallnummer.endeIntervallnummer
+            );
+          })
+      );
+
+      const intervalsNotWithin = difference(
+        csvDataWithoutHeader,
+        csvLinesWithin
+      ).map((csvLine: string) => parseInt(csvLine.split(";")[0]));
+
       if (intervalsNotWithin.length > 0) {
         return `Die Intervallnummern in der CSV-Datei welche sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${join(intervalsNotWithin, ", ")}`;
       }
