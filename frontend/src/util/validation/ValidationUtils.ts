@@ -80,9 +80,9 @@ export function useValidationUtils() {
   }
 
   /**
-   * Prüft ob die gegebenen Zeitintervalle der Anzahl an erwarteten Zeitintervalle entsprechen.
-   * Die Anzahl der Zeitintervalle muss der Zähldauer entsprechend und es dürfen keine Zeitintervalle
-   * existieren, welche ausserhalb des Zählzeitraums der Zähldauer existieren.
+   * Prüft ob die gegebenen Intervallnummern der Anzahl an erwarteten Intervallnummern entsprechen.
+   * Die Anzahl der Intervallnummern muss der Zähldauer entsprechend und es dürfen keine Intervallnummern
+   * existieren, welche sich ausserhalb des Zählzeitraums der Zähldauer befinden.
    *
    * @param csvDataWithoutHeader zum prüfen.
    * @param zaehldauer zur Prüfung der Anzahl.
