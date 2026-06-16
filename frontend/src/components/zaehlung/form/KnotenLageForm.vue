@@ -403,10 +403,22 @@ function checkUploadedFiledata(
   // Prüfung auf doppelte Intervallnummern
   const csvDataWithoutHeader = csvData.slice(3, csvData.length);
 
+  // Prüfung auf mehrfach vorhandene Intervallnummern
   const identicalIntervallnummer =
     validationUtils.checkForIdenticalIntervallnummer(csvDataWithoutHeader);
   if (!isEmpty(identicalIntervallnummer)) {
     return identicalIntervallnummer;
+  }
+
+  // Prüfung auf die korrekte Anzahl und Ausprägungen der Intervallnummern
+  const zaehldauer = zaehlung.value.zaehldauer;
+  const incorrectNumberOfIntervals =
+    validationUtils.checkForCorrectNumberOfIntervalsAccordingZaehldauer(
+      csvDataWithoutHeader,
+      zaehldauer
+    );
+  if (!isEmpty(incorrectNumberOfIntervals)) {
+    return incorrectNumberOfIntervals;
   }
 
   return "";

@@ -46,6 +46,12 @@ export function useValidationUtils() {
     return /^\d+$/.test(value);
   }
 
+  /**
+   * Prüft ob in den gegebenen Zähldateninformationen der CSV-Datei
+   * Einträge mit der selben Intervallnummer existieren.
+   *
+   * @param csvDataWithoutHeader zum prüfen.
+   */
   function checkForIdenticalIntervallnummer(
     csvDataWithoutHeader: Array<string>
   ): string {
@@ -79,63 +85,61 @@ export function useValidationUtils() {
    * Die Anzahl der Zeitintervalle muss der Zähldauer entsprechend und es dürfen keine Zeitintervalle
    * existieren, welche ausserhalb des Zählzeitraums der Zähldauer existieren.
    *
-   * @param intervalle zum prüfen.
+   * @param csvDataWithoutHeader zum prüfen.
    * @param zaehldauer zur Prüfung der Anzahl.
    */
   function checkForCorrectNumberOfIntervalsAccordingZaehldauer(
-    intervalle: Array<ZeitintervallDTO>,
+    csvDataWithoutHeader: Array<string>,
     zaehldauer: Zaehldauer
   ): string {
-    const startIntervallnummerEndeIntervallnummer =
-      zaehldauerIntervallnummern.get(zaehldauer);
+    const startIntervallnummerEndeIntervallnummer = toArray(
+      zaehldauerIntervallnummern.get(zaehldauer)
+    );
 
-    const numberOfIntervallsAccordingZaehldauer = sum(
-      toArray(startIntervallnummerEndeIntervallnummer).map(
+    const numberOfIntervalsAccordingZaehldauer = sum(
+      startIntervallnummerEndeIntervallnummer.map(
         (startIntervallnummerEndeIntervallnummer) =>
           startIntervallnummerEndeIntervallnummer.numberOfIntervals
       )
     );
 
-    const intervalleWithin = toArray(
-      startIntervallnummerEndeIntervallnummer
-    ).flatMap((startIntervallnummerEndeIntervallnummer) =>
-      intervalle.filter((intervall) =>
-        isZeitintervallWithinStartIntervallnummerEndeIntervallnummer(
-          intervall,
-          startIntervallnummerEndeIntervallnummer
+    const csvLinesWithin = startIntervallnummerEndeIntervallnummer.flatMap(
+      (startIntervallnummerEndeIntervallnummer) =>
+        csvDataWithoutHeader.filter((csvLine) =>
+          isZeitintervallWithinStartIntervallnummerEndeIntervallnummer(
+            csvLine,
+            startIntervallnummerEndeIntervallnummer
+          )
         )
-      )
     );
 
-    const intervalleNotWithin = difference(intervalle, intervalleWithin).map(
-      (interval) => startEndeUhrzeitString(interval)
-    );
+    const intervalsNotWithin = difference(
+      csvDataWithoutHeader,
+      csvLinesWithin
+    ).map((csvLine: string) => parseInt(csvLine.split(";")[0]));
 
     if (zaehldauer != Zaehldauer.SONSTIGE) {
-      if (intervalleNotWithin.length > 0) {
-        return `Zeitintervalle in CSV-Datei welche sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${join(intervalleNotWithin, ", ")}`;
+      if (intervalsNotWithin.length > 0) {
+        return `Die Intervallnummern in der CSV-Datei welche sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${join(intervalsNotWithin, ", ")}`;
       }
-      if (numberOfIntervallsAccordingZaehldauer != intervalleWithin.length) {
-        return "Die Anzahl der Zeitintervalle in der CSV-Datei entsprechen nicht der erwarteten Intervalle der Zähldauer.";
+      if (numberOfIntervalsAccordingZaehldauer != csvLinesWithin.length) {
+        return "Die Menge der Intervallnummern in der CSV-Datei entsprechen nicht den erwarteten Intervallnummern der Zähldauer.";
       }
     }
     return "";
   }
 
   function isZeitintervallWithinStartIntervallnummerEndeIntervallnummer(
-    interval: ZeitintervallDTO,
+    csvLine: string,
     startIntervallnummerEndeIntervallnummer: StartIntervallnummerEndeIntervallnummer
   ): boolean {
+    const intervallnummer = parseInt(csvLine.split(";")[0]);
     return (
-      interval.intervallnummer >=
+      intervallnummer >=
         startIntervallnummerEndeIntervallnummer.startIntervallnummer &&
-      interval.intervallnummer <=
+      intervallnummer <=
         startIntervallnummerEndeIntervallnummer.endeIntervallnummer
     );
-  }
-
-  function startEndeUhrzeitString(interval: ZeitintervallDTO) {
-    return `Intervallnummer ${interval.intervallnummer} von ${interval.startUhrzeit} bis ${interval.endeUhrzeit}`;
   }
 
   return {
