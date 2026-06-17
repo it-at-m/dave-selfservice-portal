@@ -158,6 +158,7 @@ import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
+import { useValidationStore } from "@/store/ValidationStore";
 import Richtung from "@/types/enum/Richtung";
 import Status from "@/types/enum/Status";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
@@ -190,6 +191,8 @@ const COLUMN_COUNT = EXPECTED_ZAEHLDATEN_HEADER.split(SEPARATOR).length;
 const FILE_INPUT_FIELD_ID = "fileInputField";
 
 const snackbarStore = useSnackbarStore();
+
+const validationStore = useValidationStore();
 
 const validationUtils = useValidationUtils();
 
@@ -736,7 +739,15 @@ function readFiles() {
                 csv,
                 myFile.name
               );
-              if (isPlausible.length === 0) {
+
+              const isUploadedFileForKnotenarmPlausible =
+                isPlausible.length === 0;
+              validationStore.setValidationStatusForKnotenarm(
+                zaehlungArm,
+                isUploadedFileForKnotenarmPlausible
+              );
+
+              if (isUploadedFileForKnotenarmPlausible) {
                 zaehlungArm.filename = myFile.name;
                 zaehlungArm.filedata = csv;
               } else {

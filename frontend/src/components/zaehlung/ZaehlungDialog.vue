@@ -25,6 +25,7 @@
           color="secondary"
           text="Speichern"
           variant="elevated"
+          :disabled="!isSavingOfUploadedFilesPossible"
           @click="save()"
         />
         <v-btn
@@ -49,6 +50,7 @@ import ZaehlungService from "@/api/service/ZaehlungService";
 import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
 import { useEventbusStore } from "@/store/EventbusStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
+import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
@@ -70,6 +72,7 @@ const zaehlung = defineModel<ZaehlungDTO>({
 const { mobile } = useDisplay();
 const eventbusStore = useEventbusStore();
 const snackbarStore = useSnackbarStore();
+const validationStore = useValidationStore();
 
 const csvToZeitintervallTransformationUtils =
   useCsvToZeitintervallTransformationUtils();
@@ -77,8 +80,14 @@ const csvToZeitintervallTransformationUtils =
 watch(
   () => props.showDialog,
   () => {
+    const knotenarme = zaehlung.value.knotenarme;
+    validationStore.initUploadedFileForKnotenarmnummerValid(knotenarme);
     eventbusStore.setResetFormEvent();
   }
+);
+
+const isSavingOfUploadedFilesPossible = computed<boolean>(
+  () => validationStore.isSavingOfUploadedFilesPossible
 );
 
 const showDialog = computed<boolean>(() => props.showDialog);

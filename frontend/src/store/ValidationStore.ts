@@ -1,5 +1,6 @@
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 
+import { isEmpty } from "lodash";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
@@ -8,10 +9,14 @@ export const useValidationStore = defineStore("validationStore", () => {
     new Map<number, boolean>()
   );
 
-  const getSavingOfUploadedFilesPossible = computed(() => {
-    return Array.from(uploadedFileForKnotenarmnummerValid.value.values()).every(
+  const isSavingOfUploadedFilesPossible = computed(() => {
+    const knotenarmValidationResults = Array.from(
+      uploadedFileForKnotenarmnummerValid.value.values()
+    );
+    const isEveryKnotenarmValid = knotenarmValidationResults.every(
       (fileForKnotenarmnummerValid) => fileForKnotenarmnummerValid
     );
+    return !isEmpty(knotenarmValidationResults) && isEveryKnotenarmValid;
   });
 
   function setValidationStatusForKnotenarm(
@@ -36,6 +41,6 @@ export const useValidationStore = defineStore("validationStore", () => {
   return {
     setValidationStatusForKnotenarm,
     initUploadedFileForKnotenarmnummerValid,
-    getSavingOfUploadedFilesPossible,
+    isSavingOfUploadedFilesPossible,
   };
 });
