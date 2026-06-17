@@ -23,13 +23,9 @@
           cols="4"
           sm="2"
         >
-          <zaehlung-geometrie
-            id="geo"
-            v-model="zaehlung.knotenarme"
-            height="100%"
-            width="100%"
-            active-color="#1565C0"
-            passive-color="#EEEEEE"
+          <verkehr-form
+              v-model:zaehlung="zaehlung"
+              height="100%"
           />
         </v-col>
       </v-row>
@@ -156,7 +152,6 @@ import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
-import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Richtung from "@/types/enum/Richtung";
 import Status from "@/types/enum/Status";
@@ -165,6 +160,7 @@ import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
+import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrForm.vue";
 
 interface Props {
   height: string;
@@ -688,6 +684,7 @@ function isKnotenarmnummerInZaehlung(knotenarmnummer: number): boolean {
     (zaehlungArm: KnotenarmDTO) => zaehlungArm.nummer === knotenarmnummer
   );
 }
+
 
 /**
  * Methode zum Einlesen der Files.
