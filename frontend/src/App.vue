@@ -132,4 +132,9 @@ function navigateToHandbuch() {
   padding-top: var(--app-bar-height);
   position: fixed;
 }
+
+.v-data-table th,
+.v-data-table td {
+  border-right: 1px solid rgba(0, 0, 0, 0.12) !important;
+}
 </style>

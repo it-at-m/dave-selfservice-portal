@@ -129,14 +129,14 @@
           sm="2"
         >
           <v-data-table
-            v-if="isNotKreisverkehr && isNotZaehlartFjsOrQu"
-            density="compact"
-            :headers="verkehrsbeziehungHeader as Array<any>"
-            :items="allVerkehrsbeziehungen"
-            item-key="id"
-            :items-per-page="-1"
-            hide-default-footer
-            fixed-header
+              v-if="isNotKreisverkehr"
+              density="compact"
+              :headers="verkehrsbeziehungenHeader"
+              :items="verkehrsbeziehungen"
+              item-key="id"
+              :items-per-page="-1"
+              hide-default-footer
+              fixed-header
           />
         </v-col>
       </v-row>
@@ -165,6 +165,9 @@ import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
+import type LaengsverkehrDTO from "@/domain/dto/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/domain/dto/QuerungsverkehrDTO";
+import LaengsverkehrQuerungsverkehrComparator from "@/util/LangsverkehrQuerungsverkehrComparator";
 
 interface Props {
   height: string;
@@ -229,36 +232,120 @@ const isZaehlungEditable = computed<boolean>(() => {
   return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
-const allVerkehrsbeziehungen = computed<Array<VerkehrsbeziehungDTO>>(() =>
-  toArray(zaehlung.value.verkehrsbeziehungen).sort(
-    VerkehrsbeziehungComparator.sortByActiveVonAndNach
-  )
-);
+const verkehrsbeziehungen = computed<Array<any>>(() => {
+  const zaehlart = zaehlung.value?.zaehlart;
+
+  let source:
+      | Array<VerkehrsbeziehungDTO>
+      | Array<QuerungsverkehrDTO>
+      | Array<LaengsverkehrDTO>
+      | undefined = undefined;
+
+  if (zaehlart === Zaehlart.QJS) {
+    source = zaehlung.value?.verkehrsbeziehungen as
+        | Array<VerkehrsbeziehungDTO>
+        | undefined;
+
+    // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
+    // anschließend sortieren
+    return toArray(source).sort(
+        VerkehrsbeziehungComparator.sortByActiveVonAndNach
+    );
+  } else if (zaehlart === Zaehlart.QU) {
+    source = zaehlung.value?.querungsverkehr as
+        | Array<QuerungsverkehrDTO>
+        | undefined;
+  } else if (zaehlart === Zaehlart.FJS) {
+    source = zaehlung.value?.laengsverkehr as
+        | Array<LaengsverkehrDTO>
+        | undefined;
+  } else {
+    source = undefined;
+  }
+
+  // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
+  // anschließend sortieren
+  return toArray(source).sort(LaengsverkehrQuerungsverkehrComparator.asc) ;
+});
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
 
-const isNotZaehlartFjsOrQu = computed<boolean>(() => {
-  return !(
-    zaehlung.value.zaehlart === Zaehlart.FJS ||
-    zaehlung.value.zaehlart === Zaehlart.QU
-  );
-});
+// Dynamische Header basierend auf der Zählart
+const verkehrsbeziehungenHeader = computed<Array<any>>(() => {
+  const zaehlart = zaehlung.value.zaehlart;
 
-const verkehrsbeziehungHeader = [
-  {
-    title: "Von",
-    align: "center",
-    sortable: false,
-    value: "von",
-    lastFixed: true,
-  },
-  {
-    title: "Nach",
-    align: "center",
-    sortable: false,
-    value: "nach",
-  },
-];
+  // Header für QjS (Querschnitt je Strassenseite)
+  if (zaehlart === Zaehlart.QJS) {
+    return [
+      {
+        title: "Von",
+        align: "center",
+        sortable: false,
+        value: "von",
+        lastFixed: true,
+      },
+      {
+        title: "Nach",
+        align: "center",
+        sortable: false,
+        value: "nach",
+      },
+      {
+        title: "Str.s",
+        align: "center",
+        sortable: false,
+        value: "strassenseite",
+      },
+    ];
+  }
+
+  // Header für FjS (Fußgänger/Rad je Strassenseite)
+  if (zaehlart === Zaehlart.FJS) {
+    return [
+      {
+        title: "Von",
+        align: "center",
+        sortable: false,
+        value: "knotenarm",
+        lastFixed: true,
+      },
+      {
+        title: "Str.s",
+        align: "center",
+        sortable: false,
+        value: "strassenseite",
+      },
+      {
+        title: "Ri",
+        align: "center",
+        sortable: false,
+        value: "richtung",
+      },
+    ];
+  }
+
+  // Header für Qu (Fußgänger/Rad Querungen)
+  if (zaehlart === Zaehlart.QU) {
+    return [
+      {
+        title: "Von",
+        align: "center",
+        sortable: false,
+        value: "knotenarm",
+        lastFixed: true,
+      },
+      {
+        title: "Ri",
+        align: "center",
+        sortable: false,
+        value: "richtung",
+      },
+    ];
+  }
+
+  // Andere Zählarten
+  return [];
+});
 
 function fileUpload(): void {
   if (isZaehlungEditable.value) {
