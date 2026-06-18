@@ -24,31 +24,77 @@ describe("FussverkehrValidationUtils", () => {
     utils = useFussverkehrValidationUtils();
   });
 
-  describe("validateNach (validateNachOccurrence)", () => {
+  describe("validateNachOccurrenceOccurrence", () => {
     it("returns error when Zaehlart.FJS and nach is filled", () => {
-      const err = utils.validateNach(Zaehlart.FJS, "2", "file.csv");
+      const err = utils.validateNachOccurrence(Zaehlart.FJS, "2", "file.csv");
       expect(err).toBe(
         `Der Zielknotenarm (nach) in der Datei file.csv darf nicht gefüllt sein.`
       );
     });
 
     it("returns error when Zaehlart.QU and nach is filled", () => {
-      const err = utils.validateNach(Zaehlart.QU, "something", "qu.csv");
+      const err = utils.validateNachOccurrence(
+        Zaehlart.QU,
+        "something",
+        "qu.csv"
+      );
       expect(err).toBe(
         `Der Zielknotenarm (nach) in der Datei qu.csv darf nicht gefüllt sein.`
       );
     });
 
     it("returns error when Zaehlart.QJS and nach is empty", () => {
-      const err = utils.validateNach(Zaehlart.QJS, "   ", "qjs.csv");
+      const err = utils.validateNachOccurrence(Zaehlart.QJS, "   ", "qjs.csv");
       expect(err).toBe(
         `Der Zielknotenarm (nach) in der Datei qjs.csv darf nicht leer sein.`
       );
     });
 
     it("returns undefined for QJS when nach is present", () => {
-      const err = utils.validateNach(Zaehlart.QJS, "3", "qjs.csv");
+      const err = utils.validateNachOccurrence(Zaehlart.QJS, "3", "qjs.csv");
       expect(err).toBeUndefined();
+    });
+  });
+
+  describe("validateNachValue", () => {
+    it("accepts valid mappings for arms 1..8", () => {
+      const mapping: Record<number, string> = {
+        1: "3",
+        2: "4",
+        3: "1",
+        4: "2",
+        5: "7",
+        6: "8",
+        7: "5",
+        8: "6",
+      };
+
+      Object.entries(mapping).forEach(([armStr, nach]) => {
+        const arm = Number(armStr);
+        const err = utils.validateNachValue(arm, nach, "file.csv");
+        expect(err).toBeUndefined();
+      });
+    });
+
+    it("returns an error for an incorrect mapping", () => {
+      const err = utils.validateNachValue(1, "1", "file.csv");
+      expect(err).toBe(
+        `Der Wert 1 für "nach" in der Datei file.csv ist ungültig für den Knotenarm 1.`
+      );
+    });
+
+    it("returns an error for an empty 'nach' value", () => {
+      const err = utils.validateNachValue(2, "", "file.csv");
+      expect(err).toBe(
+        `Der Wert  für "nach" in der Datei file.csv ist ungültig für den Knotenarm 2.`
+      );
+    });
+
+    it("returns an error for a non-numeric 'nach' value", () => {
+      const err = utils.validateNachValue(3, "X", "file.csv");
+      expect(err).toBe(
+        `Der Wert X für "nach" in der Datei file.csv ist ungültig für den Knotenarm 3.`
+      );
     });
   });
 

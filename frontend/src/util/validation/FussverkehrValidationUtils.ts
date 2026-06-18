@@ -50,6 +50,33 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
+   * Prüft, ob die Spalte "nach" je nach Knotenarmnummer richtig gefüllt ist.
+   *
+   * @param armNummer Nummer des Knotenarms.
+   * @param nach csv-Spalte für nach.
+   * @param filename Name der csv-Datei.
+   * @return Fehlermeldung
+   */
+  function validateNachValue(
+    armNummer: number,
+    nach: string,
+    filename: string
+  ) {
+    if (
+      (armNummer === 1 && nach !== "3") ||
+      (armNummer === 2 && nach !== "4") ||
+      (armNummer === 3 && nach !== "1") ||
+      (armNummer === 4 && nach !== "2") ||
+      (armNummer === 5 && nach !== "7") ||
+      (armNummer === 6 && nach !== "8") ||
+      (armNummer === 7 && nach !== "5") ||
+      (armNummer === 8 && nach !== "6")
+    ) {
+      return `Der Wert ${nach} für "nach" in der Datei ${filename} ist ungültig für den Knotenarm ${armNummer}.`;
+    }
+  }
+
+  /**
    * Prüft, ob die Spalte "strassenseite" je nach Zählart und Knotenarmnummer richtig gefüllt ist.
    *
    * @param zaehlart Zählart.
@@ -200,7 +227,8 @@ export function useFussverkehrValidationUtils() {
   }
 
   return {
-    validateNach: validateNachOccurrence,
+    validateNachOccurrence,
+    validateNachValue,
     validateStrassenseite,
     validateRichtung,
     validateZaehlwerteOccurrence,

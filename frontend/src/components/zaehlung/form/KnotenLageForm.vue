@@ -551,8 +551,15 @@ function checkFussverkehrData(
   const zaehlart = zaehlung.value.zaehlart;
 
   let errorMessage: string | undefined;
-  errorMessage = fussverkehrValidationUtils.validateNach(
+  errorMessage = fussverkehrValidationUtils.validateNachOccurrence(
     zaehlart,
+    splittedLine[1],
+    filename
+  );
+  if (errorMessage) return errorMessage;
+
+  errorMessage = fussverkehrValidationUtils.validateNachValue(
+    armNummer,
     splittedLine[1],
     filename
   );
