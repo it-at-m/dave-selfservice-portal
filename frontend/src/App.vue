@@ -133,8 +133,9 @@ function navigateToHandbuch() {
   position: fixed;
 }
 
-.v-data-table th,
-.v-data-table td {
+.v-data-table th:not(:last-child),
+.v-data-table td:not(:last-child) {
   border-right: 1px solid rgba(0, 0, 0, 0.12) !important;
 }
+
 </style>
