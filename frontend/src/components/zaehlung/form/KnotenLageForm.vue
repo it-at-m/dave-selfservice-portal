@@ -408,7 +408,7 @@ function checkUploadedFiledata(
 
   // Prüfung auf mehrfach vorhandene Intervallnummern
   const identicalIntervallnummer =
-    validationUtils.checkForIdenticalIntervallnummer(csvDataWithoutHeader);
+    validationUtils.checkForIdenticalIntervallnummerJeBewegungsbeziehung(csvDataWithoutHeader);
   if (!isEmpty(identicalIntervallnummer)) {
     return identicalIntervallnummer;
   }

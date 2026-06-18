@@ -50,7 +50,7 @@ export function useValidationUtils() {
    *
    * @param csvDataWithoutHeader zum prüfen.
    */
-  function checkForIdenticalIntervallnummer(
+  function checkForIdenticalIntervallnummerJeBewegungsbeziehung(
     csvDataWithoutHeader: Array<string>
   ): string {
     const csvLinesByIntervallnummerByBewegungsinformation = new Map<
@@ -173,7 +173,7 @@ export function useValidationUtils() {
   return {
     isArmnummerAndStrassenseiteInvalid,
     isWholeNonNegativeIntegerString,
-    checkForIdenticalIntervallnummer,
+    checkForIdenticalIntervallnummerJeBewegungsbeziehung,
     checkForCorrectNumberOfIntervalsAccordingZaehldauer,
   };
 }
