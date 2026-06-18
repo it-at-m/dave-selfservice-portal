@@ -743,14 +743,14 @@ function readFiles() {
               zaehlung.value.knotenarme.forEach((zaehlungArm: KnotenarmDTO) => {
                 if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
                   // Plausibilitätscheck
-                  const isPlausible: string = checkUploadedFiledata(
+                  const errorMessage: string = checkUploadedFiledata(
                     knotenarmnummerOfCsv,
                     csv,
                     myFile.name
                   );
 
                   const isUploadedFileForKnotenarmPlausible =
-                    isPlausible.length === 0;
+                    errorMessage.length === 0;
                   validationStore.setValidationStatusForKnotenarm(
                     zaehlungArm,
                     isUploadedFileForKnotenarmPlausible
@@ -761,7 +761,7 @@ function readFiles() {
                     zaehlungArm.filedata = csv;
                   } else {
                     successfull = false;
-                    errorText = `${errorText} ${myFile.name}: ${isPlausible}\n`;
+                    errorText = `${errorText} ${myFile.name}: ${errorMessage}\n`;
                   }
 
                   // Wenn alle Files eingelesen wurden, dann zeige das Ergebnis an
