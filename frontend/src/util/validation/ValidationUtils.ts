@@ -60,6 +60,7 @@ export function useValidationUtils() {
 
     csvDataWithoutHeader.forEach((csvLine: string) => {
       const lineDataPerColumn = csvLine.split(";");
+      // Die Bewegungsinformation beinhaltet die Spalten "nach;Strassenseite;Richtung"
       const bewegungsinformation =
         getBewegungsinformationFromCsvLine(lineDataPerColumn);
       const intervallnummer = lineDataPerColumn[0];
@@ -159,6 +160,11 @@ export function useValidationUtils() {
     return "";
   }
 
+  /**
+   * Die Methode gibt die Bewegungsinformation einer Zeile der CSV-Datei aus.
+   * Der Rückgabewert beinhaltet die Daten der Spalten "nach;Strassenseite;Richtung".
+   * @param csvLine
+   */
   function getBewegungsinformationFromCsvLine(csvLine: Array<string>): string {
     const bewegungsinformation = toArray(csvLine).slice(1, 4);
     return join(bewegungsinformation, ";");
