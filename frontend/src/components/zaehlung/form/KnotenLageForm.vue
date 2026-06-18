@@ -240,17 +240,7 @@ const verkehrsbeziehungen = computed<Array<any>>((a: LaengsverkehrDTO | Querungs
       | Array<LaengsverkehrDTO>
       | undefined = undefined;
 
-  if (zaehlart === Zaehlart.QJS) {
-    source = zaehlung.value?.verkehrsbeziehungen as
-        | Array<VerkehrsbeziehungDTO>
-        | undefined;
-
-    // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
-    // anschließend sortieren
-    return toArray(source).sort(
-        VerkehrsbeziehungComparator.sortByActiveVonAndNach
-    );
-  } else if (zaehlart === Zaehlart.QU) {
+   if (zaehlart === Zaehlart.QU) {
     source = zaehlung.value?.querungsverkehr as
         | Array<QuerungsverkehrDTO>
         | undefined;
@@ -259,7 +249,16 @@ const verkehrsbeziehungen = computed<Array<any>>((a: LaengsverkehrDTO | Querungs
         | Array<LaengsverkehrDTO>
         | undefined;
   } else {
-    source = undefined;
+
+    source =  zaehlung.value?.verkehrsbeziehungen as
+        | Array<VerkehrsbeziehungDTO>
+        | undefined;
+
+    // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
+    // anschließend sortieren
+    return toArray(source).sort(
+        VerkehrsbeziehungComparator.sortByActiveVonAndNach
+    );
   }
 
   // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
@@ -343,7 +342,21 @@ const verkehrsbeziehungenHeader = computed<Array<any>>(() => {
   }
 
   // Andere Zählarten
-  return [];
+  return  [
+    {
+      title: "Von",
+      align: "center",
+      sortable: false,
+      value: "von",
+      lastFixed: true,
+    },
+    {
+      title: "Nach",
+      align: "center",
+      sortable: false,
+      value: "nach",
+    },
+  ];
 });
 
 function fileUpload(): void {
