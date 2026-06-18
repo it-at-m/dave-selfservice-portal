@@ -56,7 +56,7 @@ describe("ValidationStore", () => {
     const store = useValidationStore();
     const knotenarme = [{ nummer: 1 }, { nummer: 2 }, { nummer: 3 }];
 
-    store.initUploadedFileForKnotenarmnummerValid(
+    store.initUploadedFileForKnotenarmnummerAsInvalid(
       knotenarme as Array<KnotenarmDTO>
     );
 
