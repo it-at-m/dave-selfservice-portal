@@ -151,10 +151,39 @@ export function useFussverkehrValidationUtils() {
     }
   }
 
+  /**
+   * Prüft die konkreten Werte der Zählwerte auf Validität.
+   *
+   * @param splittedLine Array für Zählwerte.
+   * @param csvLineIndex Zeilenindex der csv-Datei.
+   * @param filename Name der csv-Datei.
+   * @return Fehlermeldung
+   */
+  function validateZaehlwerteValues(
+    splittedLine: Array<string>,
+    csvLineIndex: number,
+    filename: string
+  ) {
+    const csvLineNumber: number = csvLineIndex + 1;
+    for (let i = 9; i <= 10; i++) {
+      // Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
+      if (splittedLine[i].trim().length > 0) {
+        if (
+          !validationUtils.isWholeNonNegativeIntegerString(
+            splittedLine[i].trim()
+          )
+        ) {
+          return `Die Zähldaten in Zeile ${csvLineNumber} der Datei ${filename} dürfen nur nicht-negative, ganze Zahlen enthalten.\nWar: ${splittedLine}`;
+        }
+      }
+    }
+  }
+
   return {
     validateNach: validateNachOccurrence,
     validateStrassenseite,
     validateRichtung,
     validateZaehlwerteOccurrence,
+    validateZaehlwerteValues,
   };
 }
