@@ -165,9 +165,8 @@ import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
-import type LaengsverkehrDTO from "@/domain/dto/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/domain/dto/QuerungsverkehrDTO";
-import LaengsverkehrQuerungsverkehrComparator from "@/util/LangsverkehrQuerungsverkehrComparator";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
 interface Props {
   height: string;
@@ -232,7 +231,7 @@ const isZaehlungEditable = computed<boolean>(() => {
   return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
-const verkehrsbeziehungen = computed<Array<any>>(() => {
+const verkehrsbeziehungen = computed<Array<any>>((a: LaengsverkehrDTO | QuerungsverkehrDTO, b: LaengsverkehrDTO | QuerungsverkehrDTO) => {
   const zaehlart = zaehlung.value?.zaehlart;
 
   let source:
@@ -265,7 +264,7 @@ const verkehrsbeziehungen = computed<Array<any>>(() => {
 
   // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
   // anschließend sortieren
-  return toArray(source).sort(LaengsverkehrQuerungsverkehrComparator.asc) ;
+  return toArray(source).sort(VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber) ;
 });
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
