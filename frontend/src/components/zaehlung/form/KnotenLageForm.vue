@@ -151,7 +151,7 @@ import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
-import { isEmpty, isNil, parseInt, slice, toArray, toString } from "lodash";
+import { isEmpty, isNil, parseInt, toArray, toString } from "lodash";
 import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
@@ -161,10 +161,10 @@ import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import Richtung from "@/types/enum/Richtung";
 import Status from "@/types/enum/Status";
-import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
+import { useFussverkehrValidationUtils } from "@/util/validation/FussverkehrValidationUtils";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
 
@@ -195,6 +195,7 @@ const snackbarStore = useSnackbarStore();
 const validationStore = useValidationStore();
 
 const validationUtils = useValidationUtils();
+const fussverkehrValidationUtils = useFussverkehrValidationUtils();
 
 const resetFileInput = ref<number>(0);
 
@@ -549,60 +550,21 @@ function checkFussverkehrData(
 ): string {
   const zaehlart = zaehlung.value.zaehlart;
 
-  // Prüfung des Zielknotenarms (nach)
-  if (
-    [Zaehlart.FJS, Zaehlart.QU].includes(zaehlart) &&
-    splittedLine[1].trim()
-  ) {
-    return `Der Zielknotenarm (nach) in der Datei ${filename} darf nicht gefüllt sein.`;
-  }
-  if (zaehlart === Zaehlart.QJS && !splittedLine[1].trim()) {
-    return `Der Zielknotenarm (nach) in der Datei ${filename} darf nicht leer sein.`;
-  }
+  let errorMessage: string | undefined;
+  errorMessage = fussverkehrValidationUtils.validateNach(
+    zaehlart,
+    splittedLine[1],
+    filename
+  );
+  if (errorMessage) return errorMessage;
 
-  // Prüfung der Strassenseite
-  if (
-    [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
-    isEmpty(splittedLine[2])
-  ) {
-    return `Die Strassenseite in der Datei ${filename} darf nicht leer sein.`;
-  }
-  if (zaehlart === Zaehlart.QU && splittedLine[2].trim()) {
-    return `Die Strassenseite in der Datei ${filename} muss leer sein.`;
-  }
-  if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
-    if (!StrassenseiteText.has(splittedLine[2].trim())) {
-      return `Die Strassenseite in der Datei ${filename} ist ungültig: ${splittedLine[2]}.`;
-    }
-    if (
-      validationUtils.isArmnummerAndStrassenseiteInvalid(
-        splittedLine[2],
-        armNummer,
-        [1, 3],
-        [Strassenseite.W, Strassenseite.O]
-      ) ||
-      validationUtils.isArmnummerAndStrassenseiteInvalid(
-        splittedLine[2],
-        armNummer,
-        [2, 4],
-        [Strassenseite.N, Strassenseite.S]
-      ) ||
-      validationUtils.isArmnummerAndStrassenseiteInvalid(
-        splittedLine[2],
-        armNummer,
-        [5, 7],
-        [Strassenseite.NW, Strassenseite.SO]
-      ) ||
-      validationUtils.isArmnummerAndStrassenseiteInvalid(
-        splittedLine[2],
-        armNummer,
-        [6, 8],
-        [Strassenseite.NO, Strassenseite.SW]
-      )
-    ) {
-      return `Die Strassenseite ${splittedLine[2]} in der Datei ${filename} ist ungültig für den Knotenarm.`;
-    }
-  }
+  errorMessage = fussverkehrValidationUtils.validateStrassenseite(
+    zaehlart,
+    splittedLine[2],
+    armNummer,
+    filename
+  );
+  if (errorMessage) return errorMessage;
 
   // Prüfung der Richtung
   if (zaehlart === Zaehlart.QU) {
