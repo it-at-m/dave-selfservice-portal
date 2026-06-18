@@ -2,7 +2,7 @@ import { isEmpty, join, sum, toArray, trim, uniq } from "lodash";
 
 import {
   Zaehldauer,
-  zaehldauerIntervallnummern,
+  zaehldauerIntervallnummern, zaehldauerText,
 } from "@/types/enum/Zaehldauer";
 
 export function useValidationUtils() {
@@ -140,7 +140,7 @@ export function useValidationUtils() {
           numberOfIntervalsAccordingZaehldauer !=
           csvLinesOfBewegungsinformation.length
         ) {
-          return `Die Menge der Intervallnummern in der CSV-Datei ${filename} entspricht nicht der Anzahl der erwarteten Intervallnummern der Zähldauer.`;
+          return `Die Menge von ${csvLinesOfBewegungsinformation.length} Intervallnummern in der CSV-Datei ${filename} entspricht nicht der Anzahl der erwarteten Anzahl von ${numberOfIntervalsAccordingZaehldauer} Intervallen der Zähldauer ${zaehldauerText.get(zaehldauer)}.`;
         }
       }
     }

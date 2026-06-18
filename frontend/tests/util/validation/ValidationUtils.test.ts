@@ -1,9 +1,9 @@
 import * as fs from "fs";
 import * as path from "path";
 
-import { describe, expect, test } from "vitest";
+import {describe, expect, test} from "vitest";
 
-import { useValidationUtils } from "../../../src/util/validation/ValidationUtils";
+import {useValidationUtils} from "../../../src/util/validation/ValidationUtils";
 
 const {
   isWholeNonNegativeIntegerString,
