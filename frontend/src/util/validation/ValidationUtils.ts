@@ -1,4 +1,4 @@
-import { join, sum, toArray } from "lodash";
+import { join, sum, toArray, uniq } from "lodash";
 
 import {
   Zaehldauer,
@@ -29,6 +29,7 @@ export function useValidationUtils() {
    * @param csvDataWithoutHeader zum prüfen.
    */
   function checkForIdenticalIntervallnummerJeBewegungsbeziehung(
+    filename: string,
     csvDataWithoutHeader: Array<string>
   ): string {
     const csvLinesByIntervallnummerByBewegungsinformation = new Map<
@@ -67,7 +68,7 @@ export function useValidationUtils() {
       }
     });
 
-    const intervallnummerWithMultipleLines = Array.from(
+    let intervallnummerWithMultipleLines = Array.from(
       Array.from(
         csvLinesByIntervallnummerByBewegungsinformation.values()
       ).flatMap((csvLinesByIntervallnummer) => {
@@ -81,7 +82,8 @@ export function useValidationUtils() {
       .map((csvLindesOfIntervallnummer) => csvLindesOfIntervallnummer[0]);
 
     if (intervallnummerWithMultipleLines.length > 0) {
-      return `In CSV-Datei mehrfach vorhandenen Zeitintervalle: ${join(intervallnummerWithMultipleLines, ", ")}`;
+      intervallnummerWithMultipleLines = uniq(intervallnummerWithMultipleLines);
+      return `In der CSV-Datei ${filename} befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: ${join(intervallnummerWithMultipleLines, ", ")}`;
     }
     return "";
   }
@@ -93,6 +95,7 @@ export function useValidationUtils() {
    * @param zaehldauer zur Prüfung der Anzahl.
    */
   function checkForCorrectNumberOfIntervalsAccordingZaehldauer(
+    filename: string,
     csvDataWithoutHeader: Array<string>,
     zaehldauer: Zaehldauer
   ): string {
@@ -130,7 +133,7 @@ export function useValidationUtils() {
           numberOfIntervalsAccordingZaehldauer !=
           csvLinesOfBewegungsinformation.length
         ) {
-          return "Die Menge der Intervallnummern in der CSV-Datei entsprechen nicht den erwarteten Intervallnummern der Zähldauer.";
+          return `Die Menge der Intervallnummern in der CSV-Datei ${filename} entspricht nicht der Anzahl der erwarteten Intervallnummern der Zähldauer.`;
         }
       }
     }
@@ -145,6 +148,7 @@ export function useValidationUtils() {
    * @param zaehldauer zur Prüfung auf Zähldauer.
    */
   function checkForAlignmentOfIntervallsAccordingZaehldauer(
+    filename: string,
     csvDataWithoutHeader: Array<string>,
     zaehldauer: Zaehldauer
   ): string {
@@ -175,7 +179,7 @@ export function useValidationUtils() {
           Array.from(intervallnummernNotWithin.values()).sort(),
           ", "
         );
-        return `Die Intervallnummern in der CSV-Datei welche sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${commaSeperatedIntervallnummern}`;
+        return `In der CSV-Datei ${filename} befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${commaSeperatedIntervallnummern}`;
       }
     }
     return "";

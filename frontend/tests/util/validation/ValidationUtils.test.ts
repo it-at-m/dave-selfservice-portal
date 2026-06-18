@@ -1,9 +1,15 @@
+import * as fs from "fs";
+import * as path from "path";
+
 import { describe, expect, test } from "vitest";
 
 import { useValidationUtils } from "../../../src/util/validation/ValidationUtils";
 
-const { isWholeNonNegativeIntegerString, getBewegungsinformationFromCsvLine } =
-  useValidationUtils();
+const {
+  isWholeNonNegativeIntegerString,
+  getBewegungsinformationFromCsvLine,
+  checkForIdenticalIntervallnummerJeBewegungsbeziehung,
+} = useValidationUtils();
 
 describe("ValidationUtils - isWholeNonNegativeIntegerString", () => {
   test("returns false for empty string", () => {
@@ -78,3 +84,52 @@ describe("ValidationUtils - getBewegungsinformationFromCsvLine", () => {
     expect(getBewegungsinformationFromCsvLine(csvColumnsEmpty)).toBe(";;");
   });
 });
+
+describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehung", () => {
+  test("CSV mit vier Bewegungsbeziehungen und keine doppelten Intervallnummern", () => {
+    const csvPath = path.join(
+      __dirname,
+      "checkForIdenticalIntervallnummerJeBewegungsbeziehung_FjS_Knotenarm_1_24h_korrekt.csv"
+    );
+    const csvLinesWithoutHeader = loadCsvLinesFromLine4(csvPath);
+
+    expect(
+      checkForIdenticalIntervallnummerJeBewegungsbeziehung(
+        "dateiname.csv",
+        csvLinesWithoutHeader
+      )
+    ).toBe("");
+  });
+
+  test("CSV mit vier Bewegungsbeziehungen und doppelten Intervallnummern", () => {
+    const csvPath = path.join(
+      __dirname,
+      "checkForIdenticalIntervallnummerJeBewegungsbeziehung_FjS_Knotenarm_1_24h_mehrfach_vorhandene_Intervallnummer_je_Bewegungsbeziehung.csv"
+    );
+    const csvLinesWithoutHeader = loadCsvLinesFromLine4(csvPath);
+
+    expect(
+      checkForIdenticalIntervallnummerJeBewegungsbeziehung(
+        "dateiname.csv",
+        csvLinesWithoutHeader
+      )
+    ).toBe(
+      "In der CSV-Datei dateiname.csv befinden sich mehrfach vorhandenen Zeitintervalle: 6, 5"
+    );
+  });
+});
+
+// Unittestrumpf: lädt die CSV-Datei frontend/tests/util/validation/FjS_Knotenarm_1_24h.csv
+// und stellt ab Zeile 4 (1-basierter Index) die Zeilen als Array<string> bereit
+function loadCsvLinesFromLine4(csvFilePath: string): Array<string> {
+  const absolutePath = path.resolve(csvFilePath);
+  const content = fs.readFileSync(absolutePath, { encoding: "utf8" });
+  const allLines = content.split(/\r?\n/);
+  // ab Zeile 4 (1-basierter Index) -> slice(3)
+  const linesFrom4 = allLines.slice(3);
+  // optional: entferne abschließende leere Zeile
+  if (linesFrom4.length > 0 && linesFrom4[linesFrom4.length - 1] === "") {
+    linesFrom4.pop();
+  }
+  return linesFrom4;
+}

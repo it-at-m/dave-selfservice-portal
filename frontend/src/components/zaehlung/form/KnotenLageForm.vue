@@ -408,6 +408,7 @@ function checkUploadedFiledata(
   // Prüfung auf mehrfach vorhandene Intervallnummern
   const identicalIntervallnummer =
     validationUtils.checkForIdenticalIntervallnummerJeBewegungsbeziehung(
+      filename,
       csvDataWithoutHeader
     );
   if (!isEmpty(identicalIntervallnummer)) {
@@ -418,6 +419,7 @@ function checkUploadedFiledata(
   const zaehldauer = zaehlung.value.zaehldauer;
   const incorrectNumberOfIntervals =
     validationUtils.checkForCorrectNumberOfIntervalsAccordingZaehldauer(
+      filename,
       csvDataWithoutHeader,
       zaehldauer
     );
@@ -428,6 +430,7 @@ function checkUploadedFiledata(
   // Prüfung ob die Intervalle dem Zählzeitraum der Zähldauer entsprechen.
   const incorrectAlgignmentOfIntervals =
     validationUtils.checkForAlignmentOfIntervallsAccordingZaehldauer(
+      filename,
       csvDataWithoutHeader,
       zaehldauer
     );
