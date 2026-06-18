@@ -196,5 +196,6 @@ export function useValidationUtils() {
     checkForIdenticalIntervallnummerJeBewegungsbeziehung,
     checkForCorrectNumberOfIntervalsAccordingZaehldauer,
     checkForAlignmentOfIntervallsAccordingZaehldauer,
+    getBewegungsinformationFromCsvLine,
   };
 }
