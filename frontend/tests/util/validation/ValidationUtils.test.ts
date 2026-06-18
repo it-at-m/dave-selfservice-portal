@@ -89,6 +89,7 @@ describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehun
   test("CSV mit vier Bewegungsbeziehungen und keine doppelten Intervallnummern", () => {
     const csvPath = path.join(
       __dirname,
+      "../../testdata",
       "checkForIdenticalIntervallnummerJeBewegungsbeziehung_FjS_Knotenarm_1_24h_korrekt.csv"
     );
     const csvLinesWithoutHeader = loadCsvLinesFromLine4(csvPath);
@@ -104,6 +105,7 @@ describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehun
   test("CSV mit vier Bewegungsbeziehungen und doppelten Intervallnummern", () => {
     const csvPath = path.join(
       __dirname,
+      "../../testdata",
       "checkForIdenticalIntervallnummerJeBewegungsbeziehung_FjS_Knotenarm_1_24h_mehrfach_vorhandene_Intervallnummer_je_Bewegungsbeziehung.csv"
     );
     const csvLinesWithoutHeader = loadCsvLinesFromLine4(csvPath);
