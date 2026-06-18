@@ -114,7 +114,7 @@ describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehun
         csvLinesWithoutHeader
       )
     ).toBe(
-      "In der CSV-Datei dateiname.csv befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: 6, 5"
+      "In der CSV-Datei dateiname.csv befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: 5, 6"
     );
   });
 });

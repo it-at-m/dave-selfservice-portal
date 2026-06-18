@@ -1,4 +1,4 @@
-import { join, sum, toArray, uniq } from "lodash";
+import { isEmpty, join, sum, toArray, trim, uniq } from "lodash";
 
 import {
   Zaehldauer,
@@ -36,8 +36,10 @@ export function useValidationUtils() {
       string,
       Map<string, Array<string>>
     >();
+    const csvDataWithoutEmptyLines =
+      removeEmptyLinesFromCsvDate(csvDataWithoutHeader);
 
-    csvDataWithoutHeader.forEach((csvLine: string) => {
+    csvDataWithoutEmptyLines.forEach((csvLine: string) => {
       const lineDataPerColumn = csvLine.split(";");
       // Die Bewegungsinformation beinhaltet die Spalten "nach;Strassenseite;Richtung"
       const bewegungsinformation =
@@ -82,7 +84,9 @@ export function useValidationUtils() {
       .map((csvLindesOfIntervallnummer) => csvLindesOfIntervallnummer[0]);
 
     if (intervallnummerWithMultipleLines.length > 0) {
-      intervallnummerWithMultipleLines = uniq(intervallnummerWithMultipleLines);
+      intervallnummerWithMultipleLines = uniq(
+        intervallnummerWithMultipleLines
+      ).sort();
       return `In der CSV-Datei ${filename} befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: ${join(intervallnummerWithMultipleLines, ", ")}`;
     }
     return "";
@@ -104,8 +108,11 @@ export function useValidationUtils() {
         zaehldauerIntervallnummern.get(zaehldauer)
       );
 
+      const csvDataWithoutEmptyLines =
+        removeEmptyLinesFromCsvDate(csvDataWithoutHeader);
+
       const csvLinesByBewegungsinformation = new Map<string, Array<string>>();
-      csvDataWithoutHeader.forEach((csvLine: string) => {
+      csvDataWithoutEmptyLines.forEach((csvLine: string) => {
         const lineDataPerColumn = csvLine.split(";");
         // Die Bewegungsinformation beinhaltet die Spalten "nach;Strassenseite;Richtung"
         const bewegungsinformation =
@@ -157,9 +164,12 @@ export function useValidationUtils() {
         zaehldauerIntervallnummern.get(zaehldauer)
       );
 
+      const csvDataWithoutEmptyLines =
+        removeEmptyLinesFromCsvDate(csvDataWithoutHeader);
+
       const intervallnummernNotWithin = new Set<number>();
 
-      csvDataWithoutHeader.forEach((csvLine: string) => {
+      csvDataWithoutEmptyLines.forEach((csvLine: string) => {
         const intervallnummer = parseInt(csvLine.split(";")[0]);
 
         // Prüfung ob sich die Intervallnummer ausserhalb der Intervallnummernbereiche der Zähldauer befindet.
@@ -193,6 +203,10 @@ export function useValidationUtils() {
   function getBewegungsinformationFromCsvLine(csvLine: Array<string>): string {
     const bewegungsinformation = toArray(csvLine).slice(1, 4);
     return join(bewegungsinformation, ";");
+  }
+
+  function removeEmptyLinesFromCsvDate(csvData: Array<string>): Array<string> {
+    return toArray(csvData).filter((csvLine) => !isEmpty(trim(csvLine)));
   }
 
   return {
