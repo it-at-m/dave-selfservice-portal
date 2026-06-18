@@ -100,43 +100,41 @@ describe("FussverkehrValidationUtils", () => {
 
   describe("validateStrassenseite", () => {
     it("errors when FJS and strassenseite is empty", () => {
-      const err = utils.validateStrassenseite(Zaehlart.FJS, "  ", 1, "fjs.csv");
+      const err = utils.validateStrassenseiteOccurrence(
+        Zaehlart.FJS,
+        "  ",
+        "fjs.csv"
+      );
       expect(err).toBe(
         `Die Strassenseite in der Datei fjs.csv darf nicht leer sein.`
       );
     });
 
     it("errors when QU and strassenseite is non-empty", () => {
-      const err = utils.validateStrassenseite(Zaehlart.QU, "N", 1, "qu.csv");
+      const err = utils.validateStrassenseiteOccurrence(
+        Zaehlart.QU,
+        "N",
+        "qu.csv"
+      );
       expect(err).toBe(`Die Strassenseite in der Datei qu.csv muss leer sein.`);
     });
 
     it("errors when StrassenseiteText.has is false (invalid text)", () => {
-      const err = utils.validateStrassenseite(Zaehlart.FJS, "X", 1, "file.csv");
+      const err = utils.validateStrassenseiteOccurrence(
+        Zaehlart.FJS,
+        "X",
+        "file.csv"
+      );
       expect(err).toBe(
         `Die Strassenseite in der Datei file.csv ist ungültig: X.`
       );
     });
 
-    it("errors when arm number and strassenseite are incompatible (arm 1 with 'N')", () => {
-      // For arm 1 valid sides are W or O, so 'N' should be invalid
-      const err = utils.validateStrassenseite(
-        Zaehlart.FJS,
-        Strassenseite.N,
-        1,
-        "file.csv"
-      );
-      expect(err).toBe(
-        `Die Strassenseite ${Strassenseite.N} in der Datei file.csv ist ungültig für den Knotenarm.`
-      );
-    });
-
     it("returns undefined for a valid QJS strassenseite", () => {
       // arm 2 should accept N or S — use N
-      const err = utils.validateStrassenseite(
+      const err = utils.validateStrassenseiteOccurrence(
         Zaehlart.QJS,
         Strassenseite.N,
-        2,
         "file.csv"
       );
       expect(err).toBeUndefined();
@@ -145,15 +143,57 @@ describe("FussverkehrValidationUtils", () => {
     it("treats known StrassenseiteText values as valid", () => {
       // use a known key from StrassenseiteText
       const someKey = Array.from(StrassenseiteText.keys())[0];
-      const err = utils.validateStrassenseite(
+      const err = utils.validateStrassenseiteOccurrence(
         Zaehlart.FJS,
         someKey,
-        2,
         "file.csv"
       );
       // If it's a valid mapping and not incompatible with arm 2, undefined expected
       // In the unlikely case of arm incompatibility, at least no "ungültig text" message should be present.
       expect(err === undefined || !err?.includes("ist ungültig:")).toBeTruthy();
+    });
+  });
+
+  describe("validateStrassenseiteValue", () => {
+    it("returns undefined for a valid combination (FJS, arm 1 -> W)", () => {
+      const result = utils.validateStrassenseiteValue(
+        Zaehlart.FJS,
+        Strassenseite.W,
+        1,
+        "test.csv"
+      );
+      expect(result).toBeUndefined();
+    });
+
+    it("returns an error string for an invalid combination (FJS, arm 1 -> N)", () => {
+      const result = utils.validateStrassenseiteValue(
+        Zaehlart.FJS,
+        Strassenseite.N,
+        1,
+        "test.csv"
+      );
+      expect(result).toBeDefined();
+      expect(result).toContain("ungültig für den Knotenarm");
+    });
+
+    it("returns undefined for a valid QJS combination (arm 6 -> NO)", () => {
+      const result = utils.validateStrassenseiteValue(
+        Zaehlart.QJS,
+        Strassenseite.NO,
+        6,
+        "test.csv"
+      );
+      expect(result).toBeUndefined();
+    });
+
+    it("does not validate for Zaehlart.QU (should return undefined)", () => {
+      const result = utils.validateStrassenseiteValue(
+        Zaehlart.QU,
+        Strassenseite.N,
+        1,
+        "test.csv"
+      );
+      expect(result).toBeUndefined();
     });
   });
 

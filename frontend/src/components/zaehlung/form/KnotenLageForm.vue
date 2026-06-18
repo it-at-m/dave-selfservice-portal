@@ -565,7 +565,14 @@ function checkFussverkehrData(
   );
   if (errorMessage) return errorMessage;
 
-  errorMessage = fussverkehrValidationUtils.validateStrassenseite(
+  errorMessage = fussverkehrValidationUtils.validateStrassenseiteOccurrence(
+    zaehlart,
+    splittedLine[2],
+    filename
+  );
+  if (errorMessage) return errorMessage;
+
+  errorMessage = fussverkehrValidationUtils.validateStrassenseiteValue(
     zaehlart,
     splittedLine[2],
     armNummer,

@@ -77,21 +77,18 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob die Spalte "strassenseite" je nach Zählart und Knotenarmnummer richtig gefüllt ist.
+   * Prüft, ob die Spalte "strassenseite" je nach Zählart richtig gefüllt ist.
    *
    * @param zaehlart Zählart.
    * @param strassenseite csv-Spalte für Strassenseite.
-   * @param armNummer Nummer des Knotenarms
    * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
-  function validateStrassenseite(
+  function validateStrassenseiteOccurrence(
     zaehlart: Zaehlart,
     strassenseite: string,
-    armNummer: number,
     filename: string
   ) {
-    // Prüfung der Strassenseite
     if (
       [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
       !strassenseite?.trim()
@@ -105,6 +102,25 @@ export function useFussverkehrValidationUtils() {
       if (!StrassenseiteText.has(strassenseite.trim())) {
         return `Die Strassenseite in der Datei ${filename} ist ungültig: ${strassenseite}.`;
       }
+    }
+  }
+
+  /**
+   * Prüft, ob die Spalte "strassenseite" je nach Zählart und Knotenarmnummer richtig gefüllt ist.
+   *
+   * @param zaehlart Zählart.
+   * @param strassenseite csv-Spalte für Strassenseite.
+   * @param armNummer Nummer des Knotenarms
+   * @param filename Name der csv-Datei.
+   * @return Fehlermeldung
+   */
+  function validateStrassenseiteValue(
+    zaehlart: Zaehlart,
+    strassenseite: string,
+    armNummer: number,
+    filename: string
+  ) {
+    if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
       if (
         isArmnummerAndStrassenseiteInvalid(
           strassenseite,
@@ -229,7 +245,8 @@ export function useFussverkehrValidationUtils() {
   return {
     validateNachOccurrence,
     validateNachValue,
-    validateStrassenseite,
+    validateStrassenseiteOccurrence,
+    validateStrassenseiteValue,
     validateRichtung,
     validateZaehlwerteOccurrence,
     validateZaehlwerteValues,
