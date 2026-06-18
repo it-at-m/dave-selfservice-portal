@@ -587,6 +587,14 @@ function checkFussverkehrData(
   );
   if (errorMessage) return errorMessage;
 
+  errorMessage = fussverkehrValidationUtils.validateRichtungValue(
+    zaehlart,
+    armNummer,
+    splittedLine[3],
+    filename
+  );
+  if (errorMessage) return errorMessage;
+
   errorMessage = fussverkehrValidationUtils.validateZaehlwerteOccurrence(
     splittedLine,
     filename
