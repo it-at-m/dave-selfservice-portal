@@ -114,7 +114,7 @@ describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehun
         csvLinesWithoutHeader
       )
     ).toBe(
-      "In der CSV-Datei dateiname.csv befinden sich mehrfach vorhandenen Zeitintervalle: 6, 5"
+      "In der CSV-Datei dateiname.csv befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: 6, 5"
     );
   });
 });
@@ -127,9 +127,5 @@ function loadCsvLinesFromLine4(csvFilePath: string): Array<string> {
   const allLines = content.split(/\r?\n/);
   // ab Zeile 4 (1-basierter Index) -> slice(3)
   const linesFrom4 = allLines.slice(3);
-  // optional: entferne abschließende leere Zeile
-  if (linesFrom4.length > 0 && linesFrom4[linesFrom4.length - 1] === "") {
-    linesFrom4.pop();
-  }
   return linesFrom4;
 }
