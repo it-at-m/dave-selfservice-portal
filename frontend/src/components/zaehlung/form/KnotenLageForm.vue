@@ -580,7 +580,7 @@ function checkFussverkehrData(
   );
   if (errorMessage) return errorMessage;
 
-  errorMessage = fussverkehrValidationUtils.validateRichtung(
+  errorMessage = fussverkehrValidationUtils.validateRichtungOccurrence(
     zaehlart,
     splittedLine[3],
     filename

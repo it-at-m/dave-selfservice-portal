@@ -160,7 +160,7 @@ export function useFussverkehrValidationUtils() {
    * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
-  function validateRichtung(
+  function validateRichtungOccurrence(
     zaehlart: Zaehlart,
     richtung: string,
     filename: string
@@ -247,7 +247,7 @@ export function useFussverkehrValidationUtils() {
     validateNachValue,
     validateStrassenseiteOccurrence,
     validateStrassenseiteValue,
-    validateRichtung,
+    validateRichtungOccurrence,
     validateZaehlwerteOccurrence,
     validateZaehlwerteValues,
   };

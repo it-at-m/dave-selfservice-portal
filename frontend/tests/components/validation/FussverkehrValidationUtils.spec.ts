@@ -199,35 +199,51 @@ describe("FussverkehrValidationUtils", () => {
 
   describe("validateRichtung", () => {
     it("returns error when QU and invalid direction", () => {
-      const err = utils.validateRichtung(Zaehlart.QU, "X", "file.csv");
+      const err = utils.validateRichtungOccurrence(
+        Zaehlart.QU,
+        "X",
+        "file.csv"
+      );
       expect(err).toBe(
         `Die Richtung X in der Datei file.csv ist ungültig für Zählart ${Zaehlart.QU}.`
       );
     });
 
     it("accepts a valid QU direction (e.g. N)", () => {
-      const err = utils.validateRichtung(Zaehlart.QU, Richtung.N, "file.csv");
+      const err = utils.validateRichtungOccurrence(
+        Zaehlart.QU,
+        Richtung.N,
+        "file.csv"
+      );
       expect(err).toBeUndefined();
     });
 
     it("accepts EIN/AUS for FJS", () => {
       expect(
-        utils.validateRichtung(Zaehlart.FJS, Richtung.EIN, "file.csv")
+        utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.EIN, "file.csv")
       ).toBeUndefined();
       expect(
-        utils.validateRichtung(Zaehlart.FJS, Richtung.AUS, "file.csv")
+        utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.AUS, "file.csv")
       ).toBeUndefined();
     });
 
     it("returns error for FJS when direction is not EIN/AUS", () => {
-      const err = utils.validateRichtung(Zaehlart.FJS, Richtung.N, "file.csv");
+      const err = utils.validateRichtungOccurrence(
+        Zaehlart.FJS,
+        Richtung.N,
+        "file.csv"
+      );
       expect(err).toBe(
         `Die Richtung ${Richtung.N} in der Datei file.csv ist ungültig für Zählart ${Zaehlart.FJS}.`
       );
     });
 
     it("returns error for QJS when direction is not empty", () => {
-      const err = utils.validateRichtung(Zaehlart.QJS, "N", "qjs.csv");
+      const err = utils.validateRichtungOccurrence(
+        Zaehlart.QJS,
+        "N",
+        "qjs.csv"
+      );
       expect(err).toBe(
         `Die Richtung in der Datei qjs.csv muss leer sein für Zählart ${Zaehlart.QJS}.`
       );
