@@ -79,7 +79,7 @@ export function useValidationUtils() {
   }
 
   /**
-   * Prüft ob die gegebenen Intervallnummern der Anzahl an erwarteten Intervallnummern entsprechen.
+   * Prüft, ob die gegebenen Intervallnummern der Anzahl an erwarteten Intervallnummern entsprechen.
    * Die Anzahl der Intervallnummern muss der Zähldauer entsprechend und es dürfen keine Intervallnummern
    * existieren, welche sich ausserhalb des Zählzeitraums der Zähldauer befinden.
    *
