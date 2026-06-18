@@ -1,5 +1,6 @@
 import { isEmpty } from "lodash";
 
+import Richtung from "@/types/enum/Richtung";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
@@ -11,7 +12,7 @@ export function useFussverkehrValidationUtils() {
    * Prüft, ob die Spalte "nach" je nach Zählart richtig gefüllt ist.
    *
    * @param zaehlart Zählart.
-   * @param nach csv-Spalten.
+   * @param nach csv-Spalte für nach.
    * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
@@ -28,7 +29,7 @@ export function useFussverkehrValidationUtils() {
    * Prüft, ob die Spalte "strassenseite" je nach Zählart und Knotenarmnummer richtig gefüllt ist.
    *
    * @param zaehlart Zählart.
-   * @param strassenseite csv-Spalten.
+   * @param strassenseite csv-Spalte für Strassenseite.
    * @param armNummer Nummer des Knotenarms
    * @param filename Name der csv-Datei.
    * @return Fehlermeldung
@@ -84,8 +85,50 @@ export function useFussverkehrValidationUtils() {
     }
   }
 
+  /**
+   * Prüft, ob die Spalte "richtung" je nach Zählart richtig gefüllt ist.
+   *
+   * @param zaehlart Zählart.
+   * @param richtung csv-Spalte für Richtung.
+   * @param filename Name der csv-Datei.
+   * @return Fehlermeldung
+   */
+  function validateRichtung(
+    zaehlart: Zaehlart,
+    richtung: string,
+    filename: string
+  ) {
+    // Prüfung der Richtung
+    if (zaehlart === Zaehlart.QU) {
+      if (
+        ![
+          Richtung.N,
+          Richtung.O,
+          Richtung.S,
+          Richtung.W,
+          Richtung.NO,
+          Richtung.SO,
+          Richtung.NW,
+          Richtung.SW,
+        ].includes(richtung.trim() as Richtung)
+      ) {
+        return `Die Richtung ${richtung} in der Datei ${filename} ist ungültig für Zählart ${Zaehlart.QU}.`;
+      }
+    } else if (zaehlart === Zaehlart.FJS) {
+      if (![Richtung.EIN, Richtung.AUS].includes(richtung.trim() as Richtung)) {
+        return `Die Richtung ${richtung} in der Datei ${filename} ist ungültig für Zählart ${Zaehlart.FJS}.`;
+      }
+    } else {
+      // Zaehlart.QJS
+      if (richtung.trim()) {
+        return `Die Richtung in der Datei ${filename} muss leer sein für Zählart ${zaehlart}.`;
+      }
+    }
+  }
+
   return {
     validateNach,
     validateStrassenseite,
+    validateRichtung,
   };
 }

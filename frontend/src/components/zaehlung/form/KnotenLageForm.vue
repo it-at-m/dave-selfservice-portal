@@ -159,7 +159,6 @@ import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
-import Richtung from "@/types/enum/Richtung";
 import Status from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
@@ -566,34 +565,12 @@ function checkFussverkehrData(
   );
   if (errorMessage) return errorMessage;
 
-  // Prüfung der Richtung
-  if (zaehlart === Zaehlart.QU) {
-    if (
-      ![
-        Richtung.N,
-        Richtung.O,
-        Richtung.S,
-        Richtung.W,
-        Richtung.NO,
-        Richtung.SO,
-        Richtung.NW,
-        Richtung.SW,
-      ].includes(splittedLine[3].trim() as Richtung)
-    ) {
-      return `Die Richtung ${splittedLine[3]} in der Datei ${filename} ist ungültig für Zählart ${Zaehlart.QU}.`;
-    }
-  } else if (zaehlart === Zaehlart.FJS) {
-    if (
-      ![Richtung.EIN, Richtung.AUS].includes(splittedLine[3].trim() as Richtung)
-    ) {
-      return `Die Richtung ${splittedLine[3]} in der Datei ${filename} ist ungültig für Zählart ${Zaehlart.FJS}.`;
-    }
-  } else {
-    // Zaehlart.QJS
-    if (splittedLine[3].trim()) {
-      return `Die Richtung in der Datei ${filename} muss leer sein für Zählart ${zaehlart}.`;
-    }
-  }
+  errorMessage = fussverkehrValidationUtils.validateRichtung(
+    zaehlart,
+    splittedLine[3],
+    filename
+  );
+  if (errorMessage) return errorMessage;
 
   // Hat mindestens ein Element im Array[KFZ bis Krad] einen Wert.
   if (splittedLine.slice(4, 9).some(Boolean)) {
