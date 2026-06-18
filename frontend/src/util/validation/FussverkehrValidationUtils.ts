@@ -16,7 +16,11 @@ export function useFussverkehrValidationUtils() {
    * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
-  function validateNach(zaehlart: Zaehlart, nach: string, filename: string) {
+  function validateNachOccurrence(
+    zaehlart: Zaehlart,
+    nach: string,
+    filename: string
+  ) {
     if ([Zaehlart.FJS, Zaehlart.QU].includes(zaehlart) && nach.trim()) {
       return `Der Zielknotenarm (nach) in der Datei ${filename} darf nicht gefüllt sein.`;
     }
@@ -126,9 +130,31 @@ export function useFussverkehrValidationUtils() {
     }
   }
 
+  /**
+   * Prüft, ob die Zählwerte für Fussverkehr und andere Verkehrsarten richtig gefüllt ist.
+   *
+   * @param splittedLine Array für Zählwerte.
+   * @param filename Name der csv-Datei.
+   * @return Fehlermeldung
+   */
+  function validateZaehlwerteOccurrence(
+    splittedLine: Array<string>,
+    filename: string
+  ) {
+    // Hat mindestens ein Element im Array[KFZ bis Krad] einen Wert.
+    if (splittedLine.slice(4, 9).some(Boolean)) {
+      return `Die Fahrzeugarten in der Datei ${filename} sind ungültig für Fussverkehrszählungen.`;
+    }
+
+    if (isEmpty(splittedLine[9]) && isEmpty(splittedLine[10])) {
+      return `Die Fussverkehrszähldaten in der Datei ${filename} dürfen nicht leer sein.`;
+    }
+  }
+
   return {
-    validateNach,
+    validateNach: validateNachOccurrence,
     validateStrassenseite,
     validateRichtung,
+    validateZaehlwerteOccurrence,
   };
 }

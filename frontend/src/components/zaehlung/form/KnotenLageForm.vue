@@ -407,7 +407,9 @@ function checkUploadedFiledata(
 
   // Prüfung auf mehrfach vorhandene Intervallnummern
   const identicalIntervallnummer =
-    validationUtils.checkForIdenticalIntervallnummerJeBewegungsbeziehung(csvDataWithoutHeader);
+    validationUtils.checkForIdenticalIntervallnummerJeBewegungsbeziehung(
+      csvDataWithoutHeader
+    );
   if (!isEmpty(identicalIntervallnummer)) {
     return identicalIntervallnummer;
   }
@@ -571,14 +573,11 @@ function checkFussverkehrData(
   );
   if (errorMessage) return errorMessage;
 
-  // Hat mindestens ein Element im Array[KFZ bis Krad] einen Wert.
-  if (splittedLine.slice(4, 9).some(Boolean)) {
-    return `Die Fahrzeugarten in der Datei ${filename} sind ungültig für Fussverkehrszählungen.`;
-  }
-
-  if (isEmpty(splittedLine[9]) && isEmpty(splittedLine[10])) {
-    return `Die Fussverkehrszähldaten in der Datei ${filename} dürfen nicht leer sein.`;
-  }
+  errorMessage = fussverkehrValidationUtils.validateZaehlwerteOccurrence(
+    splittedLine,
+    filename
+  );
+  if (errorMessage) return errorMessage;
 
   const csvLineNumber: number = csvLineIndex + 1;
   for (let i = 9; i <= 10; i++) {
