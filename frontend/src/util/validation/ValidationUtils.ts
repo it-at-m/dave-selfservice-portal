@@ -110,8 +110,6 @@ export function useValidationUtils() {
 
   /**
    * Prüft, ob die gegebenen Intervallnummern der Anzahl an erwarteten Intervallnummern entsprechen.
-   * Die Anzahl der Intervallnummern muss der Zähldauer entsprechend und es dürfen keine Intervallnummern
-   * existieren, welche sich ausserhalb des Zählzeitraums der Zähldauer befinden.
    *
    * @param csvDataWithoutHeader zum prüfen.
    * @param zaehldauer zur Prüfung der Anzahl.
@@ -125,6 +123,21 @@ export function useValidationUtils() {
         zaehldauerIntervallnummern.get(zaehldauer)
       );
 
+      const csvLinesByBewegungsinformation = new Map<string, Array<string>>();
+      csvDataWithoutHeader.forEach((csvLine: string) => {
+        const lineDataPerColumn = csvLine.split(";");
+        // Die Bewegungsinformation beinhaltet die Spalten "nach;Strassenseite;Richtung"
+        const bewegungsinformation =
+          getBewegungsinformationFromCsvLine(lineDataPerColumn);
+        if (csvLinesByBewegungsinformation.has(bewegungsinformation)) {
+          csvLinesByBewegungsinformation
+            .get(bewegungsinformation)
+            ?.push(csvLine);
+        } else {
+          csvLinesByBewegungsinformation.set(bewegungsinformation, [csvLine]);
+        }
+      });
+
       const numberOfIntervalsAccordingZaehldauer = sum(
         startIntervallnummerEndeIntervallnummer.map(
           (startIntervallnummerEndeIntervallnummer) =>
@@ -132,29 +145,59 @@ export function useValidationUtils() {
         )
       );
 
-      const csvLinesWithin = startIntervallnummerEndeIntervallnummer.flatMap(
-        (startIntervallnummerEndeIntervallnummer) =>
-          csvDataWithoutHeader.filter((csvLine) => {
-            const intervallnummer = parseInt(csvLine.split(";")[0]);
-            return (
-              intervallnummer >=
-                startIntervallnummerEndeIntervallnummer.startIntervallnummer &&
-              intervallnummer <=
-                startIntervallnummerEndeIntervallnummer.endeIntervallnummer
-            );
-          })
+      for (const csvLinesOfBewegungsinformation of Array.from(
+        csvLinesByBewegungsinformation.values()
+      )) {
+        if (
+          numberOfIntervalsAccordingZaehldauer !=
+          csvLinesOfBewegungsinformation.length
+        ) {
+          return "Die Menge der Intervallnummern in der CSV-Datei entsprechen nicht den erwarteten Intervallnummern der Zähldauer.";
+        }
+      }
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob die Intervallnummern der Zähldauer entsprechend.
+   * Es dürfen keine Intervallnummern existieren, welche sich ausserhalb des Zählzeitraums der Zähldauer befinden.
+   *
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param zaehldauer zur Prüfung auf Zähldauer.
+   */
+  function checkForAlignmentOfIntervallsAccordingZaehldauer(
+    csvDataWithoutHeader: Array<string>,
+    zaehldauer: Zaehldauer
+  ): string {
+    if (zaehldauer != Zaehldauer.SONSTIGE) {
+      const startIntervallnummerEndeIntervallnummer = toArray(
+        zaehldauerIntervallnummern.get(zaehldauer)
       );
 
-      const intervalsNotWithin = difference(
-        csvDataWithoutHeader,
-        csvLinesWithin
-      ).map((csvLine: string) => parseInt(csvLine.split(";")[0]));
+      const intervallnummernNotWithin = new Set<number>();
 
-      if (intervalsNotWithin.length > 0) {
-        return `Die Intervallnummern in der CSV-Datei welche sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${join(intervalsNotWithin, ", ")}`;
-      }
-      if (numberOfIntervalsAccordingZaehldauer != csvLinesWithin.length) {
-        return "Die Menge der Intervallnummern in der CSV-Datei entsprechen nicht den erwarteten Intervallnummern der Zähldauer.";
+      csvDataWithoutHeader.forEach((csvLine: string) => {
+        const intervallnummer = parseInt(csvLine.split(";")[0]);
+
+        // Prüfung ob sich die Intervallnummer ausserhalb der Intervallnummernbereiche der Zähldauer befindet.
+        const csvLineNotWithin = startIntervallnummerEndeIntervallnummer.every(
+          (startEndeIntervallNummer) =>
+            intervallnummer < startEndeIntervallNummer.startIntervallnummer ||
+            intervallnummer > startEndeIntervallNummer.endeIntervallnummer
+        );
+
+        if (csvLineNotWithin) {
+          intervallnummernNotWithin.add(intervallnummer);
+        }
+      });
+
+      if (intervallnummernNotWithin.size > 0) {
+        const commaSeperatedIntervallnummern = join(
+          Array.from(intervallnummernNotWithin.values()).sort(),
+          ", "
+        );
+        return `Die Intervallnummern in der CSV-Datei welche sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${commaSeperatedIntervallnummern}`;
       }
     }
     return "";
@@ -175,5 +218,6 @@ export function useValidationUtils() {
     isWholeNonNegativeIntegerString,
     checkForIdenticalIntervallnummerJeBewegungsbeziehung,
     checkForCorrectNumberOfIntervalsAccordingZaehldauer,
+    checkForAlignmentOfIntervallsAccordingZaehldauer,
   };
 }

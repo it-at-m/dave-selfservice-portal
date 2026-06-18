@@ -414,7 +414,7 @@ function checkUploadedFiledata(
     return identicalIntervallnummer;
   }
 
-  // Prüfung auf die korrekte Anzahl und Ausprägungen der Intervallnummern entsprechend der Zähldauer
+  // Prüfung auf die korrekte Anzahl der Intervallnummern entsprechend der Zähldauer
   const zaehldauer = zaehlung.value.zaehldauer;
   const incorrectNumberOfIntervals =
     validationUtils.checkForCorrectNumberOfIntervalsAccordingZaehldauer(
@@ -423,6 +423,16 @@ function checkUploadedFiledata(
     );
   if (!isEmpty(incorrectNumberOfIntervals)) {
     return incorrectNumberOfIntervals;
+  }
+
+  // Prüfung ob die Intervalle dem Zählzeitraum der Zähldauer entsprechen.
+  const incorrectAlgignmentOfIntervals =
+    validationUtils.checkForAlignmentOfIntervallsAccordingZaehldauer(
+      csvDataWithoutHeader,
+      zaehldauer
+    );
+  if (!isEmpty(incorrectAlgignmentOfIntervals)) {
+    return incorrectAlgignmentOfIntervals;
   }
 
   return "";
