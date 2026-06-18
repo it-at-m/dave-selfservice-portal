@@ -1,4 +1,4 @@
-import { difference, join, sum, toArray } from "lodash";
+import { join, sum, toArray } from "lodash";
 
 import {
   Zaehldauer,
