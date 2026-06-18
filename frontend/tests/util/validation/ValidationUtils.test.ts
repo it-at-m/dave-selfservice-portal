@@ -121,8 +121,6 @@ describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehun
   });
 });
 
-// Unittestrumpf: lädt die CSV-Datei frontend/tests/util/validation/FjS_Knotenarm_1_24h.csv
-// und stellt ab Zeile 4 (1-basierter Index) die Zeilen als Array<string> bereit
 function loadCsvLinesFromLine4(csvFilePath: string): Array<string> {
   const absolutePath = path.resolve(csvFilePath);
   const content = fs.readFileSync(absolutePath, { encoding: "utf8" });
