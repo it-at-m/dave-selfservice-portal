@@ -29,7 +29,7 @@ export const useValidationStore = defineStore("validationStore", () => {
     );
   }
 
-  function initUploadedFileForKnotenarmnummerValid(
+  function initUploadedFileForKnotenarmnummerAsInvalid(
     knotenarme: Array<KnotenarmDTO>
   ) {
     uploadedFileForKnotenarmnummerValid.value = new Map<number, boolean>();
@@ -40,7 +40,7 @@ export const useValidationStore = defineStore("validationStore", () => {
 
   return {
     setValidationStatusForKnotenarm,
-    initUploadedFileForKnotenarmnummerValid,
+    initUploadedFileForKnotenarmnummerAsInvalid,
     isSavingOfUploadedFilesPossible,
   };
 });
