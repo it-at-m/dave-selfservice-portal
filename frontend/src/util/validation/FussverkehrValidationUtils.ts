@@ -1,5 +1,6 @@
 import { isEmpty } from "lodash";
 
+import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Richtung from "@/types/enum/Richtung";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
@@ -194,6 +195,54 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
+   * Prüft, ob die Spalte "richtung" je nach Knotenarmnummer richtig gefüllt ist.
+   *
+   * @param zaehlart Aktuelle Zählart.
+   * @param armNummer Nummer des Knotenarms.
+   * @param richtung csv-Spalte für die Richtung.
+   * @param filename Name der csv-Datei.
+   * @return Fehlermeldung
+   */
+  function validateRichtungValue(
+    zaehlart: Zaehlart,
+    armNummer: number,
+    richtung: string,
+    filename: string
+  ) {
+    if (zaehlart !== Zaehlart.QU) {
+      return;
+    }
+    if (
+      (armNummer === 1 &&
+        richtung !== Himmelsrichtung.W.valueOf() &&
+        richtung !== Himmelsrichtung.O.valueOf()) ||
+      (armNummer === 2 &&
+        richtung !== Himmelsrichtung.N.valueOf() &&
+        richtung !== Himmelsrichtung.S.valueOf()) ||
+      (armNummer === 3 &&
+        richtung !== Himmelsrichtung.W.valueOf() &&
+        richtung !== Himmelsrichtung.O.valueOf()) ||
+      (armNummer === 4 &&
+        richtung !== Himmelsrichtung.N.valueOf() &&
+        richtung !== Himmelsrichtung.S.valueOf()) ||
+      (armNummer === 5 &&
+        richtung !== Himmelsrichtung.NW.valueOf() &&
+        richtung !== Himmelsrichtung.SO.valueOf()) ||
+      (armNummer === 6 &&
+        richtung !== Himmelsrichtung.NO.valueOf() &&
+        richtung !== Himmelsrichtung.SW.valueOf()) ||
+      (armNummer === 7 &&
+        richtung !== Himmelsrichtung.NW.valueOf() &&
+        richtung !== Himmelsrichtung.SO.valueOf()) ||
+      (armNummer === 8 &&
+        richtung !== Himmelsrichtung.NO.valueOf() &&
+        richtung !== Himmelsrichtung.SW.valueOf())
+    ) {
+      return `Die Richtung ${richtung} in der Datei ${filename} ist ungültig für den Knotenarm ${armNummer}.`;
+    }
+  }
+
+  /**
    * Prüft, ob die Zählwerte für Fussverkehr und andere Verkehrsarten richtig gefüllt ist.
    *
    * @param splittedLine Array für Zählwerte.
@@ -248,6 +297,7 @@ export function useFussverkehrValidationUtils() {
     validateStrassenseiteOccurrence,
     validateStrassenseiteValue,
     validateRichtungOccurrence,
+    validateRichtungValue,
     validateZaehlwerteOccurrence,
     validateZaehlwerteValues,
   };

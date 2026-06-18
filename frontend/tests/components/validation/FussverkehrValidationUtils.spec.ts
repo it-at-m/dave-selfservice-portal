@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Richtung from "@/types/enum/Richtung";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
@@ -197,7 +198,7 @@ describe("FussverkehrValidationUtils", () => {
     });
   });
 
-  describe("validateRichtung", () => {
+  describe("validateRichtungOccurrence", () => {
     it("returns error when QU and invalid direction", () => {
       const err = utils.validateRichtungOccurrence(
         Zaehlart.QU,
@@ -247,6 +248,82 @@ describe("FussverkehrValidationUtils", () => {
       expect(err).toBe(
         `Die Richtung in der Datei qjs.csv muss leer sein für Zählart ${Zaehlart.QJS}.`
       );
+    });
+  });
+
+  describe("validateRichtungValue", () => {
+    const filename = "test.csv";
+
+    it("returns undefined when zaehlart is not QU", () => {
+      const result = utils.validateRichtungValue(
+        Zaehlart.FJS,
+        1,
+        Himmelsrichtung.N,
+        filename
+      );
+      expect(result).toBeUndefined();
+    });
+
+    it("accepts valid directions for arm 1 when zaehlart is QU (W, O)", () => {
+      const resW = utils.validateRichtungValue(
+        Zaehlart.QU,
+        1,
+        Himmelsrichtung.W,
+        filename
+      );
+      const resO = utils.validateRichtungValue(
+        Zaehlart.QU,
+        1,
+        Himmelsrichtung.O,
+        filename
+      );
+      expect(resW).toBeUndefined();
+      expect(resO).toBeUndefined();
+    });
+
+    it("returns an error for invalid direction on arm 1 when zaehlart is QU", () => {
+      const badDir = Himmelsrichtung.N; // N is invalid for arm 1
+      const result = utils.validateRichtungValue(
+        Zaehlart.QU,
+        1,
+        badDir,
+        filename
+      );
+      expect(typeof result).toBe("string");
+      expect(result).toContain(badDir);
+      expect(result).toContain(filename);
+      expect(result).toContain("Knotenarm 1");
+    });
+
+    it("accepts valid directions for arm 6 when zaehlart is QU (NO, SW)", () => {
+      const resNO = utils.validateRichtungValue(
+        Zaehlart.QU,
+        6,
+        Himmelsrichtung.NO,
+        filename
+      );
+      const resSW = utils.validateRichtungValue(
+        Zaehlart.QU,
+        6,
+        Himmelsrichtung.SW,
+        filename
+      );
+      expect(resNO).toBeUndefined();
+      expect(resSW).toBeUndefined();
+    });
+
+    it("returns an error for invalid direction on arm 6 when zaehlart is QU", () => {
+      const badDir = Himmelsrichtung.S; // S is invalid for arm 6
+      const result = utils.validateRichtungValue(
+        Zaehlart.QU,
+        6,
+        badDir,
+        filename
+      );
+      expect(typeof result).toBe("string");
+      expect(result).toContain(badDir);
+      expect(result).toContain(filename);
+      expect(result).toContain("Knotenarm 6");
     });
   });
 
