@@ -9,6 +9,26 @@ const validationUtils = useValidationUtils();
 
 export function useFussverkehrValidationUtils() {
   /**
+   * Prüfung der Validität von Strassenseite und Armnummer.
+   *
+   * @param strassenseite zu prüfende Strassenseite
+   * @param armNummer Nummer des aktuellen Knotenarms
+   * @param validArmNummern valide Armnummern
+   * @param validStrassenseiten valide Strassenseiten
+   */
+  function isArmnummerAndStrassenseiteInvalid(
+    strassenseite: string,
+    armNummer: number,
+    validArmNummern: Array<number>,
+    validStrassenseiten: Array<Strassenseite>
+  ): boolean {
+    return (
+      validArmNummern.includes(armNummer) &&
+      !validStrassenseiten.includes(strassenseite as Strassenseite)
+    );
+  }
+
+  /**
    * Prüft, ob die Spalte "nach" je nach Zählart richtig gefüllt ist.
    *
    * @param zaehlart Zählart.
@@ -30,24 +50,48 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob die Spalte "strassenseite" je nach Zählart und Knotenarmnummer richtig gefüllt ist.
+   * Prüft, ob die Spalte "nach" je nach Knotenarmnummer richtig gefüllt ist.
    *
-   * @param zaehlart Zählart.
-   * @param strassenseite csv-Spalte für Strassenseite.
-   * @param armNummer Nummer des Knotenarms
+   * @param armNummer Nummer des Knotenarms.
+   * @param nach csv-Spalte für nach.
    * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
-  function validateStrassenseite(
-    zaehlart: Zaehlart,
-    strassenseite: string,
+  function validateNachValue(
     armNummer: number,
+    nach: string,
     filename: string
   ) {
-    // Prüfung der Strassenseite
+    if (
+      (armNummer === 1 && nach !== "3") ||
+      (armNummer === 2 && nach !== "4") ||
+      (armNummer === 3 && nach !== "1") ||
+      (armNummer === 4 && nach !== "2") ||
+      (armNummer === 5 && nach !== "7") ||
+      (armNummer === 6 && nach !== "8") ||
+      (armNummer === 7 && nach !== "5") ||
+      (armNummer === 8 && nach !== "6")
+    ) {
+      return `Der Wert ${nach} für "nach" in der Datei ${filename} ist ungültig für den Knotenarm ${armNummer}.`;
+    }
+  }
+
+  /**
+   * Prüft, ob die Spalte "strassenseite" je nach Zählart richtig gefüllt ist.
+   *
+   * @param zaehlart Zählart.
+   * @param strassenseite csv-Spalte für Strassenseite.
+   * @param filename Name der csv-Datei.
+   * @return Fehlermeldung
+   */
+  function validateStrassenseiteOccurrence(
+    zaehlart: Zaehlart,
+    strassenseite: string,
+    filename: string
+  ) {
     if (
       [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
-      isEmpty(strassenseite)
+      !strassenseite?.trim()
     ) {
       return `Die Strassenseite in der Datei ${filename} darf nicht leer sein.`;
     }
@@ -58,26 +102,45 @@ export function useFussverkehrValidationUtils() {
       if (!StrassenseiteText.has(strassenseite.trim())) {
         return `Die Strassenseite in der Datei ${filename} ist ungültig: ${strassenseite}.`;
       }
+    }
+  }
+
+  /**
+   * Prüft, ob die Spalte "strassenseite" je nach Zählart und Knotenarmnummer richtig gefüllt ist.
+   *
+   * @param zaehlart Zählart.
+   * @param strassenseite csv-Spalte für Strassenseite.
+   * @param armNummer Nummer des Knotenarms
+   * @param filename Name der csv-Datei.
+   * @return Fehlermeldung
+   */
+  function validateStrassenseiteValue(
+    zaehlart: Zaehlart,
+    strassenseite: string,
+    armNummer: number,
+    filename: string
+  ) {
+    if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
       if (
-        validationUtils.isArmnummerAndStrassenseiteInvalid(
+        isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [1, 3],
           [Strassenseite.W, Strassenseite.O]
         ) ||
-        validationUtils.isArmnummerAndStrassenseiteInvalid(
+        isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [2, 4],
           [Strassenseite.N, Strassenseite.S]
         ) ||
-        validationUtils.isArmnummerAndStrassenseiteInvalid(
+        isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [5, 7],
           [Strassenseite.NW, Strassenseite.SO]
         ) ||
-        validationUtils.isArmnummerAndStrassenseiteInvalid(
+        isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [6, 8],
@@ -97,7 +160,7 @@ export function useFussverkehrValidationUtils() {
    * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
-  function validateRichtung(
+  function validateRichtungOccurrence(
     zaehlart: Zaehlart,
     richtung: string,
     filename: string
@@ -180,9 +243,11 @@ export function useFussverkehrValidationUtils() {
   }
 
   return {
-    validateNach: validateNachOccurrence,
-    validateStrassenseite,
-    validateRichtung,
+    validateNachOccurrence,
+    validateNachValue,
+    validateStrassenseiteOccurrence,
+    validateStrassenseiteValue,
+    validateRichtungOccurrence,
     validateZaehlwerteOccurrence,
     validateZaehlwerteValues,
   };

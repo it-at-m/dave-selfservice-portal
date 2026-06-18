@@ -1,6 +1,4 @@
-import type Strassenseite from "@/types/enum/Strassenseite";
-
-import { difference, join, sum, take, toArray } from "lodash";
+import { difference, join, sum, toArray } from "lodash";
 
 import {
   Zaehldauer,
@@ -8,26 +6,6 @@ import {
 } from "@/types/enum/Zaehldauer";
 
 export function useValidationUtils() {
-  /**
-   * Prüfung der Validität von Strassenseite und Armnummer.
-   *
-   * @param strassenseite zu prüfende Strassenseite
-   * @param armNummer Nummer des aktuellen Knotenarms
-   * @param validArmNummern valide Armnummern
-   * @param validStrassenseiten valide Strassenseiten
-   */
-  function isArmnummerAndStrassenseiteInvalid(
-    strassenseite: string,
-    armNummer: number,
-    validArmNummern: Array<number>,
-    validStrassenseiten: Array<Strassenseite>
-  ): boolean {
-    return (
-      validArmNummern.includes(armNummer) &&
-      !validStrassenseiten.includes(strassenseite as Strassenseite)
-    );
-  }
-
   /**
    * Prüft, ob ein Wert eine ganze nicht-negative Zahl darstellt (nur Ziffern, z.B. "0","1","42").
    * Leere Strings sollen von Aufrufer*innen als "erlaubt" behandelt werden (d.h. Aufrufer überspringt leer).
@@ -214,7 +192,6 @@ export function useValidationUtils() {
   }
 
   return {
-    isArmnummerAndStrassenseiteInvalid,
     isWholeNonNegativeIntegerString,
     checkForIdenticalIntervallnummerJeBewegungsbeziehung,
     checkForCorrectNumberOfIntervalsAccordingZaehldauer,
