@@ -403,7 +403,6 @@ function checkUploadedFiledata(
     }
   }
 
-  // Prüfung auf doppelte Intervallnummern
   const csvDataWithoutHeader = csvData.slice(3, csvData.length);
 
   // Prüfung auf mehrfach vorhandene Intervallnummern

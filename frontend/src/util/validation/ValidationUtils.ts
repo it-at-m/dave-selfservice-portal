@@ -1,6 +1,6 @@
 import type Strassenseite from "@/types/enum/Strassenseite";
 
-import { difference, join, sum, toArray } from "lodash";
+import { difference, join, sum, take, toArray } from "lodash";
 
 import {
   Zaehldauer,
@@ -45,30 +45,60 @@ export function useValidationUtils() {
   }
 
   /**
-   * Prüft ob in den gegebenen Zähldateninformationen der CSV-Datei
-   * Einträge mit der selben Intervallnummer existieren.
+   * Prüft ob in den gegebenen Zähldateninformationen der CSV-Datei je
+   * Bewegungsinformation mehrere Einträge mit der selben Intervallnummer existieren.
    *
    * @param csvDataWithoutHeader zum prüfen.
    */
   function checkForIdenticalIntervallnummer(
     csvDataWithoutHeader: Array<string>
   ): string {
-    const csvLinesByIntervallnummer = new Map<string, Array<string>>();
+    const csvLinesByIntervallnummerByBewegungsinformation = new Map<
+      string,
+      Map<string, Array<string>>
+    >();
 
     csvDataWithoutHeader.forEach((csvLine: string) => {
-      const intervalnummer = csvLine.split(";")[0];
-      if (csvLinesByIntervallnummer.has(intervalnummer)) {
-        csvLinesByIntervallnummer.get(intervalnummer)?.push(csvLine);
+      const lineDataPerColumn = csvLine.split(";");
+      // Die Bewegungsinformation beinhaltet die Spalten "nach;Strassenseite;Richtung"
+      const bewegungsinformation =
+        getBewegungsinformationFromCsvLine(lineDataPerColumn);
+      const intervallnummer = lineDataPerColumn[0];
+
+      if (
+        csvLinesByIntervallnummerByBewegungsinformation.has(
+          bewegungsinformation
+        )
+      ) {
+        const csvLinesByIntervallnummer =
+          csvLinesByIntervallnummerByBewegungsinformation.get(
+            bewegungsinformation
+          );
+        if (csvLinesByIntervallnummer?.has(intervallnummer)) {
+          csvLinesByIntervallnummer.get(intervallnummer)?.push(csvLine);
+        } else {
+          csvLinesByIntervallnummer?.set(intervallnummer, [csvLine]);
+        }
       } else {
-        csvLinesByIntervallnummer.set(intervalnummer, [csvLine]);
+        const csvLinesByIntervallnummer = new Map<string, Array<string>>();
+        csvLinesByIntervallnummer.set(intervallnummer, [csvLine]);
+        csvLinesByIntervallnummerByBewegungsinformation.set(
+          bewegungsinformation,
+          csvLinesByIntervallnummer
+        );
       }
     });
 
     const intervallnummerWithMultipleLines = Array.from(
-      csvLinesByIntervallnummer.entries()
+      Array.from(
+        csvLinesByIntervallnummerByBewegungsinformation.values()
+      ).flatMap((csvLinesByIntervallnummer) => {
+        const entries = Array.from(csvLinesByIntervallnummer.entries());
+        return entries;
+      })
     )
       .filter(
-        (csvLindesOfIntervallnummer) => csvLindesOfIntervallnummer[1].length > 1
+        (csvLinesOfIntervallnummer) => csvLinesOfIntervallnummer[1].length > 1
       )
       .map((csvLindesOfIntervallnummer) => csvLindesOfIntervallnummer[0]);
 
@@ -128,6 +158,16 @@ export function useValidationUtils() {
       }
     }
     return "";
+  }
+
+  /**
+   * Die Methode gibt die Bewegungsinformation einer Zeile der CSV-Datei aus.
+   * Der Rückgabewert beinhaltet die Daten der Spalten "nach;Strassenseite;Richtung".
+   * @param csvLine
+   */
+  function getBewegungsinformationFromCsvLine(csvLine: Array<string>): string {
+    const bewegungsinformation = toArray(csvLine).slice(1, 4);
+    return join(bewegungsinformation, ";");
   }
 
   return {
