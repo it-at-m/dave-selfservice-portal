@@ -67,7 +67,7 @@ export function useFussverkehrValidationUtils() {
     // Prüfung der Strassenseite
     if (
       [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
-      isEmpty(strassenseite)
+      !strassenseite?.trim()
     ) {
       return `Die Strassenseite in der Datei ${filename} darf nicht leer sein.`;
     }
