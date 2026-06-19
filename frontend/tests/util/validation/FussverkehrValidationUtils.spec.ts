@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 
 import Fahrzeug from "@/types/enum/Fahrzeug";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
@@ -6,17 +6,6 @@ import Richtung from "@/types/enum/Richtung";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
 import Zaehlart from "@/types/enum/Zaehlart";
 import { useFussverkehrValidationUtils } from "@/util/validation/FussverkehrValidationUtils";
-
-// Mock the validation utils before importing the module that uses it at top-level.
-// The module calls useValidationUtils() at module init, so the mock must be declared here.
-vi.mock("@/util/validation/ValidationUtils", () => {
-  return {
-    useValidationUtils: () => ({
-      // treat strings consisting only of digits as valid non-negative integers
-      isWholeNonNegativeIntegerString: (s: string) => /^\d+$/.test(s),
-    }),
-  };
-});
 
 describe("FussverkehrValidationUtils", () => {
   let utils: ReturnType<typeof useFussverkehrValidationUtils>;
@@ -28,32 +17,22 @@ describe("FussverkehrValidationUtils", () => {
 
   describe("validateNachOccurrenceOccurrence", () => {
     it("returns error when Zaehlart.FJS and nach is filled", () => {
-      const err = utils.validateNachOccurrence(Zaehlart.FJS, "2", "file.csv");
-      expect(err).toBe(
-        `Der Zielknotenarm (nach) in der Datei file.csv darf nicht gefüllt sein.`
-      );
+      const err = utils.validateNachOccurrence(Zaehlart.FJS, "2");
+      expect(err).toBe(`Der Zielknotenarm (nach) darf nicht gefüllt sein.`);
     });
 
     it("returns error when Zaehlart.QU and nach is filled", () => {
-      const err = utils.validateNachOccurrence(
-        Zaehlart.QU,
-        "something",
-        "qu.csv"
-      );
-      expect(err).toBe(
-        `Der Zielknotenarm (nach) in der Datei qu.csv darf nicht gefüllt sein.`
-      );
+      const err = utils.validateNachOccurrence(Zaehlart.QU, "something");
+      expect(err).toBe(`Der Zielknotenarm (nach) darf nicht gefüllt sein.`);
     });
 
     it("returns error when Zaehlart.QJS and nach is empty", () => {
-      const err = utils.validateNachOccurrence(Zaehlart.QJS, "   ", "qjs.csv");
-      expect(err).toBe(
-        `Der Zielknotenarm (nach) in der Datei qjs.csv darf nicht leer sein.`
-      );
+      const err = utils.validateNachOccurrence(Zaehlart.QJS, "   ");
+      expect(err).toBe(`Der Zielknotenarm (nach) darf nicht leer sein.`);
     });
 
     it("returns undefined for QJS when nach is present", () => {
-      const err = utils.validateNachOccurrence(Zaehlart.QJS, "3", "qjs.csv");
+      const err = utils.validateNachOccurrence(Zaehlart.QJS, "3");
       expect(err).toBeUndefined();
     });
   });
@@ -73,71 +52,54 @@ describe("FussverkehrValidationUtils", () => {
 
       Object.entries(mapping).forEach(([armStr, nach]) => {
         const arm = Number(armStr);
-        const err = utils.validateNachValue(arm, nach, "file.csv");
+        const err = utils.validateNachValue(arm, nach);
         expect(err).toBeUndefined();
       });
     });
 
     it("returns an error for an incorrect mapping", () => {
-      const err = utils.validateNachValue(1, "1", "file.csv");
+      const err = utils.validateNachValue(1, "1");
       expect(err).toBe(
-        `Der Wert 1 für "nach" in der Datei file.csv ist ungültig für den Knotenarm 1.`
+        `Der Wert 1 für "nach" ist ungültig für den Knotenarm 1.`
       );
     });
 
     it("returns an error for an empty 'nach' value", () => {
-      const err = utils.validateNachValue(2, "", "file.csv");
+      const err = utils.validateNachValue(2, "");
       expect(err).toBe(
-        `Der Wert  für "nach" in der Datei file.csv ist ungültig für den Knotenarm 2.`
+        `Der Wert  für "nach" ist ungültig für den Knotenarm 2.`
       );
     });
 
     it("returns an error for a non-numeric 'nach' value", () => {
-      const err = utils.validateNachValue(3, "X", "file.csv");
+      const err = utils.validateNachValue(3, "X");
       expect(err).toBe(
-        `Der Wert X für "nach" in der Datei file.csv ist ungültig für den Knotenarm 3.`
+        `Der Wert X für "nach" ist ungültig für den Knotenarm 3.`
       );
     });
   });
 
   describe("validateStrassenseite", () => {
     it("errors when FJS and strassenseite is empty", () => {
-      const err = utils.validateStrassenseiteOccurrence(
-        Zaehlart.FJS,
-        "  ",
-        "fjs.csv"
-      );
-      expect(err).toBe(
-        `Die Strassenseite in der Datei fjs.csv darf nicht leer sein.`
-      );
+      const err = utils.validateStrassenseiteOccurrence(Zaehlart.FJS, "  ");
+      expect(err).toBe(`Die Strassenseite darf nicht leer sein.`);
     });
 
     it("errors when QU and strassenseite is non-empty", () => {
-      const err = utils.validateStrassenseiteOccurrence(
-        Zaehlart.QU,
-        "N",
-        "qu.csv"
-      );
-      expect(err).toBe(`Die Strassenseite in der Datei qu.csv muss leer sein.`);
+      const err = utils.validateStrassenseiteOccurrence(Zaehlart.QU, "N");
+      expect(err).toBe(`Die Strassenseite muss leer sein.`);
     });
 
     it("errors when StrassenseiteText.has is false (invalid text)", () => {
-      const err = utils.validateStrassenseiteOccurrence(
-        Zaehlart.FJS,
-        "X",
-        "file.csv"
-      );
-      expect(err).toBe(
-        `Die Strassenseite in der Datei file.csv ist ungültig: X.`
-      );
+      const err = utils.validateStrassenseiteOccurrence(Zaehlart.FJS, "X");
+      expect(err).toBe(`Die Strassenseite ist ungültig: X.`);
     });
 
     it("returns undefined for a valid QJS strassenseite", () => {
       // arm 2 should accept N or S — use N
       const err = utils.validateStrassenseiteOccurrence(
         Zaehlart.QJS,
-        Strassenseite.N,
-        "file.csv"
+        Strassenseite.N
       );
       expect(err).toBeUndefined();
     });
@@ -145,11 +107,7 @@ describe("FussverkehrValidationUtils", () => {
     it("treats known StrassenseiteText values as valid", () => {
       // use a known key from StrassenseiteText
       const someKey = Array.from(StrassenseiteText.keys())[0];
-      const err = utils.validateStrassenseiteOccurrence(
-        Zaehlart.FJS,
-        someKey,
-        "file.csv"
-      );
+      const err = utils.validateStrassenseiteOccurrence(Zaehlart.FJS, someKey);
       // If it's a valid mapping and not incompatible with arm 2, undefined expected
       // In the unlikely case of arm incompatibility, at least no "ungültig text" message should be present.
       expect(err === undefined || !err?.includes("ist ungültig:")).toBeTruthy();
@@ -161,8 +119,7 @@ describe("FussverkehrValidationUtils", () => {
       const result = utils.validateStrassenseiteValue(
         Zaehlart.FJS,
         Strassenseite.W,
-        1,
-        "test.csv"
+        1
       );
       expect(result).toBeUndefined();
     });
@@ -171,8 +128,7 @@ describe("FussverkehrValidationUtils", () => {
       const result = utils.validateStrassenseiteValue(
         Zaehlart.FJS,
         Strassenseite.N,
-        1,
-        "test.csv"
+        1
       );
       expect(result).toBeDefined();
       expect(result).toContain("ungültig für den Knotenarm");
@@ -182,8 +138,7 @@ describe("FussverkehrValidationUtils", () => {
       const result = utils.validateStrassenseiteValue(
         Zaehlart.QJS,
         Strassenseite.NO,
-        6,
-        "test.csv"
+        6
       );
       expect(result).toBeUndefined();
     });
@@ -192,8 +147,7 @@ describe("FussverkehrValidationUtils", () => {
       const result = utils.validateStrassenseiteValue(
         Zaehlart.QU,
         Strassenseite.N,
-        1,
-        "test.csv"
+        1
       );
       expect(result).toBeUndefined();
     });
@@ -201,53 +155,37 @@ describe("FussverkehrValidationUtils", () => {
 
   describe("validateRichtungOccurrence", () => {
     it("returns error when QU and invalid direction", () => {
-      const err = utils.validateRichtungOccurrence(
-        Zaehlart.QU,
-        "X",
-        "file.csv"
-      );
+      const err = utils.validateRichtungOccurrence(Zaehlart.QU, "X");
       expect(err).toBe(
-        `Die Richtung X in der Datei file.csv ist ungültig für Zählart ${Zaehlart.QU}.`
+        `Die Richtung X ist ungültig für Zählart ${Zaehlart.QU}.`
       );
     });
 
     it("accepts a valid QU direction (e.g. N)", () => {
-      const err = utils.validateRichtungOccurrence(
-        Zaehlart.QU,
-        Richtung.N,
-        "file.csv"
-      );
+      const err = utils.validateRichtungOccurrence(Zaehlart.QU, Richtung.N);
       expect(err).toBeUndefined();
     });
 
     it("accepts EIN/AUS for FJS", () => {
       expect(
-        utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.EIN, "file.csv")
+        utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.EIN)
       ).toBeUndefined();
       expect(
-        utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.AUS, "file.csv")
+        utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.AUS)
       ).toBeUndefined();
     });
 
     it("returns error for FJS when direction is not EIN/AUS", () => {
-      const err = utils.validateRichtungOccurrence(
-        Zaehlart.FJS,
-        Richtung.N,
-        "file.csv"
-      );
+      const err = utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.N);
       expect(err).toBe(
-        `Die Richtung ${Richtung.N} in der Datei file.csv ist ungültig für Zählart ${Zaehlart.FJS}.`
+        `Die Richtung ${Richtung.N} ist ungültig für Zählart ${Zaehlart.FJS}.`
       );
     });
 
     it("returns error for QJS when direction is not empty", () => {
-      const err = utils.validateRichtungOccurrence(
-        Zaehlart.QJS,
-        "N",
-        "qjs.csv"
-      );
+      const err = utils.validateRichtungOccurrence(Zaehlart.QJS, "N");
       expect(err).toBe(
-        `Die Richtung in der Datei qjs.csv muss leer sein für Zählart ${Zaehlart.QJS}.`
+        `Die Richtung muss leer sein für Zählart ${Zaehlart.QJS}.`
       );
     });
   });
@@ -259,8 +197,7 @@ describe("FussverkehrValidationUtils", () => {
       const result = utils.validateRichtungValue(
         Zaehlart.FJS,
         1,
-        Himmelsrichtung.N,
-        filename
+        Himmelsrichtung.N
       );
       expect(result).toBeUndefined();
     });
@@ -269,14 +206,12 @@ describe("FussverkehrValidationUtils", () => {
       const resW = utils.validateRichtungValue(
         Zaehlart.QU,
         1,
-        Himmelsrichtung.W,
-        filename
+        Himmelsrichtung.W
       );
       const resO = utils.validateRichtungValue(
         Zaehlart.QU,
         1,
-        Himmelsrichtung.O,
-        filename
+        Himmelsrichtung.O
       );
       expect(resW).toBeUndefined();
       expect(resO).toBeUndefined();
@@ -284,12 +219,7 @@ describe("FussverkehrValidationUtils", () => {
 
     it("returns an error for invalid direction on arm 1 when zaehlart is QU", () => {
       const badDir = Himmelsrichtung.N; // N is invalid for arm 1
-      const result = utils.validateRichtungValue(
-        Zaehlart.QU,
-        1,
-        badDir,
-        filename
-      );
+      const result = utils.validateRichtungValue(Zaehlart.QU, 1, badDir);
       expect(typeof result).toBe("string");
       expect(result).toContain(badDir);
       expect(result).toContain(filename);
@@ -300,14 +230,12 @@ describe("FussverkehrValidationUtils", () => {
       const resNO = utils.validateRichtungValue(
         Zaehlart.QU,
         6,
-        Himmelsrichtung.NO,
-        filename
+        Himmelsrichtung.NO
       );
       const resSW = utils.validateRichtungValue(
         Zaehlart.QU,
         6,
-        Himmelsrichtung.SW,
-        filename
+        Himmelsrichtung.SW
       );
       expect(resNO).toBeUndefined();
       expect(resSW).toBeUndefined();
@@ -315,12 +243,7 @@ describe("FussverkehrValidationUtils", () => {
 
     it("returns an error for invalid direction on arm 6 when zaehlart is QU", () => {
       const badDir = Himmelsrichtung.S; // S is invalid for arm 6
-      const result = utils.validateRichtungValue(
-        Zaehlart.QU,
-        6,
-        badDir,
-        filename
-      );
+      const result = utils.validateRichtungValue(Zaehlart.QU, 6, badDir);
       expect(typeof result).toBe("string");
       expect(result).toContain(badDir);
       expect(result).toContain(filename);
@@ -332,36 +255,22 @@ describe("FussverkehrValidationUtils", () => {
     it("errors when any vehicle types (indices 4..8) have a value", () => {
       const line = new Array(11).fill("");
       line[4] = "1"; // vehicle type present
-      const err = utils.validateZaehlwerteOccurrence(
-        [Fahrzeug.RAD],
-        line,
-        "file.csv"
-      );
+      const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
       expect(err).toBe(
-        `Die Fahrzeugarten in der Datei file.csv sind ungültig für Fussverkehrszählungen.`
+        `Die Fahrzeugarten sind ungültig für Fussverkehrszählungen.`
       );
     });
 
     it("errors when both foot-count columns (9 and 10) are empty", () => {
       const line = new Array(11).fill("");
-      const err = utils.validateZaehlwerteOccurrence(
-        [Fahrzeug.RAD],
-        line,
-        "file.csv"
-      );
-      expect(err).toBe(
-        `Die Fussverkehrszähldaten in der Datei file.csv dürfen nicht leer sein.`
-      );
+      const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
+      expect(err).toBe(`Die Fussverkehrszähldaten dürfen nicht leer sein.`);
     });
 
     it("returns undefined when vehicle columns empty but one foot-count present", () => {
       const line = new Array(11).fill("");
       line[9] = "2";
-      const err = utils.validateZaehlwerteOccurrence(
-        [Fahrzeug.RAD],
-        line,
-        "file.csv"
-      );
+      const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
       expect(err).toBeUndefined();
     });
 
@@ -369,11 +278,7 @@ describe("FussverkehrValidationUtils", () => {
       const line = new Array(11).fill("");
       line[9] = "2";
       line[10] = "2";
-      const err = utils.validateZaehlwerteOccurrence(
-        [Fahrzeug.RAD],
-        line,
-        "file.csv"
-      );
+      const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
       expect(err).toBe(`Der Zählwert von "FUSS" muss leer sein.`);
     });
 
@@ -382,8 +287,7 @@ describe("FussverkehrValidationUtils", () => {
       line[9] = "2";
       const err = utils.validateZaehlwerteOccurrence(
         [Fahrzeug.RAD, Fahrzeug.FUSS],
-        line,
-        "file.csv"
+        line
       );
       expect(err).toBe(`Der Zählwert von "FUSS" darf nicht leer sein.`);
     });

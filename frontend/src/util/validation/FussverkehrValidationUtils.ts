@@ -35,19 +35,14 @@ export function useFussverkehrValidationUtils() {
    *
    * @param zaehlart Zählart.
    * @param nach csv-Spalte für nach.
-   * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
-  function validateNachOccurrence(
-    zaehlart: Zaehlart,
-    nach: string,
-    filename: string
-  ) {
+  function validateNachOccurrence(zaehlart: Zaehlart, nach: string) {
     if ([Zaehlart.FJS, Zaehlart.QU].includes(zaehlart) && nach.trim()) {
-      return `Der Zielknotenarm (nach) in der Datei ${filename} darf nicht gefüllt sein.`;
+      return `Der Zielknotenarm (nach) darf nicht gefüllt sein.`;
     }
     if (zaehlart === Zaehlart.QJS && !nach.trim()) {
-      return `Der Zielknotenarm (nach) in der Datei ${filename} darf nicht leer sein.`;
+      return `Der Zielknotenarm (nach) darf nicht leer sein.`;
     }
   }
 
@@ -56,14 +51,9 @@ export function useFussverkehrValidationUtils() {
    *
    * @param armNummer Nummer des Knotenarms.
    * @param nach csv-Spalte für nach.
-   * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
-  function validateNachValue(
-    armNummer: number,
-    nach: string,
-    filename: string
-  ) {
+  function validateNachValue(armNummer: number, nach: string) {
     if (
       (armNummer === 1 && nach !== "3") ||
       (armNummer === 2 && nach !== "4") ||
@@ -74,7 +64,7 @@ export function useFussverkehrValidationUtils() {
       (armNummer === 7 && nach !== "5") ||
       (armNummer === 8 && nach !== "6")
     ) {
-      return `Der Wert ${nach} für "nach" in der Datei ${filename} ist ungültig für den Knotenarm ${armNummer}.`;
+      return `Der Wert ${nach} des Zielknotenarms (nach) ist ungültig für den Knotenarm ${armNummer}.`;
     }
   }
 
@@ -83,26 +73,24 @@ export function useFussverkehrValidationUtils() {
    *
    * @param zaehlart Zählart.
    * @param strassenseite csv-Spalte für Strassenseite.
-   * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
   function validateStrassenseiteOccurrence(
     zaehlart: Zaehlart,
-    strassenseite: string,
-    filename: string
+    strassenseite: string
   ) {
     if (
       [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
       !strassenseite?.trim()
     ) {
-      return `Die Strassenseite in der Datei ${filename} darf nicht leer sein.`;
+      return `Die Strassenseite darf nicht leer sein.`;
     }
     if (zaehlart === Zaehlart.QU && strassenseite.trim()) {
-      return `Die Strassenseite in der Datei ${filename} muss leer sein.`;
+      return `Die Strassenseite muss leer sein.`;
     }
     if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
       if (!StrassenseiteText.has(strassenseite.trim())) {
-        return `Die Strassenseite in der Datei ${filename} ist ungültig: ${strassenseite}.`;
+        return `Die Strassenseite ist ungültig: ${strassenseite}.`;
       }
     }
   }
@@ -113,14 +101,12 @@ export function useFussverkehrValidationUtils() {
    * @param zaehlart Zählart.
    * @param strassenseite csv-Spalte für Strassenseite.
    * @param armNummer Nummer des Knotenarms
-   * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
   function validateStrassenseiteValue(
     zaehlart: Zaehlart,
     strassenseite: string,
-    armNummer: number,
-    filename: string
+    armNummer: number
   ) {
     if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
       if (
@@ -149,7 +135,7 @@ export function useFussverkehrValidationUtils() {
           [Strassenseite.NO, Strassenseite.SW]
         )
       ) {
-        return `Die Strassenseite ${strassenseite} in der Datei ${filename} ist ungültig für den Knotenarm.`;
+        return `Die Strassenseite ${strassenseite} ist ungültig für den Knotenarm.`;
       }
     }
   }
@@ -159,14 +145,9 @@ export function useFussverkehrValidationUtils() {
    *
    * @param zaehlart Zählart.
    * @param richtung csv-Spalte für Richtung.
-   * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
-  function validateRichtungOccurrence(
-    zaehlart: Zaehlart,
-    richtung: string,
-    filename: string
-  ) {
+  function validateRichtungOccurrence(zaehlart: Zaehlart, richtung: string) {
     // Prüfung der Richtung
     if (zaehlart === Zaehlart.QU) {
       if (
@@ -181,16 +162,16 @@ export function useFussverkehrValidationUtils() {
           Richtung.SW,
         ].includes(richtung.trim() as Richtung)
       ) {
-        return `Die Richtung ${richtung} in der Datei ${filename} ist ungültig für Zählart ${Zaehlart.QU}.`;
+        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.QU}.`;
       }
     } else if (zaehlart === Zaehlart.FJS) {
       if (![Richtung.EIN, Richtung.AUS].includes(richtung.trim() as Richtung)) {
-        return `Die Richtung ${richtung} in der Datei ${filename} ist ungültig für Zählart ${Zaehlart.FJS}.`;
+        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.FJS}.`;
       }
     } else {
       // Zaehlart.QJS
       if (richtung.trim()) {
-        return `Die Richtung in der Datei ${filename} muss leer sein für Zählart ${zaehlart}.`;
+        return `Die Richtung muss leer sein für Zählart ${zaehlart}.`;
       }
     }
   }
@@ -201,14 +182,12 @@ export function useFussverkehrValidationUtils() {
    * @param zaehlart Aktuelle Zählart.
    * @param armNummer Nummer des Knotenarms.
    * @param richtung csv-Spalte für die Richtung.
-   * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
   function validateRichtungValue(
     zaehlart: Zaehlart,
     armNummer: number,
-    richtung: string,
-    filename: string
+    richtung: string
   ) {
     if (zaehlart !== Zaehlart.QU) {
       return;
@@ -239,7 +218,7 @@ export function useFussverkehrValidationUtils() {
         richtung !== Himmelsrichtung.NO.valueOf() &&
         richtung !== Himmelsrichtung.SW.valueOf())
     ) {
-      return `Die Richtung ${richtung} in der Datei ${filename} ist ungültig für den Knotenarm ${armNummer}.`;
+      return `Die Richtung ${richtung} ist ungültig für den Knotenarm ${armNummer}.`;
     }
   }
 
@@ -248,26 +227,24 @@ export function useFussverkehrValidationUtils() {
    *
    * @param requestedKategorien Angeforderte Verkehrsarten.
    * @param splittedLine Array für Zählwerte.
-   * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
   function validateZaehlwerteOccurrence(
     requestedKategorien: Array<string>,
-    splittedLine: Array<string>,
-    filename: string
+    splittedLine: Array<string>
   ) {
     // Kein Element im Array[KFZ bis Krad] darf einen Wert haben.
     if (splittedLine.slice(4, 9).some(Boolean)) {
-      return `Die Fahrzeugarten in der Datei ${filename} sind ungültig für Fussverkehrszählungen.`;
+      return `Die Zählwerte sind ungültig für die Zählart.`;
     }
 
     if (isEmpty(splittedLine[9]) && isEmpty(splittedLine[10])) {
-      return `Die Fussverkehrszähldaten in der Datei ${filename} dürfen nicht leer sein.`;
+      return `Die Zählwerte für Rad und Fuss dürfen nicht leer sein.`;
     }
 
     if (requestedKategorien.includes(Fahrzeug.RAD.valueOf())) {
       if (isEmpty(splittedLine[9])) {
-        return `Der Zählwert von "RAD" darf nicht leer sein.`;
+        return `Der Zählwert von "RAD" darf nicht leer sein. `;
       }
     } else {
       if (!isEmpty(splittedLine[9])) {
@@ -289,21 +266,13 @@ export function useFussverkehrValidationUtils() {
    * Prüft die konkreten Werte der Zählwerte auf Validität.
    *
    * @param splittedLine Array für Zählwerte.
-   * @param csvLineIndex Zeilenindex der csv-Datei.
-   * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
-  function validateZaehlwerteValues(
-    splittedLine: Array<string>,
-    csvLineIndex: number,
-    filename: string
-  ) {
+  function validateZaehlwerteValues(splittedLine: Array<string>) {
     return validationUtils.containsOnlyWholeNonNegativeIntegerStrings(
       splittedLine,
       9,
-      10,
-      csvLineIndex,
-      filename
+      10
     );
   }
 

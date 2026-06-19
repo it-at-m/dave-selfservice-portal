@@ -151,7 +151,7 @@ import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
-import { isEmpty, isNil, parseInt, toArray, toString } from "lodash";
+import { isEmpty, isNil, parseInt, toArray } from "lodash";
 import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
@@ -164,6 +164,7 @@ import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import { useFussverkehrValidationUtils } from "@/util/validation/FussverkehrValidationUtils";
+import { useKfzVerkehrValidationUtils } from "@/util/validation/KfzVerkehrValidationUtils";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
 
@@ -195,6 +196,7 @@ const validationStore = useValidationStore();
 
 const validationUtils = useValidationUtils();
 const fussverkehrValidationUtils = useFussverkehrValidationUtils();
+const kfzVerkehrValidationUtils = useKfzVerkehrValidationUtils();
 
 const resetFileInput = ref<number>(0);
 
@@ -479,69 +481,79 @@ function checkVerkehrsbeziehungData(
   splittedLine: Array<string>,
   filename: string
 ): string {
-  const csvLineNumber: number = csvLineIndex + 1;
-  if (csvLineIndex > 3) {
-    const nach: string = splittedLine[1];
-    let verkehrsbeziehung: VerkehrsbeziehungDTO | undefined;
-    if (zaehlung.value.kreisverkehr) {
-      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find(
-        (verkehrsbeziehung) => {
-          return (
-            verkehrsbeziehung.knotenarm === armNummer &&
-            ((nach === "e" && verkehrsbeziehung.hinein) ||
-              (nach === "v" && verkehrsbeziehung.vorbei) ||
-              (nach === "a" && verkehrsbeziehung.heraus))
-          );
-        }
-      );
-      // kein Kreisverkehr
-    } else {
-      const nachArmNumber: number = parseInt(toString(nach.trim()));
-      verkehrsbeziehung = zaehlung.value.verkehrsbeziehungen.find(
-        (verkehrsbeziehung) => {
-          return (
-            armNummer === verkehrsbeziehung.von &&
-            nachArmNumber === verkehrsbeziehung.nach
-          );
-        }
-      );
-    }
-    if (isNil(verkehrsbeziehung)) {
-      return `Für die Zähldaten in Zeile ${csvLineNumber} der Datei ${filename} ist keine Verkehrsbeziehung existent oder aktiv.\nWar: ${splittedLine}`;
-    }
+  // Metadaten überspringen
+  if (csvLineIndex <= 3) {
+    return "";
   }
 
-  if (
-    isEmpty(splittedLine[4]) &&
-    isEmpty(splittedLine[5]) &&
-    isEmpty(splittedLine[6]) &&
-    isEmpty(splittedLine[7]) &&
-    isEmpty(splittedLine[8])
-  ) {
-    return `Die Zähldaten in Zeile ${csvLineNumber} in der Datei ${filename} dürfen nicht leer sein.`;
-  }
+  let errorMessage: string | undefined;
 
   if (zaehlung.value.kreisverkehr) {
-    // e = einfahrend, a = abfahrend und v = vorbeifahrend
-    if (
-      splittedLine[1] !== "e" &&
-      splittedLine[1] !== "v" &&
-      splittedLine[1] !== "a"
-    ) {
-      return `Die 'nach'-Spalte in Zeile ${csvLineNumber} der Datei ${filename} darf nur 'e', 'v' oder 'a' enthalten.\nWar: ${splittedLine}`;
-    }
-  }
+    errorMessage = kfzVerkehrValidationUtils.validateNachValueForKreisverkehr(
+      splittedLine[1]
+    );
+    if (errorMessage)
+      return enrichValidationErrorMessage(
+        errorMessage,
+        splittedLine,
+        csvLineIndex,
+        filename
+      );
 
-  for (let i = 4; i <= 8; i++) {
-    // Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
-    if (splittedLine[i].trim().length > 0) {
-      if (
-        !validationUtils.isWholeNonNegativeIntegerString(splittedLine[i].trim())
-      ) {
-        return `Die Zähldaten in Zeile ${csvLineNumber} der Datei ${filename} dürfen nur nicht-negative, ganze Zahlen enthalten.\nWar: ${splittedLine}`;
-      }
-    }
+    errorMessage =
+      kfzVerkehrValidationUtils.validateVerkehrsbeziehungForKreisverkehr(
+        zaehlung.value.verkehrsbeziehungen,
+        armNummer,
+        splittedLine[1]
+      );
+  } else {
+    errorMessage = kfzVerkehrValidationUtils.validateNachValueForKreuzung(
+      zaehlung.value.verkehrsbeziehungen,
+      armNummer,
+      splittedLine[1]
+    );
   }
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
+
+  errorMessage =
+    kfzVerkehrValidationUtils.validateStrassenseiteRichtungOccurrence(
+      splittedLine[1]
+    );
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
+
+  errorMessage = kfzVerkehrValidationUtils.validateZaehlwerteOccurrence(
+    zaehlung.value.kategorien,
+    splittedLine
+  );
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
+
+  errorMessage =
+    kfzVerkehrValidationUtils.validateZaehlwerteValues(splittedLine);
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
 
   return "";
 }
@@ -561,66 +573,109 @@ function checkFussverkehrData(
   splittedLine: Array<string>,
   filename: string
 ): string {
+  // Metadaten überspringen
+  if (csvLineIndex <= 3) {
+    return "";
+  }
+
   const zaehlart = zaehlung.value.zaehlart;
 
   let errorMessage: string | undefined;
   errorMessage = fussverkehrValidationUtils.validateNachOccurrence(
     zaehlart,
-    splittedLine[1],
-    filename
+    splittedLine[1]
   );
-  if (errorMessage) return errorMessage;
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
 
   errorMessage = fussverkehrValidationUtils.validateNachValue(
     armNummer,
-    splittedLine[1],
-    filename
+    splittedLine[1]
   );
-  if (errorMessage) return errorMessage;
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
 
   errorMessage = fussverkehrValidationUtils.validateStrassenseiteOccurrence(
     zaehlart,
-    splittedLine[2],
-    filename
+    splittedLine[2]
   );
-  if (errorMessage) return errorMessage;
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
 
   errorMessage = fussverkehrValidationUtils.validateStrassenseiteValue(
     zaehlart,
     splittedLine[2],
-    armNummer,
-    filename
+    armNummer
   );
-  if (errorMessage) return errorMessage;
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
 
   errorMessage = fussverkehrValidationUtils.validateRichtungOccurrence(
     zaehlart,
-    splittedLine[3],
-    filename
+    splittedLine[3]
   );
-  if (errorMessage) return errorMessage;
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
 
   errorMessage = fussverkehrValidationUtils.validateRichtungValue(
     zaehlart,
     armNummer,
-    splittedLine[3],
-    filename
+    splittedLine[3]
   );
-  if (errorMessage) return errorMessage;
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
 
   errorMessage = fussverkehrValidationUtils.validateZaehlwerteOccurrence(
     zaehlung.value.kategorien,
-    splittedLine,
-    filename
+    splittedLine
   );
-  if (errorMessage) return errorMessage;
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
 
-  errorMessage = fussverkehrValidationUtils.validateZaehlwerteValues(
-    splittedLine,
-    csvLineIndex,
-    filename
-  );
-  if (errorMessage) return errorMessage;
+  errorMessage =
+    fussverkehrValidationUtils.validateZaehlwerteValues(splittedLine);
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
 
   return "";
 }
@@ -760,5 +815,14 @@ function readFiles() {
       }
     }
   });
+}
+
+function enrichValidationErrorMessage(
+  errorMessage: string,
+  splittedLine: Array<string>,
+  csvLineIndex: number,
+  filename: string
+) {
+  return `${errorMessage}\nWar: ${splittedLine}\nZeile: ${csvLineIndex + 1}\nDatei: ${filename}`;
 }
 </script>
