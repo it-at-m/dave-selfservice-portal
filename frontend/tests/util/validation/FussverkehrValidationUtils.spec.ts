@@ -60,21 +60,21 @@ describe("FussverkehrValidationUtils", () => {
     it("returns an error for an incorrect mapping", () => {
       const err = utils.validateNachValue(1, "1");
       expect(err).toBe(
-        `Der Wert 1 für "nach" ist ungültig für den Knotenarm 1.`
+        `Der Wert 1 des Zielknotenarms (nach) ist ungültig für den Knotenarm 1.`
       );
     });
 
     it("returns an error for an empty 'nach' value", () => {
       const err = utils.validateNachValue(2, "");
       expect(err).toBe(
-        `Der Wert  für "nach" ist ungültig für den Knotenarm 2.`
+        `Der Wert  des Zielknotenarms (nach) ist ungültig für den Knotenarm 2.`
       );
     });
 
     it("returns an error for a non-numeric 'nach' value", () => {
       const err = utils.validateNachValue(3, "X");
       expect(err).toBe(
-        `Der Wert X für "nach" ist ungültig für den Knotenarm 3.`
+        `Der Wert X des Zielknotenarms (nach) ist ungültig für den Knotenarm 3.`
       );
     });
   });
@@ -191,8 +191,6 @@ describe("FussverkehrValidationUtils", () => {
   });
 
   describe("validateRichtungValue", () => {
-    const filename = "test.csv";
-
     it("returns undefined when zaehlart is not QU", () => {
       const result = utils.validateRichtungValue(
         Zaehlart.FJS,
@@ -222,7 +220,6 @@ describe("FussverkehrValidationUtils", () => {
       const result = utils.validateRichtungValue(Zaehlart.QU, 1, badDir);
       expect(typeof result).toBe("string");
       expect(result).toContain(badDir);
-      expect(result).toContain(filename);
       expect(result).toContain("Knotenarm 1");
     });
 
@@ -246,7 +243,6 @@ describe("FussverkehrValidationUtils", () => {
       const result = utils.validateRichtungValue(Zaehlart.QU, 6, badDir);
       expect(typeof result).toBe("string");
       expect(result).toContain(badDir);
-      expect(result).toContain(filename);
       expect(result).toContain("Knotenarm 6");
     });
   });
@@ -256,15 +252,15 @@ describe("FussverkehrValidationUtils", () => {
       const line = new Array(11).fill("");
       line[4] = "1"; // vehicle type present
       const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
-      expect(err).toBe(
-        `Die Fahrzeugarten sind ungültig für Fussverkehrszählungen.`
-      );
+      expect(err).toBe(`Die Zählwerte sind ungültig für die Zählart.`);
     });
 
     it("errors when both foot-count columns (9 and 10) are empty", () => {
       const line = new Array(11).fill("");
       const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
-      expect(err).toBe(`Die Fussverkehrszähldaten dürfen nicht leer sein.`);
+      expect(err).toBe(
+        `Die Zählwerte für Rad und Fuss dürfen nicht leer sein.`
+      );
     });
 
     it("returns undefined when vehicle columns empty but one foot-count present", () => {

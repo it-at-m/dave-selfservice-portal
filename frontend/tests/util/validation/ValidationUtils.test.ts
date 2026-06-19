@@ -63,9 +63,7 @@ describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
     const result = containsOnlyWholeNonNegativeIntegerStrings(
       splittedLine,
       0,
-      2,
-      0,
-      "test.csv"
+      2
     );
     expect(result).toBeUndefined();
   });
@@ -75,9 +73,7 @@ describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
     const result = containsOnlyWholeNonNegativeIntegerStrings(
       splittedLine,
       0,
-      2,
-      0,
-      "test.csv"
+      2
     );
     expect(result).toBeUndefined();
   });
@@ -87,16 +83,12 @@ describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
     const result = containsOnlyWholeNonNegativeIntegerStrings(
       splittedLine,
       0,
-      2,
-      1, // csvLineIndex -> message should reference Zeile 2
-      "test.csv"
+      2
     );
     expect(result).toBeTypeOf("string");
     expect(result).toContain(
       "dürfen nur nicht-negative, ganze Zahlen enthalten"
     );
-    expect(result).toContain("test.csv");
-    expect(result).toContain("Zeile 2");
   });
 
   test("returns an error for decimal values with whitespace (e.g. ' 3.14 ')", () => {
@@ -104,17 +96,12 @@ describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
     const result = containsOnlyWholeNonNegativeIntegerStrings(
       splittedLine,
       0,
-      2,
-      2,
-      "decimals.csv"
+      2
     );
     expect(result).toBeTypeOf("string");
     expect(result).toContain(
       "dürfen nur nicht-negative, ganze Zahlen enthalten"
     );
-    expect(result).toContain("decimals.csv");
-    // csvLineIndex = 2 -> Zeile 3
-    expect(result).toContain("Zeile 3");
   });
 });
 
