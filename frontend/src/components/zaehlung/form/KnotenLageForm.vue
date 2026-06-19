@@ -332,9 +332,11 @@ function checkUploadedFiledata(
   filename: string
 ): string {
   // keine Daten vorhanden
-  if (isNil(csvData) || csvData.length < 4) {
-    return `Die hochgeladene Datei ${filename} enthält keine Zähldaten.`;
+  const hasDataMsg = validationUtils.validateCsvHasData(filename, csvData);
+  if (hasDataMsg && hasDataMsg.length > 0) {
+    return hasDataMsg;
   }
+
   const metaHeader: string = csvData[0];
   // MetaHeader vorhanden?
   if (isNil(metaHeader)) {
