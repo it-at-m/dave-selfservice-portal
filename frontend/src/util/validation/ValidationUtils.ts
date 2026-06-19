@@ -166,7 +166,7 @@ export function useValidationUtils() {
         csvLinesByBewegungsinformation.values()
       )) {
         if (
-          numberOfIntervalsAccordingZaehldauer !=
+          numberOfIntervalsAccordingZaehldauer !==
           csvLinesOfBewegungsinformation.length
         ) {
           return `Die Menge von ${csvLinesOfBewegungsinformation.length} Intervallnummern in der CSV-Datei ${filename} entspricht nicht der Anzahl der erwarteten Anzahl von ${numberOfIntervalsAccordingZaehldauer} Intervallen der Zähldauer ${zaehldauerText.get(zaehldauer)}.`;
