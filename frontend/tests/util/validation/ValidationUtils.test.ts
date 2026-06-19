@@ -85,6 +85,44 @@ describe("ValidationUtils - getBewegungsinformationFromCsvLine", () => {
   });
 });
 
+describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehung", () => {
+  function makeLine(intervall: number | string, nach = "nach", side = "side", richt = "dir") {
+    return `${intervall};${nach};${side};${richt};extra`;
+  }
+
+  test("returns empty when same intervall numbers are used but different bewegungsinformation", () => {
+    const csvLines = [makeLine(5, "A", "1", "X"), makeLine(5, "B", "2", "Y")];
+    expect(checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", csvLines)).toBe("");
+  });
+
+  test("detects duplicates within same bewegungsinformation and returns sorted unique intervallnumbers", () => {
+    const csvLines = [
+      makeLine(5, "A", "1", "X"),
+      makeLine(5, "A", "1", "X"),
+      makeLine(6, "A", "1", "X"),
+      makeLine(6, "A", "1", "X"),
+      makeLine(7, "B", "2", "Y"),
+    ];
+    expect(checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", csvLines)).toBe(
+      "In der CSV-Datei file.csv befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: 5, 6"
+    );
+  });
+
+  test("returns empty string for empty input", () => {
+    expect(checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", [])).toBe("");
+  });
+
+  test("detects duplicates when movement columns are empty (treated as same bewegungsinformation)", () => {
+    const csvLines = [
+      makeLine(10, "", "", ""),
+      makeLine(10, "", "", ""),
+    ];
+    expect(checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", csvLines)).toBe(
+      "In der CSV-Datei file.csv befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: 10"
+    );
+  });
+});
+
 describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", () => {
   function makeLine(intervall: number, nach = "nach", side = "side", richt = "dir") {
     return `${intervall};${nach};${side};${richt};extra`;
