@@ -388,32 +388,4 @@ describe("FussverkehrValidationUtils", () => {
       expect(err).toBe(`Der Zählwert von "FUSS" darf nicht leer sein.`);
     });
   });
-
-  describe("validateZaehlwerteValues", () => {
-    it("accepts valid non-negative integers in foot-count columns", () => {
-      const line = new Array(11).fill("");
-      line[9] = "5";
-      const err = utils.validateZaehlwerteValues(line, 0, "file.csv");
-      expect(err).toBeUndefined();
-    });
-
-    it("returns error when foot-count contains negative or non-integer values", () => {
-      const line = new Array(11).fill("");
-      line[9] = "-1"; // invalid according to the mocked validator
-      const err = utils.validateZaehlwerteValues(line, 4, "file.csv");
-      // expected message includes the csv line number (index + 1), filename and the array
-      const expectedPrefix = `Die Zähldaten in Zeile ${4 + 1} der Datei file.csv dürfen nur nicht-negative, ganze Zahlen enthalten.`;
-      expect(err).toBeDefined();
-      expect(err).toContain(expectedPrefix);
-      // The failing value array should be included in the message (stringified)
-      expect(err).toContain(line.toString());
-    });
-
-    it("ignores empty foot-count cells", () => {
-      const line = new Array(11).fill("");
-      // both empty -> should not produce numeric-validation error here (other function checks emptiness)
-      const err = utils.validateZaehlwerteValues(line, 1, "file.csv");
-      expect(err).toBeUndefined();
-    });
-  });
 });

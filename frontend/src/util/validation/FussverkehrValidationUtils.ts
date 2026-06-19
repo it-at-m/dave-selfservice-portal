@@ -298,19 +298,13 @@ export function useFussverkehrValidationUtils() {
     csvLineIndex: number,
     filename: string
   ) {
-    const csvLineNumber: number = csvLineIndex + 1;
-    for (let i = 9; i <= 10; i++) {
-      // Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
-      if (splittedLine[i].trim().length > 0) {
-        if (
-          !validationUtils.isWholeNonNegativeIntegerString(
-            splittedLine[i].trim()
-          )
-        ) {
-          return `Die Zähldaten in Zeile ${csvLineNumber} der Datei ${filename} dürfen nur nicht-negative, ganze Zahlen enthalten.\nWar: ${splittedLine}`;
-        }
-      }
-    }
+    return validationUtils.containsOnlyWholeNonNegativeIntegerStrings(
+      splittedLine,
+      9,
+      10,
+      csvLineIndex,
+      filename
+    );
   }
 
   return {

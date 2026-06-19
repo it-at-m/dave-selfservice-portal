@@ -3,10 +3,11 @@ import * as path from "path";
 
 import { describe, expect, test } from "vitest";
 
-import { useValidationUtils } from "../../../src/util/validation/ValidationUtils";
+import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
 const {
   isWholeNonNegativeIntegerString,
+  containsOnlyWholeNonNegativeIntegerStrings,
   getBewegungsinformationFromCsvLine,
   checkForIdenticalIntervallnummerJeBewegungsbeziehung,
 } = useValidationUtils();
@@ -46,6 +47,67 @@ describe("ValidationUtils - isWholeNonNegativeIntegerString", () => {
   test("rejects alphabetic strings", () => {
     expect(isWholeNonNegativeIntegerString("abc")).toBe(false);
     expect(isWholeNonNegativeIntegerString("12a3")).toBe(false);
+  });
+});
+
+describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
+  test("returns undefined when all checked cells are empty", () => {
+    const splittedLine = ["", "   ", ""];
+    const result = containsOnlyWholeNonNegativeIntegerStrings(
+      splittedLine,
+      0,
+      2,
+      0,
+      "test.csv"
+    );
+    expect(result).toBeUndefined();
+  });
+
+  test("returns undefined for valid whole non-negative integer strings (trimming applied)", () => {
+    const splittedLine = [" 0", "42 ", "  7  "];
+    const result = containsOnlyWholeNonNegativeIntegerStrings(
+      splittedLine,
+      0,
+      2,
+      0,
+      "test.csv"
+    );
+    expect(result).toBeUndefined();
+  });
+
+  test("returns an error message when a checked cell contains a non-integer or negative value", () => {
+    const splittedLine = ["1", "-1", ""]; // '-1' is invalid
+    const result = containsOnlyWholeNonNegativeIntegerStrings(
+      splittedLine,
+      0,
+      2,
+      1, // csvLineIndex -> message should reference Zeile 2
+      "test.csv"
+    );
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain(
+      "dürfen nur nicht-negative, ganze Zahlen enthalten"
+    );
+    expect(result).toContain("test.csv");
+    expect(result).toContain("Zeile 2");
+  });
+
+  test("returns an error for decimal values with whitespace (e.g. ' 3.14 ')", () => {
+    const splittedLine = ["", " 3.14 ", ""];
+    const result = containsOnlyWholeNonNegativeIntegerStrings(
+      splittedLine,
+      0,
+      2,
+      2,
+      "decimals.csv"
+    );
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain(
+      "dürfen nur nicht-negative, ganze Zahlen enthalten"
+    );
+    expect(result).toContain("decimals.csv");
+    // csvLineIndex = 2 -> Zeile 3
+    expect(result).toContain("Zeile 3");
   });
 });
 
