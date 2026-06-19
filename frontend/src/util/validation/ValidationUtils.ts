@@ -24,6 +24,34 @@ export function useValidationUtils() {
   }
 
   /**
+   * Prüft eine Range von Werten aus einem Array auf ganze, nicht-negative Zahlen.
+   *
+   * @param splittedLine Array für Zählwerte.
+   * @param indexFrom Auszuwertender Anfangsindex der splittedLine
+   * @param indexTo Auszuwertender Endindex der splittedLine
+   * @param csvLineIndex Zeilenindex der csv-Datei.
+   * @param filename Name der csv-Datei.
+   * @return Fehlermeldung
+   */
+  function containsOnlyWholeNonNegativeIntegerStrings(
+    splittedLine: Array<string>,
+    indexFrom: number,
+    indexTo: number,
+    csvLineIndex: number,
+    filename: string
+  ) {
+    const csvLineNumber: number = csvLineIndex + 1;
+    for (let i = indexFrom; i <= indexTo; i++) {
+      // Zaehldaten dürfen nur nicht negative Zahlen enthalten oder müssen leer sein.
+      if (splittedLine[i].trim().length > 0) {
+        if (!isWholeNonNegativeIntegerString(splittedLine[i].trim())) {
+          return `Die Zähldaten in Zeile ${csvLineNumber} der Datei ${filename} dürfen nur nicht-negative, ganze Zahlen enthalten.\nWar: ${splittedLine}`;
+        }
+      }
+    }
+  }
+
+  /**
    * Prüft ob in den gegebenen Zähldateninformationen der CSV-Datei je
    * Bewegungsinformation mehrere Einträge mit der selben Intervallnummer existieren.
    *
@@ -212,6 +240,7 @@ export function useValidationUtils() {
 
   return {
     isWholeNonNegativeIntegerString,
+    containsOnlyWholeNonNegativeIntegerStrings,
     checkForIdenticalIntervallnummerJeBewegungsbeziehung,
     checkForCorrectNumberOfIntervalsAccordingZaehldauer,
     checkForAlignmentOfIntervallsAccordingZaehldauer,
