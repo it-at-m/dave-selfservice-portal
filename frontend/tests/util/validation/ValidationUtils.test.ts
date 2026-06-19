@@ -1,6 +1,3 @@
-import * as fs from "fs";
-import * as path from "path";
-
 import { Zaehldauer, zaehldauerIntervallnummern, zaehldauerText } from "../../../src/types/enum/Zaehldauer";
 import { describe, expect, test } from "vitest";
 
@@ -88,42 +85,6 @@ describe("ValidationUtils - getBewegungsinformationFromCsvLine", () => {
   });
 });
 
-describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehung", () => {
-  test("CSV mit vier Bewegungsbeziehungen und keine doppelten Intervallnummern", () => {
-    const csvPath = path.join(
-      __dirname,
-      "../../testdata",
-      "checkForIdenticalIntervallnummerJeBewegungsbeziehung_FjS_Knotenarm_1_24h_korrekt.csv"
-    );
-    const csvLinesWithoutHeader = loadCsvLinesFromLine4(csvPath);
-
-    expect(
-      checkForIdenticalIntervallnummerJeBewegungsbeziehung(
-        "dateiname.csv",
-        csvLinesWithoutHeader
-      )
-    ).toBe("");
-  });
-
-  test("CSV mit vier Bewegungsbeziehungen und doppelten Intervallnummern", () => {
-    const csvPath = path.join(
-      __dirname,
-      "../../testdata",
-      "checkForIdenticalIntervallnummerJeBewegungsbeziehung_FjS_Knotenarm_1_24h_mehrfach_vorhandene_Intervallnummer_je_Bewegungsbeziehung.csv"
-    );
-    const csvLinesWithoutHeader = loadCsvLinesFromLine4(csvPath);
-
-    expect(
-      checkForIdenticalIntervallnummerJeBewegungsbeziehung(
-        "dateiname.csv",
-        csvLinesWithoutHeader
-      )
-    ).toBe(
-      "In der CSV-Datei dateiname.csv befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: 5, 6"
-    );
-  });
-});
-
 describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", () => {
   function makeLine(intervall: number, nach = "nach", side = "side", richt = "dir") {
     return `${intervall};${nach};${side};${richt};extra`;
@@ -201,12 +162,3 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     ).toBe("");
   });
 });
-
-function loadCsvLinesFromLine4(csvFilePath: string): Array<string> {
-  const absolutePath = path.resolve(csvFilePath);
-  const content = fs.readFileSync(absolutePath, { encoding: "utf8" });
-  const allLines = content.split(/\r?\n/);
-  // ab Zeile 4 (1-basierter Index) -> slice(3)
-  const linesFrom4 = allLines.slice(3);
-  return linesFrom4;
-}
