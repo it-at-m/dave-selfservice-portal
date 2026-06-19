@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import Fahrzeug from "@/types/enum/Fahrzeug";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Richtung from "@/types/enum/Richtung";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
@@ -331,7 +332,11 @@ describe("FussverkehrValidationUtils", () => {
     it("errors when any vehicle types (indices 4..8) have a value", () => {
       const line = new Array(11).fill("");
       line[4] = "1"; // vehicle type present
-      const err = utils.validateZaehlwerteOccurrence(line, "file.csv");
+      const err = utils.validateZaehlwerteOccurrence(
+        [Fahrzeug.RAD],
+        line,
+        "file.csv"
+      );
       expect(err).toBe(
         `Die Fahrzeugarten in der Datei file.csv sind ungültig für Fussverkehrszählungen.`
       );
@@ -339,7 +344,11 @@ describe("FussverkehrValidationUtils", () => {
 
     it("errors when both foot-count columns (9 and 10) are empty", () => {
       const line = new Array(11).fill("");
-      const err = utils.validateZaehlwerteOccurrence(line, "file.csv");
+      const err = utils.validateZaehlwerteOccurrence(
+        [Fahrzeug.RAD],
+        line,
+        "file.csv"
+      );
       expect(err).toBe(
         `Die Fussverkehrszähldaten in der Datei file.csv dürfen nicht leer sein.`
       );
@@ -348,8 +357,35 @@ describe("FussverkehrValidationUtils", () => {
     it("returns undefined when vehicle columns empty but one foot-count present", () => {
       const line = new Array(11).fill("");
       line[9] = "2";
-      const err = utils.validateZaehlwerteOccurrence(line, "file.csv");
+      const err = utils.validateZaehlwerteOccurrence(
+        [Fahrzeug.RAD],
+        line,
+        "file.csv"
+      );
       expect(err).toBeUndefined();
+    });
+
+    it("returns error when unrequested verkehrsart is present", () => {
+      const line = new Array(11).fill("");
+      line[9] = "2";
+      line[10] = "2";
+      const err = utils.validateZaehlwerteOccurrence(
+        [Fahrzeug.RAD],
+        line,
+        "file.csv"
+      );
+      expect(err).toBe(`Der Zählwert von "FUSS" muss leer sein.`);
+    });
+
+    it("returns error when requested verkehrsart is not present", () => {
+      const line = new Array(11).fill("");
+      line[9] = "2";
+      const err = utils.validateZaehlwerteOccurrence(
+        [Fahrzeug.RAD, Fahrzeug.FUSS],
+        line,
+        "file.csv"
+      );
+      expect(err).toBe(`Der Zählwert von "FUSS" darf nicht leer sein.`);
     });
   });
 

@@ -2,7 +2,8 @@ import { isEmpty, join, sum, toArray, trim, uniq } from "lodash";
 
 import {
   Zaehldauer,
-  zaehldauerIntervallnummern, zaehldauerText,
+  zaehldauerIntervallnummern,
+  zaehldauerText,
 } from "@/types/enum/Zaehldauer";
 
 export function useValidationUtils() {
