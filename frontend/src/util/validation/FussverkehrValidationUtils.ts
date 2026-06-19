@@ -1,5 +1,6 @@
 import { isEmpty } from "lodash";
 
+import Fahrzeug from "@/types/enum/Fahrzeug";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Richtung from "@/types/enum/Richtung";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
@@ -245,21 +246,42 @@ export function useFussverkehrValidationUtils() {
   /**
    * Prüft, ob die Zählwerte für Fussverkehr und andere Verkehrsarten richtig gefüllt ist.
    *
+   * @param requestedKategorien Angeforderte Verkehrsarten.
    * @param splittedLine Array für Zählwerte.
    * @param filename Name der csv-Datei.
    * @return Fehlermeldung
    */
   function validateZaehlwerteOccurrence(
+    requestedKategorien: Array<string>,
     splittedLine: Array<string>,
     filename: string
   ) {
-    // Hat mindestens ein Element im Array[KFZ bis Krad] einen Wert.
+    // Kein Element im Array[KFZ bis Krad] darf einen Wert haben.
     if (splittedLine.slice(4, 9).some(Boolean)) {
       return `Die Fahrzeugarten in der Datei ${filename} sind ungültig für Fussverkehrszählungen.`;
     }
 
     if (isEmpty(splittedLine[9]) && isEmpty(splittedLine[10])) {
       return `Die Fussverkehrszähldaten in der Datei ${filename} dürfen nicht leer sein.`;
+    }
+
+    if (requestedKategorien.includes(Fahrzeug.RAD.valueOf())) {
+      if (isEmpty(splittedLine[9])) {
+        return `Der Zählwert von "RAD" darf nicht leer sein.`;
+      }
+    } else {
+      if (!isEmpty(splittedLine[9])) {
+        return `Der Zählwert von "RAD" muss leer sein.`;
+      }
+    }
+    if (requestedKategorien.includes(Fahrzeug.FUSS.valueOf())) {
+      if (isEmpty(splittedLine[10])) {
+        return `Der Zählwert von "FUSS" darf nicht leer sein.`;
+      }
+    } else {
+      if (!isEmpty(splittedLine[10])) {
+        return `Der Zählwert von "FUSS" muss leer sein.`;
+      }
     }
   }
 

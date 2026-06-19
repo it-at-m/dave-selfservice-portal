@@ -609,6 +609,7 @@ function checkFussverkehrData(
   if (errorMessage) return errorMessage;
 
   errorMessage = fussverkehrValidationUtils.validateZaehlwerteOccurrence(
+    zaehlung.value.kategorien,
     splittedLine,
     filename
   );
