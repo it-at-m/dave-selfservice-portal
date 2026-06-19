@@ -1,6 +1,10 @@
-import { Zaehldauer, zaehldauerIntervallnummern, zaehldauerText } from "../../../src/types/enum/Zaehldauer";
 import { describe, expect, test } from "vitest";
 
+import {
+  Zaehldauer,
+  zaehldauerIntervallnummern,
+  zaehldauerText,
+} from "../../../src/types/enum/Zaehldauer";
 import { useValidationUtils } from "../../../src/util/validation/ValidationUtils";
 
 const {
@@ -86,13 +90,20 @@ describe("ValidationUtils - getBewegungsinformationFromCsvLine", () => {
 });
 
 describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehung", () => {
-  function makeLine(intervall: number | string, nach = "nach", side = "side", richt = "dir") {
+  function makeLine(
+    intervall: number | string,
+    nach = "nach",
+    side = "side",
+    richt = "dir"
+  ) {
     return `${intervall};${nach};${side};${richt};extra`;
   }
 
   test("returns empty when same intervall numbers are used but different bewegungsinformation", () => {
     const csvLines = [makeLine(5, "A", "1", "X"), makeLine(5, "B", "2", "Y")];
-    expect(checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", csvLines)).toBe("");
+    expect(
+      checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", csvLines)
+    ).toBe("");
   });
 
   test("detects duplicates within same bewegungsinformation and returns sorted unique intervallnumbers", () => {
@@ -103,42 +114,58 @@ describe("ValidationUtils -> checkForIdenticalIntervallnummerJeBewegungsbeziehun
       makeLine(6, "A", "1", "X"),
       makeLine(7, "B", "2", "Y"),
     ];
-    expect(checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", csvLines)).toBe(
+    expect(
+      checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", csvLines)
+    ).toBe(
       "In der CSV-Datei file.csv befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: 5, 6"
     );
   });
 
   test("returns empty string for empty input", () => {
-    expect(checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", [])).toBe("");
+    expect(
+      checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", [])
+    ).toBe("");
   });
 
   test("detects duplicates when movement columns are empty (treated as same bewegungsinformation)", () => {
-    const csvLines = [
-      makeLine(10, "", "", ""),
-      makeLine(10, "", "", ""),
-    ];
-    expect(checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", csvLines)).toBe(
+    const csvLines = [makeLine(10, "", "", ""), makeLine(10, "", "", "")];
+    expect(
+      checkForIdenticalIntervallnummerJeBewegungsbeziehung("file.csv", csvLines)
+    ).toBe(
       "In der CSV-Datei file.csv befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: 10"
     );
   });
 });
 
 describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", () => {
-  function makeLine(intervall: number, nach = "nach", side = "side", richt = "dir") {
+  function makeLine(
+    intervall: number,
+    nach = "nach",
+    side = "side",
+    richt = "dir"
+  ) {
     return `${intervall};${nach};${side};${richt};extra`;
   }
 
   test("returns empty string when all intervalls are within 24h bounds", () => {
     const csvLines = [makeLine(1), makeLine(96)];
     expect(
-      checkForAlignmentOfIntervallsAccordingZaehldauer("file.csv", csvLines, Zaehldauer.DAUER_24_STUNDEN)
+      checkForAlignmentOfIntervallsAccordingZaehldauer(
+        "file.csv",
+        csvLines,
+        Zaehldauer.DAUER_24_STUNDEN
+      )
     ).toBe("");
   });
 
   test("detects intervalls outside 24h bounds and returns them sorted and comma separated", () => {
     const csvLines = [makeLine(0), makeLine(97), makeLine(50)];
     expect(
-      checkForAlignmentOfIntervallsAccordingZaehldauer("f.csv", csvLines, Zaehldauer.DAUER_24_STUNDEN)
+      checkForAlignmentOfIntervallsAccordingZaehldauer(
+        "f.csv",
+        csvLines,
+        Zaehldauer.DAUER_24_STUNDEN
+      )
     ).toBe(
       "In der CSV-Datei f.csv befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: 0, 97"
     );
@@ -147,18 +174,29 @@ describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", 
   test("returns empty for SONSTIGE regardless of intervall numbers", () => {
     const csvLines = [makeLine(0), makeLine(1000)];
     expect(
-      checkForAlignmentOfIntervallsAccordingZaehldauer("file.csv", csvLines, Zaehldauer.SONSTIGE)
+      checkForAlignmentOfIntervallsAccordingZaehldauer(
+        "file.csv",
+        csvLines,
+        Zaehldauer.SONSTIGE
+      )
     ).toBe("");
   });
 });
 
 describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer", () => {
-  function makeLine(intervall: number, nach = "nach", side = "side", richt = "dir") {
+  function makeLine(
+    intervall: number,
+    nach = "nach",
+    side = "side",
+    richt = "dir"
+  ) {
     return `${intervall};${nach};${side};${richt};extra`;
   }
 
   test("returns empty when number of intervalls per bewegungsinformation matches expected for 2x4h", () => {
-    const ranges = zaehldauerIntervallnummern.get(Zaehldauer.DAUER_2_X_4_STUNDEN)!;
+    const ranges = zaehldauerIntervallnummern.get(
+      Zaehldauer.DAUER_2_X_4_STUNDEN
+    )!;
     const csvLines: Array<string> = [];
     // build all intervall numbers for the zaehldauer
     ranges.forEach((r) => {
@@ -168,12 +206,18 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     });
 
     expect(
-      checkForCorrectNumberOfIntervalsAccordingZaehldauer("file.csv", csvLines, Zaehldauer.DAUER_2_X_4_STUNDEN)
+      checkForCorrectNumberOfIntervalsAccordingZaehldauer(
+        "file.csv",
+        csvLines,
+        Zaehldauer.DAUER_2_X_4_STUNDEN
+      )
     ).toBe("");
   });
 
   test("returns descriptive message when count does not match expected for 2x4h", () => {
-    const ranges = zaehldauerIntervallnummern.get(Zaehldauer.DAUER_2_X_4_STUNDEN)!;
+    const ranges = zaehldauerIntervallnummern.get(
+      Zaehldauer.DAUER_2_X_4_STUNDEN
+    )!;
     const csvLines: Array<string> = [];
     // omit the last intervall to create a mismatch
     ranges.forEach((r) => {
@@ -184,19 +228,30 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     // remove one line to be incorrect
     csvLines.pop();
 
-    const expectedTotal = ranges.reduce((acc, cur) => acc + cur.numberOfIntervals, 0);
+    const expectedTotal = ranges.reduce(
+      (acc, cur) => acc + cur.numberOfIntervals,
+      0
+    );
     const actualCount = csvLines.length;
     const expectedMessage = `Die Menge von ${actualCount} Intervallnummern in der CSV-Datei file.csv entspricht nicht der Anzahl der erwarteten Anzahl von ${expectedTotal} Intervallen der Zähldauer ${zaehldauerText.get(Zaehldauer.DAUER_2_X_4_STUNDEN)}.`;
 
     expect(
-      checkForCorrectNumberOfIntervalsAccordingZaehldauer("file.csv", csvLines, Zaehldauer.DAUER_2_X_4_STUNDEN)
+      checkForCorrectNumberOfIntervalsAccordingZaehldauer(
+        "file.csv",
+        csvLines,
+        Zaehldauer.DAUER_2_X_4_STUNDEN
+      )
     ).toBe(expectedMessage);
   });
 
   test("does not perform check for SONSTIGE and returns empty even if counts differ", () => {
     const csvLines = [makeLine(1), makeLine(2), makeLine(3)];
     expect(
-      checkForCorrectNumberOfIntervalsAccordingZaehldauer("file.csv", csvLines, Zaehldauer.SONSTIGE)
+      checkForCorrectNumberOfIntervalsAccordingZaehldauer(
+        "file.csv",
+        csvLines,
+        Zaehldauer.SONSTIGE
+      )
     ).toBe("");
   });
 });
