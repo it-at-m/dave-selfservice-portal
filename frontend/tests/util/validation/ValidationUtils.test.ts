@@ -10,6 +10,8 @@ import { useValidationUtils } from "@/util/validation/ValidationUtils";
 const {
   isWholeNonNegativeIntegerString,
   containsOnlyWholeNonNegativeIntegerStrings,
+  hasCsvDataLineCorrectNumberOfColumns,
+  COLUMN_COUNT,
   getBewegungsinformationFromCsvLine,
   checkForIdenticalIntervallnummerJeBewegungsbeziehung,
   checkForCorrectNumberOfIntervalsAccordingZaehldauer,
@@ -112,6 +114,34 @@ describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
     expect(result).toContain("decimals.csv");
     // csvLineIndex = 2 -> Zeile 3
     expect(result).toContain("Zeile 3");
+  });
+});
+
+describe("ValidationUtils -> hasCsvDataLineCorrectNumberOfColumns", () => {
+  test("returns empty when correct number of columns", () => {
+    const correct = new Array(COLUMN_COUNT).fill("");
+    expect(hasCsvDataLineCorrectNumberOfColumns("test.csv", correct)).toBe("");
+  });
+
+  test("returns error message when too few columns", () => {
+    const tooFew = new Array(Math.max(0, COLUMN_COUNT - 2)).fill("");
+    const expected = `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei test.csv enthalten sein.`;
+    expect(hasCsvDataLineCorrectNumberOfColumns("test.csv", tooFew)).toBe(
+      expected
+    );
+  });
+
+  test("returns error message when too many columns", () => {
+    const tooMany = new Array(COLUMN_COUNT + 1).fill("");
+    const expected = `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei other.csv enthalten sein.`;
+    expect(hasCsvDataLineCorrectNumberOfColumns("other.csv", tooMany)).toBe(
+      expected
+    );
+  });
+
+  test("returns empty when correct number of columns with values", () => {
+    const values = Array.from({ length: COLUMN_COUNT }, (_, i) => `${i}`);
+    expect(hasCsvDataLineCorrectNumberOfColumns("vals.csv", values)).toBe("");
   });
 });
 

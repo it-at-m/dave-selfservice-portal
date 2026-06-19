@@ -177,15 +177,16 @@ const zaehlung = defineModel<ZaehlungDTO>({
   required: true,
 });
 
+const validationUtils = useValidationUtils();
+
 const EXPECTED_META_HEADER =
   "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;";
 
-const EXPECTED_ZAEHLDATEN_HEADER =
-  "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss";
+const EXPECTED_ZAEHLDATEN_HEADER = validationUtils.EXPECTED_ZAEHLDATEN_HEADER;
 
-const SEPARATOR = ";";
+const SEPARATOR = validationUtils.SEPARATOR;
 
-const COLUMN_COUNT = EXPECTED_ZAEHLDATEN_HEADER.split(SEPARATOR).length;
+const COLUMN_COUNT = validationUtils.COLUMN_COUNT;
 
 const FILE_INPUT_FIELD_ID = "fileInputField";
 
@@ -193,7 +194,6 @@ const snackbarStore = useSnackbarStore();
 
 const validationStore = useValidationStore();
 
-const validationUtils = useValidationUtils();
 const fussverkehrValidationUtils = useFussverkehrValidationUtils();
 
 const resetFileInput = ref<number>(0);
@@ -370,8 +370,15 @@ function checkUploadedFiledata(
     // Prüfung ab Zeile 4 der CSV und für nicht leere Zeilen
     if (csvLineIndex > 2 && data.trim().length > 0) {
       const splittedLine: Array<string> = data.split(SEPARATOR);
-      if (splittedLine.length !== COLUMN_COUNT) {
-        return `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei ${filename} enthalten sein.`;
+
+      // Prüfen auf korrekte Anzahl an Spalten.
+      const hasCorrectNumberOfColumns =
+        validationUtils.hasCsvDataLineCorrectNumberOfColumns(
+          filename,
+          splittedLine
+        );
+      if (!isEmpty(hasCorrectNumberOfColumns)) {
+        return hasCorrectNumberOfColumns;
       }
 
       // Unterscheidung zw. Fussverkehrszählung und anderen Zählungen
