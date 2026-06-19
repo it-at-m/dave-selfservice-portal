@@ -229,7 +229,7 @@ describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", 
         Zaehldauer.DAUER_24_STUNDEN
       )
     ).toBe(
-      "In der CSV-Datei f.csv befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: 0, 97"
+      "In der CSV-Datei f.csv befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer Ganztageszählung befinden: 0, 97"
     );
   });
 

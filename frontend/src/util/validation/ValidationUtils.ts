@@ -218,7 +218,7 @@ export function useValidationUtils() {
           Array.from(intervallnummernNotWithin.values()).sort(),
           ", "
         );
-        return `In der CSV-Datei ${filename} befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${commaSeperatedIntervallnummern}`;
+        return `In der CSV-Datei ${filename} befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer ${zaehldauerText.get(zaehldauer)} befinden: ${commaSeperatedIntervallnummern}`;
       }
     }
     return "";
