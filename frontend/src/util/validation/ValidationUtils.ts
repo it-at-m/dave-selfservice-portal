@@ -7,6 +7,51 @@ import {
 } from "@/types/enum/Zaehldauer";
 
 export function useValidationUtils() {
+  const SEPARATOR = ";";
+
+  const EXPECTED_ZAEHLDATEN_HEADER =
+    "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss";
+
+  const COLUMN_COUNT = EXPECTED_ZAEHLDATEN_HEADER.split(SEPARATOR).length;
+
+  /**
+   * Prüft, ob die Anzahl der übergebenen Zählwerte auch der Anzahl an erwarteten Zählwerte je Zeile entsprechen.
+   *
+   * @param filename Name der csv-Datei.
+   * @param splittedLine Array für Zählwerte.
+   */
+  function hasCsvDataLineCorrectNumberOfColumns(
+    filename: string,
+    splittedLine: Array<string>
+  ) {
+    if (toArray(splittedLine).length !== COLUMN_COUNT) {
+      return `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei ${filename} enthalten sein.`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob die hochgeladene CSV-Datei Zähldaten enthält.
+   * Eine Datei gilt als gültig, wenn sie mindestens vier Zeilen hat:
+   * - Zeile 1: Metadaten-Header
+   * - Zeile 2: Metadaten
+   * - Zeile 3: Zähldaten-Header
+   * - Ab Zeile 4: mindestens eine Datenzeile
+   *
+   * @param filename Name der csv-Datei (für Fehlermeldungen).
+   * @param csvData Dateiinhalt als Array von Zeilen.
+   * @return Fehlermeldung, wenn keine Zähldaten vorhanden sind, sonst leerer String.
+   */
+  function validateCsvHasData(
+    filename: string,
+    csvData: Array<string>
+  ): string {
+    if (!csvData || csvData.length < 4) {
+      return `Die hochgeladene Datei ${filename} enthält keine Zähldaten.`;
+    }
+    return "";
+  }
+
   /**
    * Prüft, ob ein Wert eine ganze nicht-negative Zahl darstellt (nur Ziffern, z.B. "0","1","42").
    * Leere Strings sollen von Aufrufer*innen als "erlaubt" behandelt werden (d.h. Aufrufer überspringt leer).
@@ -65,7 +110,7 @@ export function useValidationUtils() {
       removeEmptyLinesFromCsvDate(csvDataWithoutHeader);
 
     csvDataWithoutEmptyLines.forEach((csvLine: string) => {
-      const lineDataPerColumn = csvLine.split(";");
+      const lineDataPerColumn = csvLine.split(SEPARATOR);
       // Die Bewegungsinformation beinhaltet die Spalten "nach;Strassenseite;Richtung"
       const bewegungsinformation =
         getBewegungsinformationFromCsvLine(lineDataPerColumn);
@@ -139,7 +184,7 @@ export function useValidationUtils() {
 
       const csvLinesByBewegungsinformation = new Map<string, Array<string>>();
       csvDataWithoutEmptyLines.forEach((csvLine: string) => {
-        const lineDataPerColumn = csvLine.split(";");
+        const lineDataPerColumn = csvLine.split(SEPARATOR);
         // Die Bewegungsinformation beinhaltet die Spalten "nach;Strassenseite;Richtung"
         const bewegungsinformation =
           getBewegungsinformationFromCsvLine(lineDataPerColumn);
@@ -197,7 +242,7 @@ export function useValidationUtils() {
       const intervallnummernNotWithin = new Set<number>();
 
       csvDataWithoutEmptyLines.forEach((csvLine: string) => {
-        const intervallnummer = parseInt(csvLine.split(";")[0]);
+        const intervallnummer = parseInt(csvLine.split(SEPARATOR)[0]);
 
         // Prüfung ob sich die Intervallnummer ausserhalb der Intervallnummernbereiche der Zähldauer befindet.
         const csvLineNotWithin = startIntervallnummerEndeIntervallnummer.every(
@@ -216,7 +261,7 @@ export function useValidationUtils() {
           Array.from(intervallnummernNotWithin.values()).sort(),
           ", "
         );
-        return `In der CSV-Datei ${filename} befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: ${commaSeperatedIntervallnummern}`;
+        return `In der CSV-Datei ${filename} befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer ${zaehldauerText.get(zaehldauer)} befinden: ${commaSeperatedIntervallnummern}`;
       }
     }
     return "";
@@ -229,7 +274,7 @@ export function useValidationUtils() {
    */
   function getBewegungsinformationFromCsvLine(csvLine: Array<string>): string {
     const bewegungsinformation = toArray(csvLine).slice(1, 4);
-    return join(bewegungsinformation, ";");
+    return join(bewegungsinformation, SEPARATOR);
   }
 
   function removeEmptyLinesFromCsvDate(csvData: Array<string>): Array<string> {
@@ -237,6 +282,11 @@ export function useValidationUtils() {
   }
 
   return {
+    SEPARATOR,
+    EXPECTED_ZAEHLDATEN_HEADER,
+    COLUMN_COUNT,
+    hasCsvDataLineCorrectNumberOfColumns,
+    validateCsvHasData,
     isWholeNonNegativeIntegerString,
     containsOnlyWholeNonNegativeIntegerStrings,
     checkForIdenticalIntervallnummerJeBewegungsbeziehung,

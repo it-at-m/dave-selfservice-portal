@@ -10,6 +10,9 @@ import { useValidationUtils } from "@/util/validation/ValidationUtils";
 const {
   isWholeNonNegativeIntegerString,
   containsOnlyWholeNonNegativeIntegerStrings,
+  hasCsvDataLineCorrectNumberOfColumns,
+  validateCsvHasData,
+  COLUMN_COUNT,
   getBewegungsinformationFromCsvLine,
   checkForIdenticalIntervallnummerJeBewegungsbeziehung,
   checkForCorrectNumberOfIntervalsAccordingZaehldauer,
@@ -112,6 +115,67 @@ describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
     expect(result).toContain("decimals.csv");
     // csvLineIndex = 2 -> Zeile 3
     expect(result).toContain("Zeile 3");
+  });
+});
+
+describe("ValidationUtils -> hasCsvDataLineCorrectNumberOfColumns", () => {
+  test("returns empty when correct number of columns", () => {
+    const correct = new Array(COLUMN_COUNT).fill("");
+    expect(hasCsvDataLineCorrectNumberOfColumns("test.csv", correct)).toBe("");
+  });
+
+  test("returns error message when too few columns", () => {
+    const tooFew = new Array(Math.max(0, COLUMN_COUNT - 2)).fill("");
+    const expected = `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei test.csv enthalten sein.`;
+    expect(hasCsvDataLineCorrectNumberOfColumns("test.csv", tooFew)).toBe(
+      expected
+    );
+  });
+
+  test("returns error message when too many columns", () => {
+    const tooMany = new Array(COLUMN_COUNT + 1).fill("");
+    const expected = `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei other.csv enthalten sein.`;
+    expect(hasCsvDataLineCorrectNumberOfColumns("other.csv", tooMany)).toBe(
+      expected
+    );
+  });
+
+  test("returns empty when correct number of columns with values", () => {
+    const values = Array.from({ length: COLUMN_COUNT }, (_, i) => `${i}`);
+    expect(hasCsvDataLineCorrectNumberOfColumns("vals.csv", values)).toBe("");
+  });
+});
+
+describe("ValidationUtils -> validateCsvHasData", () => {
+  test("returns no error when csvData has 4 lines", () => {
+    const shortCsv: Array<string> = ["a", "b", "c", "d"];
+    const result = useValidationUtils().validateCsvHasData(
+      "file.csv",
+      shortCsv
+    );
+    expect(result).toBe("");
+  });
+
+  test("returns error when csvData is undefined or null", () => {
+    const result = (validateCsvHasData as any)("file.csv", undefined);
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain("enthält keine Zähldaten");
+  });
+
+  test("returns error when csvData has less than 4 lines", () => {
+    const shortCsv: Array<string> = ["a", "b", "c"];
+    const result = useValidationUtils().validateCsvHasData(
+      "file.csv",
+      shortCsv
+    );
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain("enthält keine Zähldaten");
+  });
+
+  test("returns empty when csvData has 4 or more lines", () => {
+    const okCsv: Array<string> = ["h1", "h2", "h3", "line4"];
+    const result = useValidationUtils().validateCsvHasData("file.csv", okCsv);
+    expect(result).toBe("");
   });
 });
 
@@ -229,7 +293,7 @@ describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", 
         Zaehldauer.DAUER_24_STUNDEN
       )
     ).toBe(
-      "In der CSV-Datei f.csv befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer befinden: 0, 97"
+      "In der CSV-Datei f.csv befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer Ganztageszählung befinden: 0, 97"
     );
   });
 
@@ -255,15 +319,18 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     return `${intervall};${nach};${side};${richt};extra`;
   }
 
-  test("returns empty when number of intervalls per bewegungsinformation matches expected for 2x4h", () => {
+  test("returns empty when number of intervalls per bewegungsinformation matches expected for 2x4h (two bewegungsinformationen)", () => {
     const ranges = zaehldauerIntervallnummern.get(
       Zaehldauer.DAUER_2_X_4_STUNDEN
     )!;
     const csvLines: Array<string> = [];
-    // build all intervall numbers for the zaehldauer
+    // build all intervall numbers for the zaehldauer for two different bewegungsinformationen (A and B)
     ranges.forEach((r) => {
       for (let i = r.startIntervallnummer; i <= r.endeIntervallnummer; i++) {
-        csvLines.push(makeLine(i));
+        // bewegungsinformation A
+        csvLines.push(makeLine(i, "A", "1", "X"));
+        // bewegungsinformation B
+        csvLines.push(makeLine(i, "B", "2", "Y"));
       }
     });
 
@@ -276,25 +343,33 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     ).toBe("");
   });
 
-  test("returns descriptive message when count does not match expected for 2x4h", () => {
+  test("returns descriptive message when count does not match expected for 2x4h (one bewegungsinformation wrong)", () => {
     const ranges = zaehldauerIntervallnummern.get(
       Zaehldauer.DAUER_2_X_4_STUNDEN
     )!;
     const csvLines: Array<string> = [];
-    // omit the last intervall to create a mismatch
+    // Build two bewegungsinformationen: A (correct), B (one missing intervall)
+    // bewegungsinformation A
     ranges.forEach((r) => {
       for (let i = r.startIntervallnummer; i <= r.endeIntervallnummer; i++) {
-        csvLines.push(makeLine(i));
+        csvLines.push(makeLine(i, "A", "1", "X"));
       }
     });
-    // remove one line to be incorrect
+    // bewegungsinformation B
+    ranges.forEach((r) => {
+      for (let i = r.startIntervallnummer; i <= r.endeIntervallnummer; i++) {
+        csvLines.push(makeLine(i, "B", "2", "Y"));
+      }
+    });
+    // remove one line from B to make it incorrect
     csvLines.pop();
 
     const expectedTotal = ranges.reduce(
       (acc, cur) => acc + cur.numberOfIntervals,
       0
     );
-    const actualCount = csvLines.length;
+    // actual count for the offending bewegungsinformation (B) is expectedTotal - 1
+    const actualCount = expectedTotal - 1;
     const expectedMessage = `Die Menge von ${actualCount} Intervallnummern in der CSV-Datei file.csv entspricht nicht der Anzahl der erwarteten Anzahl von ${expectedTotal} Intervallen der Zähldauer ${zaehldauerText.get(Zaehldauer.DAUER_2_X_4_STUNDEN)}.`;
 
     expect(
