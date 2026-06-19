@@ -193,15 +193,18 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     return `${intervall};${nach};${side};${richt};extra`;
   }
 
-  test("returns empty when number of intervalls per bewegungsinformation matches expected for 2x4h", () => {
+  test("returns empty when number of intervalls per bewegungsinformation matches expected for 2x4h (two bewegungsinformationen)", () => {
     const ranges = zaehldauerIntervallnummern.get(
       Zaehldauer.DAUER_2_X_4_STUNDEN
     )!;
     const csvLines: Array<string> = [];
-    // build all intervall numbers for the zaehldauer
+    // build all intervall numbers for the zaehldauer for two different bewegungsinformationen (A and B)
     ranges.forEach((r) => {
       for (let i = r.startIntervallnummer; i <= r.endeIntervallnummer; i++) {
-        csvLines.push(makeLine(i));
+        // bewegungsinformation A
+        csvLines.push(makeLine(i, "A", "1", "X"));
+        // bewegungsinformation B
+        csvLines.push(makeLine(i, "B", "2", "Y"));
       }
     });
 
@@ -214,25 +217,33 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     ).toBe("");
   });
 
-  test("returns descriptive message when count does not match expected for 2x4h", () => {
+  test("returns descriptive message when count does not match expected for 2x4h (one bewegungsinformation wrong)", () => {
     const ranges = zaehldauerIntervallnummern.get(
       Zaehldauer.DAUER_2_X_4_STUNDEN
     )!;
     const csvLines: Array<string> = [];
-    // omit the last intervall to create a mismatch
+    // Build two bewegungsinformationen: A (correct), B (one missing intervall)
+    // bewegungsinformation A
     ranges.forEach((r) => {
       for (let i = r.startIntervallnummer; i <= r.endeIntervallnummer; i++) {
-        csvLines.push(makeLine(i));
+        csvLines.push(makeLine(i, "A", "1", "X"));
       }
     });
-    // remove one line to be incorrect
+    // bewegungsinformation B
+    ranges.forEach((r) => {
+      for (let i = r.startIntervallnummer; i <= r.endeIntervallnummer; i++) {
+        csvLines.push(makeLine(i, "B", "2", "Y"));
+      }
+    });
+    // remove one line from B to make it incorrect
     csvLines.pop();
 
     const expectedTotal = ranges.reduce(
       (acc, cur) => acc + cur.numberOfIntervals,
       0
     );
-    const actualCount = csvLines.length;
+    // actual count for the offending bewegungsinformation (B) is expectedTotal - 1
+    const actualCount = expectedTotal - 1;
     const expectedMessage = `Die Menge von ${actualCount} Intervallnummern in der CSV-Datei file.csv entspricht nicht der Anzahl der erwarteten Anzahl von ${expectedTotal} Intervallen der Zähldauer ${zaehldauerText.get(Zaehldauer.DAUER_2_X_4_STUNDEN)}.`;
 
     expect(
