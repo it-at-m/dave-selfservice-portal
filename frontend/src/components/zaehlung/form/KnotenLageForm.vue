@@ -282,6 +282,7 @@ function wrongFileType(file: File): boolean {
 function deleteFile(nummer: number): void {
   zaehlung.value.knotenarme.forEach((arm: KnotenarmDTO) => {
     if (arm.nummer === nummer) {
+      validationStore.setValidationStatusForKnotenarm(arm, false);
       arm.filename = "";
       arm.filedata = [];
     }
