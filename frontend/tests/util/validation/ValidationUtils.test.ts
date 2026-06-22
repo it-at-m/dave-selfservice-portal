@@ -11,7 +11,10 @@ const {
   isWholeNonNegativeIntegerString,
   containsOnlyWholeNonNegativeIntegerStrings,
   hasCsvDataLineCorrectNumberOfColumns,
-  validateCsvHasData,
+  hasCsvFileAtLeastFourLinesOfData,
+  hasCsvFileMetadatenHeader,
+  hasCsvFileCorrectMetadatenHeader,
+  EXPECTED_META_HEADER,
   COLUMN_COUNT,
   getBewegungsinformationFromCsvLine,
   checkForIdenticalIntervallnummerJeBewegungsbeziehung,
@@ -133,10 +136,10 @@ describe("ValidationUtils -> hasCsvDataLineCorrectNumberOfColumns", () => {
   });
 });
 
-describe("ValidationUtils -> validateCsvHasData", () => {
+describe("ValidationUtils -> hasCsvFileAtLeastFourLinesOfData", () => {
   test("returns no error when csvData has 4 lines", () => {
     const shortCsv: Array<string> = ["a", "b", "c", "d"];
-    const result = useValidationUtils().validateCsvHasData(
+    const result = useValidationUtils().hasCsvFileAtLeastFourLinesOfData(
       "file.csv",
       shortCsv
     );
@@ -144,14 +147,17 @@ describe("ValidationUtils -> validateCsvHasData", () => {
   });
 
   test("returns error when csvData is undefined or null", () => {
-    const result = (validateCsvHasData as any)("file.csv", undefined);
+    const result = (hasCsvFileAtLeastFourLinesOfData as any)(
+      "file.csv",
+      undefined
+    );
     expect(result).toBeTypeOf("string");
     expect(result).toContain("enthält keine Zähldaten");
   });
 
   test("returns error when csvData has less than 4 lines", () => {
     const shortCsv: Array<string> = ["a", "b", "c"];
-    const result = useValidationUtils().validateCsvHasData(
+    const result = useValidationUtils().hasCsvFileAtLeastFourLinesOfData(
       "file.csv",
       shortCsv
     );
@@ -161,7 +167,40 @@ describe("ValidationUtils -> validateCsvHasData", () => {
 
   test("returns empty when csvData has 4 or more lines", () => {
     const okCsv: Array<string> = ["h1", "h2", "h3", "line4"];
-    const result = useValidationUtils().validateCsvHasData("file.csv", okCsv);
+    const result = useValidationUtils().hasCsvFileAtLeastFourLinesOfData(
+      "file.csv",
+      okCsv
+    );
+    expect(result).toBe("");
+  });
+});
+
+describe("ValidationUtils -> hasCsvFileMetadatenHeader", () => {
+  test("returns error when meta header missing (empty array)", () => {
+    const result = hasCsvFileMetadatenHeader("file.csv", []);
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain("Header der Metadaten fehlen");
+  });
+
+  test("returns empty when meta header present", () => {
+    const csv = ["meta", "a", "b", "c"];
+    const result = hasCsvFileMetadatenHeader("file.csv", csv);
+    expect(result).toBe("");
+  });
+});
+
+describe("ValidationUtils -> hasCsvFileCorrectMetadatenHeader", () => {
+  test("returns error when header incorrect", () => {
+    const csv = ["WRONG;HEADER;VALUE", "a", "b", "c"];
+    const result = hasCsvFileCorrectMetadatenHeader("file.csv", csv);
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain("Erwartet:");
+    expect(result).toContain(EXPECTED_META_HEADER);
+  });
+
+  test("returns empty when header is correct", () => {
+    const csv = [EXPECTED_META_HEADER, "a", "b", "c"];
+    const result = hasCsvFileCorrectMetadatenHeader("file.csv", csv);
     expect(result).toBe("");
   });
 });

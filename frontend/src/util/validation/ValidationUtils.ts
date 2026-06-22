@@ -1,4 +1,4 @@
-import { isEmpty, join, sum, toArray, trim, uniq } from "lodash";
+import { isEmpty, isNil, join, sum, toArray, trim, uniq } from "lodash";
 
 import {
   Zaehldauer,
@@ -8,6 +8,9 @@ import {
 
 export function useValidationUtils() {
   const SEPARATOR = ";";
+
+  const EXPECTED_META_HEADER =
+    "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;";
 
   const EXPECTED_ZAEHLDATEN_HEADER =
     "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss";
@@ -23,7 +26,7 @@ export function useValidationUtils() {
   function hasCsvDataLineCorrectNumberOfColumns(
     filename: string,
     splittedLine: Array<string>
-  ) {
+  ): string {
     if (toArray(splittedLine).length !== COLUMN_COUNT) {
       return `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei ${filename} enthalten sein.`;
     }
@@ -42,12 +45,46 @@ export function useValidationUtils() {
    * @param csvData Dateiinhalt als Array von Zeilen.
    * @return Fehlermeldung, wenn keine Zähldaten vorhanden sind, sonst leerer String.
    */
-  function validateCsvHasData(
+  function hasCsvFileAtLeastFourLinesOfData(
     filename: string,
     csvData: Array<string>
   ): string {
     if (!csvData || csvData.length < 4) {
       return `Die hochgeladene Datei ${filename} enthält keine Zähldaten.`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob die CSV-Datei einen Metadatenheader besitzt.
+   *
+   * @param filename Name der csv-Datei (für Fehlermeldungen).
+   * @param csvData Dateiinhalt als Array von Zeilen.
+   */
+  function hasCsvFileMetadatenHeader(
+    filename: string,
+    csvData: Array<string>
+  ): string {
+    const metaHeader: string = csvData[0];
+    if (isNil(metaHeader)) {
+      return `Die Header der Metadaten fehlen in der hochgeladenen Datei ${filename}.`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob der Metadatenheader in der CSV-Datei den korrekten Inhalt hat.
+   *
+   * @param filename Name der csv-Datei (für Fehlermeldungen).
+   * @param csvData Dateiinhalt als Array von Zeilen.
+   */
+  function hasCsvFileCorrectMetadatenHeader(
+    filename: string,
+    csvData: Array<string>
+  ): string {
+    const metaHeader: string = csvData[0];
+    if (metaHeader!.trim() !== EXPECTED_META_HEADER) {
+      return `Die Header der Metadaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${EXPECTED_META_HEADER}`;
     }
     return "";
   }
@@ -283,10 +320,13 @@ export function useValidationUtils() {
 
   return {
     SEPARATOR,
+    EXPECTED_META_HEADER,
     EXPECTED_ZAEHLDATEN_HEADER,
     COLUMN_COUNT,
     hasCsvDataLineCorrectNumberOfColumns,
-    validateCsvHasData,
+    hasCsvFileAtLeastFourLinesOfData,
+    hasCsvFileMetadatenHeader,
+    hasCsvFileCorrectMetadatenHeader,
     isWholeNonNegativeIntegerString,
     containsOnlyWholeNonNegativeIntegerStrings,
     checkForIdenticalIntervallnummerJeBewegungsbeziehung,
