@@ -518,7 +518,7 @@ function checkVerkehrsbeziehungData(
 
   errorMessage =
     kfzVerkehrValidationUtils.validateStrassenseiteRichtungOccurrence(
-      splittedLine[1]
+      splittedLine[2]
     );
   if (errorMessage)
     return enrichValidationErrorMessage(
