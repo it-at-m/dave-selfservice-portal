@@ -331,7 +331,7 @@ function checkUploadedFiledata(
   filename: string
 ): string {
   // keine Daten vorhanden
-  const hasDataMsg = validationUtils.hasCsvFileAtLeastFourLinesOfData(
+  const hasDataMsg = validationUtils.hasAtLeastFourLinesOfData(
     filename,
     csvData
   );

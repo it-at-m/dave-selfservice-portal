@@ -45,7 +45,7 @@ export function useValidationUtils() {
    * @param csvData Dateiinhalt als Array von Zeilen.
    * @return Fehlermeldung, wenn keine Zähldaten vorhanden sind, sonst leerer String.
    */
-  function hasCsvFileAtLeastFourLinesOfData(
+  function hasAtLeastFourLinesOfData(
     filename: string,
     csvData: Array<string>
   ): string {
@@ -324,7 +324,7 @@ export function useValidationUtils() {
     EXPECTED_ZAEHLDATEN_HEADER,
     COLUMN_COUNT,
     hasCsvDataLineCorrectNumberOfColumns,
-    hasCsvFileAtLeastFourLinesOfData,
+    hasAtLeastFourLinesOfData,
     hasMetadatenHeader,
     hasCorrectMetadatenHeader,
     isWholeNonNegativeIntegerString,

@@ -11,7 +11,7 @@ const {
   isWholeNonNegativeIntegerString,
   containsOnlyWholeNonNegativeIntegerStrings,
   hasCsvDataLineCorrectNumberOfColumns,
-  hasCsvFileAtLeastFourLinesOfData,
+  hasAtLeastFourLinesOfData,
   hasMetadatenHeader,
   hasCorrectMetadatenHeader,
   EXPECTED_META_HEADER,
@@ -136,10 +136,10 @@ describe("ValidationUtils -> hasCsvDataLineCorrectNumberOfColumns", () => {
   });
 });
 
-describe("ValidationUtils -> hasCsvFileAtLeastFourLinesOfData", () => {
+describe("ValidationUtils -> hasAtLeastFourLinesOfData", () => {
   test("returns no error when csvData has 4 lines", () => {
     const shortCsv: Array<string> = ["a", "b", "c", "d"];
-    const result = useValidationUtils().hasCsvFileAtLeastFourLinesOfData(
+    const result = useValidationUtils().hasAtLeastFourLinesOfData(
       "file.csv",
       shortCsv
     );
@@ -147,7 +147,7 @@ describe("ValidationUtils -> hasCsvFileAtLeastFourLinesOfData", () => {
   });
 
   test("returns error when csvData is undefined or null", () => {
-    const result = (hasCsvFileAtLeastFourLinesOfData as any)(
+    const result = (hasAtLeastFourLinesOfData as any)(
       "file.csv",
       undefined
     );
@@ -157,7 +157,7 @@ describe("ValidationUtils -> hasCsvFileAtLeastFourLinesOfData", () => {
 
   test("returns error when csvData has less than 4 lines", () => {
     const shortCsv: Array<string> = ["a", "b", "c"];
-    const result = useValidationUtils().hasCsvFileAtLeastFourLinesOfData(
+    const result = useValidationUtils().hasAtLeastFourLinesOfData(
       "file.csv",
       shortCsv
     );
@@ -167,7 +167,7 @@ describe("ValidationUtils -> hasCsvFileAtLeastFourLinesOfData", () => {
 
   test("returns empty when csvData has 4 or more lines", () => {
     const okCsv: Array<string> = ["h1", "h2", "h3", "line4"];
-    const result = useValidationUtils().hasCsvFileAtLeastFourLinesOfData(
+    const result = useValidationUtils().hasAtLeastFourLinesOfData(
       "file.csv",
       okCsv
     );
