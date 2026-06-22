@@ -352,15 +352,19 @@ function checkUploadedFiledata(
     return hasCorrectMetaHeader;
   }
 
-  const metaData: string = csvData[1];
-  // MetaData vorhanden?
-  if (isNil(metaData)) {
-    return "Die Metadaten fehlen in der hochgeladenen Datei ${filename}.";
+  const hasMetadata = validationUtils.hasMetadata(filename, csvData);
+  if (hasMetadata.length > 0) {
+    return hasMetadata;
   }
-  // MetaData korrekt?
-  const expectedMetaData = buildExpectedMetaData(armNummer);
-  if (metaData!.trim() !== expectedMetaData) {
-    return `Die Metadaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${expectedMetaData}`;
+
+  const hasCorrectMetadata = validationUtils.hasCorrectMetadata(
+    filename,
+    csvData,
+    armNummer,
+    zaehlung.value
+  );
+  if (hasCorrectMetadata.length > 0) {
+    return hasCorrectMetadata;
   }
 
   const zaehldatenHeader: string = csvData[2];
@@ -453,29 +457,6 @@ function checkUploadedFiledata(
   }
 
   return "";
-}
-
-/**
- * Erstellung der erwarteten Metadaten.
- *
- * @param armNummer Nummer des Knotenarms
- * @return Erwartete Metadaten
- */
-function buildExpectedMetaData(armNummer: number): string {
-  const metaZaehlart =
-    zaehlung.value.zaehlart === Zaehlart.N ? "" : zaehlung.value.zaehlart;
-  const expectedMetaDataArray = [
-    zaehlung.value.zaehlstelleNummer,
-    metaZaehlart,
-    zaehlung.value.datum,
-    armNummer,
-  ];
-  // Fülle das Array mit leeren Feldern, bis die Länge den erwarteten Spalten entspricht
-  while (expectedMetaDataArray.length < COLUMN_COUNT) {
-    expectedMetaDataArray.push("");
-  }
-  // Erstelle den finalen String
-  return expectedMetaDataArray.join(";");
 }
 
 /**

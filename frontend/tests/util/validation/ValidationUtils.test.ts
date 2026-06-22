@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import Zaehlart from "@/types/enum/Zaehlart";
 import {
   Zaehldauer,
   zaehldauerIntervallnummern,
@@ -14,6 +15,8 @@ const {
   hasAtLeastFourLinesOfData,
   hasMetadatenHeader,
   hasCorrectMetadatenHeader,
+  hasMetadata,
+  hasCorrectMetadata,
   EXPECTED_META_HEADER,
   COLUMN_COUNT,
   getBewegungsinformationFromCsvLine,
@@ -147,10 +150,7 @@ describe("ValidationUtils -> hasAtLeastFourLinesOfData", () => {
   });
 
   test("returns error when csvData is undefined or null", () => {
-    const result = (hasAtLeastFourLinesOfData as any)(
-      "file.csv",
-      undefined
-    );
+    const result = (hasAtLeastFourLinesOfData as any)("file.csv", undefined);
     expect(result).toBeTypeOf("string");
     expect(result).toContain("enthält keine Zähldaten");
   });
@@ -202,6 +202,90 @@ describe("ValidationUtils -> hasCorrectMetadatenHeader", () => {
     const csv = [EXPECTED_META_HEADER, "a", "b", "c"];
     const result = hasCorrectMetadatenHeader("file.csv", csv);
     expect(result).toBe("");
+  });
+});
+
+describe("ValidationUtils -> hasMetadata", () => {
+  test("returns error when metadata missing (empty)", () => {
+    const resultShort = hasMetadata("file.csv", []);
+    expect(resultShort).toBeTypeOf("string");
+    expect(resultShort).toContain("Metadaten fehlen");
+  });
+
+  test("returns error when metadata missing (too short)", () => {
+    const resultShort = hasMetadata("file.csv", ["h1"]);
+    expect(resultShort).toBeTypeOf("string");
+    expect(resultShort).toContain("Metadaten fehlen");
+  });
+
+  test("returns empty when metadata present", () => {
+    const csv = ["h1", "metaLine", "h3", "h4"];
+    const result = hasMetadata("file.csv", csv);
+    expect(result).toBe("");
+  });
+});
+
+describe("ValidationUtils -> hasCorrectMetadata", () => {
+  test("returns empty when metadata matches expected values", () => {
+    const knotenarmNr = 5;
+    const zaehlung = {
+      zaehlstelleNummer: "ZS123",
+      zaehlart: Zaehlart.QJS,
+      datum: "2023-01-01",
+    };
+    const metaZaehlart =
+      zaehlung.zaehlart === Zaehlart.N ? "" : zaehlung.zaehlart;
+    const expectedMetaDataArray = [
+      zaehlung.zaehlstelleNummer,
+      metaZaehlart,
+      zaehlung.datum,
+      knotenarmNr,
+    ];
+    while (expectedMetaDataArray.length < COLUMN_COUNT) {
+      expectedMetaDataArray.push("");
+    }
+    const expectedMetaData = expectedMetaDataArray.join(";");
+
+    const csv = ["h0", expectedMetaData, "h2", "h3"];
+    const result = useValidationUtils().hasCorrectMetadata(
+      "file.csv",
+      csv,
+      knotenarmNr,
+      zaehlung as any
+    );
+    expect(result).toBe("");
+  });
+
+  test("returns error when metadata does not match expected values", () => {
+    const knotenarmNr = 2;
+    const zaehlung = {
+      zaehlstelleNummer: "ZS999",
+      zaehlart: Zaehlart.N,
+      datum: "2022-12-31",
+    };
+    const metaZaehlart =
+      zaehlung.zaehlart === Zaehlart.N ? "" : zaehlung.zaehlart;
+    const expectedMetaDataArray = [
+      zaehlung.zaehlstelleNummer,
+      metaZaehlart,
+      zaehlung.datum,
+      knotenarmNr,
+    ];
+    while (expectedMetaDataArray.length < COLUMN_COUNT) {
+      expectedMetaDataArray.push("");
+    }
+    const expectedMetaData = expectedMetaDataArray.join(";");
+
+    const csv = ["h0", "WRONG;META;LINE", "h2", "h3"];
+    const result = useValidationUtils().hasCorrectMetadata(
+      "file.csv",
+      csv,
+      knotenarmNr,
+      zaehlung as any
+    );
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain("Erwartet:");
+    expect(result).toContain(expectedMetaData);
   });
 });
 

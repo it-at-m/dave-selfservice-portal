@@ -1,5 +1,8 @@
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+
 import { isEmpty, isNil, join, sum, toArray, trim, uniq } from "lodash";
 
+import Zaehlart from "@/types/enum/Zaehlart";
 import {
   Zaehldauer,
   zaehldauerIntervallnummern,
@@ -85,6 +88,57 @@ export function useValidationUtils() {
     const metaHeader: string = csvData[0];
     if (metaHeader!.trim() !== EXPECTED_META_HEADER) {
       return `Die Header der Metadaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${EXPECTED_META_HEADER}`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob die CSV-Datei Metadateninformationen besitzt.
+   *
+   * @param filename Name der csv-Datei (für Fehlermeldungen).
+   * @param csvData Dateiinhalt als Array von Zeilen.
+   */
+  function hasMetadata(filename: string, csvData: Array<string>): string {
+    const metaData: string = csvData[1];
+    if (isNil(metaData)) {
+      return `Die Metadaten fehlen in der hochgeladenen Datei ${filename}.`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob die Metadaten in der CSV-Datei den korrekten Inhalt haben.
+   *
+   * @param filename Name der csv-Datei (für Fehlermeldungen).
+   * @param csvData Dateiinhalt als Array von Zeilen.
+   * @param knotenarmNr zur Gegenprüfung der Metadaten.
+   * @param zaehlung zur Gegenprüfung der Metadaten.
+   */
+  function hasCorrectMetadata(
+    filename: string,
+    csvData: Array<string>,
+    knotenarmNr: number,
+    zaehlung: ZaehlungDTO
+  ): string {
+    //Erstellen der erwarteten Metadaten
+    const metaZaehlart =
+      zaehlung.zaehlart === Zaehlart.N ? "" : zaehlung.zaehlart;
+    const expectedMetaDataArray = [
+      zaehlung.zaehlstelleNummer,
+      metaZaehlart,
+      zaehlung.datum,
+      knotenarmNr,
+    ];
+    // Fülle das Array mit leeren Feldern, bis die Länge den erwarteten Spalten entspricht
+    while (expectedMetaDataArray.length < COLUMN_COUNT) {
+      expectedMetaDataArray.push("");
+    }
+    const expectedMetaData = expectedMetaDataArray.join(";");
+
+    // Erstellen der erwarteten Metadaten
+    const metaData: string = csvData[1];
+    if (metaData!.trim() !== expectedMetaData) {
+      return `Die Metadaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${expectedMetaData}`;
     }
     return "";
   }
@@ -327,6 +381,8 @@ export function useValidationUtils() {
     hasAtLeastFourLinesOfData,
     hasMetadatenHeader,
     hasCorrectMetadatenHeader,
+    hasMetadata,
+    hasCorrectMetadata,
     isWholeNonNegativeIntegerString,
     containsOnlyWholeNonNegativeIntegerStrings,
     checkForIdenticalIntervallnummerJeBewegungsbeziehung,
