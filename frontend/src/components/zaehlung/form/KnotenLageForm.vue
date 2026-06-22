@@ -180,8 +180,6 @@ const zaehlung = defineModel<ZaehlungDTO>({
 
 const validationUtils = useValidationUtils();
 
-const EXPECTED_META_HEADER = validationUtils.EXPECTED_META_HEADER;
-
 const EXPECTED_ZAEHLDATEN_HEADER = validationUtils.EXPECTED_ZAEHLDATEN_HEADER;
 
 const SEPARATOR = validationUtils.SEPARATOR;
@@ -337,23 +335,20 @@ function checkUploadedFiledata(
     filename,
     csvData
   );
-  if (hasDataMsg && hasDataMsg.length > 0) {
+  if (hasDataMsg.length > 0) {
     return hasDataMsg;
   }
 
-  const hasMetaHeader = validationUtils.hasCsvFileMetadatenHeader(
-    filename,
-    csvData
-  );
-  if (hasMetaHeader && hasMetaHeader.length > 0) {
+  const hasMetaHeader = validationUtils.hasMetadatenHeader(filename, csvData);
+  if (hasMetaHeader.length > 0) {
     return hasMetaHeader;
   }
 
-  const hasCorrectMetaHeader = validationUtils.hasCsvFileCorrectMetadatenHeader(
+  const hasCorrectMetaHeader = validationUtils.hasCorrectMetadatenHeader(
     filename,
     csvData
   );
-  if (hasCorrectMetaHeader && hasCorrectMetaHeader.length > 0) {
+  if (hasCorrectMetaHeader.length > 0) {
     return hasCorrectMetaHeader;
   }
 

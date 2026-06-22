@@ -61,7 +61,7 @@ export function useValidationUtils() {
    * @param filename Name der csv-Datei (für Fehlermeldungen).
    * @param csvData Dateiinhalt als Array von Zeilen.
    */
-  function hasCsvFileMetadatenHeader(
+  function hasMetadatenHeader(
     filename: string,
     csvData: Array<string>
   ): string {
@@ -78,7 +78,7 @@ export function useValidationUtils() {
    * @param filename Name der csv-Datei (für Fehlermeldungen).
    * @param csvData Dateiinhalt als Array von Zeilen.
    */
-  function hasCsvFileCorrectMetadatenHeader(
+  function hasCorrectMetadatenHeader(
     filename: string,
     csvData: Array<string>
   ): string {
@@ -325,8 +325,8 @@ export function useValidationUtils() {
     COLUMN_COUNT,
     hasCsvDataLineCorrectNumberOfColumns,
     hasCsvFileAtLeastFourLinesOfData,
-    hasCsvFileMetadatenHeader,
-    hasCsvFileCorrectMetadatenHeader,
+    hasMetadatenHeader,
+    hasCorrectMetadatenHeader,
     isWholeNonNegativeIntegerString,
     containsOnlyWholeNonNegativeIntegerStrings,
     checkForIdenticalIntervallnummerJeBewegungsbeziehung,

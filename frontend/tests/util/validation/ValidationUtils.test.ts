@@ -12,8 +12,8 @@ const {
   containsOnlyWholeNonNegativeIntegerStrings,
   hasCsvDataLineCorrectNumberOfColumns,
   hasCsvFileAtLeastFourLinesOfData,
-  hasCsvFileMetadatenHeader,
-  hasCsvFileCorrectMetadatenHeader,
+  hasMetadatenHeader,
+  hasCorrectMetadatenHeader,
   EXPECTED_META_HEADER,
   COLUMN_COUNT,
   getBewegungsinformationFromCsvLine,
@@ -175,24 +175,24 @@ describe("ValidationUtils -> hasCsvFileAtLeastFourLinesOfData", () => {
   });
 });
 
-describe("ValidationUtils -> hasCsvFileMetadatenHeader", () => {
+describe("ValidationUtils -> hasMetadatenHeader", () => {
   test("returns error when meta header missing (empty array)", () => {
-    const result = hasCsvFileMetadatenHeader("file.csv", []);
+    const result = hasMetadatenHeader("file.csv", []);
     expect(result).toBeTypeOf("string");
     expect(result).toContain("Header der Metadaten fehlen");
   });
 
   test("returns empty when meta header present", () => {
     const csv = ["meta", "a", "b", "c"];
-    const result = hasCsvFileMetadatenHeader("file.csv", csv);
+    const result = hasMetadatenHeader("file.csv", csv);
     expect(result).toBe("");
   });
 });
 
-describe("ValidationUtils -> hasCsvFileCorrectMetadatenHeader", () => {
+describe("ValidationUtils -> hasCorrectMetadatenHeader", () => {
   test("returns error when header incorrect", () => {
     const csv = ["WRONG;HEADER;VALUE", "a", "b", "c"];
-    const result = hasCsvFileCorrectMetadatenHeader("file.csv", csv);
+    const result = hasCorrectMetadatenHeader("file.csv", csv);
     expect(result).toBeTypeOf("string");
     expect(result).toContain("Erwartet:");
     expect(result).toContain(EXPECTED_META_HEADER);
@@ -200,7 +200,7 @@ describe("ValidationUtils -> hasCsvFileCorrectMetadatenHeader", () => {
 
   test("returns empty when header is correct", () => {
     const csv = [EXPECTED_META_HEADER, "a", "b", "c"];
-    const result = hasCsvFileCorrectMetadatenHeader("file.csv", csv);
+    const result = hasCorrectMetadatenHeader("file.csv", csv);
     expect(result).toBe("");
   });
 });
