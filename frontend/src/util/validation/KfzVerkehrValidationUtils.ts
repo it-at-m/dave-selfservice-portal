@@ -60,7 +60,7 @@ export function useKfzVerkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob die Spalte "nach" je nach Zählart richtig gefüllt ist.
+   * Prüft, ob die Spalte "nach" je nach Verkehrsbeziehungen richtig gefüllt ist.
    *
    * @param verkehrsbeziehungen Verkehrsbeziehungen der Zählung.
    * @param armNummer Betrachteter Knotenarm
