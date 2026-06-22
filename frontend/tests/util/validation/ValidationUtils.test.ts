@@ -268,7 +268,7 @@ describe("ValidationUtils -> hasCorrectMetadata", () => {
     const expectedMetaData = expectedMetaDataArray.join(";");
 
     const csv = ["h0", expectedMetaData, "h2", "h3"];
-    const result = useValidationUtils().hasCorrectMetadata(
+    const result = hasCorrectMetadata(
       "file.csv",
       csv,
       knotenarmNr,
@@ -298,7 +298,7 @@ describe("ValidationUtils -> hasCorrectMetadata", () => {
     const expectedMetaData = expectedMetaDataArray.join(";");
 
     const csv = ["h0", "WRONG;META;LINE", "h2", "h3"];
-    const result = useValidationUtils().hasCorrectMetadata(
+    const result = hasCorrectMetadata(
       "file.csv",
       csv,
       knotenarmNr,
