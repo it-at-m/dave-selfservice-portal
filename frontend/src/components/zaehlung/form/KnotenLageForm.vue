@@ -180,9 +180,6 @@ const zaehlung = defineModel<ZaehlungDTO>({
 
 const validationUtils = useValidationUtils();
 
-const EXPECTED_META_HEADER =
-  "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;";
-
 const EXPECTED_ZAEHLDATEN_HEADER = validationUtils.EXPECTED_ZAEHLDATEN_HEADER;
 
 const SEPARATOR = validationUtils.SEPARATOR;
@@ -334,19 +331,25 @@ function checkUploadedFiledata(
   filename: string
 ): string {
   // keine Daten vorhanden
-  const hasDataMsg = validationUtils.validateCsvHasData(filename, csvData);
-  if (hasDataMsg && hasDataMsg.length > 0) {
+  const hasDataMsg = validationUtils.hasCsvFileAtLeastFourLinesOfData(
+    filename,
+    csvData
+  );
+  if (hasDataMsg.length > 0) {
     return hasDataMsg;
   }
 
-  const metaHeader: string = csvData[0];
-  // MetaHeader vorhanden?
-  if (isNil(metaHeader)) {
-    return `Die Header der Metadaten fehlen in der hochgeladenen Datei ${filename}.`;
+  const hasMetaHeader = validationUtils.hasMetadatenHeader(filename, csvData);
+  if (hasMetaHeader.length > 0) {
+    return hasMetaHeader;
   }
-  // MetaHeader korrekt?
-  if (metaHeader!.trim() !== EXPECTED_META_HEADER) {
-    return `Die Header der Metadaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${EXPECTED_META_HEADER}`;
+
+  const hasCorrectMetaHeader = validationUtils.hasCorrectMetadatenHeader(
+    filename,
+    csvData
+  );
+  if (hasCorrectMetaHeader.length > 0) {
+    return hasCorrectMetaHeader;
   }
 
   const metaData: string = csvData[1];
