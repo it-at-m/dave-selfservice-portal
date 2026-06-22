@@ -144,6 +144,23 @@ export function useValidationUtils() {
   }
 
   /**
+   * Prüft, ob die CSV-Datei eine Zähldatenheader besitzt.
+   *
+   * @param filename Name der csv-Datei (für Fehlermeldungen).
+   * @param csvData Dateiinhalt als Array von Zeilen.
+   */
+  function hasZaehldatenHeader(
+    filename: string,
+    csvData: Array<string>
+  ): string {
+    const zaehldatenHeader: string = csvData[2];
+    if (isNil(zaehldatenHeader)) {
+      return `Die Header der Zähldaten fehlen in der hochgeladenen Datei ${filename}.`;
+    }
+    return "";
+  }
+
+  /**
    * Prüft, ob ein Wert eine ganze nicht-negative Zahl darstellt (nur Ziffern, z.B. "0","1","42").
    * Leere Strings sollen von Aufrufer*innen als "erlaubt" behandelt werden (d.h. Aufrufer überspringt leer).
    *
@@ -383,6 +400,7 @@ export function useValidationUtils() {
     hasCorrectMetadatenHeader,
     hasMetadata,
     hasCorrectMetadata,
+    hasZaehldatenHeader,
     isWholeNonNegativeIntegerString,
     containsOnlyWholeNonNegativeIntegerStrings,
     checkForIdenticalIntervallnummerJeBewegungsbeziehung,

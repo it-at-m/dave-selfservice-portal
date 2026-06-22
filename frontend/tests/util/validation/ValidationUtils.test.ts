@@ -17,6 +17,7 @@ const {
   hasCorrectMetadatenHeader,
   hasMetadata,
   hasCorrectMetadata,
+  hasZaehldatenHeader,
   EXPECTED_META_HEADER,
   COLUMN_COUNT,
   getBewegungsinformationFromCsvLine,
@@ -201,6 +202,26 @@ describe("ValidationUtils -> hasCorrectMetadatenHeader", () => {
   test("returns empty when header is correct", () => {
     const csv = [EXPECTED_META_HEADER, "a", "b", "c"];
     const result = hasCorrectMetadatenHeader("file.csv", csv);
+    expect(result).toBe("");
+  });
+});
+
+describe("ValidationUtils -> hasZaehldatenHeader", () => {
+  test("returns error when zaehldaten header missing (empty array)", () => {
+    const result = hasZaehldatenHeader("file.csv", []);
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain("Header der Zähldaten fehlen");
+  });
+
+  test("returns error when zaehldaten header missing (too short)", () => {
+    const result = hasZaehldatenHeader("file.csv", ["h1", "h2"]);
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain("Header der Zähldaten fehlen");
+  });
+
+  test("returns empty when zaehldaten header present", () => {
+    const csv = ["h0", "h1", "ZAeHLDATEN;HEADER;HERE", "h3"];
+    const result = hasZaehldatenHeader("file.csv", csv);
     expect(result).toBe("");
   });
 });

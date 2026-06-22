@@ -367,11 +367,14 @@ function checkUploadedFiledata(
     return hasCorrectMetadata;
   }
 
-  const zaehldatenHeader: string = csvData[2];
-  // ZaehldatenHeader vorhanden und korrekt?
-  if (isNil(zaehldatenHeader)) {
-    return "Die Header der Zähldaten fehlen in der hochgeladenen Datei ${filename}.";
+  const zaehldatenHeader = validationUtils.hasZaehldatenHeader(
+    filename,
+    csvData
+  );
+  if (zaehldatenHeader.length > 0) {
+    return zaehldatenHeader;
   }
+
   // ZaehldatenHeader vorhanden und korrekt?
   if (zaehldatenHeader!.trim() !== EXPECTED_ZAEHLDATEN_HEADER) {
     return `Die Header der Zähldaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${EXPECTED_ZAEHLDATEN_HEADER}`;
