@@ -8,8 +8,8 @@
     <v-card-text>
       <v-row dense>
         <v-col
-          cols="8"
-          sm="10"
+          cols="6"
+          sm="9"
         >
           <zaehlung-card-map
             height="200px"
@@ -20,19 +20,20 @@
           />
         </v-col>
         <v-col
-          cols="4"
-          sm="2"
+          cols="6"
+          sm="3"
         >
           <verkehr-form
               v-model:zaehlung="zaehlung"
               height="100%"
+              width="100%"
           />
         </v-col>
       </v-row>
       <v-row dense>
         <v-col
-          cols="8"
-          sm="10"
+          cols="6"
+          sm="9"
         >
           <v-row
             dense
@@ -121,8 +122,8 @@
           </v-row>
         </v-col>
         <v-col
-          cols="4"
-          sm="2"
+          cols="6"
+          sm="3"
         >
           <v-data-table
             v-if="isNotKreisverkehr && isNotZaehlartFjsOrQu"

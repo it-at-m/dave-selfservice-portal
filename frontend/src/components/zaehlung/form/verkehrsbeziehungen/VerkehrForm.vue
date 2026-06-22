@@ -5,18 +5,20 @@
     "
     v-model:zaehlung="zaehlung"
     :height="height"
+    :width="width"
   />
   <querschnitt-je-strassenseite-form
     v-else-if="zaehlung.zaehlart === Zaehlart.QJS"
     v-model:zaehlung="zaehlung"
     :height="height"
+    :width="width"
   />
   <zaehlung-geometrie
       v-else
       id="geo"
       v-model="zaehlung.knotenarme"
-      height="100%"
-      width="100%"
+      :height="height"
+      :width="width"
       active-color="#1565C0"
       passive-color="#EEEEEE"
   />
@@ -32,6 +34,7 @@ import ZaehlungGeometrie from "@/components/zaehlung/form/verkehrsbeziehungen/Za
 
 interface Props {
   height: string;
+  width: string;
 }
 defineProps<Props>();
 

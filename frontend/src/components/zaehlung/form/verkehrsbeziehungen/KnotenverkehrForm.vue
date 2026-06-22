@@ -1,6 +1,6 @@
 <template>
   <v-sheet
-      width="100%"
+      :width="width"
       :height="height"
       :max-height="height"
       color="transparent"
@@ -8,7 +8,7 @@
   >
     <svg
         :height="height"
-        :width="height"
+        :width="width"
         viewBox="0 0 1400 1400"
         preserveAspectRatio="xMidYMid"
         fill-rule="evenodd"
@@ -1264,6 +1264,7 @@ import Zaehlart from "@/types/enum/Zaehlart";
 
 interface Props {
   height: string;
+  width: string;
 }
 defineProps<Props>();
 
