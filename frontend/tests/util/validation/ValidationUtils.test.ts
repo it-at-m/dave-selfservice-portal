@@ -18,7 +18,9 @@ const {
   hasMetadata,
   hasCorrectMetadata,
   hasZaehldatenHeader,
+  hasCorrectZaehldatenHeader,
   EXPECTED_META_HEADER,
+  EXPECTED_ZAEHLDATEN_HEADER,
   COLUMN_COUNT,
   getBewegungsinformationFromCsvLine,
   checkForIdenticalIntervallnummerJeBewegungsbeziehung,
@@ -222,6 +224,22 @@ describe("ValidationUtils -> hasZaehldatenHeader", () => {
   test("returns empty when zaehldaten header present", () => {
     const csv = ["h0", "h1", "ZAeHLDATEN;HEADER;HERE", "h3"];
     const result = hasZaehldatenHeader("file.csv", csv);
+    expect(result).toBe("");
+  });
+});
+
+describe("ValidationUtils -> hasCorrectZaehldatenHeader", () => {
+  test("returns error when zaehldaten header incorrect", () => {
+    const csv = ["h0", "h1", "WRONG;HEADER", "h3"];
+    const result = hasCorrectZaehldatenHeader("file.csv", csv);
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain("Erwartet:");
+    expect(result).toContain(EXPECTED_ZAEHLDATEN_HEADER);
+  });
+
+  test("returns empty when zaehldaten header correct", () => {
+    const csv = ["h0", "h1", EXPECTED_ZAEHLDATEN_HEADER, "h3"];
+    const result = hasCorrectZaehldatenHeader("file.csv", csv);
     expect(result).toBe("");
   });
 });
