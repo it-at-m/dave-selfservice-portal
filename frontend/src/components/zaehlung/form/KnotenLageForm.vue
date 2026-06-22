@@ -228,35 +228,28 @@ const isZaehlungEditable = computed<boolean>(() => {
   return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
-const verkehrsbeziehungen = computed<Array<any>>(() => {
+const verkehrsbeziehungen = computed<
+  Array<VerkehrsbeziehungDTO | QuerungsverkehrDTO | LaengsverkehrDTO>
+>(() => {
   const zaehlart = zaehlung.value?.zaehlart;
 
-  let source:
-    | Array<VerkehrsbeziehungDTO>
-    | Array<QuerungsverkehrDTO>
-    | Array<LaengsverkehrDTO>
-    | undefined;
-
-  if (zaehlart === Zaehlart.QU) {
-    source = zaehlung.value?.querungsverkehr as
-      | Array<QuerungsverkehrDTO>
-      | undefined;
-  } else if (zaehlart === Zaehlart.FJS) {
-    source = zaehlung.value?.laengsverkehr as
-      | Array<LaengsverkehrDTO>
-      | undefined;
-  } else {
-    source = zaehlung.value?.verkehrsbeziehungen as
-      | Array<VerkehrsbeziehungDTO>
-      | undefined;
-  }
   // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
   // anschließend sortieren
-  return zaehlart === Zaehlart.QU || zaehlart === Zaehlart.FJS
-    ? toArray(source).sort(
-        VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber
-      )
-    : toArray(source).sort(VerkehrsbeziehungComparator.sortByActiveVonAndNach);
+  if (zaehlart === Zaehlart.QU) {
+    return toArray(
+      zaehlung.value?.querungsverkehr as Array<QuerungsverkehrDTO> | undefined
+    ).sort(VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber);
+  }
+
+  if (zaehlart === Zaehlart.FJS) {
+    return toArray(
+      zaehlung.value?.laengsverkehr as Array<LaengsverkehrDTO> | undefined
+    ).sort(VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber);
+  }
+
+  return toArray(
+    zaehlung.value?.verkehrsbeziehungen as Array<VerkehrsbeziehungDTO> | undefined
+  ).sort(VerkehrsbeziehungComparator.sortByActiveVonAndNach);
 });
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
