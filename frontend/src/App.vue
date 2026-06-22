@@ -137,5 +137,4 @@ function navigateToHandbuch() {
 .v-data-table td:not(:last-child) {
   border-right: 1px solid rgba(0, 0, 0, 0.12) !important;
 }
-
 </style>

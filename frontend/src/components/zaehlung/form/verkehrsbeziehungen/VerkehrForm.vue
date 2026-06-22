@@ -14,13 +14,13 @@
     :width="width"
   />
   <zaehlung-geometrie
-      v-else
-      id="geo"
-      v-model="zaehlung.knotenarme"
-      :height="height"
-      :width="width"
-      active-color="#1565C0"
-      passive-color="#EEEEEE"
+    v-else
+    id="geo"
+    v-model="zaehlung.knotenarme"
+    :height="height"
+    :width="width"
+    active-color="#1565C0"
+    passive-color="#EEEEEE"
   />
 </template>
 
@@ -29,8 +29,8 @@ import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import KnotenverkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/KnotenverkehrForm.vue";
 import QuerschnittJeStrassenseiteForm from "@/components/zaehlung/form/verkehrsbeziehungen/QuerschnittJeStrassenseiteForm.vue";
-import Zaehlart from "@/types/enum/Zaehlart";
 import ZaehlungGeometrie from "@/components/zaehlung/form/verkehrsbeziehungen/ZaehlungGeometrie.vue";
+import Zaehlart from "@/types/enum/Zaehlart";
 
 interface Props {
   height: string;

@@ -91,11 +91,11 @@ const EXTRA_SVG_PADDING_VH = computed(() => (mobile.value ? 6 : 8));
 
 const contentHeight = computed(() => {
   const calculated =
-      daveUtils.pxToVh(mobile.value ? height.value : 800) -
-      daveUtils.cardtitleHeight.value -
-      daveUtils.tabHeight.value -
-      daveUtils.cardactionHeight.value -
-      EXTRA_SVG_PADDING_VH.value; // neuer Abzug für größere SVGs / Inhaltspuffer
+    daveUtils.pxToVh(mobile.value ? height.value : 800) -
+    daveUtils.cardtitleHeight.value -
+    daveUtils.tabHeight.value -
+    daveUtils.cardactionHeight.value -
+    EXTRA_SVG_PADDING_VH.value; // neuer Abzug für größere SVGs / Inhaltspuffer
   return `${calculated}vh`;
 });
 </script>

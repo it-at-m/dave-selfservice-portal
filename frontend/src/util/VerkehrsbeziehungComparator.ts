@@ -69,10 +69,9 @@ export default class VerkehrsbeziehungComparator {
    * @param b
    */
   public static sortLaengsUndQuerungByNumber(
-      a: LaengsverkehrDTO|QuerungsverkehrDTO,
-      b: LaengsverkehrDTO|QuerungsverkehrDTO
+    a: LaengsverkehrDTO | QuerungsverkehrDTO,
+    b: LaengsverkehrDTO | QuerungsverkehrDTO
   ): number {
     return a.knotenarm - b.knotenarm;
   }
-
 }

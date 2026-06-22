@@ -24,9 +24,9 @@
           sm="3"
         >
           <verkehr-form
-              v-model:zaehlung="zaehlung"
-              height="100%"
-              width="100%"
+            v-model:zaehlung="zaehlung"
+            height="100%"
+            width="100%"
           />
         </v-col>
       </v-row>
@@ -126,14 +126,14 @@
           sm="3"
         >
           <v-data-table
-              v-if="isNotKreisverkehr"
-              density="compact"
-              :headers="verkehrsbeziehungenHeader"
-              :items="verkehrsbeziehungen"
-              item-key="id"
-              :items-per-page="-1"
-              hide-default-footer
-              fixed-header
+            v-if="isNotKreisverkehr"
+            density="compact"
+            :headers="verkehrsbeziehungenHeader"
+            :items="verkehrsbeziehungen"
+            item-key="id"
+            :items-per-page="-1"
+            hide-default-footer
+            fixed-header
           />
         </v-col>
       </v-row>
@@ -145,6 +145,8 @@
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
@@ -153,6 +155,7 @@ import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
+import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrForm.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Richtung from "@/types/enum/Richtung";
 import Status from "@/types/enum/Status";
@@ -161,9 +164,6 @@ import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
-import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrForm.vue";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
 interface Props {
   height: string;
@@ -232,29 +232,31 @@ const verkehrsbeziehungen = computed<Array<any>>(() => {
   const zaehlart = zaehlung.value?.zaehlart;
 
   let source:
-      | Array<VerkehrsbeziehungDTO>
-      | Array<QuerungsverkehrDTO>
-      | Array<LaengsverkehrDTO>
-      | undefined;
+    | Array<VerkehrsbeziehungDTO>
+    | Array<QuerungsverkehrDTO>
+    | Array<LaengsverkehrDTO>
+    | undefined;
 
-   if (zaehlart === Zaehlart.QU) {
+  if (zaehlart === Zaehlart.QU) {
     source = zaehlung.value?.querungsverkehr as
-        | Array<QuerungsverkehrDTO>
-        | undefined;
+      | Array<QuerungsverkehrDTO>
+      | undefined;
   } else if (zaehlart === Zaehlart.FJS) {
     source = zaehlung.value?.laengsverkehr as
-        | Array<LaengsverkehrDTO>
-        | undefined;
+      | Array<LaengsverkehrDTO>
+      | undefined;
   } else {
-    source =  zaehlung.value?.verkehrsbeziehungen as
-        | Array<VerkehrsbeziehungDTO>
-        | undefined;
+    source = zaehlung.value?.verkehrsbeziehungen as
+      | Array<VerkehrsbeziehungDTO>
+      | undefined;
   }
   // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
   // anschließend sortieren
-  return (zaehlart === Zaehlart.QU || zaehlart === Zaehlart.FJS) ?
-      toArray(source).sort(VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber) :
-      toArray(source).sort(VerkehrsbeziehungComparator.sortByActiveVonAndNach)  ;
+  return zaehlart === Zaehlart.QU || zaehlart === Zaehlart.FJS
+    ? toArray(source).sort(
+        VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber
+      )
+    : toArray(source).sort(VerkehrsbeziehungComparator.sortByActiveVonAndNach);
 });
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
@@ -333,7 +335,7 @@ const verkehrsbeziehungenHeader = computed<Array<any>>(() => {
   }
 
   // Andere Zählarten
-  return  [
+  return [
     {
       title: "Von",
       align: "center",
