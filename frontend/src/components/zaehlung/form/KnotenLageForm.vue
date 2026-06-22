@@ -8,8 +8,8 @@
     <v-card-text>
       <v-row dense>
         <v-col
-          cols="8"
-          sm="10"
+          cols="6"
+          sm="9"
         >
           <zaehlung-card-map
             height="200px"
@@ -20,23 +20,20 @@
           />
         </v-col>
         <v-col
-          cols="4"
-          sm="2"
+          cols="6"
+          sm="3"
         >
-          <zaehlung-geometrie
-            id="geo"
-            v-model="zaehlung.knotenarme"
-            height="100%"
-            width="100%"
-            active-color="#1565C0"
-            passive-color="#EEEEEE"
+          <verkehr-form
+              v-model:zaehlung="zaehlung"
+              height="100%"
+              width="100%"
           />
         </v-col>
       </v-row>
       <v-row dense>
         <v-col
-          cols="8"
-          sm="10"
+          cols="6"
+          sm="9"
         >
           <v-row
             dense
@@ -125,8 +122,8 @@
           </v-row>
         </v-col>
         <v-col
-          cols="4"
-          sm="2"
+          cols="6"
+          sm="3"
         >
           <v-data-table
               v-if="isNotKreisverkehr"
@@ -156,7 +153,6 @@ import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
-import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Richtung from "@/types/enum/Richtung";
 import Status from "@/types/enum/Status";
@@ -165,6 +161,7 @@ import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import VerkehrsbeziehungComparator from "@/util/VerkehrsbeziehungComparator";
+import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrForm.vue";
 import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
 import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 

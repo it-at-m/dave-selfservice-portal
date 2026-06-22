@@ -206,7 +206,7 @@ import ZaehlartIcon from "@/components/icons/ZaehlartIcon.vue";
 import ZaehldauerIcon from "@/components/icons/ZaehldauerIcon.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import { getCsvContentForAllZaehlarten } from "@/components/zaehlung/ZaehlungCsvHeader";
-import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
+import ZaehlungGeometrie from "@/components/zaehlung/form/verkehrsbeziehungen/ZaehlungGeometrie.vue";
 import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Status, { statusIcon } from "@/types/enum/Status";
