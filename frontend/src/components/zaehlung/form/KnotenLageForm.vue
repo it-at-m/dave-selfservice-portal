@@ -180,11 +180,7 @@ const zaehlung = defineModel<ZaehlungDTO>({
 
 const validationUtils = useValidationUtils();
 
-const EXPECTED_ZAEHLDATEN_HEADER = validationUtils.EXPECTED_ZAEHLDATEN_HEADER;
-
 const SEPARATOR = validationUtils.SEPARATOR;
-
-const COLUMN_COUNT = validationUtils.COLUMN_COUNT;
 
 const FILE_INPUT_FIELD_ID = "fileInputField";
 
