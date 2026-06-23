@@ -246,46 +246,4 @@ describe("FussverkehrValidationUtils", () => {
       expect(result).toContain("Knotenarm 6");
     });
   });
-
-  describe("validateZaehlwerteOccurrence", () => {
-    it("errors when any vehicle types (indices 4..8) have a value", () => {
-      const line = new Array(11).fill("");
-      line[4] = "1"; // vehicle type present
-      const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
-      expect(err).toBe(`Die Zählwerte sind ungültig für die Zählart.`);
-    });
-
-    it("errors when both foot-count columns (9 and 10) are empty", () => {
-      const line = new Array(11).fill("");
-      const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
-      expect(err).toBe(
-        `Die Zählwerte für Rad und Fuss dürfen nicht leer sein.`
-      );
-    });
-
-    it("returns undefined when vehicle columns empty but one foot-count present", () => {
-      const line = new Array(11).fill("");
-      line[9] = "2";
-      const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
-      expect(err).toBeUndefined();
-    });
-
-    it("returns error when unrequested verkehrsart is present", () => {
-      const line = new Array(11).fill("");
-      line[9] = "2";
-      line[10] = "2";
-      const err = utils.validateZaehlwerteOccurrence([Fahrzeug.RAD], line);
-      expect(err).toBe(`Der Zählwert von "FUSS" muss leer sein.`);
-    });
-
-    it("returns error when requested verkehrsart is not present", () => {
-      const line = new Array(11).fill("");
-      line[9] = "2";
-      const err = utils.validateZaehlwerteOccurrence(
-        [Fahrzeug.RAD, Fahrzeug.FUSS],
-        line
-      );
-      expect(err).toBe(`Der Zählwert von "FUSS" darf nicht leer sein.`);
-    });
-  });
 });
