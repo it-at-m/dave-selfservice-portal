@@ -317,7 +317,7 @@ export function useValidationUtils() {
           numberOfIntervalsAccordingZaehldauer !==
           csvLinesOfBewegungsinformation.length
         ) {
-          return `Die Menge von ${csvLinesOfBewegungsinformation.length} Intervallnummern in der CSV-Datei entspricht nicht der Anzahl der erwarteten Anzahl von ${numberOfIntervalsAccordingZaehldauer} Intervallen der Zähldauer ${zaehldauerText.get(zaehldauer)}.`;
+          return `Die Menge von ${csvLinesOfBewegungsinformation.length} Intervallnummern in der CSV-Datei entspricht nicht der erwarteten Anzahl von ${numberOfIntervalsAccordingZaehldauer} Intervallen der Zähldauer ${zaehldauerText.get(zaehldauer)}.`;
         }
       }
     }

@@ -568,7 +568,7 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     );
     // actual count for the offending bewegungsinformation (B) is expectedTotal - 1
     const actualCount = expectedTotal - 1;
-    const expectedMessage = `Die Menge von ${actualCount} Intervallnummern in der CSV-Datei entspricht nicht der Anzahl der erwarteten Anzahl von ${expectedTotal} Intervallen der Zähldauer ${zaehldauerText.get(Zaehldauer.DAUER_2_X_4_STUNDEN)}.`;
+    const expectedMessage = `Die Menge von ${actualCount} Intervallnummern in der CSV-Datei entspricht nicht der erwarteten Anzahl von ${expectedTotal} Intervallen der Zähldauer ${zaehldauerText.get(Zaehldauer.DAUER_2_X_4_STUNDEN)}.`;
 
     expect(
       checkForCorrectNumberOfIntervalsAccordingZaehldauer(
