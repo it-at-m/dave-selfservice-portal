@@ -12,7 +12,7 @@
           sm="9"
         >
           <zaehlung-card-map
-            height="250px"
+            height="230px"
             width="100%"
             :lat-lng-zaehlstelle="coordsZaehlstelle"
             :lat-lng-zaehlung="coordsZaehlung"
@@ -25,7 +25,7 @@
         >
           <verkehr-form
             v-model:zaehlung="zaehlung"
-            height="250px"
+            height="100%"
             width="100%"
           />
         </v-col>

@@ -2,6 +2,7 @@
   <v-sheet
     :height="height"
     :width="width"
+    :max-height="height"
     color="transparent"
   >
     <svg
