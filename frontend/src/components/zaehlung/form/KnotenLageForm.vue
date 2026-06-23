@@ -583,17 +583,19 @@ function checkFussverkehrData(
       filename
     );
 
-  errorMessage = fussverkehrValidationUtils.validateNachValue(
-    armNummer,
-    splittedLine[1]
-  );
-  if (errorMessage)
-    return enrichValidationErrorMessage(
-      errorMessage,
-      splittedLine,
-      csvLineIndex,
-      filename
+  if (Zaehlart.QJS === zaehlart) {
+    errorMessage = fussverkehrValidationUtils.validateNachValue(
+      armNummer,
+      splittedLine[1]
     );
+    if (errorMessage)
+      return enrichValidationErrorMessage(
+        errorMessage,
+        splittedLine,
+        csvLineIndex,
+        filename
+      );
+  }
 
   errorMessage = fussverkehrValidationUtils.validateStrassenseiteOccurrence(
     zaehlart,
