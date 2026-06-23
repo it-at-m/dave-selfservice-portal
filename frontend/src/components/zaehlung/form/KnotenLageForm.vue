@@ -12,7 +12,7 @@
           sm="9"
         >
           <zaehlung-card-map
-            height="200px"
+            height="250px"
             width="100%"
             :lat-lng-zaehlstelle="coordsZaehlstelle"
             :lat-lng-zaehlung="coordsZaehlung"
@@ -25,7 +25,7 @@
         >
           <verkehr-form
             v-model:zaehlung="zaehlung"
-            height="100%"
+            height="250px"
             width="100%"
           />
         </v-col>
@@ -228,7 +228,9 @@ const isZaehlungEditable = computed<boolean>(() => {
   return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
-const verkehrsbeziehungen = computed<Array<any>>(() => {
+const verkehrsbeziehungen = computed<
+  Array<VerkehrsbeziehungDTO | QuerungsverkehrDTO | LaengsverkehrDTO>
+>(() => {
   const zaehlart = zaehlung.value?.zaehlart;
 
   let source:

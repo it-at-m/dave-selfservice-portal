@@ -1282,11 +1282,11 @@ const hasAvailableKnotenarme = computed(() => {
   return availableKnotenarme.value.length > 0;
 });
 
-const selectedLaengsverkehre = computed(() => {
-  return zaehlung.value.laengsverkehr;
+const selectedLaengsverkehre = computed<Array<LaengsverkehrDTO>>(() => {
+  return toArray(zaehlung.value.laengsverkehr);
 });
-const selectedQuerungsverkehre = computed(() => {
-  return zaehlung.value.querungsverkehr;
+const selectedQuerungsverkehre = computed<Array<QuerungsverkehrDTO>>(() => {
+  return toArray(zaehlung.value.querungsverkehr);
 });
 
 function isKnotenarmAvailable(knotenarm: number): boolean {

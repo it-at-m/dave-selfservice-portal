@@ -362,9 +362,11 @@ const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
 const activeColor = "#D50000";
 const passiveColor = "#9E9E9E";
 
-const selectedVerkehrsbeziehungen = computed(() => {
-  return zaehlung.value.verkehrsbeziehungen;
-});
+const selectedVerkehrsbeziehungen = computed<Array<VerkehrsbeziehungDTO>>(
+  () => {
+    return toArray(zaehlung.value.verkehrsbeziehungen);
+  }
+);
 
 const firstStreetname = ref<Array<string>>([]);
 const secondStreetname = ref<Array<string>>([]);
