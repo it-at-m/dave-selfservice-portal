@@ -381,6 +381,17 @@ function checkUploadedFiledata(
         return hasCorrectNumberOfColumns;
       }
 
+      const isIntervallnummerSet =
+        validationUtils.isIntervallnummerSetInCsvDataLine(splittedLine);
+      if (!isEmpty(isIntervallnummerSet)) {
+        return enrichValidationErrorMessage(
+          isIntervallnummerSet,
+          splittedLine,
+          csvLineIndex,
+          filename
+        );
+      }
+
       // Unterscheidung zw. Fussverkehrszählung und anderen Zählungen
       let invalidityReason: string;
       if (

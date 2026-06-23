@@ -13,6 +13,7 @@ const {
   isWholeNonNegativeIntegerString,
   containsOnlyWholeNonNegativeIntegerStrings,
   hasCsvDataLineCorrectNumberOfColumns,
+  isIntervallnummerSetInCsvDataLine,
   hasAtLeastFourLinesOfData,
   hasMetadatenHeader,
   hasCorrectMetadatenHeader,
@@ -112,6 +113,34 @@ describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
     expect(result).toBeTypeOf("string");
     expect(result).toContain(
       "dürfen nur nicht-negative, ganze Zahlen enthalten"
+    );
+  });
+});
+
+describe("ValidationUtils -> isIntervallnummerSetInCsvDataLine", () => {
+  test("returns empty when intervall number is valid whole non-negative integer", () => {
+    const line = ["1", "a", "b"];
+    expect(isIntervallnummerSetInCsvDataLine(line)).toBe("");
+  });
+
+  test("returns error when intervall number missing or empty", () => {
+    expect(isIntervallnummerSetInCsvDataLine(["", "a"])).toBe(
+      "Es ist keine Intervallnummer vorhanden."
+    );
+    expect(isIntervallnummerSetInCsvDataLine(["   ", "a"])).toBe(
+      "Es ist keine Intervallnummer vorhanden."
+    );
+  });
+
+  test("returns error for non-integer or negative or decimal values", () => {
+    expect(isIntervallnummerSetInCsvDataLine(["1.0"])).toBe(
+      "Es ist keine Intervallnummer vorhanden."
+    );
+    expect(isIntervallnummerSetInCsvDataLine(["-1"])).toBe(
+      "Es ist keine Intervallnummer vorhanden."
+    );
+    expect(isIntervallnummerSetInCsvDataLine(["abc"])).toBe(
+      "Es ist keine Intervallnummer vorhanden."
     );
   });
 });

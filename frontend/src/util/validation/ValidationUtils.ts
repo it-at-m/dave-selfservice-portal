@@ -35,6 +35,15 @@ export function useValidationUtils() {
     return "";
   }
 
+  function isIntervallnummerSetInCsvDataLine(
+    splittedLine: Array<string>
+  ): string {
+    const intervallnummer = splittedLine[0];
+    return isWholeNonNegativeIntegerString(intervallnummer)
+      ? ""
+      : "Es ist keine Intervallnummer vorhanden.";
+  }
+
   /**
    * Prüft, ob die hochgeladene CSV-Datei Zähldaten enthält.
    * Eine Datei gilt als gültig, wenn sie mindestens vier Zeilen hat:
@@ -459,6 +468,7 @@ export function useValidationUtils() {
     EXPECTED_ZAEHLDATEN_HEADER,
     COLUMN_COUNT,
     hasCsvDataLineCorrectNumberOfColumns,
+    isIntervallnummerSetInCsvDataLine,
     hasAtLeastFourLinesOfData,
     hasMetadatenHeader,
     hasCorrectMetadatenHeader,
