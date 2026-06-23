@@ -1,8 +1,7 @@
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 
-import { isEmpty, isNil, parseInt, toString } from "lodash";
+import { isNil, parseInt, toString } from "lodash";
 
-import Fahrzeug from "@/types/enum/Fahrzeug";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
 const validationUtils = useValidationUtils();

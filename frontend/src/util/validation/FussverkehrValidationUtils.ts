@@ -1,6 +1,3 @@
-import { isEmpty } from "lodash";
-
-import Fahrzeug from "@/types/enum/Fahrzeug";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Richtung from "@/types/enum/Richtung";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
