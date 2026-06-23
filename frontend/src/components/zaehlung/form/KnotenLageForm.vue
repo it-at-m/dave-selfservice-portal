@@ -529,7 +529,7 @@ function checkVerkehrsbeziehungData(
       filename
     );
 
-  errorMessage = kfzVerkehrValidationUtils.validateZaehlwerteOccurrence(
+  errorMessage = validationUtils.validateZaehlwerteOccurrence(
     zaehlung.value.kategorien,
     splittedLine
   );
@@ -651,11 +651,11 @@ function checkFussverkehrData(
       filename
     );
 
-  errorMessage = fussverkehrValidationUtils.validateZaehlwerteOccurrence(
+  errorMessage = validationUtils.validateZaehlwerteOccurrence(
     zaehlung.value.kategorien,
     splittedLine
   );
-  if (errorMessage)
+  if (!isEmpty(errorMessage))
     return enrichValidationErrorMessage(
       errorMessage,
       splittedLine,

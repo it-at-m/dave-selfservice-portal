@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import Fahrzeug from "@/types/enum/Fahrzeug";
 import Zaehlart from "@/types/enum/Zaehlart";
 import {
   Zaehldauer,
@@ -22,10 +23,11 @@ const {
   EXPECTED_META_HEADER,
   EXPECTED_ZAEHLDATEN_HEADER,
   COLUMN_COUNT,
-  getBewegungsinformationFromCsvLine,
   checkForIdenticalIntervallnummerJeBewegungsbeziehung,
   checkForCorrectNumberOfIntervalsAccordingZaehldauer,
   checkForAlignmentOfIntervallsAccordingZaehldauer,
+  getBewegungsinformationFromCsvLine,
+  validateZaehlwerteOccurrence,
 } = useValidationUtils();
 
 describe("ValidationUtils - isWholeNonNegativeIntegerString", () => {
@@ -241,6 +243,57 @@ describe("ValidationUtils -> hasCorrectZaehldatenHeader", () => {
     const csv = ["h0", "h1", EXPECTED_ZAEHLDATEN_HEADER, "h3"];
     const result = hasCorrectZaehldatenHeader("file.csv", csv);
     expect(result).toBe("");
+  });
+});
+
+describe("ValidationUtils -> validateZaehlwerteOccurrence", () => {
+  const vehicleIndexMap: Record<string, number> = {
+    [Fahrzeug.PKW]: 4,
+    [Fahrzeug.LKW]: 5,
+    [Fahrzeug.LZ]: 6,
+    [Fahrzeug.BUS]: 7,
+    [Fahrzeug.KRAD]: 8,
+    [Fahrzeug.RAD]: 9,
+    [Fahrzeug.FUSS]: 10,
+  };
+
+  Object.entries(vehicleIndexMap).forEach(([veh, idx]) => {
+    test(`returns empty when requested ${veh} present and others empty`, () => {
+      const requested = [veh];
+      const line = new Array(11).fill("");
+      line[idx] = "1";
+      const result = validateZaehlwerteOccurrence(requested, line);
+      expect(result).toBe("");
+    });
+
+    test(`returns error when requested ${veh} missing`, () => {
+      const requested = [veh];
+      const line = new Array(11).fill("");
+      const result = validateZaehlwerteOccurrence(requested, line);
+      expect(result).toBeTypeOf("string");
+      expect(result).toContain(veh);
+      expect(result).toContain("darf nicht leer");
+    });
+
+    test(`returns error when ${veh} not requested but present`, () => {
+      const requested: Array<string> = [];
+      const line = new Array(11).fill("");
+      line[idx] = "2";
+      const result = validateZaehlwerteOccurrence(requested, line);
+      expect(result).toBeTypeOf("string");
+      expect(result).toContain(veh);
+      expect(result).toContain("muss leer sein");
+    });
+  });
+
+  test("returns error when one of multiple requested categories is missing", () => {
+    const requested = [Fahrzeug.PKW, Fahrzeug.LKW];
+    const line = new Array(11).fill("");
+    line[4] = "1"; // PKW present
+    // LKW missing
+    const result = validateZaehlwerteOccurrence(requested, line);
+    expect(result).toBeTypeOf("string");
+    expect(result).toContain("LKW");
   });
 });
 

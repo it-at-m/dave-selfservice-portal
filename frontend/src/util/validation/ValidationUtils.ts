@@ -2,6 +2,7 @@ import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { isEmpty, isNil, join, sum, toArray, trim, uniq } from "lodash";
 
+import Fahrzeug from "@/types/enum/Fahrzeug";
 import Zaehlart from "@/types/enum/Zaehlart";
 import {
   Zaehldauer,
@@ -393,6 +394,83 @@ export function useValidationUtils() {
   }
 
   /**
+   * Prüft, ob die Zählwerte für Fussverkehr und andere Verkehrsarten richtig gefüllt ist.
+   *
+   * @param requestedKategorien Angeforderte Verkehrsarten.
+   * @param splittedLine Array für Zählwerte.
+   * @return Fehlermeldung
+   */
+  function validateZaehlwerteOccurrence(
+    requestedKategorien: Array<string>,
+    splittedLine: Array<string>
+  ) {
+    if (requestedKategorien.includes(Fahrzeug.PKW.valueOf())) {
+      if (isEmpty(splittedLine[4])) {
+        return `Der Zählwert von "PKW" darf nicht leer sein.`;
+      }
+    } else {
+      if (!isEmpty(splittedLine[4])) {
+        return `Der Zählwert von "PKW" muss leer sein.`;
+      }
+    }
+    if (requestedKategorien.includes(Fahrzeug.LKW.valueOf())) {
+      if (isEmpty(splittedLine[5])) {
+        return `Der Zählwert von "LKW" darf nicht leer sein.`;
+      }
+    } else {
+      if (!isEmpty(splittedLine[5])) {
+        return `Der Zählwert von "LKW" muss leer sein.`;
+      }
+    }
+    if (requestedKategorien.includes(Fahrzeug.LZ.valueOf())) {
+      if (isEmpty(splittedLine[6])) {
+        return `Der Zählwert von "LZ" darf nicht leer sein.`;
+      }
+    } else {
+      if (!isEmpty(splittedLine[6])) {
+        return `Der Zählwert von "LZ" muss leer sein.`;
+      }
+    }
+    if (requestedKategorien.includes(Fahrzeug.BUS.valueOf())) {
+      if (isEmpty(splittedLine[7])) {
+        return `Der Zählwert von "BUS" darf nicht leer sein.`;
+      }
+    } else {
+      if (!isEmpty(splittedLine[7])) {
+        return `Der Zählwert von "BUS" muss leer sein.`;
+      }
+    }
+    if (requestedKategorien.includes(Fahrzeug.KRAD.valueOf())) {
+      if (isEmpty(splittedLine[8])) {
+        return `Der Zählwert von "KRAD" darf nicht leer sein.`;
+      }
+    } else {
+      if (!isEmpty(splittedLine[8])) {
+        return `Der Zählwert von "KRAD" muss leer sein.`;
+      }
+    }
+    if (requestedKategorien.includes(Fahrzeug.RAD.valueOf())) {
+      if (isEmpty(splittedLine[9])) {
+        return `Der Zählwert von "RAD" darf nicht leer sein.`;
+      }
+    } else {
+      if (!isEmpty(splittedLine[9])) {
+        return `Der Zählwert von "RAD" muss leer sein.`;
+      }
+    }
+    if (requestedKategorien.includes(Fahrzeug.FUSS.valueOf())) {
+      if (isEmpty(splittedLine[10])) {
+        return `Der Zählwert von "FUSS" darf nicht leer sein.`;
+      }
+    } else {
+      if (!isEmpty(splittedLine[10])) {
+        return `Der Zählwert von "FUSS" muss leer sein.`;
+      }
+    }
+    return "";
+  }
+
+  /**
    * Die Methode gibt die Bewegungsinformation einer Zeile der CSV-Datei aus.
    * Der Rückgabewert beinhaltet die Daten der Spalten "nach;Strassenseite;Richtung".
    * @param csvLine
@@ -425,5 +503,6 @@ export function useValidationUtils() {
     checkForCorrectNumberOfIntervalsAccordingZaehldauer,
     checkForAlignmentOfIntervallsAccordingZaehldauer,
     getBewegungsinformationFromCsvLine,
+    validateZaehlwerteOccurrence,
   };
 }

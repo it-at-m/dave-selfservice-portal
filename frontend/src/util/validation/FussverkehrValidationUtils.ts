@@ -223,46 +223,6 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob die Zählwerte für Fussverkehr und andere Verkehrsarten richtig gefüllt ist.
-   *
-   * @param requestedKategorien Angeforderte Verkehrsarten.
-   * @param splittedLine Array für Zählwerte.
-   * @return Fehlermeldung
-   */
-  function validateZaehlwerteOccurrence(
-    requestedKategorien: Array<string>,
-    splittedLine: Array<string>
-  ) {
-    // Kein Element im Array[KFZ bis Krad] darf einen Wert haben.
-    if (splittedLine.slice(4, 9).some(Boolean)) {
-      return `Die Zählwerte sind ungültig für die Zählart.`;
-    }
-
-    if (isEmpty(splittedLine[9]) && isEmpty(splittedLine[10])) {
-      return `Die Zählwerte für Rad und Fuss dürfen nicht leer sein.`;
-    }
-
-    if (requestedKategorien.includes(Fahrzeug.RAD.valueOf())) {
-      if (isEmpty(splittedLine[9])) {
-        return `Der Zählwert von "RAD" darf nicht leer sein. `;
-      }
-    } else {
-      if (!isEmpty(splittedLine[9])) {
-        return `Der Zählwert von "RAD" muss leer sein.`;
-      }
-    }
-    if (requestedKategorien.includes(Fahrzeug.FUSS.valueOf())) {
-      if (isEmpty(splittedLine[10])) {
-        return `Der Zählwert von "FUSS" darf nicht leer sein.`;
-      }
-    } else {
-      if (!isEmpty(splittedLine[10])) {
-        return `Der Zählwert von "FUSS" muss leer sein.`;
-      }
-    }
-  }
-
-  /**
    * Prüft die konkreten Werte der Zählwerte auf Validität.
    *
    * @param splittedLine Array für Zählwerte.
@@ -283,7 +243,6 @@ export function useFussverkehrValidationUtils() {
     validateStrassenseiteValue,
     validateRichtungOccurrence,
     validateRichtungValue,
-    validateZaehlwerteOccurrence,
     validateZaehlwerteValues,
   };
 }
