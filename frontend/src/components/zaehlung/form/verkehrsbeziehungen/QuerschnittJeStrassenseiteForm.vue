@@ -579,7 +579,9 @@ function getStreetname(knotenarm: KnotenarmDTO | undefined): Array<string> {
 </script>
 
 <style scoped>
-/* SVG komplett un-klickbar machen (keine Click/Hover/Pointer-Ereignisse) */
+/* SVG komplett un-klickbar machen (keine Click/Hover/Pointer-Ereignisse)
+Mit Hinblick auf Refactoring der SVGs in eine Bibliothek wurden hier die Click-Events NICHT entfernt.
+Dieses Skript wurde aus dem Adminportal übernommen.*/
 svg {
   pointer-events: none;
 }

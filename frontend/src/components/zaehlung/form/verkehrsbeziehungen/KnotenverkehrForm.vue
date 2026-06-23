@@ -1898,7 +1898,9 @@ function createQuerungsverkehr(
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
 }
-/* SVG komplett un-klickbar machen (keine Click/Hover/Pointer-Ereignisse) */
+/* SVG komplett un-klickbar machen (keine Click/Hover/Pointer-Ereignisse)
+Mit Hinblick auf Refactoring der SVGs in eine Bibliothek wurden hier die Click-Events nicht entfernt.
+Dieses Skript wurde aus dem Adminportal übernommen.*/
 svg {
   pointer-events: none;
 }
