@@ -328,34 +328,28 @@ function checkUploadedFiledata(
   filename: string
 ): string {
   // keine Daten vorhanden
-  const hasDataMsg = validationUtils.hasAtLeastFourLinesOfData(
-    filename,
-    csvData
-  );
+  const hasDataMsg = validationUtils.hasAtLeastFourLinesOfData(csvData);
   if (hasDataMsg.length > 0) {
     return hasDataMsg;
   }
 
-  const hasMetaHeader = validationUtils.hasMetadatenHeader(filename, csvData);
+  const hasMetaHeader = validationUtils.hasMetadatenHeader(csvData);
   if (hasMetaHeader.length > 0) {
     return hasMetaHeader;
   }
 
-  const hasCorrectMetaHeader = validationUtils.hasCorrectMetadatenHeader(
-    filename,
-    csvData
-  );
+  const hasCorrectMetaHeader =
+    validationUtils.hasCorrectMetadatenHeader(csvData);
   if (hasCorrectMetaHeader.length > 0) {
     return hasCorrectMetaHeader;
   }
 
-  const hasMetadata = validationUtils.hasMetadata(filename, csvData);
+  const hasMetadata = validationUtils.hasMetadata(csvData);
   if (hasMetadata.length > 0) {
     return hasMetadata;
   }
 
   const hasCorrectMetadata = validationUtils.hasCorrectMetadata(
-    filename,
     csvData,
     armNummer,
     zaehlung.value
@@ -364,18 +358,13 @@ function checkUploadedFiledata(
     return hasCorrectMetadata;
   }
 
-  const zaehldatenHeader = validationUtils.hasZaehldatenHeader(
-    filename,
-    csvData
-  );
+  const zaehldatenHeader = validationUtils.hasZaehldatenHeader(csvData);
   if (zaehldatenHeader.length > 0) {
     return zaehldatenHeader;
   }
 
-  const correctZaehldatenHeader = validationUtils.hasCorrectZaehldatenHeader(
-    filename,
-    csvData
-  );
+  const correctZaehldatenHeader =
+    validationUtils.hasCorrectZaehldatenHeader(csvData);
   if (correctZaehldatenHeader.length > 0) {
     return correctZaehldatenHeader;
   }
@@ -387,10 +376,7 @@ function checkUploadedFiledata(
 
       // Prüfen auf korrekte Anzahl an Spalten.
       const hasCorrectNumberOfColumns =
-        validationUtils.hasCsvDataLineCorrectNumberOfColumns(
-          filename,
-          splittedLine
-        );
+        validationUtils.hasCsvDataLineCorrectNumberOfColumns(splittedLine);
       if (!isEmpty(hasCorrectNumberOfColumns)) {
         return hasCorrectNumberOfColumns;
       }
@@ -429,7 +415,6 @@ function checkUploadedFiledata(
   // Prüfung auf mehrfach vorhandene Intervallnummern
   const identicalIntervallnummer =
     validationUtils.checkForIdenticalIntervallnummerJeBewegungsbeziehung(
-      filename,
       csvDataWithoutHeader
     );
   if (!isEmpty(identicalIntervallnummer)) {
@@ -440,7 +425,6 @@ function checkUploadedFiledata(
   const zaehldauer = zaehlung.value.zaehldauer;
   const incorrectNumberOfIntervals =
     validationUtils.checkForCorrectNumberOfIntervalsAccordingZaehldauer(
-      filename,
       csvDataWithoutHeader,
       zaehldauer
     );
@@ -451,7 +435,6 @@ function checkUploadedFiledata(
   // Prüfung ob die Intervalle dem Zählzeitraum der Zähldauer entsprechen.
   const incorrectAlgignmentOfIntervals =
     validationUtils.checkForAlignmentOfIntervallsAccordingZaehldauer(
-      filename,
       csvDataWithoutHeader,
       zaehldauer
     );

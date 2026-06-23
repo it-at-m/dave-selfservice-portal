@@ -24,15 +24,13 @@ export function useValidationUtils() {
   /**
    * Prüft, ob die Anzahl der übergebenen Zählwerte auch der Anzahl an erwarteten Zählwerte je Zeile entsprechen.
    *
-   * @param filename Name der csv-Datei.
    * @param splittedLine Array für Zählwerte.
    */
   function hasCsvDataLineCorrectNumberOfColumns(
-    filename: string,
     splittedLine: Array<string>
   ): string {
     if (toArray(splittedLine).length !== COLUMN_COUNT) {
-      return `Je Zeile müssen ${COLUMN_COUNT} Spalten in der Datei ${filename} enthalten sein.`;
+      return `Je Zeile müssen ${COLUMN_COUNT} Spalten in der CSV-Datei enthalten sein.`;
     }
     return "";
   }
@@ -45,16 +43,12 @@ export function useValidationUtils() {
    * - Zeile 3: Zähldaten-Header
    * - Ab Zeile 4: mindestens eine Datenzeile
    *
-   * @param filename Name der csv-Datei (für Fehlermeldungen).
    * @param csvData Dateiinhalt als Array von Zeilen.
    * @return Fehlermeldung, wenn keine Zähldaten vorhanden sind, sonst leerer String.
    */
-  function hasAtLeastFourLinesOfData(
-    filename: string,
-    csvData: Array<string>
-  ): string {
+  function hasAtLeastFourLinesOfData(csvData: Array<string>): string {
     if (!csvData || csvData.length < 4) {
-      return `Die hochgeladene Datei ${filename} enthält keine Zähldaten.`;
+      return `Die hochgeladene CSV-Datei enthält keine Zähldaten.`;
     }
     return "";
   }
@@ -62,16 +56,12 @@ export function useValidationUtils() {
   /**
    * Prüft, ob die CSV-Datei einen Metadatenheader besitzt.
    *
-   * @param filename Name der csv-Datei (für Fehlermeldungen).
    * @param csvData Dateiinhalt als Array von Zeilen.
    */
-  function hasMetadatenHeader(
-    filename: string,
-    csvData: Array<string>
-  ): string {
+  function hasMetadatenHeader(csvData: Array<string>): string {
     const metaHeader: string = csvData[0];
     if (isNil(metaHeader)) {
-      return `Die Header der Metadaten fehlen in der hochgeladenen Datei ${filename}.`;
+      return `Die Header der Metadaten fehlen in der hochgeladenen CSV-Datei.`;
     }
     return "";
   }
@@ -79,16 +69,12 @@ export function useValidationUtils() {
   /**
    * Prüft, ob der Metadatenheader in der CSV-Datei den korrekten Inhalt hat.
    *
-   * @param filename Name der csv-Datei (für Fehlermeldungen).
    * @param csvData Dateiinhalt als Array von Zeilen.
    */
-  function hasCorrectMetadatenHeader(
-    filename: string,
-    csvData: Array<string>
-  ): string {
+  function hasCorrectMetadatenHeader(csvData: Array<string>): string {
     const metaHeader: string = csvData[0];
     if (metaHeader!.trim() !== EXPECTED_META_HEADER) {
-      return `Die Header der Metadaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${EXPECTED_META_HEADER}`;
+      return `Die Header der Metadaten in der hochgeladenen CSV-Datei sind nicht korrekt.\nErwartet: ${EXPECTED_META_HEADER}`;
     }
     return "";
   }
@@ -96,13 +82,12 @@ export function useValidationUtils() {
   /**
    * Prüft, ob die CSV-Datei Metadateninformationen besitzt.
    *
-   * @param filename Name der csv-Datei (für Fehlermeldungen).
    * @param csvData Dateiinhalt als Array von Zeilen.
    */
-  function hasMetadata(filename: string, csvData: Array<string>): string {
+  function hasMetadata(csvData: Array<string>): string {
     const metaData: string = csvData[1];
     if (isNil(metaData)) {
-      return `Die Metadaten fehlen in der hochgeladenen Datei ${filename}.`;
+      return `Die Metadaten fehlen in der hochgeladenen CSV-Datei.`;
     }
     return "";
   }
@@ -110,13 +95,11 @@ export function useValidationUtils() {
   /**
    * Prüft, ob die Metadaten in der CSV-Datei den korrekten Inhalt haben.
    *
-   * @param filename Name der csv-Datei (für Fehlermeldungen).
    * @param csvData Dateiinhalt als Array von Zeilen.
    * @param knotenarmNr zur Gegenprüfung der Metadaten.
    * @param zaehlung zur Gegenprüfung der Metadaten.
    */
   function hasCorrectMetadata(
-    filename: string,
     csvData: Array<string>,
     knotenarmNr: number,
     zaehlung: ZaehlungDTO
@@ -139,7 +122,7 @@ export function useValidationUtils() {
     // Erstellen der erwarteten Metadaten
     const metaData: string = csvData[1];
     if (metaData!.trim() !== expectedMetaData) {
-      return `Die Metadaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${expectedMetaData}`;
+      return `Die Metadaten in der hochgeladenen CSV-Datei sind nicht korrekt.\nErwartet: ${expectedMetaData}`;
     }
     return "";
   }
@@ -147,16 +130,12 @@ export function useValidationUtils() {
   /**
    * Prüft, ob die CSV-Datei eine Zähldatenheader besitzt.
    *
-   * @param filename Name der csv-Datei (für Fehlermeldungen).
    * @param csvData Dateiinhalt als Array von Zeilen.
    */
-  function hasZaehldatenHeader(
-    filename: string,
-    csvData: Array<string>
-  ): string {
+  function hasZaehldatenHeader(csvData: Array<string>): string {
     const zaehldatenHeader: string = csvData[2];
     if (isNil(zaehldatenHeader)) {
-      return `Die Header der Zähldaten fehlen in der hochgeladenen Datei ${filename}.`;
+      return `Die Header der Zähldaten fehlen in der hochgeladenen CSV-Datei.`;
     }
     return "";
   }
@@ -164,16 +143,12 @@ export function useValidationUtils() {
   /**
    * Prüft, ob der Zähldatenheader in der CSV-Datei den korrekten Inhalt hat.
    *
-   * @param filename Name der csv-Datei (für Fehlermeldungen).
    * @param csvData Dateiinhalt als Array von Zeilen.
    */
-  function hasCorrectZaehldatenHeader(
-    filename: string,
-    csvData: Array<string>
-  ): string {
+  function hasCorrectZaehldatenHeader(csvData: Array<string>): string {
     const zaehldatenHeader: string = csvData[2];
     if (zaehldatenHeader!.trim() !== EXPECTED_ZAEHLDATEN_HEADER) {
-      return `Die Header der Zähldaten in der hochgeladenen Datei ${filename} sind nicht korrekt.\nErwartet: ${EXPECTED_ZAEHLDATEN_HEADER}`;
+      return `Die Header der Zähldaten in der hochgeladenen CSV-Datei sind nicht korrekt.\nErwartet: ${EXPECTED_ZAEHLDATEN_HEADER}`;
     }
     return "";
   }
@@ -221,11 +196,9 @@ export function useValidationUtils() {
    * Prüft ob in den gegebenen Zähldateninformationen der CSV-Datei je
    * Bewegungsinformation mehrere Einträge mit der selben Intervallnummer existieren.
    *
-   * @param filename Name der validierten csv-Datei
    * @param csvDataWithoutHeader zum prüfen.
    */
   function checkForIdenticalIntervallnummerJeBewegungsbeziehung(
-    filename: string,
     csvDataWithoutHeader: Array<string>
   ): string {
     const csvLinesByIntervallnummerByBewegungsinformation = new Map<
@@ -283,7 +256,7 @@ export function useValidationUtils() {
       intervallnummerWithMultipleLines = uniq(
         intervallnummerWithMultipleLines
       ).sort();
-      return `In der CSV-Datei ${filename} befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: ${join(intervallnummerWithMultipleLines, ", ")}`;
+      return `In der CSV-Datei befinden sich mehrfach vorhandenen Zeitintervalle mit folgenden Intervallnummern: ${join(intervallnummerWithMultipleLines, ", ")}`;
     }
     return "";
   }
@@ -291,12 +264,10 @@ export function useValidationUtils() {
   /**
    * Prüft, ob die gegebenen Intervallnummern der Anzahl an erwarteten Intervallnummern entsprechen.
    *
-   * @param filename Name der validierten csv-Datei
    * @param csvDataWithoutHeader zum prüfen.
    * @param zaehldauer zur Prüfung der Anzahl.
    */
   function checkForCorrectNumberOfIntervalsAccordingZaehldauer(
-    filename: string,
     csvDataWithoutHeader: Array<string>,
     zaehldauer: Zaehldauer
   ): string {
@@ -337,7 +308,7 @@ export function useValidationUtils() {
           numberOfIntervalsAccordingZaehldauer !==
           csvLinesOfBewegungsinformation.length
         ) {
-          return `Die Menge von ${csvLinesOfBewegungsinformation.length} Intervallnummern in der CSV-Datei ${filename} entspricht nicht der Anzahl der erwarteten Anzahl von ${numberOfIntervalsAccordingZaehldauer} Intervallen der Zähldauer ${zaehldauerText.get(zaehldauer)}.`;
+          return `Die Menge von ${csvLinesOfBewegungsinformation.length} Intervallnummern in der CSV-Datei entspricht nicht der Anzahl der erwarteten Anzahl von ${numberOfIntervalsAccordingZaehldauer} Intervallen der Zähldauer ${zaehldauerText.get(zaehldauer)}.`;
         }
       }
     }
@@ -348,12 +319,10 @@ export function useValidationUtils() {
    * Prüft, ob die Intervallnummern der Zähldauer entsprechend.
    * Es dürfen keine Intervallnummern existieren, welche sich ausserhalb des Zählzeitraums der Zähldauer befinden.
    *
-   * @param filename Name der validierten csv-Datei
    * @param csvDataWithoutHeader zum prüfen.
    * @param zaehldauer zur Prüfung auf Zähldauer.
    */
   function checkForAlignmentOfIntervallsAccordingZaehldauer(
-    filename: string,
     csvDataWithoutHeader: Array<string>,
     zaehldauer: Zaehldauer
   ): string {
@@ -387,7 +356,7 @@ export function useValidationUtils() {
           Array.from(intervallnummernNotWithin.values()).sort(),
           ", "
         );
-        return `In der CSV-Datei ${filename} befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer ${zaehldauerText.get(zaehldauer)} befinden: ${commaSeperatedIntervallnummern}`;
+        return `In der CSV-Datei befinden sich Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer ${zaehldauerText.get(zaehldauer)} befinden: ${commaSeperatedIntervallnummern}`;
       }
     }
     return "";
