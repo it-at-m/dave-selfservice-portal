@@ -439,15 +439,6 @@ function checkUploadedFiledata(
     if (!isEmpty(allNachIntervallsAreExistent)) {
       return allNachIntervallsAreExistent;
     }
-    const noUneccesaryNachIntervallsArExistent =
-      kfzVerkehrValidationUtils.validateNoUneccesaryNachIntervallsArExistent(
-        armNummer,
-        csvDataWithoutHeader,
-        zaehlung.value.verkehrsbeziehungen
-      );
-    if (!isEmpty(noUneccesaryNachIntervallsArExistent)) {
-      return noUneccesaryNachIntervallsArExistent;
-    }
   }
 
   // Prüfung auf mehrfach vorhandene Intervallnummern

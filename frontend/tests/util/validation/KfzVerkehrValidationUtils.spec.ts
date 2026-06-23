@@ -2,7 +2,6 @@ import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 
 import { describe, expect, it } from "vitest";
 
-import Fahrzeug from "@/types/enum/Fahrzeug";
 import { useKfzVerkehrValidationUtils } from "@/util/validation/KfzVerkehrValidationUtils";
 
 describe("useKfzVerkehrValidationUtils", () => {
@@ -117,43 +116,6 @@ describe("useKfzVerkehrValidationUtils", () => {
       expect(result).toBeTypeOf("string");
       expect(result).toContain("Für folgende Zielknotenarme");
       expect(result).toContain("3");
-    });
-  });
-
-  describe("validateNoUneccesaryNachIntervallsArExistent", () => {
-    it("returns empty when csv contains only requested nach values", () => {
-      const armNummer = 1;
-      const csvDataWithoutHeader = ["10;2", "11;3"];
-      const verkehrsbeziehungen = [
-        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
-        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
-      ];
-      expect(
-        utils.validateNoUneccesaryNachIntervallsArExistent(
-          armNummer,
-          csvDataWithoutHeader,
-          verkehrsbeziehungen
-        )
-      ).toBe("");
-    });
-
-    it("returns error when csv contains nach values not requested", () => {
-      const armNummer = 1;
-      const csvDataWithoutHeader = ["10;2", "11;99"];
-      const verkehrsbeziehungen = [
-        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
-        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
-      ];
-      const result = utils.validateNoUneccesaryNachIntervallsArExistent(
-        armNummer,
-        csvDataWithoutHeader,
-        verkehrsbeziehungen
-      );
-      expect(result).toBeTypeOf("string");
-      expect(result).toContain(
-        "In der CSV-Datei sind folgende Zielknotenarme (nach) existent"
-      );
-      expect(result).toContain("99");
     });
   });
 

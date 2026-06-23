@@ -44,9 +44,11 @@ export function useKfzVerkehrValidationUtils() {
     csvDataWithoutHeader: Array<string>,
     verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
   ) {
-    const nachOfEachLine = csvDataWithoutHeader.map((csvLine) => {
-      return parseInt(csvLine.split(validationUtils.SEPARATOR)[1]);
-    });
+    const nachOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => parseInt(csvLine[1]));
     const allInCsvExistingNach = Array.from(new Set(nachOfEachLine));
 
     const allNecessaryNachKnotenarme = toArray(verkehrsbeziehungen)
@@ -60,31 +62,6 @@ export function useKfzVerkehrValidationUtils() {
 
     if (!isEmpty(inCsvMissingNach)) {
       return `Für folgende Zielknotenarme sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNach}`;
-    }
-    return "";
-  }
-
-  function validateNoUneccesaryNachIntervallsArExistent(
-    armNummer: number,
-    csvDataWithoutHeader: Array<string>,
-    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
-  ) {
-    const nachOfEachLine = csvDataWithoutHeader.map((csvLine) => {
-      return parseInt(csvLine.split(validationUtils.SEPARATOR)[1]);
-    });
-    const allInCsvExistingNach = Array.from(new Set(nachOfEachLine));
-
-    const allNecessaryNachKnotenarme = toArray(verkehrsbeziehungen)
-      .filter((verkehrsbeziehungen) => verkehrsbeziehungen.von === armNummer)
-      .map((verkehrsbeziehungen) => verkehrsbeziehungen.nach);
-
-    const nachInCsvWithoutRequestedNach = difference(
-      allInCsvExistingNach,
-      allNecessaryNachKnotenarme
-    );
-
-    if (!isEmpty(nachInCsvWithoutRequestedNach)) {
-      return `In der CSV-Datei sind folgende Zielknotenarme (nach) existent die keinen angeforderten Zielknotenarm entsprechen: ${nachInCsvWithoutRequestedNach}`;
     }
     return "";
   }
@@ -194,7 +171,6 @@ export function useKfzVerkehrValidationUtils() {
     validateNachValueForKreisverkehr,
     validateNachValueForKreuzung,
     validateAllNachIntervallsAreExistent,
-    validateNoUneccesaryNachIntervallsArExistent,
     validateNachOccurrence,
     validateNachValue,
     validateStrassenseiteRichtungOccurrence,
