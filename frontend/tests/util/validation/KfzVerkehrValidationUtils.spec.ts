@@ -85,6 +85,78 @@ describe("useKfzVerkehrValidationUtils", () => {
     });
   });
 
+  describe("validateAllNachIntervallsAreExistent", () => {
+    it("returns empty when all necessary nach are present in csv data", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;2", "11;3", "12;2"];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+      ];
+      expect(
+        utils.validateAllNachIntervallsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        )
+      ).toBe("");
+    });
+
+    it("returns error listing missing nach values", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;2"]; // missing 3
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+      ];
+      const result = utils.validateAllNachIntervallsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        verkehrsbeziehungen
+      );
+      expect(result).toBeTypeOf("string");
+      expect(result).toContain("Für folgende Zielknotenarme");
+      expect(result).toContain("3");
+    });
+  });
+
+  describe("validateNoUneccesaryNachIntervallsArExistent", () => {
+    it("returns empty when csv contains only requested nach values", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;2", "11;3"];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+      ];
+      expect(
+        utils.validateNoUneccesaryNachIntervallsArExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        )
+      ).toBe("");
+    });
+
+    it("returns error when csv contains nach values not requested", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;2", "11;99"];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+      ];
+      const result = utils.validateNoUneccesaryNachIntervallsArExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        verkehrsbeziehungen
+      );
+      expect(result).toBeTypeOf("string");
+      expect(result).toContain(
+        "In der CSV-Datei sind folgende Zielknotenarme (nach) existent"
+      );
+      expect(result).toContain("99");
+    });
+  });
+
   describe("validateNachValueForKreuzung", () => {
     it("returns undefined when a matching verkehrsbeziehung exists (trim and parse)", () => {
       const verkehrsbeziehungen = [{ von: 1, nach: 2 } as VerkehrsbeziehungDTO];
