@@ -423,46 +423,15 @@ function checkUploadedFiledata(
 
   const csvDataWithoutHeader = csvData.slice(3, csvData.length);
 
-  if (zaehlung.value.zaehlart === Zaehlart.QJS) {
-    const nachAndStrassenseiteIntervallsAreExistent =
-      fussverkehrValidationUtils.validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
-        armNummer,
-        csvDataWithoutHeader,
-        zaehlung.value.verkehrsbeziehungen
-      );
-    if (!isEmpty(nachAndStrassenseiteIntervallsAreExistent)) {
-      return nachAndStrassenseiteIntervallsAreExistent;
-    }
-  } else if (zaehlung.value.zaehlart === Zaehlart.FJS) {
-    const strassenseiteAndRichtungIntervallsAreExistent =
-      fussverkehrValidationUtils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
-        armNummer,
-        csvDataWithoutHeader,
-        zaehlung.value.laengsverkehr
-      );
-    if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
-      return strassenseiteAndRichtungIntervallsAreExistent;
-    }
-  } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
-    const strassenseiteAndRichtungIntervallsAreExistent =
-      fussverkehrValidationUtils.validateRequiredRichtungIntervallsForFjsAreExistent(
-        armNummer,
-        csvDataWithoutHeader,
-        zaehlung.value.querungsverkehr
-      );
-    if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
-      return strassenseiteAndRichtungIntervallsAreExistent;
-    }
-  } else {
-    const nachIntervallsAreExistent =
-      kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistent(
-        armNummer,
-        csvDataWithoutHeader,
-        zaehlung.value.verkehrsbeziehungen
-      );
-    if (!isEmpty(nachIntervallsAreExistent)) {
-      return nachIntervallsAreExistent;
-    }
+  // Prüfen ob für die in der beauftragten Zählung angeforderten Richtungsinformationen Intervalle existieren.
+  const intervallsWithRequiredRichtungsinformationAreExistent =
+    validationUtils.validateIntervallsWithRequiredRichtungsinformationAreExistent(
+      armNummer,
+      csvDataWithoutHeader,
+      zaehlung.value
+    );
+  if (!isEmpty(intervallsWithRequiredRichtungsinformationAreExistent)) {
+    return intervallsWithRequiredRichtungsinformationAreExistent;
   }
 
   // Prüfung auf mehrfach vorhandene Intervallnummern
