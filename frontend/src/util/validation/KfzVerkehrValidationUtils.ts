@@ -61,7 +61,7 @@ export function useKfzVerkehrValidationUtils() {
     );
 
     if (!isEmpty(inCsvMissingNach)) {
-      return `Für folgende Zielknotenarme sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNach}`;
+      return `Für folgende Zielknotenarme (nach) sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNach}`;
     }
     return "";
   }

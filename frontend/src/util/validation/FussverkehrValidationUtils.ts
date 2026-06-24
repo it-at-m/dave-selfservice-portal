@@ -127,7 +127,7 @@ export function useFussverkehrValidationUtils() {
     );
 
     if (!isEmpty(inCsvMissingNachAndStrassenseite)) {
-      return `Für folgende Nach- und Straßenseiteninformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNachAndStrassenseite}`;
+      return `Für folgende Zielknotenarm- (nach) und Straßenseiteninformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNachAndStrassenseite}`;
     }
     return "";
   }
