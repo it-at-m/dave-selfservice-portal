@@ -434,9 +434,25 @@ function checkUploadedFiledata(
       return nachAndStrassenseiteIntervallsAreExistent;
     }
   } else if (zaehlung.value.zaehlart === Zaehlart.FJS) {
-    // TBD
+    const strassenseiteAndRichtungIntervallsAreExistent =
+      fussverkehrValidationUtils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        zaehlung.value.laengsverkehr
+      );
+    if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
+      return strassenseiteAndRichtungIntervallsAreExistent;
+    }
   } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
-    // TBD
+    const strassenseiteAndRichtungIntervallsAreExistent =
+      fussverkehrValidationUtils.validateRequiredRichtungIntervallsForFjsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        zaehlung.value.querungsverkehr
+      );
+    if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
+      return strassenseiteAndRichtungIntervallsAreExistent;
+    }
   } else {
     const nachIntervallsAreExistent =
       kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistent(

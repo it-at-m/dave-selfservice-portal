@@ -1,4 +1,6 @@
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
 import { difference, isEmpty, parseInt, toArray } from "lodash";
 
@@ -126,6 +128,65 @@ export function useFussverkehrValidationUtils() {
 
     if (!isEmpty(inCsvMissingNachAndStrassenseite)) {
       return `Für folgende Nach- und Straßenseiteninformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNachAndStrassenseite}`;
+    }
+    return "";
+  }
+
+  function validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
+    armNummer: number,
+    csvDataWithoutHeader: Array<string>,
+    laengsverkehre: Array<LaengsverkehrDTO>
+  ) {
+    const strassenseiteAndRichtungOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => `${csvLine[2]} ${csvLine[3]}`);
+    const allInCsvExistingStrassenseiteAndRichtung = Array.from(
+      new Set(strassenseiteAndRichtungOfEachLine)
+    );
+
+    const allNecessaryStrassenseiteAndRichtung = toArray(laengsverkehre)
+      .filter((laengsverkehr) => laengsverkehr.knotenarm === armNummer)
+      .map(
+        (laengsverkehr) =>
+          `${laengsverkehr.strassenseite} ${laengsverkehr.richtung}`
+      );
+
+    const inCsvMissingNachAndStrassenseite = difference(
+      allNecessaryStrassenseiteAndRichtung,
+      allInCsvExistingStrassenseiteAndRichtung
+    );
+
+    if (!isEmpty(inCsvMissingNachAndStrassenseite)) {
+      return `Für folgende Straßenseite- und Richtungsinformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNachAndStrassenseite}`;
+    }
+    return "";
+  }
+
+  function validateRequiredRichtungIntervallsForFjsAreExistent(
+    armNummer: number,
+    csvDataWithoutHeader: Array<string>,
+    querungsverkehre: Array<QuerungsverkehrDTO>
+  ) {
+    const richtungOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => `${csvLine[3]}`);
+    const allInCsvExistingRichtung = Array.from(new Set(richtungOfEachLine));
+
+    const allNecessaryRichtung = toArray(querungsverkehre)
+      .filter((querungsverkehr) => querungsverkehr.knotenarm === armNummer)
+      .map((querungsverkehr) => `${querungsverkehr.richtung}`);
+
+    const inCsvMissingNachAndStrassenseite = difference(
+      allNecessaryRichtung,
+      allInCsvExistingRichtung
+    );
+
+    if (!isEmpty(inCsvMissingNachAndStrassenseite)) {
+      return `Für folgende Richtungsinformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNachAndStrassenseite}`;
     }
     return "";
   }
@@ -276,6 +337,8 @@ export function useFussverkehrValidationUtils() {
     validateNachValue,
     validateStrassenseiteOccurrence,
     validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent,
+    validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent,
+    validateRequiredRichtungIntervallsForFjsAreExistent,
     validateStrassenseiteValue,
     validateRichtungOccurrence,
     validateRichtungValue,
