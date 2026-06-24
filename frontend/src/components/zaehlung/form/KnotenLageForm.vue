@@ -423,21 +423,29 @@ function checkUploadedFiledata(
 
   const csvDataWithoutHeader = csvData.slice(3, csvData.length);
 
-  if (
-    zaehlung.value.zaehlart === Zaehlart.QJS ||
-    zaehlung.value.zaehlart === Zaehlart.FJS ||
-    zaehlung.value.zaehlart === Zaehlart.QU
-  ) {
-    // TBD
-  } else {
-    const allNachIntervallsAreExistent =
-      kfzVerkehrValidationUtils.validateAllRequiredNachIntervallsAreExistent(
+  if (zaehlung.value.zaehlart === Zaehlart.QJS) {
+    const nachAndStrassenseiteIntervallsAreExistent =
+      fussverkehrValidationUtils.validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
         armNummer,
         csvDataWithoutHeader,
         zaehlung.value.verkehrsbeziehungen
       );
-    if (!isEmpty(allNachIntervallsAreExistent)) {
-      return allNachIntervallsAreExistent;
+    if (!isEmpty(nachAndStrassenseiteIntervallsAreExistent)) {
+      return nachAndStrassenseiteIntervallsAreExistent;
+    }
+  } else if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+    // TBD
+  } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
+    // TBD
+  } else {
+    const nachIntervallsAreExistent =
+      kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        zaehlung.value.verkehrsbeziehungen
+      );
+    if (!isEmpty(nachIntervallsAreExistent)) {
+      return nachIntervallsAreExistent;
     }
   }
 

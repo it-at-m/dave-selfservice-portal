@@ -1,3 +1,7 @@
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+
+import { difference, isEmpty, parseInt, toArray } from "lodash";
+
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Richtung from "@/types/enum/Richtung";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
@@ -90,6 +94,40 @@ export function useFussverkehrValidationUtils() {
         return `Die Strassenseite ist ungültig: ${strassenseite}.`;
       }
     }
+  }
+
+  function validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
+    armNummer: number,
+    csvDataWithoutHeader: Array<string>,
+    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+  ) {
+    const nachAndStrassenseiteOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => `${csvLine[1]} ${csvLine[2]}`);
+    const allInCsvExistingNachAndStrassenseite = Array.from(
+      new Set(nachAndStrassenseiteOfEachLine)
+    );
+
+    const allNecessaryNachAndStrassenseiteKnotenarme = toArray(
+      verkehrsbeziehungen
+    )
+      .filter((verkehrsbeziehung) => verkehrsbeziehung.von === armNummer)
+      .map(
+        (verkehrsbeziehung) =>
+          `${verkehrsbeziehung.nach} ${verkehrsbeziehung.strassenseite}`
+      );
+
+    const inCsvMissingNachAndStrassenseite = difference(
+      allNecessaryNachAndStrassenseiteKnotenarme,
+      allInCsvExistingNachAndStrassenseite
+    );
+
+    if (!isEmpty(inCsvMissingNachAndStrassenseite)) {
+      return `Für folgende Nach- und Straßenseiteninformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNachAndStrassenseite}`;
+    }
+    return "";
   }
 
   /**
@@ -237,6 +275,7 @@ export function useFussverkehrValidationUtils() {
     validateNachOccurrence,
     validateNachValue,
     validateStrassenseiteOccurrence,
+    validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent,
     validateStrassenseiteValue,
     validateRichtungOccurrence,
     validateRichtungValue,
