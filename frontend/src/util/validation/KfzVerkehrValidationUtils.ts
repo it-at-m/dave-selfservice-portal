@@ -39,7 +39,7 @@ export function useKfzVerkehrValidationUtils() {
     }
   }
 
-  function validateAllNachIntervallsAreExistent(
+  function validateAllRequiredNachIntervallsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
     verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
@@ -170,7 +170,7 @@ export function useKfzVerkehrValidationUtils() {
     validateVerkehrsbeziehungForKreisverkehr,
     validateNachValueForKreisverkehr,
     validateNachValueForKreuzung,
-    validateAllNachIntervallsAreExistent,
+    validateAllRequiredNachIntervallsAreExistent,
     validateNachOccurrence,
     validateNachValue,
     validateStrassenseiteRichtungOccurrence,

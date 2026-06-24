@@ -431,7 +431,7 @@ function checkUploadedFiledata(
     // TBD
   } else {
     const allNachIntervallsAreExistent =
-      kfzVerkehrValidationUtils.validateAllNachIntervallsAreExistent(
+      kfzVerkehrValidationUtils.validateAllRequiredNachIntervallsAreExistent(
         armNummer,
         csvDataWithoutHeader,
         zaehlung.value.verkehrsbeziehungen

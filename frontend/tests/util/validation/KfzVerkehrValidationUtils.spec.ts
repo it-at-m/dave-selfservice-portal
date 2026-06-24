@@ -84,7 +84,7 @@ describe("useKfzVerkehrValidationUtils", () => {
     });
   });
 
-  describe("validateAllNachIntervallsAreExistent", () => {
+  describe("validateAllRequiredNachIntervallsAreExistent", () => {
     it("returns empty when all necessary nach are present in csv data", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["10;2", "11;3", "12;2"];
@@ -93,7 +93,7 @@ describe("useKfzVerkehrValidationUtils", () => {
         { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
       ];
       expect(
-        utils.validateAllNachIntervallsAreExistent(
+        utils.validateAllRequiredNachIntervallsAreExistent(
           armNummer,
           csvDataWithoutHeader,
           verkehrsbeziehungen
@@ -108,7 +108,7 @@ describe("useKfzVerkehrValidationUtils", () => {
         { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
         { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
       ];
-      const result = utils.validateAllNachIntervallsAreExistent(
+      const result = utils.validateAllRequiredNachIntervallsAreExistent(
         armNummer,
         csvDataWithoutHeader,
         verkehrsbeziehungen
