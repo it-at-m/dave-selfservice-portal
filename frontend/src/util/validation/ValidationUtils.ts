@@ -497,12 +497,23 @@ export function useValidationUtils() {
         return strassenseiteAndRichtungIntervallsAreExistent;
       }
     } else {
-      const nachIntervallsAreExistent =
-        kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistent(
-          armNummer,
-          csvDataWithoutHeader,
-          zaehlung.verkehrsbeziehungen
-        );
+      // KFZ-Verkehr
+      let nachIntervallsAreExistent;
+      if (zaehlung.kreisverkehr) {
+        nachIntervallsAreExistent =
+          kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistentForKreisverkehr(
+            armNummer,
+            csvDataWithoutHeader,
+            zaehlung.verkehrsbeziehungen
+          );
+      } else {
+        nachIntervallsAreExistent =
+          kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistent(
+            armNummer,
+            csvDataWithoutHeader,
+            zaehlung.verkehrsbeziehungen
+          );
+      }
       if (!isEmpty(nachIntervallsAreExistent)) {
         return nachIntervallsAreExistent;
       }

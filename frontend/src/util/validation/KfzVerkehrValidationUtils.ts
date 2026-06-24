@@ -66,6 +66,45 @@ export function useKfzVerkehrValidationUtils() {
     return "";
   }
 
+  function validateRequiredNachIntervallsAreExistentForKreisverkehr(
+    armNummer: number,
+    csvDataWithoutHeader: Array<string>,
+    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+  ): string {
+    const nachOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine[1]);
+    const allInCsvExistingNach = Array.from(new Set(nachOfEachLine));
+
+    const allNecessaryNachKnotenarme = toArray(verkehrsbeziehungen)
+      .filter((verkehrsbeziehung) => verkehrsbeziehung.von === armNummer)
+      .map((verkehrsbeziehung) => {
+        if (verkehrsbeziehung.hinein) {
+          return "e";
+        }
+        if (verkehrsbeziehung.heraus) {
+          return "a";
+        }
+        if (verkehrsbeziehung.vorbei) {
+          return "v";
+        } else {
+          return "";
+        }
+      });
+
+    const inCsvMissingNach = difference(
+      allNecessaryNachKnotenarme,
+      allInCsvExistingNach
+    );
+
+    if (!isEmpty(inCsvMissingNach)) {
+      return `Für folgende Zielknotenarme (nach) sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNach}`;
+    }
+    return "";
+  }
+
   /**
    * Prüft auf passende Verkehrsbeziehungen.
    *
@@ -171,6 +210,7 @@ export function useKfzVerkehrValidationUtils() {
     validateNachValueForKreisverkehr,
     validateNachValueForKreuzung,
     validateRequiredNachIntervallsAreExistent,
+    validateRequiredNachIntervallsAreExistentForKreisverkehr,
     validateNachOccurrence,
     validateNachValue,
     validateStrassenseiteRichtungOccurrence,
