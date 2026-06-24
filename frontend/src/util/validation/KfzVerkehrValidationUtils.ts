@@ -39,6 +39,13 @@ export function useKfzVerkehrValidationUtils() {
     }
   }
 
+  /**
+   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   */
   function validateRequiredNachIntervallsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
@@ -66,6 +73,13 @@ export function useKfzVerkehrValidationUtils() {
     return "";
   }
 
+  /**
+   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   */
   function validateRequiredNachIntervallsAreExistentForKreisverkehr(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,

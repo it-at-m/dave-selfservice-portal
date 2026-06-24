@@ -455,7 +455,7 @@ export function useValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei die Intervalle entsprechend der angeforderten Richtungsinformation entsprechend des Knotenarms vorhanden sind.
+   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.

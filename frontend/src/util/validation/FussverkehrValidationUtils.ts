@@ -98,6 +98,13 @@ export function useFussverkehrValidationUtils() {
     }
   }
 
+  /**
+   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   */
   function validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
@@ -132,6 +139,13 @@ export function useFussverkehrValidationUtils() {
     return "";
   }
 
+  /**
+   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   */
   function validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
@@ -164,6 +178,13 @@ export function useFussverkehrValidationUtils() {
     return "";
   }
 
+  /**
+   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   */
   function validateRequiredRichtungIntervallsForFjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
