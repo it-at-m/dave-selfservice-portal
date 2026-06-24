@@ -119,6 +119,62 @@ describe("useKfzVerkehrValidationUtils", () => {
     });
   });
 
+  describe("validateRequiredNachIntervallsAreExistentForKreisverkehr", () => {
+    it("returns empty when all necessary nach codes are present in csv data", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;e", "11;v", "12;e"];
+      const verkehrsbeziehungen = [
+        {
+          von: 1,
+          hinein: true,
+          vorbei: false,
+          heraus: false,
+        } as VerkehrsbeziehungDTO,
+        {
+          von: 1,
+          hinein: false,
+          vorbei: true,
+          heraus: false,
+        } as VerkehrsbeziehungDTO,
+      ];
+      expect(
+        utils.validateRequiredNachIntervallsAreExistentForKreisverkehr(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        )
+      ).toBe("");
+    });
+
+    it("returns error listing missing nach codes", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;e"]; // missing 'v'
+      const verkehrsbeziehungen = [
+        {
+          von: 1,
+          hinein: true,
+          vorbei: false,
+          heraus: false,
+        } as VerkehrsbeziehungDTO,
+        {
+          von: 1,
+          hinein: false,
+          vorbei: true,
+          heraus: false,
+        } as VerkehrsbeziehungDTO,
+      ];
+      const result =
+        utils.validateRequiredNachIntervallsAreExistentForKreisverkehr(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        );
+      expect(result).toBeTypeOf("string");
+      expect(result).toContain("Für folgende Zielknotenarme (nach)");
+      expect(result).toContain("v");
+    });
+  });
+
   describe("validateNachValueForKreuzung", () => {
     it("returns undefined when a matching verkehrsbeziehung exists (trim and parse)", () => {
       const verkehrsbeziehungen = [{ von: 1, nach: 2 } as VerkehrsbeziehungDTO];
