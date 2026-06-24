@@ -425,7 +425,7 @@ function checkUploadedFiledata(
 
   // Prüfen ob für die in der beauftragten Zählung angeforderten Richtungsinformationen Intervalle existieren.
   const intervallsWithRequiredRichtungsinformationAreExistent =
-    validationUtils.validateIntervallsWithRequiredRichtungsinformationAreExistent(
+    validateIntervallsWithRequiredRichtungsinformationAreExistent(
       armNummer,
       csvDataWithoutHeader,
       zaehlung.value
@@ -680,6 +680,73 @@ function checkFussverkehrData(
       filename
     );
 
+  return "";
+}
+
+/**
+ * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+ *
+ * @param armNummer des Knotenarms
+ * @param csvDataWithoutHeader zum prüfen.
+ * @param zaehlung für die angeforderten Richtungsinformationen.
+ */
+function validateIntervallsWithRequiredRichtungsinformationAreExistent(
+  armNummer: number,
+  csvDataWithoutHeader: Array<string>,
+  zaehlung: ZaehlungDTO
+): string {
+  if (zaehlung.zaehlart === Zaehlart.QJS) {
+    const nachAndStrassenseiteIntervallsAreExistent =
+      fussverkehrValidationUtils.validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        zaehlung.verkehrsbeziehungen
+      );
+    if (!isEmpty(nachAndStrassenseiteIntervallsAreExistent)) {
+      return nachAndStrassenseiteIntervallsAreExistent;
+    }
+  } else if (zaehlung.zaehlart === Zaehlart.FJS) {
+    const strassenseiteAndRichtungIntervallsAreExistent =
+      fussverkehrValidationUtils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        zaehlung.laengsverkehr
+      );
+    if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
+      return strassenseiteAndRichtungIntervallsAreExistent;
+    }
+  } else if (zaehlung.zaehlart === Zaehlart.QU) {
+    const strassenseiteAndRichtungIntervallsAreExistent =
+      fussverkehrValidationUtils.validateRequiredRichtungIntervallsForFjsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        zaehlung.querungsverkehr
+      );
+    if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
+      return strassenseiteAndRichtungIntervallsAreExistent;
+    }
+  } else {
+    // KFZ-Verkehr
+    let nachIntervallsAreExistent;
+    if (zaehlung.kreisverkehr) {
+      nachIntervallsAreExistent =
+        kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistentForKreisverkehr(
+          armNummer,
+          csvDataWithoutHeader,
+          zaehlung.verkehrsbeziehungen
+        );
+    } else {
+      nachIntervallsAreExistent =
+        kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          zaehlung.verkehrsbeziehungen
+        );
+    }
+    if (!isEmpty(nachIntervallsAreExistent)) {
+      return nachIntervallsAreExistent;
+    }
+  }
   return "";
 }
 

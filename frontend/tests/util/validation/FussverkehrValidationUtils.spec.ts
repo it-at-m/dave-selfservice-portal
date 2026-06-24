@@ -1,6 +1,7 @@
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+
 import { beforeEach, describe, expect, it } from "vitest";
 
-import Fahrzeug from "@/types/enum/Fahrzeug";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Richtung from "@/types/enum/Richtung";
 import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
@@ -111,6 +112,117 @@ describe("FussverkehrValidationUtils", () => {
       // If it's a valid mapping and not incompatible with arm 2, undefined expected
       // In the unlikely case of arm incompatibility, at least no "ungültig text" message should be present.
       expect(err === undefined || !err?.includes("ist ungültig:")).toBeTruthy();
+    });
+  });
+
+  describe("validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent", () => {
+    it("returns empty when all required nach+strassenseite combinations are present", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;2;N;", "1;3;S;"];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2, strassenseite: "N" } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3, strassenseite: "S" } as VerkehrsbeziehungDTO,
+      ];
+      expect(
+        utils.validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        )
+      ).toBe("");
+    });
+
+    it("returns error when a required nach+strassenseite combination is missing", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;2;N;"]; // missing 3 S
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2, strassenseite: "N" } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3, strassenseite: "S" } as VerkehrsbeziehungDTO,
+      ];
+      const res =
+        utils.validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "Für folgende Zielknotenarm- (nach) und Straßenseiteninformationen"
+      );
+      expect(res).toContain("3 S");
+    });
+  });
+
+  describe("validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent", () => {
+    it("returns empty when all required strassenseite+richtung combos are present", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;1;N;EIN", "1;1;S;AUS"];
+      const laengsverkehre = [
+        { knotenarm: 1, strassenseite: "N", richtung: "EIN" } as any,
+        { knotenarm: 1, strassenseite: "S", richtung: "AUS" } as any,
+      ];
+      expect(
+        utils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          laengsverkehre
+        )
+      ).toBe("");
+    });
+
+    it("returns error when a required strassenseite+richtung combo is missing", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;1;N;EIN"]; // missing S AUS
+      const laengsverkehre = [
+        { knotenarm: 1, strassenseite: "N", richtung: "EIN" } as any,
+        { knotenarm: 1, strassenseite: "S", richtung: "AUS" } as any,
+      ];
+      const res =
+        utils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          laengsverkehre
+        );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "Für folgende Straßenseite- und Richtungsinformationen"
+      );
+      expect(res).toContain("S AUS");
+    });
+  });
+
+  describe("validateRequiredRichtungIntervallsForFjsAreExistent", () => {
+    it("returns empty when all required richtung values are present", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;1;N;EIN", "1;1;S;AUS"];
+      const querungsverkehre = [
+        { knotenarm: 1, richtung: "EIN" } as any,
+        { knotenarm: 1, richtung: "AUS" } as any,
+      ];
+      expect(
+        utils.validateRequiredRichtungIntervallsForFjsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          querungsverkehre
+        )
+      ).toBe("");
+    });
+
+    it("returns error when a required richtung is missing", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;1;N;EIN"]; // missing AUS
+      const querungsverkehre = [
+        { knotenarm: 1, richtung: "EIN" } as any,
+        { knotenarm: 1, richtung: "AUS" } as any,
+      ];
+      const res = utils.validateRequiredRichtungIntervallsForFjsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        querungsverkehre
+      );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain("Für folgende Richtungsinformationen");
+      expect(res).toContain("AUS");
     });
   });
 

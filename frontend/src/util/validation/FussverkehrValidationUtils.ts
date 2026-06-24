@@ -2,7 +2,7 @@ import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
 import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
-import { difference, isEmpty, parseInt, toArray } from "lodash";
+import { difference, isEmpty, toArray } from "lodash";
 
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Richtung from "@/types/enum/Richtung";
@@ -144,7 +144,7 @@ export function useFussverkehrValidationUtils() {
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
-   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   * @param laengsverkehre für die angeforderten Richtungsinformationen.
    */
   function validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
     armNummer: number,
@@ -183,7 +183,7 @@ export function useFussverkehrValidationUtils() {
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
-   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   * @param querungsverkehre für die angeforderten Richtungsinformationen.
    */
   function validateRequiredRichtungIntervallsForFjsAreExistent(
     armNummer: number,

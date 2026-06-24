@@ -9,8 +9,6 @@ import {
   zaehldauerIntervallnummern,
   zaehldauerText,
 } from "@/types/enum/Zaehldauer";
-import { useFussverkehrValidationUtils } from "@/util/validation/FussverkehrValidationUtils";
-import { useKfzVerkehrValidationUtils } from "@/util/validation/KfzVerkehrValidationUtils";
 
 export function useValidationUtils() {
   const SEPARATOR = ";";
@@ -22,10 +20,6 @@ export function useValidationUtils() {
     "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss";
 
   const COLUMN_COUNT = EXPECTED_ZAEHLDATEN_HEADER.split(SEPARATOR).length;
-
-  const fussverkehrValidationUtils = useFussverkehrValidationUtils();
-
-  const kfzVerkehrValidationUtils = useKfzVerkehrValidationUtils();
 
   /**
    * Prüft, ob die Anzahl der übergebenen Zählwerte auch der Anzahl an erwarteten Zählwerte je Zeile entsprechen.
@@ -455,73 +449,6 @@ export function useValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
-   *
-   * @param armNummer des Knotenarms
-   * @param csvDataWithoutHeader zum prüfen.
-   * @param zaehlung für die angeforderten Richtungsinformationen.
-   */
-  function validateIntervallsWithRequiredRichtungsinformationAreExistent(
-    armNummer: number,
-    csvDataWithoutHeader: Array<string>,
-    zaehlung: ZaehlungDTO
-  ): string {
-    if (zaehlung.zaehlart === Zaehlart.QJS) {
-      const nachAndStrassenseiteIntervallsAreExistent =
-        fussverkehrValidationUtils.validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
-          armNummer,
-          csvDataWithoutHeader,
-          zaehlung.verkehrsbeziehungen
-        );
-      if (!isEmpty(nachAndStrassenseiteIntervallsAreExistent)) {
-        return nachAndStrassenseiteIntervallsAreExistent;
-      }
-    } else if (zaehlung.zaehlart === Zaehlart.FJS) {
-      const strassenseiteAndRichtungIntervallsAreExistent =
-        fussverkehrValidationUtils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
-          armNummer,
-          csvDataWithoutHeader,
-          zaehlung.laengsverkehr
-        );
-      if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
-        return strassenseiteAndRichtungIntervallsAreExistent;
-      }
-    } else if (zaehlung.zaehlart === Zaehlart.QU) {
-      const strassenseiteAndRichtungIntervallsAreExistent =
-        fussverkehrValidationUtils.validateRequiredRichtungIntervallsForFjsAreExistent(
-          armNummer,
-          csvDataWithoutHeader,
-          zaehlung.querungsverkehr
-        );
-      if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
-        return strassenseiteAndRichtungIntervallsAreExistent;
-      }
-    } else {
-      // KFZ-Verkehr
-      let nachIntervallsAreExistent;
-      if (zaehlung.kreisverkehr) {
-        nachIntervallsAreExistent =
-          kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistentForKreisverkehr(
-            armNummer,
-            csvDataWithoutHeader,
-            zaehlung.verkehrsbeziehungen
-          );
-      } else {
-        nachIntervallsAreExistent =
-          kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistent(
-            armNummer,
-            csvDataWithoutHeader,
-            zaehlung.verkehrsbeziehungen
-          );
-      }
-      if (!isEmpty(nachIntervallsAreExistent)) {
-        return nachIntervallsAreExistent;
-      }
-    }
-    return "";
-  }
-
-  /**
    * Die Methode gibt die Bewegungsinformation einer Zeile der CSV-Datei aus.
    * Der Rückgabewert beinhaltet die Daten der Spalten "nach;Strassenseite;Richtung".
    * @param csvLine
@@ -556,6 +483,5 @@ export function useValidationUtils() {
     checkForAlignmentOfIntervallsAccordingZaehldauer,
     getBewegungsinformationFromCsvLine,
     validateZaehlwerteOccurrence,
-    validateIntervallsWithRequiredRichtungsinformationAreExistent,
   };
 }
