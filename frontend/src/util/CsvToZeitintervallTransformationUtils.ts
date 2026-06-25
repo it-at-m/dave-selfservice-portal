@@ -497,7 +497,6 @@ export function useCsvToZeitintervallTransformationUtils() {
     const intervall: ZeitintervallDTO = {} as ZeitintervallDTO;
     intervall.startUhrzeit = startEndeOfIntervallnummer.startUhrzeit;
     intervall.endeUhrzeit = startEndeOfIntervallnummer.endeUhrzeit;
-    intervall.intervallnummer = parseInt(intervallNr);
     return intervall;
   }
 
