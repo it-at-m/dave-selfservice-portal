@@ -483,7 +483,7 @@ function checkVerkehrsbeziehungData(
   filename: string
 ): string {
   // Metadaten überspringen
-  if (csvLineIndex <= 3) {
+  if (csvLineIndex < 3) {
     return "";
   }
 
