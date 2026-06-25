@@ -356,6 +356,7 @@
 </template>
 
 <script setup lang="ts">
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
@@ -364,7 +365,6 @@ import { computed, onMounted, ref, watch } from "vue";
 
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 
 interface Props {
   height: string;
@@ -755,4 +755,3 @@ function getStreetname(knotenarm: KnotenarmDTO | undefined): Array<string> {
   return pieces;
 }
 </script>
-
