@@ -862,15 +862,26 @@ function readFiles() {
                     // Damit nacheinander ein File mit identischem Namen hocheladen werden
                     // kann, wird immer der FileInput zurückgesetzt
                     resetFileInput.value = Math.floor(Math.random() * 10001);
-                    if (successfull) {
-                      snackbarStore.showSuccess(
-                        `Alle Dateien konnten einem Knotenarm zugeordnet werden.`
+                    // wenn zu wenig Files hochgeladen wurden, dann Abbrechen
+                    const knotenarmWithoutFile = zaehlung.value.knotenarme.some(
+                      (kn) => !kn.filename
+                    );
+                    if (!isNil(files.value) && knotenarmWithoutFile) {
+                      snackbarStore.showError(
+                        `Zu wenig Dateien`,
+                        `Es muss pro Knotenarm genau eine Datei hochgeladen werden.`
                       );
                     } else {
-                      snackbarStore.showError(
-                        `Folgende Dateien wurden abgelehnt:`,
-                        errorText
-                      );
+                      if (successfull) {
+                        snackbarStore.showSuccess(
+                          `Alle Dateien konnten einem Knotenarm zugeordnet werden.`
+                        );
+                      } else {
+                        snackbarStore.showError(
+                          `Folgende Dateien wurden abgelehnt:`,
+                          errorText
+                        );
+                      }
                     }
                   }
                 }
