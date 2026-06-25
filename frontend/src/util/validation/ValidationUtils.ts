@@ -383,7 +383,7 @@ export function useValidationUtils() {
     splittedLine: Array<string>
   ) {
     if (requestedKategorien.includes(Fahrzeug.PKW.valueOf())) {
-      if (isEmpty(splittedLine[4])) {
+      if (isEmpty(trim(splittedLine[4]))) {
         return `Der Zählwert von "PKW" darf nicht leer sein.`;
       }
     } else {
@@ -392,7 +392,7 @@ export function useValidationUtils() {
       }
     }
     if (requestedKategorien.includes(Fahrzeug.LKW.valueOf())) {
-      if (isEmpty(splittedLine[5])) {
+      if (isEmpty(trim(splittedLine[5]))) {
         return `Der Zählwert von "LKW" darf nicht leer sein.`;
       }
     } else {
@@ -401,7 +401,7 @@ export function useValidationUtils() {
       }
     }
     if (requestedKategorien.includes(Fahrzeug.LZ.valueOf())) {
-      if (isEmpty(splittedLine[6])) {
+      if (isEmpty(trim(splittedLine[6]))) {
         return `Der Zählwert von "LZ" darf nicht leer sein.`;
       }
     } else {
@@ -410,7 +410,7 @@ export function useValidationUtils() {
       }
     }
     if (requestedKategorien.includes(Fahrzeug.BUS.valueOf())) {
-      if (isEmpty(splittedLine[7])) {
+      if (isEmpty(trim(splittedLine[7]))) {
         return `Der Zählwert von "BUS" darf nicht leer sein.`;
       }
     } else {
@@ -419,7 +419,7 @@ export function useValidationUtils() {
       }
     }
     if (requestedKategorien.includes(Fahrzeug.KRAD.valueOf())) {
-      if (isEmpty(splittedLine[8])) {
+      if (isEmpty(trim(splittedLine[8]))) {
         return `Der Zählwert von "KRAD" darf nicht leer sein.`;
       }
     } else {
@@ -428,7 +428,7 @@ export function useValidationUtils() {
       }
     }
     if (requestedKategorien.includes(Fahrzeug.RAD.valueOf())) {
-      if (isEmpty(splittedLine[9])) {
+      if (isEmpty(trim(splittedLine[9]))) {
         return `Der Zählwert von "RAD" darf nicht leer sein.`;
       }
     } else {
@@ -437,7 +437,7 @@ export function useValidationUtils() {
       }
     }
     if (requestedKategorien.includes(Fahrzeug.FUSS.valueOf())) {
-      if (isEmpty(splittedLine[10])) {
+      if (isEmpty(trim(splittedLine[10]))) {
         return `Der Zählwert von "FUSS" darf nicht leer sein.`;
       }
     } else {
