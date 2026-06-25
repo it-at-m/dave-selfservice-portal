@@ -99,7 +99,7 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
@@ -140,7 +140,7 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
@@ -179,7 +179,7 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
