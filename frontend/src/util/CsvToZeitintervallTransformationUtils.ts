@@ -78,11 +78,14 @@ export function useCsvToZeitintervallTransformationUtils() {
         knotenarm.filedata &&
         knotenarm.filedata.length > 0
       ) {
-        const knotenarmNr: string =
-          removeCsvHeaderAndRetrieveKnotenarmNr(knotenarm);
+        const knotenarmNr: string = knotenarm.filedata[1].split(SEPARATOR)[3];
+        const fileDataWithoutHeader = knotenarm.filedata.slice(
+          3,
+          knotenarm.filedata.length
+        );
 
         // Alle weiteren Zeilen enthalten Zähldaten
-        knotenarm.filedata.forEach((line: string) => {
+        fileDataWithoutHeader.forEach((line: string) => {
           if (line.trim().length === 0) {
             // skip Leerzeilen
           } else {
@@ -205,11 +208,14 @@ export function useCsvToZeitintervallTransformationUtils() {
         knotenarm.filedata &&
         knotenarm.filedata.length > 0
       ) {
-        const knotenarmNr: string =
-          removeCsvHeaderAndRetrieveKnotenarmNr(knotenarm);
+        const knotenarmNr: string = knotenarm.filedata[1].split(SEPARATOR)[3];
+        const fileDataWithoutHeader = knotenarm.filedata.slice(
+          3,
+          knotenarm.filedata.length
+        );
 
         // Alle weiteren Zeilen enthalten Zähldaten
-        knotenarm.filedata.forEach((line: string) => {
+        fileDataWithoutHeader.forEach((line: string) => {
           if (line.trim().length === 0) {
             // skip Leerzeilen
           } else {
@@ -333,11 +339,14 @@ export function useCsvToZeitintervallTransformationUtils() {
         knotenarm.filedata &&
         knotenarm.filedata.length > 0
       ) {
-        const knotenarmNr: string =
-          removeCsvHeaderAndRetrieveKnotenarmNr(knotenarm);
+        const knotenarmNr: string = knotenarm.filedata[1].split(SEPARATOR)[3];
+        const fileDataWithoutHeader = knotenarm.filedata.slice(
+          3,
+          knotenarm.filedata.length
+        );
 
         // Alle weiteren Zeilen enthalten Zähldaten
-        knotenarm.filedata.forEach((line: string) => {
+        fileDataWithoutHeader.forEach((line: string) => {
           if (line.trim().length === 0) {
             // skip Leerzeilen
           } else {
@@ -408,7 +417,7 @@ export function useCsvToZeitintervallTransformationUtils() {
    * @param arm Knotenarm mit den Daten der csv
    */
   function transformCsvDataToVerkehrsbeziehung(
-    arm: KnotenarmDTO
+    knotenarm: KnotenarmDTO
   ): Map<string, Array<ZeitintervallDTO>> {
     const verkehrsbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
       string,
@@ -419,10 +428,14 @@ export function useCsvToZeitintervallTransformationUtils() {
       Array<ZeitintervallDTO>
     >();
 
-    const knotenarmVon: string = removeCsvHeaderAndRetrieveKnotenarmNr(arm);
+    const knotenarmNr: string = knotenarm.filedata[1].split(SEPARATOR)[3];
+    const fileDataWithoutHeader = knotenarm.filedata.slice(
+      3,
+      knotenarm.filedata.length
+    );
 
     // Alle weiteren Zeilen enthalten Zähldaten
-    arm.filedata.forEach((line: string) => {
+    fileDataWithoutHeader.forEach((line: string) => {
       if (line.trim().length === 0) {
         // skip Leerzeilen
       } else {
@@ -465,23 +478,9 @@ export function useCsvToZeitintervallTransformationUtils() {
     });
 
     zeitintervalleProNach.forEach((value, key) => {
-      verkehrsbeziehungen.set(knotenarmVon + key, value);
+      verkehrsbeziehungen.set(knotenarmNr + key, value);
     });
     return verkehrsbeziehungen;
-  }
-
-  /**
-   * Entfernt den dreizeiligen CSV-Header und gibt die Knotenarmnummer aus dem Header zurück.
-   * @param knotenarm
-   */
-  function removeCsvHeaderAndRetrieveKnotenarmNr(
-    knotenarm: KnotenarmDTO
-  ): string {
-    // Ersten 3 Zeilen entfernen
-    knotenarm.filedata.shift(); // Meta-Header
-    const knotenarmNr: string = knotenarm.filedata.shift()!.split(SEPARATOR)[3];
-    knotenarm.filedata.shift(); // Zaehlung-Header
-    return knotenarmNr;
   }
 
   /**
