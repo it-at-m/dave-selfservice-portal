@@ -6,12 +6,16 @@
     v-model:zaehlung="zaehlung"
     :height="height"
     :width="width"
+    :clickable="false"
   />
   <querschnitt-je-strassenseite-form
     v-else-if="zaehlung.zaehlart === Zaehlart.QJS"
     v-model:zaehlung="zaehlung"
     :height="height"
     :width="width"
+    :is-knoten-lage-form-valid="true"
+    :clickable="false"
+    :show-streetnames="false"
   />
   <zaehlung-geometrie
     v-else

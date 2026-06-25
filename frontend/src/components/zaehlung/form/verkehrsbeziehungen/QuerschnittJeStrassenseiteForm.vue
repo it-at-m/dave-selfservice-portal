@@ -1,14 +1,15 @@
 <template>
   <v-sheet
-    :width="width"
+    width="100%"
     :height="height"
     :max-height="height"
     color="transparent"
     class="d-flex flex-row justify-center overflow-y-auto"
   >
     <svg
+      v-if="isKnotenLageFormValid"
       :height="height"
-      :width="width"
+      :width="height"
       viewBox="0 0 1400 1400"
       preserveAspectRatio="xMidYMid"
       fill-rule="evenodd"
@@ -16,12 +17,91 @@
       stroke-linejoin="round"
       xmlns="http://www.w3.org/2000/svg"
       xml:space="preserve"
+      :style="{ pointerEvents: clickable ? 'auto' : 'none' }"
     >
       <g
         id="querschnitt"
         :transform="rotateSvg"
       >
         <g id="description">
+          <g id="second_street">
+            <text
+              v-if="secondStreetname.length === 1 && showStreetnames"
+              id="singlerow2"
+              xml:space="preserve"
+              style="
+                font-style: normal;
+                font-variant: normal;
+                font-weight: normal;
+                font-stretch: normal;
+                font-size: 33.4058px;
+                font-family: sans-serif;
+                font-variant-ligatures: normal;
+                font-variant-caps: normal;
+                font-variant-numeric: normal;
+                font-variant-east-asian: normal;
+                text-align: start;
+                writing-mode: rl-tb;
+                direction: rtl;
+                text-anchor: start;
+                fill: #000000;
+                stroke-width: 39.1848;
+              "
+              x="1332.2212"
+              y="712.01141"
+            >
+              <tspan
+                id="tspan21"
+                style="stroke-width: 38.9194; unicode-bidi: plaintext"
+                x="1332.2212"
+                y="712.01141"
+              >
+                {{ secondStreetname[0] }}
+              </tspan>
+            </text>
+            <text
+              v-if="secondStreetname.length === 2 && showStreetnames"
+              id="multirow2"
+              xml:space="preserve"
+              style="
+                font-style: normal;
+                font-variant: normal;
+                font-weight: normal;
+                font-stretch: normal;
+                font-size: 33.4058px;
+                font-family: sans-serif;
+                font-variant-ligatures: normal;
+                font-variant-caps: normal;
+                font-variant-numeric: normal;
+                font-variant-east-asian: normal;
+                text-align: start;
+                writing-mode: rl-tb;
+                direction: rtl;
+                text-anchor: start;
+                fill: #000000;
+                stroke-width: 39.1848;
+              "
+              y="691.19336"
+              x="1332.2212"
+            >
+              <tspan
+                id="tspan17"
+                style="stroke-width: 39.1848; unicode-bidi: plaintext"
+                x="1332.2212"
+                y="691.19336"
+              >
+                {{ secondStreetname[0] }}
+              </tspan>
+              <tspan
+                id="tspan18"
+                style="stroke-width: 39.1848; unicode-bidi: plaintext"
+                x="1332.2212"
+                y="732.95062"
+              >
+                {{ secondStreetname[1] }}
+              </tspan>
+            </text>
+          </g>
           <g id="second_number">
             <ellipse
               id="ellipse13"
@@ -61,6 +141,84 @@
                 style="stroke-width: 52.2711"
               >
                 {{ secondNode?.nummer }}
+              </tspan>
+            </text>
+          </g>
+          <g id="first_street">
+            <text
+              v-if="firstStreetname.length === 1 && showStreetnames"
+              id="singlerow"
+              xml:space="preserve"
+              style="
+                font-style: normal;
+                font-variant: normal;
+                font-weight: normal;
+                font-stretch: normal;
+                font-size: 33.4058px;
+                font-family: sans-serif;
+                font-variant-ligatures: normal;
+                font-variant-caps: normal;
+                font-variant-numeric: normal;
+                font-variant-east-asian: normal;
+                text-align: start;
+                writing-mode: lr-tb;
+                direction: ltr;
+                text-anchor: start;
+                fill: #000000;
+                stroke-width: 39.1848;
+              "
+              x="68.368858"
+              y="712.17938"
+            >
+              <tspan
+                id="tspan15"
+                style="stroke-width: 39.1848"
+                x="68.368858"
+                y="712.17938"
+              >
+                {{ firstStreetname[0] }}
+              </tspan>
+            </text>
+            <text
+              v-if="firstStreetname.length === 2 && showStreetnames"
+              id="multirow"
+              xml:space="preserve"
+              style="
+                font-style: normal;
+                font-variant: normal;
+                font-weight: normal;
+                font-stretch: normal;
+                font-size: 33.4058px;
+                font-family: sans-serif;
+                font-variant-ligatures: normal;
+                font-variant-caps: normal;
+                font-variant-numeric: normal;
+                font-variant-east-asian: normal;
+                text-align: start;
+                writing-mode: lr-tb;
+                direction: ltr;
+                text-anchor: start;
+                fill: #000000;
+                stroke-width: 39.1848;
+              "
+              x="68.368858"
+              y="691.19336"
+            >
+              <tspan
+                id="tspan20"
+                style="stroke-width: 39.1848"
+                x="68.368858"
+                y="691.19336"
+              >
+                {{ firstStreetname[0] }}
+              </tspan>
+              <tspan
+                id="tspan1"
+                style="stroke-width: 39.1848"
+                x="68.368858"
+                y="732.95062"
+              >
+                {{ firstStreetname[1] }}
               </tspan>
             </text>
           </g>
@@ -179,11 +337,25 @@
         </g>
       </g>
     </svg>
+
+    <v-banner
+      v-else
+      lines="one"
+      width="100%"
+      text="Es wurden nicht exakt 2 gegenüberliegende Knotenarme ausgewählt."
+    >
+      <template #prepend>
+        <v-icon
+          icon="mdi-alert-decagram-outline"
+          size="36"
+          color="error"
+        />
+      </template>
+    </v-banner>
   </v-sheet>
 </template>
 
 <script setup lang="ts">
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
@@ -192,25 +364,31 @@ import { computed, onMounted, ref, watch } from "vue";
 
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 
 interface Props {
   height: string;
-  width: string;
+  isKnotenLageFormValid: boolean;
+  clickable: boolean;
+  showStreetnames?: boolean;
 }
-defineProps<Props>();
 
 const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
   required: true,
 });
 
+const props = withDefaults(defineProps<Props>(), {
+  clickable: true,
+  showStreetnames: true,
+});
+const clickable = computed(() => props.clickable);
+
 const activeColor = "#D50000";
 const passiveColor = "#9E9E9E";
 
-const selectedVerkehrsbeziehungen = computed<Array<VerkehrsbeziehungDTO>>(
-  () => {
-    return toArray(zaehlung.value.verkehrsbeziehungen);
-  }
-);
+const selectedVerkehrsbeziehungen = computed(() => {
+  return zaehlung.value.verkehrsbeziehungen;
+});
 
 const firstStreetname = ref<Array<string>>([]);
 const secondStreetname = ref<Array<string>>([]);
@@ -578,11 +756,3 @@ function getStreetname(knotenarm: KnotenarmDTO | undefined): Array<string> {
 }
 </script>
 
-<style scoped>
-/* SVG komplett un-klickbar machen (keine Click/Hover/Pointer-Ereignisse)
-Mit Hinblick auf Refactoring der SVGs in eine Bibliothek wurden hier die Click-Events NICHT entfernt.
-Dieses Skript wurde aus dem Adminportal übernommen.*/
-svg {
-  pointer-events: none;
-}
-</style>

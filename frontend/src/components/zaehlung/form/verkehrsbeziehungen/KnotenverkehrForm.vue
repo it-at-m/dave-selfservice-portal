@@ -16,6 +16,7 @@
       stroke-linejoin="round"
       xmlns="http://www.w3.org/2000/svg"
       xml:space="preserve"
+      :style="{ pointerEvents: clickable ? 'auto' : 'none' }"
     >
       <g
         id="nodes5To8"
@@ -1265,12 +1266,17 @@ import Zaehlart from "@/types/enum/Zaehlart";
 interface Props {
   height: string;
   width: string;
+  clickable: boolean;
 }
-defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), {
+  clickable: true,
+});
 
 const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
   required: true,
 });
+
+const clickable = computed(() => props.clickable);
 
 const activeColor = "#D50000";
 const passiveColor = "#9E9E9E";
