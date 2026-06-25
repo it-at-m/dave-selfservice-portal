@@ -2,12 +2,8 @@ import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
-import { mount, VueWrapper } from "@vue/test-utils";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, it } from "vitest";
-import { createVuetify } from "vuetify";
+import { describe, expect, it } from "vitest";
 
-import ZaehlungDialog from "@/components/zaehlung/ZaehlungDialog.vue";
 import Bewegungsrichtung from "@/types/enum/Bewegungsrichtung";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
@@ -15,38 +11,13 @@ import Status from "@/types/enum/Status";
 import Wetter from "@/types/enum/Wetter";
 import Zaehlart from "@/types/enum/Zaehlart";
 import Zaehldauer from "@/types/enum/Zaehldauer";
-import DefaultObjectCreator from "@/util/DefaultObjectCreator";
+import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
-const vuetify = createVuetify();
-
-global.ResizeObserver = class {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-};
+const csvToZeitintervallTransformationUtils =
+  useCsvToZeitintervallTransformationUtils();
 
 describe("prepareForSaveZaehlungFjs", () => {
-  let wrapper: VueWrapper;
-
-  beforeEach(() => {
-    const pinia = createPinia();
-    setActivePinia(pinia);
-
-    wrapper = mount(ZaehlungDialog, {
-      global: {
-        plugins: [vuetify, pinia],
-      },
-      props: {
-        modelValue: DefaultObjectCreator.createDefaultZaehlungDTO(),
-        showDialog: true,
-      },
-    });
-  });
-
   it("sollte FJS-Verkehr aus CSV-Datei mit Strassenseite und Richtung parsen", () => {
-    const instance = wrapper.vm as unknown as {
-      prepareForSaveZaehlungFjs: (zaehlung: ZaehlungDTO) => void;
-    };
     const zaehlung: ZaehlungDTO = {
       id: "2-test",
       entityVersion: 0,
@@ -174,7 +145,9 @@ describe("prepareForSaveZaehlungFjs", () => {
       unreadMessagesDienstleister: false,
     };
 
-    instance.prepareForSaveZaehlungFjs(zaehlung);
+    csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
+      zaehlung
+    );
 
     // Prüfen: 2 Laengsverkehrsrichtungen (O/EIN, W/AUS) wurden mit Daten gefüllt
     expect(zaehlung.laengsverkehr.length).toBe(8); // alle 8 wurden initialisiert

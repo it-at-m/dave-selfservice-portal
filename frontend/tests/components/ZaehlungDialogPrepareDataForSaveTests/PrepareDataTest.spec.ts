@@ -1,56 +1,27 @@
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
-import { mount, VueWrapper } from "@vue/test-utils";
-import { createPinia, setActivePinia } from "pinia";
-import { beforeEach, describe, expect, it } from "vitest";
-import { createVuetify } from "vuetify";
+import { describe, expect, it } from "vitest";
 
-import ZaehlungDialog from "@/components/zaehlung/ZaehlungDialog.vue";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import Wetter from "@/types/enum/Wetter";
 import Zaehlart from "@/types/enum/Zaehlart";
 import Zaehldauer from "@/types/enum/Zaehldauer";
-import DefaultObjectCreator from "@/util/DefaultObjectCreator";
+import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
-const vuetify = createVuetify();
-
-global.ResizeObserver = class {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-};
+const csvToZeitintervallTransformationUtils =
+  useCsvToZeitintervallTransformationUtils();
 
 describe("prepareForSaveZaehlung", () => {
-  let wrapper: VueWrapper;
-
-  beforeEach(() => {
-    const pinia = createPinia();
-    setActivePinia(pinia);
-
-    wrapper = mount(ZaehlungDialog, {
-      global: {
-        plugins: [vuetify, pinia],
-      },
-      props: {
-        modelValue: DefaultObjectCreator.createDefaultZaehlungDTO(),
-        showDialog: true,
-      },
-    });
-  });
-
   it("should properly transform CSV data into time intervals", () => {
-    const instance = wrapper.vm as unknown as {
-      prepareForSaveZaehlung: (zaehlung: ZaehlungDTO) => void;
-    };
     const zaehlung: ZaehlungDTO = {
       id: "1",
       entityVersion: 0,
       createdTime: "0",
       datum: "2026-03-10",
-      zaehlart: Zaehlart.FJS,
+      zaehlart: Zaehlart.N,
       punkt: { lat: "0", lon: "0" },
       projektNummer: "P123",
       projektName: "Project Name",
@@ -167,7 +138,9 @@ describe("prepareForSaveZaehlung", () => {
       unreadMessagesDienstleister: false,
     };
 
-    instance.prepareForSaveZaehlung(zaehlung);
+    csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
+      zaehlung
+    );
 
     expect(zaehlung.verkehrsbeziehungen).toBeDefined();
     expect(zaehlung.verkehrsbeziehungen.length).toBe(2);
