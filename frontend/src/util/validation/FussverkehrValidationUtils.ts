@@ -167,13 +167,13 @@ export function useFussverkehrValidationUtils() {
           `${laengsverkehr.strassenseite} ${laengsverkehr.richtung}`
       );
 
-    const inCsvMissingNachAndStrassenseite = difference(
+    const inCsvMissingStrassenseiteAndRichtung = difference(
       allNecessaryStrassenseiteAndRichtung,
       allInCsvExistingStrassenseiteAndRichtung
     );
 
-    if (!isEmpty(inCsvMissingNachAndStrassenseite)) {
-      return `Für folgende Straßenseite- und Richtungsinformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNachAndStrassenseite}`;
+    if (!isEmpty(inCsvMissingStrassenseiteAndRichtung)) {
+      return `Für folgende Straßenseite- und Richtungsinformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingStrassenseiteAndRichtung}`;
     }
     return "";
   }
@@ -201,13 +201,13 @@ export function useFussverkehrValidationUtils() {
       .filter((querungsverkehr) => querungsverkehr.knotenarm === armNummer)
       .map((querungsverkehr) => `${querungsverkehr.richtung}`);
 
-    const inCsvMissingNachAndStrassenseite = difference(
+    const inCsvMissingRichtung = difference(
       allNecessaryRichtung,
       allInCsvExistingRichtung
     );
 
-    if (!isEmpty(inCsvMissingNachAndStrassenseite)) {
-      return `Für folgende Richtungsinformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNachAndStrassenseite}`;
+    if (!isEmpty(inCsvMissingRichtung)) {
+      return `Für folgende Richtungsinformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingRichtung}`;
     }
     return "";
   }
