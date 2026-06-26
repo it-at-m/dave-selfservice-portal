@@ -1,4 +1,7 @@
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
 import { shallowMount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
@@ -65,9 +68,9 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
       zaehlung.zaehlart = Zaehlart.QJS;
       zaehlung.verkehrsbeziehungen = [
-        { von: 1, nach: 2, strassenseite: Himmelsrichtung.N } as any,
-        { von: 1, nach: 3, strassenseite: Himmelsrichtung.S } as any,
-      ];
+        { von: 1, nach: 2, strassenseite: Himmelsrichtung.N },
+        { von: 1, nach: 3, strassenseite: Himmelsrichtung.S },
+      ] as Array<VerkehrsbeziehungDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -89,9 +92,9 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
       zaehlung.zaehlart = Zaehlart.QJS;
       zaehlung.verkehrsbeziehungen = [
-        { von: 1, nach: 2, strassenseite: Himmelsrichtung.N } as any,
-        { von: 1, nach: 3, strassenseite: Himmelsrichtung.S } as any,
-      ];
+        { von: 1, nach: 2, strassenseite: Himmelsrichtung.N },
+        { von: 1, nach: 3, strassenseite: Himmelsrichtung.S },
+      ] as Array<VerkehrsbeziehungDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -118,13 +121,13 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
           knotenarm: 1,
           strassenseite: Himmelsrichtung.N,
           richtung: Bewegungsrichtung.EIN,
-        } as any,
+        },
         {
           knotenarm: 1,
           strassenseite: Himmelsrichtung.S,
           richtung: Bewegungsrichtung.AUS,
-        } as any,
-      ];
+        },
+      ] as Array<LaengsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -150,13 +153,13 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
           knotenarm: 1,
           strassenseite: Himmelsrichtung.N,
           richtung: Bewegungsrichtung.EIN,
-        } as any,
+        },
         {
           knotenarm: 1,
           strassenseite: Himmelsrichtung.S,
           richtung: Bewegungsrichtung.AUS,
-        } as any,
-      ];
+        },
+      ] as Array<LaengsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -181,16 +184,16 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
       zaehlung.zaehlart = Zaehlart.QU;
       zaehlung.querungsverkehr = [
-        { knotenarm: 1, richtung: Bewegungsrichtung.EIN } as any,
-        { knotenarm: 1, richtung: Bewegungsrichtung.AUS } as any,
-      ];
+        { knotenarm: 1, richtung: Himmelsrichtung.O },
+        { knotenarm: 1, richtung: Himmelsrichtung.W },
+      ] as Array<QuerungsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
       const vm: any = wrapper.vm;
       const csvDataWithoutHeader = [
-        `1;1;${Himmelsrichtung.N};${Bewegungsrichtung.EIN}`,
-        `2;1;${Himmelsrichtung.S};${Bewegungsrichtung.AUS}`,
+        `1;;;${Himmelsrichtung.W}`,
+        `1;;;${Himmelsrichtung.O}`,
       ];
       const res =
         vm.validateIntervallsWithRequiredRichtungsinformationAreExistent(
@@ -205,16 +208,14 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
       zaehlung.zaehlart = Zaehlart.QU;
       zaehlung.querungsverkehr = [
-        { knotenarm: 1, richtung: Bewegungsrichtung.EIN } as any,
-        { knotenarm: 1, richtung: Bewegungsrichtung.AUS } as any,
-      ];
+        { knotenarm: 1, richtung: Himmelsrichtung.N },
+        { knotenarm: 1, richtung: Himmelsrichtung.O },
+      ] as Array<QuerungsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
       const vm: any = wrapper.vm;
-      const csvDataWithoutHeader = [
-        `1;1;${Himmelsrichtung.N};${Bewegungsrichtung.EIN}`,
-      ];
+      const csvDataWithoutHeader = [`1;;;${Himmelsrichtung.N}`];
       const res =
         vm.validateIntervallsWithRequiredRichtungsinformationAreExistent(
           1,
@@ -223,7 +224,7 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
         );
       expect(res).toBeTypeOf("string");
       expect(res).toContain("Für folgende Richtungsinformationen");
-      expect(res).toContain(`${Bewegungsrichtung.AUS}`);
+      expect(res).toContain(`${Himmelsrichtung.O}`);
     });
 
     it("returns empty for KFZ when required nach intervalls are present", () => {
