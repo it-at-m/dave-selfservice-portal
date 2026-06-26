@@ -1,4 +1,6 @@
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
 import { beforeEach, describe, expect, it } from "vitest";
 
@@ -158,8 +160,16 @@ describe("FussverkehrValidationUtils", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["0;1;N;EIN", "1;1;S;AUS"];
       const laengsverkehre = [
-        { knotenarm: 1, strassenseite: "N", richtung: "EIN" } as any,
-        { knotenarm: 1, strassenseite: "S", richtung: "AUS" } as any,
+        {
+          knotenarm: 1,
+          strassenseite: "N",
+          richtung: "EIN",
+        } as LaengsverkehrDTO,
+        {
+          knotenarm: 1,
+          strassenseite: "S",
+          richtung: "AUS",
+        } as LaengsverkehrDTO,
       ];
       expect(
         utils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
@@ -174,8 +184,16 @@ describe("FussverkehrValidationUtils", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["0;1;N;EIN"]; // missing S AUS
       const laengsverkehre = [
-        { knotenarm: 1, strassenseite: "N", richtung: "EIN" } as any,
-        { knotenarm: 1, strassenseite: "S", richtung: "AUS" } as any,
+        {
+          knotenarm: 1,
+          strassenseite: "N",
+          richtung: "EIN",
+        } as LaengsverkehrDTO,
+        {
+          knotenarm: 1,
+          strassenseite: "S",
+          richtung: "AUS",
+        } as LaengsverkehrDTO,
       ];
       const res =
         utils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
@@ -196,8 +214,8 @@ describe("FussverkehrValidationUtils", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["0;;;W", "1;;;O"];
       const querungsverkehre = [
-        { knotenarm: 1, richtung: "O" } as any,
-        { knotenarm: 1, richtung: "W" } as any,
+        { knotenarm: 1, richtung: "O" } as QuerungsverkehrDTO,
+        { knotenarm: 1, richtung: "W" } as QuerungsverkehrDTO,
       ];
       expect(
         utils.validateRequiredRichtungIntervallsForQuAreExistent(
@@ -212,8 +230,8 @@ describe("FussverkehrValidationUtils", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["0;;;O"]; // missing AUS
       const querungsverkehre = [
-        { knotenarm: 1, richtung: "O" } as any,
-        { knotenarm: 1, richtung: "W" } as any,
+        { knotenarm: 1, richtung: "O" } as QuerungsverkehrDTO,
+        { knotenarm: 1, richtung: "W" } as QuerungsverkehrDTO,
       ];
       const res = utils.validateRequiredRichtungIntervallsForQuAreExistent(
         armNummer,
