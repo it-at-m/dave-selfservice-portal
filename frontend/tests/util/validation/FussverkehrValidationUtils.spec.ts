@@ -194,10 +194,10 @@ describe("FussverkehrValidationUtils", () => {
   describe("validateRequiredRichtungIntervallsForQuAreExistent", () => {
     it("returns empty when all required richtung values are present", () => {
       const armNummer = 1;
-      const csvDataWithoutHeader = ["0;1;N;EIN", "1;1;S;AUS"];
+      const csvDataWithoutHeader = ["0;;;W", "1;;;O"];
       const querungsverkehre = [
-        { knotenarm: 1, richtung: "EIN" } as any,
-        { knotenarm: 1, richtung: "AUS" } as any,
+        { knotenarm: 1, richtung: "O" } as any,
+        { knotenarm: 1, richtung: "W" } as any,
       ];
       expect(
         utils.validateRequiredRichtungIntervallsForQuAreExistent(
@@ -210,10 +210,10 @@ describe("FussverkehrValidationUtils", () => {
 
     it("returns error when a required richtung is missing", () => {
       const armNummer = 1;
-      const csvDataWithoutHeader = ["0;1;N;EIN"]; // missing AUS
+      const csvDataWithoutHeader = ["0;;;O"]; // missing AUS
       const querungsverkehre = [
-        { knotenarm: 1, richtung: "EIN" } as any,
-        { knotenarm: 1, richtung: "AUS" } as any,
+        { knotenarm: 1, richtung: "O" } as any,
+        { knotenarm: 1, richtung: "W" } as any,
       ];
       const res = utils.validateRequiredRichtungIntervallsForQuAreExistent(
         armNummer,
@@ -222,7 +222,7 @@ describe("FussverkehrValidationUtils", () => {
       );
       expect(res).toBeTypeOf("string");
       expect(res).toContain("Für folgende Richtungsinformationen");
-      expect(res).toContain("AUS");
+      expect(res).toContain("W");
     });
   });
 
