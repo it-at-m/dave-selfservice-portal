@@ -191,7 +191,7 @@ describe("FussverkehrValidationUtils", () => {
     });
   });
 
-  describe("validateRequiredRichtungIntervallsForFjsAreExistent", () => {
+  describe("validateRequiredRichtungIntervallsForQuAreExistent", () => {
     it("returns empty when all required richtung values are present", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["0;1;N;EIN", "1;1;S;AUS"];
@@ -200,7 +200,7 @@ describe("FussverkehrValidationUtils", () => {
         { knotenarm: 1, richtung: "AUS" } as any,
       ];
       expect(
-        utils.validateRequiredRichtungIntervallsForFjsAreExistent(
+        utils.validateRequiredRichtungIntervallsForQuAreExistent(
           armNummer,
           csvDataWithoutHeader,
           querungsverkehre
@@ -215,7 +215,7 @@ describe("FussverkehrValidationUtils", () => {
         { knotenarm: 1, richtung: "EIN" } as any,
         { knotenarm: 1, richtung: "AUS" } as any,
       ];
-      const res = utils.validateRequiredRichtungIntervallsForFjsAreExistent(
+      const res = utils.validateRequiredRichtungIntervallsForQuAreExistent(
         armNummer,
         csvDataWithoutHeader,
         querungsverkehre

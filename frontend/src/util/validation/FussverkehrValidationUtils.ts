@@ -185,7 +185,7 @@ export function useFussverkehrValidationUtils() {
    * @param csvDataWithoutHeader zum prüfen.
    * @param querungsverkehre für die angeforderten Richtungsinformationen.
    */
-  function validateRequiredRichtungIntervallsForFjsAreExistent(
+  function validateRequiredRichtungIntervallsForQuAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
     querungsverkehre: Array<QuerungsverkehrDTO>
@@ -359,7 +359,7 @@ export function useFussverkehrValidationUtils() {
     validateStrassenseiteOccurrence,
     validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent,
     validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent,
-    validateRequiredRichtungIntervallsForFjsAreExistent,
+    validateRequiredRichtungIntervallsForQuAreExistent,
     validateStrassenseiteValue,
     validateRichtungOccurrence,
     validateRichtungValue,

@@ -716,14 +716,14 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
       return strassenseiteAndRichtungIntervallsAreExistent;
     }
   } else if (zaehlung.zaehlart === Zaehlart.QU) {
-    const strassenseiteAndRichtungIntervallsAreExistent =
-      fussverkehrValidationUtils.validateRequiredRichtungIntervallsForFjsAreExistent(
+    const richtungIntervallsAreExistent =
+      fussverkehrValidationUtils.validateRequiredRichtungIntervallsForQuAreExistent(
         armNummer,
         csvDataWithoutHeader,
         zaehlung.querungsverkehr
       );
-    if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
-      return strassenseiteAndRichtungIntervallsAreExistent;
+    if (!isEmpty(richtungIntervallsAreExistent)) {
+      return richtungIntervallsAreExistent;
     }
   } else {
     // KFZ-Verkehr
