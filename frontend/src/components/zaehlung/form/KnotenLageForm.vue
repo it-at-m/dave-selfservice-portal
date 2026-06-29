@@ -8,11 +8,11 @@
     <v-card-text>
       <v-row dense>
         <v-col
-          cols="8"
-          sm="10"
+          cols="6"
+          sm="9"
         >
           <zaehlung-card-map
-            height="200px"
+            height="100%"
             width="100%"
             :lat-lng-zaehlstelle="coordsZaehlstelle"
             :lat-lng-zaehlung="coordsZaehlung"
@@ -20,23 +20,20 @@
           />
         </v-col>
         <v-col
-          cols="4"
-          sm="2"
+          cols="6"
+          sm="3"
         >
-          <zaehlung-geometrie
-            id="geo"
-            v-model="zaehlung.knotenarme"
+          <verkehr-form
+            v-model:zaehlung="zaehlung"
             height="100%"
             width="100%"
-            active-color="#1565C0"
-            passive-color="#EEEEEE"
           />
         </v-col>
       </v-row>
       <v-row dense>
         <v-col
-          cols="8"
-          sm="10"
+          cols="6"
+          sm="9"
         >
           <v-row
             dense
@@ -125,14 +122,14 @@
           </v-row>
         </v-col>
         <v-col
-          cols="4"
-          sm="2"
+          cols="6"
+          sm="3"
         >
           <v-data-table
-            v-if="isNotKreisverkehr && isNotZaehlartFjsOrQu"
+            v-if="isNotKreisverkehr"
             density="compact"
-            :headers="verkehrsbeziehungHeader as Array<any>"
-            :items="allVerkehrsbeziehungen"
+            :headers="verkehrsbeziehungenHeader"
+            :items="verkehrsbeziehungen"
             item-key="id"
             :items-per-page="-1"
             hide-default-footer
@@ -148,6 +145,8 @@
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
@@ -156,7 +155,7 @@ import { computed, ref } from "vue";
 
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
-import ZaehlungGeometrie from "@/components/zaehlung/ZaehlungGeometrie.vue";
+import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrForm.vue";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
@@ -230,36 +229,131 @@ const isZaehlungEditable = computed<boolean>(() => {
   return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
-const allVerkehrsbeziehungen = computed<Array<VerkehrsbeziehungDTO>>(() =>
-  toArray(zaehlung.value.verkehrsbeziehungen).sort(
-    VerkehrsbeziehungComparator.sortByActiveVonAndNach
-  )
-);
+const verkehrsbeziehungen = computed<
+  Array<VerkehrsbeziehungDTO | QuerungsverkehrDTO | LaengsverkehrDTO>
+>(() => {
+  const zaehlart = zaehlung.value?.zaehlart;
+
+  let source:
+    | Array<VerkehrsbeziehungDTO>
+    | Array<QuerungsverkehrDTO>
+    | Array<LaengsverkehrDTO>
+    | undefined;
+
+  if (zaehlart === Zaehlart.QU) {
+    source = zaehlung.value?.querungsverkehr as
+      | Array<QuerungsverkehrDTO>
+      | undefined;
+  } else if (zaehlart === Zaehlart.FJS) {
+    source = zaehlung.value?.laengsverkehr as
+      | Array<LaengsverkehrDTO>
+      | undefined;
+  } else {
+    source = zaehlung.value?.verkehrsbeziehungen as
+      | Array<VerkehrsbeziehungDTO>
+      | undefined;
+  }
+  // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
+  // anschließend sortieren
+  return zaehlart === Zaehlart.QU || zaehlart === Zaehlart.FJS
+    ? toArray(source).sort(
+        VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber
+      )
+    : toArray(source).sort(VerkehrsbeziehungComparator.sortByActiveVonAndNach);
+});
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
 
-const isNotZaehlartFjsOrQu = computed<boolean>(() => {
-  return !(
-    zaehlung.value.zaehlart === Zaehlart.FJS ||
-    zaehlung.value.zaehlart === Zaehlart.QU
-  );
-});
+// Dynamische Header basierend auf der Zählart
+const verkehrsbeziehungenHeader = computed<Array<any>>(() => {
+  const zaehlart = zaehlung.value.zaehlart;
 
-const verkehrsbeziehungHeader = [
-  {
-    title: "Von",
-    align: "center",
-    sortable: false,
-    value: "von",
-    lastFixed: true,
-  },
-  {
-    title: "Nach",
-    align: "center",
-    sortable: false,
-    value: "nach",
-  },
-];
+  // Header für QjS (Querschnitt je Strassenseite)
+  if (zaehlart === Zaehlart.QJS) {
+    return [
+      {
+        title: "Von",
+        align: "center",
+        sortable: false,
+        value: "von",
+        lastFixed: true,
+      },
+      {
+        title: "Nach",
+        align: "center",
+        sortable: false,
+        value: "nach",
+      },
+      {
+        title: "Str.s",
+        align: "center",
+        sortable: false,
+        value: "strassenseite",
+      },
+    ];
+  }
+
+  // Header für FjS (Fußgänger/Rad je Strassenseite)
+  if (zaehlart === Zaehlart.FJS) {
+    return [
+      {
+        title: "Von",
+        align: "center",
+        sortable: false,
+        value: "knotenarm",
+        lastFixed: true,
+      },
+      {
+        title: "Str.s",
+        align: "center",
+        sortable: false,
+        value: "strassenseite",
+      },
+      {
+        title: "Ri",
+        align: "center",
+        sortable: false,
+        value: "richtung",
+      },
+    ];
+  }
+
+  // Header für Qu (Fußgänger/Rad Querungen)
+  if (zaehlart === Zaehlart.QU) {
+    return [
+      {
+        title: "Von",
+        align: "center",
+        sortable: false,
+        value: "knotenarm",
+        lastFixed: true,
+      },
+      {
+        title: "Ri",
+        align: "center",
+        sortable: false,
+        value: "richtung",
+      },
+    ];
+  }
+
+  // Andere Zählarten
+  return [
+    {
+      title: "Von",
+      align: "center",
+      sortable: false,
+      value: "von",
+      lastFixed: true,
+    },
+    {
+      title: "Nach",
+      align: "center",
+      sortable: false,
+      value: "nach",
+    },
+  ];
+});
 
 function fileUpload(): void {
   if (isZaehlungEditable.value) {
