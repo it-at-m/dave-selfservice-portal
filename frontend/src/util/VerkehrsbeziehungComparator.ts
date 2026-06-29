@@ -1,4 +1,6 @@
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
 export default class VerkehrsbeziehungComparator {
   /**
@@ -58,5 +60,18 @@ export default class VerkehrsbeziehungComparator {
       return 0;
     }
     return 0;
+  }
+
+  /**
+   * Sortiert eine Liste von Querungs- und LaengsverkehrDTO mit ihren Knotenarmen nach der Nummer
+   *
+   * @param a
+   * @param b
+   */
+  public static sortLaengsUndQuerungByNumber(
+    a: LaengsverkehrDTO | QuerungsverkehrDTO,
+    b: LaengsverkehrDTO | QuerungsverkehrDTO
+  ): number {
+    return a.knotenarm - b.knotenarm;
   }
 }
