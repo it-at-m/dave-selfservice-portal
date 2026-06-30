@@ -125,13 +125,13 @@ describe("useKfzVerkehrValidationUtils", () => {
       const csvDataWithoutHeader = ["10;e", "11;v", "12;e"];
       const verkehrsbeziehungen = [
         {
-          von: 1,
+          knotenarm: 1,
           hinein: true,
           vorbei: false,
           heraus: false,
         } as VerkehrsbeziehungDTO,
         {
-          von: 1,
+          knotenarm: 1,
           hinein: false,
           vorbei: true,
           heraus: false,
@@ -151,13 +151,13 @@ describe("useKfzVerkehrValidationUtils", () => {
       const csvDataWithoutHeader = ["10;e"]; // missing 'v'
       const verkehrsbeziehungen = [
         {
-          von: 1,
+          knotenarm: 1,
           hinein: true,
           vorbei: false,
           heraus: false,
         } as VerkehrsbeziehungDTO,
         {
-          von: 1,
+          knotenarm: 1,
           hinein: false,
           vorbei: true,
           heraus: false,

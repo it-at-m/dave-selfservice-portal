@@ -93,7 +93,7 @@ export function useKfzVerkehrValidationUtils() {
     const allInCsvExistingNach = Array.from(new Set(nachOfEachLine));
 
     const allNecessaryNachKnotenarme = toArray(verkehrsbeziehungen)
-      .filter((verkehrsbeziehung) => verkehrsbeziehung.von === armNummer)
+      .filter((verkehrsbeziehung) => verkehrsbeziehung.knotenarm === armNummer)
       .map((verkehrsbeziehung) => {
         if (verkehrsbeziehung.hinein) {
           return "e";
