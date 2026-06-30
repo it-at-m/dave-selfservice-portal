@@ -943,10 +943,10 @@ function readFiles() {
                     isUploadedFileForKnotenarmPlausible
                   );
 
-                  if (isUploadedFileForKnotenarmPlausible) {
-                    zaehlungArm.filename = myFile.name;
-                    zaehlungArm.filedata = csv;
-                  } else {
+                  zaehlungArm.filename = myFile.name;
+                  zaehlungArm.filedata = csv;
+
+                  if (!isUploadedFileForKnotenarmPlausible) {
                     successfull = false;
                     errorText = `${errorText} ${myFile.name}: ${errorMessage}\n`;
                   }
