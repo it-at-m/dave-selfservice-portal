@@ -778,7 +778,8 @@ function checkFussverkehrData(
 }
 
 /**
- * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+ * Prüft, ob in der CSV-Datei für den Knotenarm die Intervalle entsprechend der angeforderten Richtungsinformation
+ * und nicht beauftragte Intervalle vorhanden sind.
  *
  * @param armNummer des Knotenarms
  * @param csvDataWithoutHeader zum prüfen.
@@ -799,6 +800,16 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
     if (!isEmpty(nachAndStrassenseiteIntervallsAreExistent)) {
       return nachAndStrassenseiteIntervallsAreExistent;
     }
+
+    const toMuchNachAndStrassenseiteIntervallsAreExistent =
+      fussverkehrValidationUtils.validateNonRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        zaehlung.verkehrsbeziehungen
+      );
+    if (!isEmpty(toMuchNachAndStrassenseiteIntervallsAreExistent)) {
+      return toMuchNachAndStrassenseiteIntervallsAreExistent;
+    }
   } else if (zaehlung.zaehlart === Zaehlart.FJS) {
     const strassenseiteAndRichtungIntervallsAreExistent =
       fussverkehrValidationUtils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
@@ -808,6 +819,16 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
       );
     if (!isEmpty(strassenseiteAndRichtungIntervallsAreExistent)) {
       return strassenseiteAndRichtungIntervallsAreExistent;
+    }
+
+    const toMuchStrassenseiteAndRichtungIntervallsAreExistent =
+      fussverkehrValidationUtils.validateNonRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        zaehlung.laengsverkehr
+      );
+    if (!isEmpty(toMuchStrassenseiteAndRichtungIntervallsAreExistent)) {
+      return toMuchStrassenseiteAndRichtungIntervallsAreExistent;
     }
   } else if (zaehlung.zaehlart === Zaehlart.QU) {
     const richtungIntervallsAreExistent =
@@ -819,26 +840,58 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
     if (!isEmpty(richtungIntervallsAreExistent)) {
       return richtungIntervallsAreExistent;
     }
+
+    const toMuchRichtungIntervallsAreExistent =
+      fussverkehrValidationUtils.validateNonRequiredRichtungIntervallsForQuAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        zaehlung.querungsverkehr
+      );
+    if (!isEmpty(toMuchRichtungIntervallsAreExistent)) {
+      return toMuchRichtungIntervallsAreExistent;
+    }
   } else {
     // KFZ-Verkehr
-    let nachIntervallsAreExistent;
     if (zaehlung.kreisverkehr) {
-      nachIntervallsAreExistent =
+      const nachIntervallsAreExistent =
         kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistentForKreisverkehr(
           armNummer,
           csvDataWithoutHeader,
           zaehlung.verkehrsbeziehungen
         );
+      if (!isEmpty(nachIntervallsAreExistent)) {
+        return nachIntervallsAreExistent;
+      }
+
+      const toMuchNachIntervallsAreExistent =
+        kfzVerkehrValidationUtils.validateNonRequiredNachIntervallsAreExistentForKreisverkehr(
+          armNummer,
+          csvDataWithoutHeader,
+          zaehlung.verkehrsbeziehungen
+        );
+      if (!isEmpty(toMuchNachIntervallsAreExistent)) {
+        return toMuchNachIntervallsAreExistent;
+      }
     } else {
-      nachIntervallsAreExistent =
+      const nachIntervallsAreExistent =
         kfzVerkehrValidationUtils.validateRequiredNachIntervallsAreExistent(
           armNummer,
           csvDataWithoutHeader,
           zaehlung.verkehrsbeziehungen
         );
-    }
-    if (!isEmpty(nachIntervallsAreExistent)) {
-      return nachIntervallsAreExistent;
+      if (!isEmpty(nachIntervallsAreExistent)) {
+        return nachIntervallsAreExistent;
+      }
+
+      const toMuchNachIntervallsAreExistent =
+        kfzVerkehrValidationUtils.validateNonRequiredNachIntervallsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          zaehlung.verkehrsbeziehungen
+        );
+      if (!isEmpty(toMuchNachIntervallsAreExistent)) {
+        return toMuchNachIntervallsAreExistent;
+      }
     }
   }
   return "";

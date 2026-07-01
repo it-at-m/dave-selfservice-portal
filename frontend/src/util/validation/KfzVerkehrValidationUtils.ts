@@ -40,7 +40,7 @@ export function useKfzVerkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   * Prüft, ob in der CSV-Datei zu wenig Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
@@ -74,7 +74,41 @@ export function useKfzVerkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation nicht beauftragte Intervalle vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   */
+  function validateNonRequiredNachIntervallsAreExistent(
+    armNummer: number,
+    csvDataWithoutHeader: Array<string>,
+    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+  ): string {
+    const nachOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => parseInt(csvLine[1]));
+    const allInCsvExistingNach = Array.from(new Set(nachOfEachLine));
+
+    const allNecessaryNachKnotenarme = toArray(verkehrsbeziehungen)
+      .filter((verkehrsbeziehung) => verkehrsbeziehung.von === armNummer)
+      .map((verkehrsbeziehung) => verkehrsbeziehung.nach);
+
+    const inCsvTooMuchNach = difference(
+      allInCsvExistingNach,
+      allNecessaryNachKnotenarme
+    );
+
+    if (!isEmpty(inCsvTooMuchNach)) {
+      return `In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Zielknotenarme: ${inCsvTooMuchNach}`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob in der CSV-Datei zu wenig Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
@@ -115,6 +149,52 @@ export function useKfzVerkehrValidationUtils() {
 
     if (!isEmpty(inCsvMissingNach)) {
       return `Für folgende Zielknotenarme (nach) sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingNach}`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation nicht beauftragte Intervalle vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   */
+  function validateNonRequiredNachIntervallsAreExistentForKreisverkehr(
+    armNummer: number,
+    csvDataWithoutHeader: Array<string>,
+    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+  ): string {
+    const nachOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine[1]);
+    const allInCsvExistingNach = Array.from(new Set(nachOfEachLine));
+
+    const allNecessaryNachKnotenarme = toArray(verkehrsbeziehungen)
+      .filter((verkehrsbeziehung) => verkehrsbeziehung.knotenarm === armNummer)
+      .map((verkehrsbeziehung) => {
+        if (verkehrsbeziehung.hinein) {
+          return "e";
+        }
+        if (verkehrsbeziehung.heraus) {
+          return "a";
+        }
+        if (verkehrsbeziehung.vorbei) {
+          return "v";
+        } else {
+          return "";
+        }
+      });
+
+    const inCsvTooMuchNach = difference(
+      allInCsvExistingNach,
+      allNecessaryNachKnotenarme
+    );
+
+    if (!isEmpty(inCsvTooMuchNach)) {
+      return `In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Zielknotenarme: ${inCsvTooMuchNach}`;
     }
     return "";
   }
@@ -224,7 +304,9 @@ export function useKfzVerkehrValidationUtils() {
     validateNachValueForKreisverkehr,
     validateNachValueForKreuzung,
     validateRequiredNachIntervallsAreExistent,
+    validateNonRequiredNachIntervallsAreExistent,
     validateRequiredNachIntervallsAreExistentForKreisverkehr,
+    validateNonRequiredNachIntervallsAreExistentForKreisverkehr,
     validateNachOccurrence,
     validateNachValue,
     validateStrassenseiteRichtungOccurrence,

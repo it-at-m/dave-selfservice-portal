@@ -99,7 +99,7 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   * Prüft, ob in der CSV-Datei zu wenig Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
@@ -140,7 +140,48 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation nicht beauftragte Intervalle vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param verkehrsbeziehungen für die angeforderten Richtungsinformationen.
+   */
+  function validateNonRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
+    armNummer: number,
+    csvDataWithoutHeader: Array<string>,
+    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+  ) {
+    const nachAndStrassenseiteOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => `${csvLine[1]} ${csvLine[2]}`);
+    const allInCsvExistingNachAndStrassenseite = Array.from(
+      new Set(nachAndStrassenseiteOfEachLine)
+    );
+
+    const allNecessaryNachAndStrassenseiteKnotenarme = toArray(
+      verkehrsbeziehungen
+    )
+      .filter((verkehrsbeziehung) => verkehrsbeziehung.von === armNummer)
+      .map(
+        (verkehrsbeziehung) =>
+          `${verkehrsbeziehung.nach} ${verkehrsbeziehung.strassenseite}`
+      );
+
+    const inCsvTooMuchNachAndStrassenseite = difference(
+      allInCsvExistingNachAndStrassenseite,
+      allNecessaryNachAndStrassenseiteKnotenarme
+    );
+
+    if (!isEmpty(inCsvTooMuchNachAndStrassenseite)) {
+      return `In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Zielknotenarm- (nach) und Straßenseiteninformationen: ${inCsvTooMuchNachAndStrassenseite}`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob in der CSV-Datei zu wenig Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
@@ -179,7 +220,46 @@ export function useFussverkehrValidationUtils() {
   }
 
   /**
-   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
+   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation nicht beauftragte Intervalle vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param laengsverkehre für die angeforderten Richtungsinformationen.
+   */
+  function validateNonRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
+    armNummer: number,
+    csvDataWithoutHeader: Array<string>,
+    laengsverkehre: Array<LaengsverkehrDTO>
+  ) {
+    const strassenseiteAndRichtungOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => `${csvLine[2]} ${csvLine[3]}`);
+    const allInCsvExistingStrassenseiteAndRichtung = Array.from(
+      new Set(strassenseiteAndRichtungOfEachLine)
+    );
+
+    const allNecessaryStrassenseiteAndRichtung = toArray(laengsverkehre)
+      .filter((laengsverkehr) => laengsverkehr.knotenarm === armNummer)
+      .map(
+        (laengsverkehr) =>
+          `${laengsverkehr.strassenseite} ${laengsverkehr.richtung}`
+      );
+
+    const inCsvTooMuchStrassenseiteAndRichtung = difference(
+      allInCsvExistingStrassenseiteAndRichtung,
+      allNecessaryStrassenseiteAndRichtung
+    );
+
+    if (!isEmpty(inCsvTooMuchStrassenseiteAndRichtung)) {
+      return `In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Straßenseite- und Richtungsinformationen: ${inCsvTooMuchStrassenseiteAndRichtung}`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob in der CSV-Datei zu wenig Intervalle entsprechend der angeforderten Richtungsinformation vorhanden sind.
    *
    * @param armNummer des Knotenarms
    * @param csvDataWithoutHeader zum prüfen.
@@ -208,6 +288,40 @@ export function useFussverkehrValidationUtils() {
 
     if (!isEmpty(inCsvMissingRichtung)) {
       return `Für folgende Richtungsinformationen sind in der CSV-Datei keine Einträge vorhanden: ${inCsvMissingRichtung}`;
+    }
+    return "";
+  }
+
+  /**
+   * Prüft, ob in der CSV-Datei Intervalle entsprechend der angeforderten Richtungsinformation nicht beauftragte Intervalle vorhanden sind.
+   *
+   * @param armNummer des Knotenarms
+   * @param csvDataWithoutHeader zum prüfen.
+   * @param querungsverkehre für die angeforderten Richtungsinformationen.
+   */
+  function validateNonRequiredRichtungIntervallsForQuAreExistent(
+    armNummer: number,
+    csvDataWithoutHeader: Array<string>,
+    querungsverkehre: Array<QuerungsverkehrDTO>
+  ) {
+    const richtungOfEachLine = csvDataWithoutHeader
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => csvLine.split(validationUtils.SEPARATOR))
+      .filter((csvLine) => !isEmpty(csvLine))
+      .map((csvLine) => `${csvLine[3]}`);
+    const allInCsvExistingRichtung = Array.from(new Set(richtungOfEachLine));
+
+    const allNecessaryRichtung = toArray(querungsverkehre)
+      .filter((querungsverkehr) => querungsverkehr.knotenarm === armNummer)
+      .map((querungsverkehr) => `${querungsverkehr.richtung}`);
+
+    const inCsvTooMuchRichtung = difference(
+      allInCsvExistingRichtung,
+      allNecessaryRichtung
+    );
+
+    if (!isEmpty(inCsvTooMuchRichtung)) {
+      return `In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Richtungsinformationen: ${inCsvTooMuchRichtung}`;
     }
     return "";
   }
@@ -358,8 +472,11 @@ export function useFussverkehrValidationUtils() {
     validateNachValue,
     validateStrassenseiteOccurrence,
     validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent,
+    validateNonRequiredNachAndStrassenseiteIntervallsForQjsAreExistent,
     validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent,
+    validateNonRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent,
     validateRequiredRichtungIntervallsForQuAreExistent,
+    validateNonRequiredRichtungIntervallsForQuAreExistent,
     validateStrassenseiteValue,
     validateRichtungOccurrence,
     validateRichtungValue,

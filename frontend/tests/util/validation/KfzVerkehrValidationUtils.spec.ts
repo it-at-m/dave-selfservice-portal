@@ -119,6 +119,43 @@ describe("useKfzVerkehrValidationUtils", () => {
     });
   });
 
+  describe("validateNonRequiredNachIntervallsAreExistent", () => {
+    it("returns empty when csv contains only requested nach values", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;2", "11;3"];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+      ];
+      expect(
+        utils.validateNonRequiredNachIntervallsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        )
+      ).toBe("");
+    });
+
+    it("returns error when csv contains nach values not requested", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;2", "11;99"];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+      ];
+      const result = utils.validateNonRequiredNachIntervallsAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        verkehrsbeziehungen
+      );
+      expect(result).toBeTypeOf("string");
+      expect(result).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Zielknotenarme"
+      );
+      expect(result).toContain("99");
+    });
+  });
+
   describe("validateRequiredNachIntervallsAreExistentForKreisverkehr", () => {
     it("returns empty when all necessary nach codes are present in csv data", () => {
       const armNummer = 1;
