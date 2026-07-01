@@ -212,6 +212,64 @@ describe("useKfzVerkehrValidationUtils", () => {
     });
   });
 
+  describe("validateNonRequiredNachIntervallsAreExistentForKreisverkehr", () => {
+    it("returns empty when csv contains only requested nach codes", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;e", "11;v"];
+      const verkehrsbeziehungen = [
+        {
+          knotenarm: 1,
+          hinein: true,
+          vorbei: false,
+          heraus: false,
+        } as VerkehrsbeziehungDTO,
+        {
+          knotenarm: 1,
+          hinein: false,
+          vorbei: true,
+          heraus: false,
+        } as VerkehrsbeziehungDTO,
+      ];
+      expect(
+        utils.validateNonRequiredNachIntervallsAreExistentForKreisverkehr(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        )
+      ).toBe("");
+    });
+
+    it("returns error when csv contains nach codes not requested", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["10;e", "11;x"];
+      const verkehrsbeziehungen = [
+        {
+          knotenarm: 1,
+          hinein: true,
+          vorbei: false,
+          heraus: false,
+        } as VerkehrsbeziehungDTO,
+        {
+          knotenarm: 1,
+          hinein: false,
+          vorbei: true,
+          heraus: false,
+        } as VerkehrsbeziehungDTO,
+      ];
+      const result =
+        utils.validateNonRequiredNachIntervallsAreExistentForKreisverkehr(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        );
+      expect(result).toBeTypeOf("string");
+      expect(result).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Zielknotenarme"
+      );
+      expect(result).toContain("x");
+    });
+  });
+
   describe("validateNachValueForKreuzung", () => {
     it("returns undefined when a matching verkehrsbeziehung exists (trim and parse)", () => {
       const verkehrsbeziehungen = [{ von: 1, nach: 2 } as VerkehrsbeziehungDTO];
