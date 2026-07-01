@@ -196,7 +196,7 @@ describe("FussverkehrValidationUtils", () => {
   describe("validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent", () => {
     it("returns empty when all required strassenseite+richtung combos are present", () => {
       const armNummer = 1;
-      const csvDataWithoutHeader = ["0;1;N;EIN", "1;1;S;AUS"];
+      const csvDataWithoutHeader = ["0;;N;EIN", "1;;S;AUS"];
       const laengsverkehre = [
         {
           knotenarm: 1,
@@ -220,7 +220,7 @@ describe("FussverkehrValidationUtils", () => {
 
     it("returns error when a required strassenseite+richtung combo is missing", () => {
       const armNummer = 1;
-      const csvDataWithoutHeader = ["0;1;N;EIN"]; // missing S AUS
+      const csvDataWithoutHeader = ["0;;N;EIN"]; // missing S AUS
       const laengsverkehre = [
         {
           knotenarm: 1,
@@ -244,6 +244,60 @@ describe("FussverkehrValidationUtils", () => {
         "Für folgende Straßenseite- und Richtungsinformationen"
       );
       expect(res).toContain("S AUS");
+    });
+  });
+
+  describe("validateNonRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent", () => {
+    it("returns empty when csv contains only requested strassenseite+richtung combinations", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;;N;EIN", "1;;S;AUS"];
+      const laengsverkehre = [
+        {
+          knotenarm: 1,
+          strassenseite: "N",
+          richtung: "EIN",
+        } as LaengsverkehrDTO,
+        {
+          knotenarm: 1,
+          strassenseite: "S",
+          richtung: "AUS",
+        } as LaengsverkehrDTO,
+      ];
+      expect(
+        utils.validateNonRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          laengsverkehre
+        )
+      ).toBe("");
+    });
+
+    it("returns error when csv contains strassenseite+richtung not requested", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;;N;EIN", "1;;Z;EIN"];
+      const laengsverkehre = [
+        {
+          knotenarm: 1,
+          strassenseite: "N",
+          richtung: "EIN",
+        } as LaengsverkehrDTO,
+        {
+          knotenarm: 1,
+          strassenseite: "S",
+          richtung: "AUS",
+        } as LaengsverkehrDTO,
+      ];
+      const res =
+        utils.validateNonRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          laengsverkehre
+        );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Straßenseite- und Richtungsinformationen"
+      );
+      expect(res).toContain("Z EIN");
     });
   });
 
