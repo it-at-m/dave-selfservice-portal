@@ -272,5 +272,139 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
       expect(res).toContain("Für folgende Zielknotenarme");
       expect(res).toContain("3");
     });
+
+    it("returns error for QJS when csv contains non-requested nach+strassenseite combos", () => {
+      const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+      zaehlung.zaehlart = Zaehlart.QJS;
+      zaehlung.verkehrsbeziehungen = [
+        { von: 1, nach: 2, strassenseite: Himmelsrichtung.N },
+      ] as Array<VerkehrsbeziehungDTO>;
+      const wrapper = shallowMount(KnotenLageForm, {
+        props: { height: "400px", modelValue: zaehlung },
+      });
+      const vm: any = wrapper.vm;
+      const csvDataWithoutHeader = [`1;2;${Himmelsrichtung.N};`, `2;99;X;`];
+      const res =
+        vm.validateIntervallsWithRequiredRichtungsinformationAreExistent(
+          1,
+          csvDataWithoutHeader,
+          zaehlung
+        );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge"
+      );
+      expect(res).toContain("99 X");
+    });
+
+    it("returns error for FJS when csv contains strassenseite+richtung not requested", () => {
+      const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+      zaehlung.zaehlart = Zaehlart.FJS;
+      zaehlung.laengsverkehr = [
+        {
+          knotenarm: 1,
+          strassenseite: Himmelsrichtung.N,
+          richtung: Bewegungsrichtung.EIN,
+        },
+      ] as Array<LaengsverkehrDTO>;
+      const wrapper = shallowMount(KnotenLageForm, {
+        props: { height: "400px", modelValue: zaehlung },
+      });
+      const vm: any = wrapper.vm;
+      const csvDataWithoutHeader = [
+        `1;;${Himmelsrichtung.N};${Bewegungsrichtung.EIN}`,
+        `2;;Z;EIN`,
+      ];
+      const res =
+        vm.validateIntervallsWithRequiredRichtungsinformationAreExistent(
+          1,
+          csvDataWithoutHeader,
+          zaehlung
+        );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Straßenseite- und Richtungsinformationen"
+      );
+      expect(res).toContain("Z EIN");
+    });
+
+    it("returns error for QU when csv contains richtung values not requested", () => {
+      const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+      zaehlung.zaehlart = Zaehlart.QU;
+      zaehlung.querungsverkehr = [
+        { knotenarm: 1, richtung: Himmelsrichtung.W },
+      ] as Array<QuerungsverkehrDTO>;
+      const wrapper = shallowMount(KnotenLageForm, {
+        props: { height: "400px", modelValue: zaehlung },
+      });
+      const vm: any = wrapper.vm;
+      const csvDataWithoutHeader = ["1;;;W", "1;;;X"];
+      const res =
+        vm.validateIntervallsWithRequiredRichtungsinformationAreExistent(
+          1,
+          csvDataWithoutHeader,
+          zaehlung
+        );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Richtungsinformationen"
+      );
+      expect(res).toContain("X");
+    });
+
+    it("returns error for KFZ when csv contains not requested nach", () => {
+      const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+      zaehlung.zaehlart = Zaehlart.N;
+      zaehlung.kreisverkehr = false;
+      zaehlung.verkehrsbeziehungen = [
+        { von: 1, nach: 2 },
+      ] as Array<VerkehrsbeziehungDTO>;
+      const wrapper = shallowMount(KnotenLageForm, {
+        props: { height: "400px", modelValue: zaehlung },
+      });
+      const vm: any = wrapper.vm;
+      const csvDataWithoutHeader = [`1;2; ;`, `2;99; ;`];
+      const res =
+        vm.validateIntervallsWithRequiredRichtungsinformationAreExistent(
+          1,
+          csvDataWithoutHeader,
+          zaehlung
+        );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Zielknotenarme"
+      );
+      expect(res).toContain("99");
+    });
+
+    it("returns error for KFZ kreisverkehr when csv contains not requested nach codes", () => {
+      const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+      zaehlung.zaehlart = Zaehlart.N;
+      zaehlung.kreisverkehr = true;
+      zaehlung.verkehrsbeziehungen = [
+        {
+          knotenarm: 1,
+          hinein: true,
+          vorbei: false,
+          heraus: false,
+        },
+      ] as Array<VerkehrsbeziehungDTO>;
+      const wrapper = shallowMount(KnotenLageForm, {
+        props: { height: "400px", modelValue: zaehlung },
+      });
+      const vm: any = wrapper.vm;
+      const csvDataWithoutHeader = [`1;e; ;`, `2;x; ;`];
+      const res =
+        vm.validateIntervallsWithRequiredRichtungsinformationAreExistent(
+          1,
+          csvDataWithoutHeader,
+          zaehlung
+        );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Zielknotenarme"
+      );
+      expect(res).toContain("x");
+    });
   });
 });
