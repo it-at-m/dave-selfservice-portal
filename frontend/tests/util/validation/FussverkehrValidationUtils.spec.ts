@@ -336,6 +336,43 @@ describe("FussverkehrValidationUtils", () => {
     });
   });
 
+  describe("validateNonRequiredRichtungIntervallsForQuAreExistent", () => {
+    it("returns empty when csv contains only requested richtung values", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;;;W", "1;;;O"];
+      const querungsverkehre = [
+        { knotenarm: 1, richtung: "O" } as QuerungsverkehrDTO,
+        { knotenarm: 1, richtung: "W" } as QuerungsverkehrDTO,
+      ];
+      expect(
+        utils.validateNonRequiredRichtungIntervallsForQuAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          querungsverkehre
+        )
+      ).toBe("");
+    });
+
+    it("returns error when csv contains richtung values not requested", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;;;W", "1;;;X"];
+      const querungsverkehre = [
+        { knotenarm: 1, richtung: "O" } as QuerungsverkehrDTO,
+        { knotenarm: 1, richtung: "W" } as QuerungsverkehrDTO,
+      ];
+      const res = utils.validateNonRequiredRichtungIntervallsForQuAreExistent(
+        armNummer,
+        csvDataWithoutHeader,
+        querungsverkehre
+      );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Richtungsinformationen"
+      );
+      expect(res).toContain("X");
+    });
+  });
+
   describe("validateStrassenseiteValue", () => {
     it("returns undefined for a valid combination (FJS, arm 1 -> W)", () => {
       const result = utils.validateStrassenseiteValue(
