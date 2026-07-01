@@ -155,6 +155,44 @@ describe("FussverkehrValidationUtils", () => {
     });
   });
 
+  describe("validateNonRequiredNachAndStrassenseiteIntervallsForQjsAreExistent", () => {
+    it("returns empty when csv contains only requested nach+strassenseite combinations", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;2;N;", "1;3;S;"];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2, strassenseite: "N" } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3, strassenseite: "S" } as VerkehrsbeziehungDTO,
+      ];
+      expect(
+        utils.validateNonRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        )
+      ).toBe("");
+    });
+
+    it("returns error when csv contains nach+strassenseite not requested", () => {
+      const armNummer = 1;
+      const csvDataWithoutHeader = ["0;2;N;", "1;99;X;"];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2, strassenseite: "N" } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 3, strassenseite: "S" } as VerkehrsbeziehungDTO,
+      ];
+      const res =
+        utils.validateNonRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
+          armNummer,
+          csvDataWithoutHeader,
+          verkehrsbeziehungen
+        );
+      expect(res).toBeTypeOf("string");
+      expect(res).toContain(
+        "In der CSV-Datei befinden sind nicht beauftragte Einträge für folgende Zielknotenarm- (nach) und Straßenseiteninformationen"
+      );
+      expect(res).toContain("99 X");
+    });
+  });
+
   describe("validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent", () => {
     it("returns empty when all required strassenseite+richtung combos are present", () => {
       const armNummer = 1;
