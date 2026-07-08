@@ -588,3 +588,59 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     ).toBe("");
   });
 });
+
+describe("ValidationUtils - isWholeNonNegativeIntegerString - edge cases", () => {
+  test("accepts very long digit strings", () => {
+    const large = "9".repeat(200);
+    expect(isWholeNonNegativeIntegerString(large)).toBe(true);
+  });
+
+  test("accepts multiple leading zeros", () => {
+    expect(isWholeNonNegativeIntegerString("0000")).toBe(true);
+  });
+
+  test("trims various whitespace including newline and tab", () => {
+    expect(isWholeNonNegativeIntegerString("\n  42\t")).toBe(true);
+  });
+
+  test("rejects hex and exponential notation", () => {
+    expect(isWholeNonNegativeIntegerString("0x10")).toBe(false);
+    expect(isWholeNonNegativeIntegerString("1e3")).toBe(false);
+  });
+
+  test("rejects unicode digits (Arabic-Indic)", () => {
+    // Arabic-Indic digits '١٢٣' should not match ASCII-only regex
+    expect(isWholeNonNegativeIntegerString("١٢٣")).toBe(false);
+  });
+
+  test("returns false for undefined or null", () => {
+    expect(isWholeNonNegativeIntegerString(undefined as any)).toBe(false);
+    expect(isWholeNonNegativeIntegerString(null as any)).toBe(false);
+  });
+
+  test("rejects strings with embedded spaces", () => {
+    expect(isWholeNonNegativeIntegerString("1 0")).toBe(false);
+  });
+
+  test("rejects various decimal and comma notations", () => {
+    const invalids = [
+      "1.2",
+      "9.0",
+      "0.0",
+      "1.",
+      "0.",
+      ".0",
+      ".1",
+      "1,2",
+      "9,0",
+      "0,0",
+      "1,",
+      ",1",
+      "0,",
+      ",0",
+    ];
+    invalids.forEach((val) => {
+      expect(isWholeNonNegativeIntegerString(val)).toBe(false);
+    });
+  });
+});
