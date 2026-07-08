@@ -42,11 +42,11 @@
                 text-align: start;
                 writing-mode: lr-tb;
                 direction: ltr;
-                text-anchor: start;
+                text-anchor: middle;
                 fill: #ffffff;
                 stroke-width: 38.9365;
               "
-              x="701.77631"
+              x="724.81334"
               y="179.69041"
               transform="scale(0.96576588,1.0354476)"
               :style="{ cursor: getCursorType(1) }"
@@ -345,11 +345,11 @@
                 text-align: start;
                 writing-mode: lr-tb;
                 direction: ltr;
-                text-anchor: start;
+                text-anchor: middle;
                 fill: #ffffff;
                 stroke-width: 38.9365;
               "
-              x="701.77631"
+              x="724.81334"
               y="1229.7999"
               transform="scale(0.96576591,1.0354476)"
               :style="{ cursor: getCursorType(3) }"
@@ -658,7 +658,7 @@
                 fill: #ffffff;
                 stroke-width: 38.9365;
               "
-              x="371.39447"
+              x="375.39447"
               y="610.23108"
               transform="matrix(0.68289962,-0.68289962,0.73217203,0.73217203,0,0)"
               :style="{ cursor: getCursorType(5) }"
@@ -959,7 +959,7 @@
                 fill: #ffffff;
                 stroke-width: 38.9365;
               "
-              x="-424.5455"
+              x="-417.5455"
               y="1352.3147"
               transform="matrix(0.68289963,-0.68289963,0.73217202,0.73217202,0,0)"
               :style="{ cursor: getCursorType(7) }"
