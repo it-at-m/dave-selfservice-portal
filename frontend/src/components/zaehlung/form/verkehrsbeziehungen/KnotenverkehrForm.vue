@@ -19,24 +19,24 @@
       :style="{ pointerEvents: clickable ? 'auto' : 'none' }"
     >
       <g
-        id="nodes5To8"
+        id="knotenarme_5_to_8"
         class="Page"
         transform="rotate(45,700,700)"
       >
         <g
-          id="node8_group"
+          id="knotenarm8_group"
           class="com.sun.star.drawing.ClosedBezierShape"
           transform="rotate(-90,700,700)"
         >
-          <g id="node8">
+          <g id="knotenarm8">
             <path
-              id="node8_spike"
+              id="knotenarm8_spike"
               d="m 661.11087,699.99998 v -568.4076 l 38.889,-53.8146 38.889,53.8135 v 568.4087 z"
               :fill="getColorOfKnotenarm(8)"
               stroke="none"
             />
             <text
-              id="node8_spike_text"
+              id="knotenarm8_number_text"
               class="prevent-select"
               xml:space="preserve"
               style="
@@ -59,14 +59,14 @@
           </g>
           <g
             v-if="isKnotenarmAvailable(8)"
-            id="node8_arrows"
+            id="arrows_knotenarm8"
           >
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node8_south_west"
+              id="arrows_knotenarm8_sued_west"
             >
               <path
-                id="node8_south_west_north_west"
+                id="arrow_knotenarm8_sued_west_ausgehend"
                 d="m 621.66642,364.92523 v -194.445 h -11.111 l 19.443,-38.888 19.446,38.888 h -11.111 v 194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -86,7 +86,7 @@
                 "
               />
               <path
-                id="node8_south_west_south_east"
+                id="arrow_knotenarm8_sued_west_eingehend"
                 d="m 599.44453,131.59223 v 194.445 h 11.111 l -19.444,38.888 -19.445,-38.888 h 11.111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -108,10 +108,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node8_north_east"
+              id="arrows_knotenarm8_nord_ost"
             >
               <path
-                id="node8_north_east_north_west"
+                id="arrow_knotenarm8_nord_ost_ausgehend"
                 d="m 800.55532,364.92563 v -194.4453 h -11.111 l 19.444,-38.8881 19.445,38.8881 h -11.111 v 194.4453 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -131,7 +131,7 @@
                 "
               />
               <path
-                id="node8_north_east_south_east"
+                id="arrow_knotenarm8_nord_ost_eingehend"
                 d="m 778.33343,131.59223 v 194.445 h 11.111 l -19.443,38.888 -19.446,-38.888 h 11.111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -153,10 +153,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.QU"
-              id="node8_crossing"
+              id="arrows_knotenarm8_crossing"
             >
               <path
-                id="node8_crossing_north_east"
+                id="arrow_knotenarm8_crossing_nord_ost"
                 d="m 583.33335,322.22223 h 194.44503 v -11.11111 l 38.88831,19.44345 -38.88831,19.44544 V 338.88889 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -164,7 +164,7 @@
                 @click="handleClickOnQuerungsverkehr(8, Himmelsrichtung.NO)"
               />
               <path
-                id="node8_crossing_south_west"
+                id="arrow_knotenarm8_crossing_sued_west"
                 d="M 816.66669,299.99959 H 622.22175 v 11.11153 l -38.8884,-19.4435 38.8884,-19.44539 v 11.11057 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -175,18 +175,18 @@
           </g>
         </g>
         <g
-          id="node7_group"
+          id="knotenarm7_group"
           class="com.sun.star.drawing.ClosedBezierShape"
         >
-          <g id="node7">
+          <g id="knotenarm7">
             <path
-              id="node7_spike"
+              id="knotenarm7_spike"
               d="m 738.88891,700.00002 v 568.40778 l -38.88831,53.8145 -38.88947,-53.8143 V 700.00002 Z"
               :fill="getColorOfKnotenarm(7)"
               stroke="none"
             />
             <text
-              id="node7_text"
+              id="knotenarm7_number_text"
               class="prevent-select"
               xml:space="preserve"
               style="
@@ -209,14 +209,14 @@
           </g>
           <g
             v-if="isKnotenarmAvailable(7)"
-            id="node7_arrows"
+            id="arrows_knotenarm7"
           >
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node7_south_east"
+              id="arrows_knotenarm7_sued_ost"
             >
               <path
-                id="node7_south_east_south_west"
+                id="arrow_knotenarm7_sued_ost_ausgehend"
                 d="m 778.33336,1035.0745 v 194.445 h 11.11111 l -19.44345,38.8883 -19.44544,-38.8883 h 11.11111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -236,7 +236,7 @@
                 "
               />
               <path
-                id="node7_south_east_north_east"
+                id="arrow_knotenarm7_sued_ost_eingehend"
                 d="m 800.55599,1268.4078 v -194.4449 h -11.11152 l 19.4435,-38.8884 19.44539,38.8884 h -11.11057 v 194.4449 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -258,10 +258,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node7_north_west"
+              id="arrows_knotenarm7_nord_west"
             >
               <path
-                id="node7_north_west_south_west"
+                id="arrow_knotenarm7_nord_west_ausgehend"
                 d="m 599.44446,1035.0745 v 194.445 h 11.11111 l -19.44345,38.8883 -19.44544,-38.8883 h 11.11111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -281,7 +281,7 @@
                 "
               />
               <path
-                id="node7_north_west_north_east"
+                id="arrow_knotenarm7_nord_west_eingehend"
                 d="m 621.66709,1268.4078 v -194.4449 h -11.11152 l 19.4435,-38.8884 19.44539,38.8884 h -11.11057 v 194.4449 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -303,10 +303,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.QU"
-              id="node7_crossing"
+              id="arrows_knotenarm7_crossing"
             >
               <path
-                id="node7_crossing_north_west"
+                id="arrow_knotenarm7_crossing_nord_west"
                 d="M 808.33025,1077.7756 H 613.88531 v 11.1116 l -38.8884,-19.4435 38.8884,-19.4454 v 11.1105 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -314,7 +314,7 @@
                 @click="handleClickOnQuerungsverkehr(7, Himmelsrichtung.NW)"
               />
               <path
-                id="node7_crossing_south_east"
+                id="arrow_knotenarm7_crossing_sued_ost"
                 d="m 575.66231,1099.9989 h 194.44506 v -11.1112 l 38.8883,19.4435 -38.8883,19.4454 v -11.1111 H 575.66231 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -325,19 +325,19 @@
           </g>
         </g>
         <g
-          id="node6_group"
+          id="knotenarm6_group"
           class="com.sun.star.drawing.ClosedBezierShape"
           transform="rotate(90,700,700)"
         >
-          <g id="node6">
+          <g id="knotenarm6">
             <path
-              id="node6_spike"
+              id="knotenarm6_spike"
               d="m 661.11113,699.99998 v -568.408 l 38.889,-53.814 38.889,53.813 v 568.409 z"
               :fill="getColorOfKnotenarm(6)"
               stroke="none"
             />
             <text
-              id="node6_spike_text"
+              id="knotenarm6_number_text"
               class="prevent-select"
               xml:space="preserve"
               style="
@@ -360,14 +360,14 @@
           </g>
           <g
             v-if="isKnotenarmAvailable(6)"
-            id="node6_arrows"
+            id="arrows_knotenarm6"
           >
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node6_north_east"
+              id="arrow_knotenarm6_nord_ost"
             >
               <path
-                id="node6_north_east_south_east"
+                id="arrow_knotenarm6_nord_ost_ausgehend"
                 d="m 621.66667,364.92553 v -194.445 h -11.1111 l 19.4435,-38.888 19.4454,38.888 h -11.1111 v 194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -387,7 +387,7 @@
                 "
               />
               <path
-                id="node6_north_east_north_west"
+                id="arrow_knotenarm6_nord_ost_eingehend"
                 d="m 599.44448,131.59253 v 194.445 h 11.1111 l -19.4434,38.888 -19.4455,-38.888 h 11.1111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -409,10 +409,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node6_south_west"
+              id="arrows_knotenarm6_sued_west"
             >
               <path
-                id="node6_south_west_south_east"
+                id="arrow_knotenarm6_sued_west_ausgehend"
                 d="m 800.55557,364.92553 v -194.445 h -11.1111 l 19.4434,-38.888 19.4455,38.888 h -11.1111 v 194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -432,7 +432,7 @@
                 "
               />
               <path
-                id="node6_south_west_north_west"
+                id="arrow_knotenarm6_sued_west_eingehend"
                 d="m 778.33338,131.59253 v 194.445 h 11.1111 l -19.4435,38.888 -19.4454,-38.888 h 11.1111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -454,10 +454,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.QU"
-              id="node6_crossing"
+              id="arrows_knotenarm6_crossing"
             >
               <path
-                id="node6_crossing_south_west"
+                id="arrow_knotenarm6_crossing_sued_west"
                 d="m 583.33335,322.22223 h 194.44503 v -11.11111 l 38.88831,19.44345 -38.88831,19.44544 V 338.88889 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -465,7 +465,7 @@
                 @click="handleClickOnQuerungsverkehr(6, Himmelsrichtung.SW)"
               />
               <path
-                id="node6_crossing_north_east"
+                id="arrow_knotenarm6_crossing_nord_ost"
                 d="M 816.66669,299.99959 H 622.22175 v 11.11153 l -38.8884,-19.4435 38.8884,-19.44539 v 11.11057 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -476,18 +476,18 @@
           </g>
         </g>
         <g
-          id="node5_group"
+          id="knotenarm5_group"
           class="com.sun.star.drawing.ClosedBezierShape"
         >
-          <g id="node5_arrow">
+          <g id="knotenarm5">
             <path
-              id="node5_spike"
+              id="knotenarm5_spike"
               d="M 661.11113,700.00002 V 131.59223 l 38.88831,-53.81445 38.88947,53.8143 v 568.40794 z"
               :fill="getColorOfKnotenarm(5)"
               stroke="none"
             />
             <text
-              id="node5_spike_text"
+              id="knotenarm5_number_text"
               class="prevent-select"
               xml:space="preserve"
               style="
@@ -510,14 +510,14 @@
           </g>
           <g
             v-if="isKnotenarmAvailable(5)"
-            id="node5_arrows"
+            id="arrows_knotenarm5"
           >
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node5_north_west"
+              id="arrows_knotenarm5_nord_west"
             >
               <path
-                id="node5_north_west_north_east"
+                id="arrow_knotenarm5_nord_west_ausgehend"
                 d="M 621.66709,364.92557 V 170.48063 h -11.11152 l 19.4435,-38.8884 19.44539,38.8884 h -11.11057 v 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -537,7 +537,7 @@
                 "
               />
               <path
-                id="node5_north_west_south_west"
+                id="arrow_knotenarm5_nord_west_eingehend"
                 d="m 599.44446,131.59223 v 194.44503 h 11.11111 l -19.44345,38.88831 -19.44544,-38.88831 h 11.11111 V 131.59223 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -559,10 +559,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node5_south_east"
+              id="arrows_knotenarm5_sued_ost"
             >
               <path
-                id="node5_south_east_north_east"
+                id="arrow_knotenarm5_sued_ost_ausgehend"
                 d="M 800.55599,364.92557 V 170.48063 h -11.11152 l 19.4435,-38.8884 19.44539,38.8884 h -11.11057 v 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -582,7 +582,7 @@
                 "
               />
               <path
-                id="node5_south_east_south_west"
+                id="arrow_knotenarm5_sued_ost_eingehend"
                 d="m 778.33336,131.59223 v 194.44503 h 11.11111 l -19.44345,38.88831 -19.44544,-38.88831 h 11.11111 V 131.59223 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -604,10 +604,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.QU"
-              id="node5_crossing"
+              id="arrows_knotenarm5_crossing"
             >
               <path
-                id="node5_crossing_south_east"
+                id="arrow_knotenarm5_crossing_sued_ost"
                 d="m 583.33335,322.22223 h 194.44503 v -11.11111 l 38.88831,19.44345 -38.88831,19.44544 V 338.88889 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -615,7 +615,7 @@
                 @click="handleClickOnQuerungsverkehr(5, Himmelsrichtung.SO)"
               />
               <path
-                id="node5_crossing_north_west"
+                id="arrow_knotenarm5_crossing_nord_west"
                 d="M 816.66669,299.99959 H 622.22175 v 11.11153 l -38.8884,-19.4435 38.8884,-19.44539 v 11.11057 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -628,23 +628,23 @@
       </g>
 
       <g
-        id="nodes1To4"
+        id="knotenarme_1_to_4"
         class="Page"
       >
         <g
-          id="node4_group"
+          id="knotenarm4_group"
           class="com.sun.star.drawing.ClosedBezierShape"
           transform="rotate(-90,700,700)"
         >
-          <g id="node4">
+          <g id="knotenarm4">
             <path
-              id="node4_spike"
+              id="knotenarm4_spike"
               d="m 661.11087,699.99998 v -568.4076 l 38.889,-53.8146 38.889,53.8135 v 568.4087 z"
               :fill="getColorOfKnotenarm(4)"
               stroke="none"
             />
             <text
-              id="node4_spike_text"
+              id="knotenarm4_number_text"
               class="prevent-select"
               xml:space="preserve"
               style="
@@ -668,14 +668,14 @@
 
           <g
             v-if="isKnotenarmAvailable(4)"
-            id="node4_arrows"
+            id="arrows_knotenarm4"
           >
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node4_south"
+              id="arrows_knotenarm4_sued"
             >
               <path
-                id="node4_south_west"
+                id="arrow_knotenarm4_sued_ausgehend"
                 d="m 621.66642,364.92523 v -194.445 h -11.111 l 19.443,-38.888 19.446,38.888 h -11.111 v 194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -695,7 +695,7 @@
                 "
               />
               <path
-                id="node4_south_east"
+                id="arrow_knotenarm4_sued_eingehend"
                 d="m 599.44453,131.59223 v 194.445 h 11.111 l -19.444,38.888 -19.445,-38.888 h 11.111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -717,10 +717,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node4_north"
+              id="arrows_knotenarm4_nord"
             >
               <path
-                id="node4_north_west"
+                id="arrow_knotenarm4_nord_ausgehend"
                 d="m 800.55532,364.92563 v -194.4453 h -11.111 l 19.444,-38.8881 19.445,38.8881 h -11.111 v 194.4453 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -740,7 +740,7 @@
                 "
               />
               <path
-                id="node4_north_east"
+                id="arrow_knotenarm4_nord_eingehend"
                 d="m 778.33343,131.59223 v 194.445 h 11.111 l -19.443,38.888 -19.446,-38.888 h 11.111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -762,10 +762,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.QU"
-              id="node4_crossing"
+              id="arrows_knotenarm4_crossing"
             >
               <path
-                id="node4_crossing_north"
+                id="arrow_knotenarm4_crossing_nord"
                 d="m 583.33335,322.22223 h 194.44503 v -11.11111 l 38.88831,19.44345 -38.88831,19.44544 V 338.88889 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -773,7 +773,7 @@
                 @click="handleClickOnQuerungsverkehr(4, Himmelsrichtung.N)"
               />
               <path
-                id="node4_crossing_south"
+                id="arrow_knotenarm4_crossing_sued"
                 d="M 816.66669,299.99959 H 622.22175 v 11.11153 l -38.8884,-19.4435 38.8884,-19.44539 v 11.11057 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -784,18 +784,18 @@
           </g>
         </g>
         <g
-          id="node3_group"
+          id="knotenarm3_group"
           class="com.sun.star.drawing.ClosedBezierShape"
         >
-          <g id="node3">
+          <g id="knotenarm3">
             <path
-              id="node3_spike"
+              id="knotenarm3_spike"
               d="m 738.88891,700.00002 v 568.40778 l -38.88831,53.8145 -38.88947,-53.8143 V 700.00002 Z"
               :fill="getColorOfKnotenarm(3)"
               stroke="none"
             />
             <text
-              id="node3_spike_text"
+              id="knotenarm3_number_text"
               class="prevent-select"
               xml:space="preserve"
               style="
@@ -819,14 +819,14 @@
 
           <g
             v-if="isKnotenarmAvailable(3)"
-            id="node3_arrows"
+            id="arrows_knotenarm3"
           >
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node3_east"
+              id="arrows_knotenarm3_ost"
             >
               <path
-                id="node3_east_south"
+                id="arrow_knotenarm3_ost_ausgehend"
                 d="m 778.33336,1035.0745 v 194.445 h 11.11111 l -19.44345,38.8883 -19.44544,-38.8883 h 11.11111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -846,7 +846,7 @@
                 "
               />
               <path
-                id="node3_east_north"
+                id="arrow_knotenarm3_ost_eingehend"
                 d="m 800.55599,1268.4078 v -194.4449 h -11.11152 l 19.4435,-38.8884 19.44539,38.8884 h -11.11057 v 194.4449 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -868,10 +868,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node3_west"
+              id="arrows_knotenarm3_west"
             >
               <path
-                id="node3_west_south"
+                id="arrow_knotenarm3_west_ausgehend"
                 d="m 599.44446,1035.0745 v 194.445 h 11.11111 l -19.44345,38.8883 -19.44544,-38.8883 h 11.11111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -891,7 +891,7 @@
                 "
               />
               <path
-                id="node3_west_north"
+                id="arrow_knotenarm3_west_eingehend"
                 d="m 621.66709,1268.4078 v -194.4449 h -11.11152 l 19.4435,-38.8884 19.44539,38.8884 h -11.11057 v 194.4449 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -913,10 +913,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.QU"
-              id="node3_crossing"
+              id="arrows_knotenarm3_crossing"
             >
               <path
-                id="node3_crossing_west"
+                id="arrow_knotenarm3_crossing_west"
                 d="M 816.66669,1077.7774 H 622.22175 v 11.1115 l -38.8884,-19.4435 38.8884,-19.4454 v 11.1106 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -924,7 +924,7 @@
                 @click="handleClickOnQuerungsverkehr(3, Himmelsrichtung.W)"
               />
               <path
-                id="node3_crossing_east"
+                id="arrow_knotenarm3_crossing_ost"
                 d="m 583.33335,1100 h 194.44503 v -11.1111 l 38.88831,19.4435 -38.88831,19.4454 v -11.1111 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -935,19 +935,19 @@
           </g>
         </g>
         <g
-          id="node2_group"
+          id="knotenarm2_group"
           class="com.sun.star.drawing.ClosedBezierShape"
           transform="rotate(90, 700, 700)"
         >
-          <g id="node2">
+          <g id="knotenarm2">
             <path
-              id="node2_spike"
+              id="knotenarm2_spike"
               d="m 661.11113,699.99998 v -568.408 l 38.889,-53.814 38.889,53.813 v 568.409 z"
               :fill="getColorOfKnotenarm(2)"
               stroke="none"
             />
             <text
-              id="node2_spike_text"
+              id="knotenarm2_number_text"
               class="prevent-select"
               xml:space="preserve"
               style="
@@ -971,14 +971,14 @@
 
           <g
             v-if="isKnotenarmAvailable(2)"
-            id="node2_arrows"
+            id="arrows_knotenarm2"
           >
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node2_north"
+              id="arrows_knotenarm2_nord"
             >
               <path
-                id="node2_north_east"
+                id="arrow_knotenarm2_nord_ausgehend"
                 d="m 621.66667,364.92553 v -194.445 h -11.1111 l 19.4435,-38.888 19.4454,38.888 h -11.1111 v 194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -998,7 +998,7 @@
                 "
               />
               <path
-                id="node2_north_west"
+                id="arrow_knotenarm2_nord_eingehend"
                 d="m 599.44448,131.59253 v 194.445 h 11.1111 l -19.4434,38.888 -19.4455,-38.888 h 11.1111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1020,10 +1020,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node2_south"
+              id="arrows_knotenarm2_sued"
             >
               <path
-                id="node2_south_east"
+                id="arrow_knotenarm2_sued_ausgehend"
                 d="m 800.55557,364.92553 v -194.445 h -11.1111 l 19.4434,-38.888 19.4455,38.888 h -11.1111 v 194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1043,7 +1043,7 @@
                 "
               />
               <path
-                id="node2_south_west"
+                id="arrow_knotenarm2_sued_eingehend"
                 d="m 778.33338,131.59253 v 194.445 h 11.1111 l -19.4435,38.888 -19.4454,-38.888 h 11.1111 v -194.445 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1065,10 +1065,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.QU"
-              id="node2_crossing"
+              id="arrows_knotenarm2_crossing"
             >
               <path
-                id="node2_crossing_south"
+                id="arrow_knotenarm2_crossing_sued"
                 d="m 583.33335,322.22223 h 194.44503 v -11.11111 l 38.88831,19.44345 -38.88831,19.44544 V 338.88889 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1076,7 +1076,7 @@
                 @click="handleClickOnQuerungsverkehr(2, Himmelsrichtung.S)"
               />
               <path
-                id="node2_crossing_north"
+                id="arrow_knotenarm2_crossing_nord"
                 d="M 816.66669,299.99959 H 622.22175 v 11.11153 l -38.8884,-19.4435 38.8884,-19.44539 v 11.11057 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1087,18 +1087,18 @@
           </g>
         </g>
         <g
-          id="node1_group"
+          id="knotenarm1_group"
           class="com.sun.star.drawing.ClosedBezierShape"
         >
-          <g id="node1">
+          <g id="knotenarm1">
             <path
-              id="node1_spike"
+              id="knotenarm1_spike"
               d="M 661.11113,700.00002 V 131.59223 l 38.88831,-53.81445 38.88947,53.8143 v 568.40794 z"
               :fill="getColorOfKnotenarm(1)"
               stroke="none"
             />
             <text
-              id="node1_spike_text"
+              id="knotenarm1_number_text"
               class="prevent-select"
               xml:space="preserve"
               style="
@@ -1122,14 +1122,14 @@
 
           <g
             v-if="isKnotenarmAvailable(1)"
-            id="node1_arrows"
+            id="arrows_knotenarm1"
           >
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node1_west"
+              id="arrows_knotenarm1_west"
             >
               <path
-                id="node1_west_north"
+                id="arrow_knotenarm1_west_ausgehend"
                 d="M 621.66709,364.92557 V 170.48063 h -11.11152 l 19.4435,-38.8884 19.44539,38.8884 h -11.11057 v 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1149,7 +1149,7 @@
                 "
               />
               <path
-                id="node1_west_south"
+                id="arrow_knotenarm1_west_eingehend"
                 d="m 599.44446,131.59223 v 194.44503 h 11.11111 l -19.44345,38.88831 -19.44544,-38.88831 h 11.11111 V 131.59223 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1171,10 +1171,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.FJS"
-              id="node1_east"
+              id="arrows_knotenarm1_ost"
             >
               <path
-                id="node1_east_north"
+                id="arrow_knotenarm1_ost_ausgehend"
                 d="M 800.55599,364.92557 V 170.48063 h -11.11152 l 19.4435,-38.8884 19.44539,38.8884 h -11.11057 v 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1194,7 +1194,7 @@
                 "
               />
               <path
-                id="node1_east_south"
+                id="arrow_knotenarm1_ost_eingehend"
                 d="m 778.33336,131.59223 v 194.44503 h 11.11111 l -19.44345,38.88831 -19.44544,-38.88831 h 11.11111 V 131.59223 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1216,10 +1216,10 @@
             </g>
             <g
               v-if="zaehlung.zaehlart === Zaehlart.QU"
-              id="node1_crossing"
+              id="arrows_knotenarm1_crossing"
             >
               <path
-                id="node1_crossing_east"
+                id="arrow_knotenarm1_crossing_ost"
                 d="m 583.33335,322.22223 h 194.44503 v -11.11111 l 38.88831,19.44345 -38.88831,19.44544 V 338.88889 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
@@ -1227,7 +1227,7 @@
                 @click="handleClickOnQuerungsverkehr(1, Himmelsrichtung.O)"
               />
               <path
-                id="node1_crossing_west"
+                id="arrow_knotenarm1_crossing_west"
                 d="M 816.66669,299.99959 H 622.22175 v 11.11153 l -38.8884,-19.4435 38.8884,-19.44539 v 11.11057 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
