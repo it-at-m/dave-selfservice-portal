@@ -486,6 +486,17 @@ function checkUploadedFiledata(
         );
       }
 
+      const zaehlwerteWithValidFormat =
+        validationUtils.validateZaehlwerteValues(splittedLine);
+      if (!isEmpty(zaehlwerteWithValidFormat)) {
+        return enrichValidationErrorMessage(
+          zaehlwerteWithValidFormat,
+          splittedLine,
+          csvLineIndex,
+          filename
+        );
+      }
+
       // Unterscheidung zw. Fussverkehrszählung und anderen Zählungen
       let invalidityReason: string;
       if (
@@ -640,16 +651,6 @@ function checkVerkehrsbeziehungData(
       filename
     );
 
-  errorMessage =
-    kfzVerkehrValidationUtils.validateZaehlwerteValues(splittedLine);
-  if (errorMessage)
-    return enrichValidationErrorMessage(
-      errorMessage,
-      splittedLine,
-      csvLineIndex,
-      filename
-    );
-
   return "";
 }
 
@@ -757,16 +758,6 @@ function checkFussverkehrData(
     splittedLine
   );
   if (!isEmpty(errorMessage))
-    return enrichValidationErrorMessage(
-      errorMessage,
-      splittedLine,
-      csvLineIndex,
-      filename
-    );
-
-  errorMessage =
-    fussverkehrValidationUtils.validateZaehlwerteValues(splittedLine);
-  if (errorMessage)
     return enrichValidationErrorMessage(
       errorMessage,
       splittedLine,

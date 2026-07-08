@@ -29,6 +29,7 @@ const {
   checkForAlignmentOfIntervallsAccordingZaehldauer,
   getBewegungsinformationFromCsvLine,
   validateZaehlwerteOccurrence,
+  validateZaehlwerteValues,
 } = useValidationUtils();
 
 describe("ValidationUtils - isWholeNonNegativeIntegerString", () => {
@@ -77,7 +78,7 @@ describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
       0,
       2
     );
-    expect(result).toBeUndefined();
+    expect(result).toBe("");
   });
 
   test("returns undefined for valid whole non-negative integer strings (trimming applied)", () => {
@@ -87,7 +88,7 @@ describe("containsOnlyWholeNonNegativeIntegerStrings", () => {
       0,
       2
     );
-    expect(result).toBeUndefined();
+    expect(result).toBe("");
   });
 
   test("returns an error message when a checked cell contains a non-integer or negative value", () => {
@@ -642,5 +643,55 @@ describe("ValidationUtils - isWholeNonNegativeIntegerString - edge cases", () =>
     invalids.forEach((val) => {
       expect(isWholeNonNegativeIntegerString(val)).toBe(false);
     });
+  });
+});
+
+describe("ValidationUtils -> validateZaehlwerteValues", () => {
+  test("returns empty when all value cells empty", () => {
+    const line = new Array(COLUMN_COUNT).fill("");
+    expect(validateZaehlwerteValues(line)).toBe("");
+  });
+
+  test("returns empty when all value cells valid integers", () => {
+    const line = new Array(COLUMN_COUNT).fill("");
+    for (let i = 4; i <= 10; i++) line[i] = "1";
+    expect(validateZaehlwerteValues(line)).toBe("");
+  });
+
+  test("returns empty when some cells empty and others valid (trimming)", () => {
+    const line = new Array(COLUMN_COUNT).fill("");
+    line[4] = "0";
+    line[7] = "  5 ";
+    expect(validateZaehlwerteValues(line)).toBe("");
+  });
+
+  test("returns error when a decimal value is present", () => {
+    const line = new Array(COLUMN_COUNT).fill("");
+    line[6] = "1.2";
+    const res = validateZaehlwerteValues(line);
+    expect(res).toBeTypeOf("string");
+    expect(res).toContain("dürfen nur nicht-negative, ganze Zahlen enthalten");
+  });
+
+  test("returns error when negative value present", () => {
+    const line = new Array(COLUMN_COUNT).fill("");
+    line[9] = "-1";
+    const res = validateZaehlwerteValues(line);
+    expect(res).toBeTypeOf("string");
+    expect(res).toContain("dürfen nur nicht-negative, ganze Zahlen enthalten");
+  });
+
+  test("returns error when non-numeric value present", () => {
+    const line = new Array(COLUMN_COUNT).fill("");
+    line[5] = "abc";
+    const res = validateZaehlwerteValues(line);
+    expect(res).toBeTypeOf("string");
+  });
+
+  test("returns error when embedded spaces in number", () => {
+    const line = new Array(COLUMN_COUNT).fill("");
+    line[8] = "1 0";
+    const res = validateZaehlwerteValues(line);
+    expect(res).toBeTypeOf("string");
   });
 });

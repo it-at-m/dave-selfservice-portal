@@ -285,20 +285,6 @@ export function useKfzVerkehrValidationUtils() {
     }
   }
 
-  /**
-   * Prüft die konkreten Werte der Zählwerte auf Validität.
-   *
-   * @param splittedLine Array für Zählwerte.
-   * @return Fehlermeldung
-   */
-  function validateZaehlwerteValues(splittedLine: Array<string>) {
-    return validationUtils.containsOnlyWholeNonNegativeIntegerStrings(
-      splittedLine,
-      4,
-      8
-    );
-  }
-
   return {
     validateVerkehrsbeziehungForKreisverkehr,
     validateNachValueForKreisverkehr,
@@ -310,6 +296,5 @@ export function useKfzVerkehrValidationUtils() {
     validateNachOccurrence,
     validateNachValue,
     validateStrassenseiteRichtungOccurrence,
-    validateZaehlwerteValues,
   };
 }

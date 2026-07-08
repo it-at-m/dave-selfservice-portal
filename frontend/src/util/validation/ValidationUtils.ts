@@ -179,6 +179,16 @@ export function useValidationUtils() {
   }
 
   /**
+   * Prüft die konkreten Werte der Zählwerte auf Validität.
+   *
+   * @param splittedLine Array für Zählwerte.
+   * @return Fehlermeldung
+   */
+  function validateZaehlwerteValues(splittedLine: Array<string>) {
+    return containsOnlyWholeNonNegativeIntegerStrings(splittedLine, 4, 10);
+  }
+
+  /**
    * Prüft eine Range von Werten aus einem Array auf ganze, nicht-negative Zahlen.
    *
    * @param splittedLine Array für Zählwerte.
@@ -199,6 +209,7 @@ export function useValidationUtils() {
         }
       }
     }
+    return "";
   }
 
   /**
@@ -483,5 +494,6 @@ export function useValidationUtils() {
     checkForAlignmentOfIntervallsAccordingZaehldauer,
     getBewegungsinformationFromCsvLine,
     validateZaehlwerteOccurrence,
+    validateZaehlwerteValues,
   };
 }

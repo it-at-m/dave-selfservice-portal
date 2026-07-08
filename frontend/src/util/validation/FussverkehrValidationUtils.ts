@@ -453,20 +453,6 @@ export function useFussverkehrValidationUtils() {
     }
   }
 
-  /**
-   * Prüft die konkreten Werte der Zählwerte auf Validität.
-   *
-   * @param splittedLine Array für Zählwerte.
-   * @return Fehlermeldung
-   */
-  function validateZaehlwerteValues(splittedLine: Array<string>) {
-    return validationUtils.containsOnlyWholeNonNegativeIntegerStrings(
-      splittedLine,
-      9,
-      10
-    );
-  }
-
   return {
     validateNachOccurrence,
     validateNachValue,
@@ -480,6 +466,5 @@ export function useFussverkehrValidationUtils() {
     validateStrassenseiteValue,
     validateRichtungOccurrence,
     validateRichtungValue,
-    validateZaehlwerteValues,
   };
 }
