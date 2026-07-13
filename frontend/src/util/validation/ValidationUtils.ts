@@ -473,6 +473,16 @@ export function useValidationUtils() {
     return toArray(csvData).filter((csvLine) => !isEmpty(trim(csvLine)));
   }
 
+  function validateIsColumnValueEmpty(
+    columnValue: string,
+    columnName: string
+  ): string {
+    if (!isEmpty(columnValue)) {
+      return `In Spalte ${columnName} darf kein Wert stehen.`;
+    }
+    return "";
+  }
+
   return {
     SEPARATOR,
     EXPECTED_META_HEADER,
@@ -495,5 +505,6 @@ export function useValidationUtils() {
     getBewegungsinformationFromCsvLine,
     validateZaehlwerteOccurrence,
     validateZaehlwerteValues,
+    validateIsColumnValueEmpty,
   };
 }

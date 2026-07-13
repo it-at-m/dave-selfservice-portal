@@ -594,6 +594,33 @@ function checkVerkehrsbeziehungData(
 
   let errorMessage: string | undefined;
 
+  let columnName =
+    validationUtils.EXPECTED_ZAEHLDATEN_HEADER.split(SEPARATOR)[2];
+  errorMessage = validationUtils.validateIsColumnValueEmpty(
+    splittedLine[2],
+    columnName
+  );
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
+
+  columnName = validationUtils.EXPECTED_ZAEHLDATEN_HEADER.split(SEPARATOR)[3];
+  errorMessage = validationUtils.validateIsColumnValueEmpty(
+    splittedLine[3],
+    columnName
+  );
+  if (errorMessage)
+    return enrichValidationErrorMessage(
+      errorMessage,
+      splittedLine,
+      csvLineIndex,
+      filename
+    );
+
   if (zaehlung.value.kreisverkehr) {
     errorMessage = kfzVerkehrValidationUtils.validateNachValueForKreisverkehr(
       splittedLine[1]

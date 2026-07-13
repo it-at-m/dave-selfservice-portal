@@ -30,6 +30,7 @@ const {
   getBewegungsinformationFromCsvLine,
   validateZaehlwerteOccurrence,
   validateZaehlwerteValues,
+  validateIsColumnValueEmpty,
 } = useValidationUtils();
 
 describe("ValidationUtils - isWholeNonNegativeIntegerString", () => {
@@ -693,5 +694,29 @@ describe("ValidationUtils -> validateZaehlwerteValues", () => {
     line[8] = "1 0";
     const res = validateZaehlwerteValues(line);
     expect(res).toBeTypeOf("string");
+  });
+});
+
+describe("ValidationUtils -> validateIsColumnValueEmpty", () => {
+  test("returns empty when column value is empty string", () => {
+    expect(validateIsColumnValueEmpty("", "TestSpalte")).toBe("");
+  });
+
+  test("returns error when column value contains non-empty text", () => {
+    const res = validateIsColumnValueEmpty("value", "ColA");
+    expect(res).toBeTypeOf("string");
+    expect(res).toContain("In Spalte ColA darf kein Wert stehen.");
+  });
+
+  test("returns error when column value contains whitespace only (not trimmed)", () => {
+    // lodash.isEmpty("   ") === false, so whitespace is treated as value and should return an error
+    const res = validateIsColumnValueEmpty("   ", "WhitespaceCol");
+    expect(res).toBeTypeOf("string");
+    expect(res).toContain("WhitespaceCol");
+  });
+
+  test("returns empty for undefined or null (treated as empty)", () => {
+    expect(validateIsColumnValueEmpty(undefined as any, "NullCol")).toBe("");
+    expect(validateIsColumnValueEmpty(null as any, "NullCol")).toBe("");
   });
 });
