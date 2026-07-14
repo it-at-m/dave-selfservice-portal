@@ -4,7 +4,6 @@ on: [push]
 
 jobs:
   build-maven:
-    needs: compliance
     runs-on: ubuntu-latest
     permissions:
       contents: read
