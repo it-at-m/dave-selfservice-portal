@@ -4,7 +4,7 @@
 
     <groupId>de.muenchen.dave.apigateway</groupId>
     <artifactId>dave-selfserviceportal-apigateway</artifactId>
-    <version>9.0.1-SNAPSHOT</version>
+    <version>10.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>dave_selfserviceportal_apigateway</name>
 
@@ -148,7 +148,7 @@
         <!-- Frontend Lib -->
         <dependency>
             <groupId>de.muenchen.dave.frontend</groupId>
-            <version>9.0.1-SNAPSHOT</version>
+            <version>10.0.1-SNAPSHOT</version>
             <artifactId>dave-selfserviceportal-frontend</artifactId>
             <scope>runtime</scope>
         </dependency>
