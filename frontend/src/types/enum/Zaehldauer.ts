@@ -1,4 +1,5 @@
 import type KeyVal from "@/types/common/KeyVal";
+import type { StartIntervallnummerEndeIntervallnummer } from "@/types/common/StartIntervallnummerEndeIntervallnummer";
 
 export enum Zaehldauer {
   /**
@@ -62,3 +63,55 @@ export const zaehldauerDropDown = new Array<KeyVal>(
     title: zaehldauerText.get(Zaehldauer.SONSTIGE)!,
   }
 );
+
+export const zaehldauerIntervallnummern = new Map<
+  Zaehldauer,
+  Array<StartIntervallnummerEndeIntervallnummer>
+>([
+  [
+    Zaehldauer.DAUER_2_X_4_STUNDEN,
+    [
+      {
+        startIntervallnummer: 25,
+        endeIntervallnummer: 40,
+        numberOfIntervals: 16,
+      },
+      {
+        startIntervallnummer: 61,
+        endeIntervallnummer: 76,
+        numberOfIntervals: 16,
+      },
+    ],
+  ],
+  [
+    Zaehldauer.DAUER_13_STUNDEN,
+    [
+      {
+        startIntervallnummer: 25,
+        endeIntervallnummer: 76,
+        numberOfIntervals: 52,
+      },
+    ],
+  ],
+  [
+    Zaehldauer.DAUER_16_STUNDEN,
+    [
+      {
+        startIntervallnummer: 25,
+        endeIntervallnummer: 88,
+        numberOfIntervals: 64,
+      },
+    ],
+  ],
+  [
+    Zaehldauer.DAUER_24_STUNDEN,
+    [
+      {
+        startIntervallnummer: 1,
+        endeIntervallnummer: 96,
+        numberOfIntervals: 96,
+      },
+    ],
+  ],
+  [Zaehldauer.SONSTIGE, []],
+]);
