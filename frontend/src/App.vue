@@ -67,7 +67,8 @@ import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useUserStore } from "@/store/UserStore";
 
-const URL_HANDBUCH_LINK = "";
+const URL_HANDBUCH_LINK =
+    "https://it-at-m.github.io/dave/de/DAVe_Anwenderhandbuch_Datenportal.pdf";
 
 const loggedInUser = ref<string>("no-security");
 
