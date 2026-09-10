@@ -16,7 +16,7 @@ describe("ValidationStore", () => {
     expect(store.isSavingOfUploadedFilesPossible).toBe(false);
   });
 
-  it("initUploadedFileForKnotenarmnummerValid sets entries to false", () => {
+  it("initUploadedFilesForKnotenarme sets entries to false, when no filenames present", () => {
     const store = useValidationStore();
     const knotenarme = [{ nummer: 1 }, { nummer: 2 }];
 
@@ -28,6 +28,23 @@ describe("ValidationStore", () => {
     // setze beide auf true => computed wird wahr
     store.setValidationStatusForKnotenarm(knotenarme[0] as any, true);
     expect(store.isSavingOfUploadedFilesPossible).toBe(false); // noch einer false
+    store.setValidationStatusForKnotenarm(knotenarme[1] as any, true);
+    expect(store.isSavingOfUploadedFilesPossible).toBe(true);
+  });
+
+  it("initUploadedFilesForKnotenarme sets entries according to presence of filenames", () => {
+    const store = useValidationStore();
+    const knotenarme = [
+      { nummer: 1, filename: "Knotenarm1.csv" },
+      { nummer: 2 },
+    ];
+
+    store.initUploadedFilesForKnotenarme(knotenarme as Array<KnotenarmDTO>);
+
+    // Nur der erste Knotenarm hat einen positiven Eintrag => computed ist false
+    expect(store.isSavingOfUploadedFilesPossible).toBe(false);
+
+    // Setze auch den 2ten Knotenarm auf true => computed wird wahr
     store.setValidationStatusForKnotenarm(knotenarme[1] as any, true);
     expect(store.isSavingOfUploadedFilesPossible).toBe(true);
   });
