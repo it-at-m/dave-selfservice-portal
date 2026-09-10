@@ -52,6 +52,7 @@ import { useEventbusStore } from "@/store/EventbusStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
+import Zaehlart from "@/types/enum/Zaehlart";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
 interface Props {
@@ -83,6 +84,7 @@ watch(
     const knotenarme = zaehlung.value.knotenarme;
     validationStore.initUploadedFilesForKnotenarme(knotenarme);
     eventbusStore.setResetFormEvent();
+    validationStore.uploadedFilesChanged = false;
   }
 );
 
@@ -106,6 +108,16 @@ function save(): void {
   csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
     zaehlung.value
   );
+
+  if (!validationStore.uploadedFilesChanged) {
+    if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+      zaehlung.value.laengsverkehr = [];
+    } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
+      zaehlung.value.querungsverkehr = [];
+    } else {
+      zaehlung.value.verkehrsbeziehungen = [];
+    }
+  }
 
   ZaehlungService.saveZaehlung(zaehlung.value)
     .then(() => {

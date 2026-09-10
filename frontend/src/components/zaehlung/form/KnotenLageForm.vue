@@ -374,6 +374,7 @@ function wrongFileType(file: File): boolean {
 }
 
 function deleteFile(nummer: number): void {
+  validationStore.uploadedFilesChanged = true;
   zaehlung.value.knotenarme.forEach((arm: KnotenarmDTO) => {
     if (arm.nummer === nummer) {
       validationStore.setValidationStatusForKnotenarm(arm, false);
@@ -996,6 +997,7 @@ function readFiles() {
               );
             } else {
               knotenarmeWithUploadedFiles.set(knotenarmnummerOfCsv, myFile);
+              validationStore.uploadedFilesChanged = true;
 
               itemsProcessed++;
               zaehlung.value.knotenarme.forEach((zaehlungArm: KnotenarmDTO) => {

@@ -19,6 +19,8 @@ export const useValidationStore = defineStore("validationStore", () => {
     return !isEmpty(knotenarmValidationResults) && isEveryKnotenarmValid;
   });
 
+  const uploadedFilesChanged = ref<boolean>(false);
+
   function setValidationStatusForKnotenarm(
     knotenarm: KnotenarmDTO,
     isUploadedFileValid: boolean
@@ -44,5 +46,6 @@ export const useValidationStore = defineStore("validationStore", () => {
     setValidationStatusForKnotenarm,
     initUploadedFilesForKnotenarme,
     isSavingOfUploadedFilesPossible,
+    uploadedFilesChanged,
   };
 });
