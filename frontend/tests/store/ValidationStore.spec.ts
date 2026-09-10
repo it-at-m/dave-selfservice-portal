@@ -20,9 +20,7 @@ describe("ValidationStore", () => {
     const store = useValidationStore();
     const knotenarme = [{ nummer: 1 }, { nummer: 2 }];
 
-    store.initUploadedFileForKnotenarmnummerAsInvalid(
-      knotenarme as Array<KnotenarmDTO>
-    );
+    store.initUploadedFilesForKnotenarme(knotenarme as Array<KnotenarmDTO>);
 
     // nach init sind alle Einträge false => computed false
     expect(store.isSavingOfUploadedFilesPossible).toBe(false);
@@ -56,9 +54,7 @@ describe("ValidationStore", () => {
     const store = useValidationStore();
     const knotenarme = [{ nummer: 1 }, { nummer: 2 }, { nummer: 3 }];
 
-    store.initUploadedFileForKnotenarmnummerAsInvalid(
-      knotenarme as Array<KnotenarmDTO>
-    );
+    store.initUploadedFilesForKnotenarme(knotenarme as Array<KnotenarmDTO>);
 
     // alle false -> false
     expect(store.isSavingOfUploadedFilesPossible).toBe(false);

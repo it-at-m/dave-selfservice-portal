@@ -81,7 +81,7 @@ watch(
   () => props.showDialog,
   () => {
     const knotenarme = zaehlung.value.knotenarme;
-    validationStore.initUploadedFileForKnotenarmnummerAsInvalid(knotenarme);
+    validationStore.initUploadedFilesForKnotenarme(knotenarme);
     eventbusStore.setResetFormEvent();
   }
 );

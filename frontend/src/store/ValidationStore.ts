@@ -29,18 +29,20 @@ export const useValidationStore = defineStore("validationStore", () => {
     );
   }
 
-  function initUploadedFileForKnotenarmnummerAsInvalid(
-    knotenarme: Array<KnotenarmDTO>
-  ) {
+  function initUploadedFilesForKnotenarme(knotenarme: Array<KnotenarmDTO>) {
     uploadedFileForKnotenarmnummerValid.value = new Map<number, boolean>();
     knotenarme.forEach((knotenarm) => {
-      uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, false);
+      if (knotenarm.filename != null) {
+        uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, true);
+      } else {
+        uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, false);
+      }
     });
   }
 
   return {
     setValidationStatusForKnotenarm,
-    initUploadedFileForKnotenarmnummerAsInvalid,
+    initUploadedFilesForKnotenarme,
     isSavingOfUploadedFilesPossible,
   };
 });
