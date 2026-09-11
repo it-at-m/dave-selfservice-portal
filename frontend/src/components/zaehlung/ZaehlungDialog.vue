@@ -52,6 +52,7 @@ import { useEventbusStore } from "@/store/EventbusStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
+import Zaehlart from "@/types/enum/Zaehlart";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
 interface Props {
@@ -81,8 +82,10 @@ watch(
   () => props.showDialog,
   () => {
     const knotenarme = zaehlung.value.knotenarme;
-    validationStore.initUploadedFileForKnotenarmnummerAsInvalid(knotenarme);
+    validationStore.initUploadedFilesForKnotenarme(knotenarme);
     eventbusStore.setResetFormEvent();
+    validationStore.uploadedFilesChanged = false;
+    validationStore.initPendingUploadedFileReads();
   }
 );
 
@@ -106,6 +109,18 @@ function save(): void {
   csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
     zaehlung.value
   );
+
+  if (!validationStore.uploadedFilesChanged) {
+    // Bewegungsbeziehungen auf leeres Array setzen, um ein Löschen der gespeicherten
+    // Zeitintervalle auf Backend-Seite zu verhindern
+    if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+      zaehlung.value.laengsverkehr = [];
+    } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
+      zaehlung.value.querungsverkehr = [];
+    } else {
+      zaehlung.value.verkehrsbeziehungen = [];
+    }
+  }
 
   ZaehlungService.saveZaehlung(zaehlung.value)
     .then(() => {
