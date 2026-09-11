@@ -34,7 +34,7 @@ export const useValidationStore = defineStore("validationStore", () => {
   function initUploadedFilesForKnotenarme(knotenarme: Array<KnotenarmDTO>) {
     uploadedFileForKnotenarmnummerValid.value = new Map<number, boolean>();
     knotenarme.forEach((knotenarm) => {
-      if (knotenarm.filename != null) {
+      if (knotenarm.filename?.trim().length > 0) {
         uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, true);
       } else {
         uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, false);
