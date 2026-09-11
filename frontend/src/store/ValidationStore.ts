@@ -16,9 +16,14 @@ export const useValidationStore = defineStore("validationStore", () => {
     const isEveryKnotenarmValid = knotenarmValidationResults.every(
       (fileForKnotenarmnummerValid) => fileForKnotenarmnummerValid
     );
-    return !isEmpty(knotenarmValidationResults) && isEveryKnotenarmValid;
+    return (
+      pendingUploadedFileReads.value === 0 &&
+      !isEmpty(knotenarmValidationResults) &&
+      isEveryKnotenarmValid
+    );
   });
 
+  const pendingUploadedFileReads = ref<number>(0);
   const uploadedFilesChanged = ref<boolean>(false);
 
   function setValidationStatusForKnotenarm(
@@ -42,10 +47,28 @@ export const useValidationStore = defineStore("validationStore", () => {
     });
   }
 
+  function startUploadedFileRead() {
+    pendingUploadedFileReads.value++;
+  }
+
+  function finishUploadedFileRead() {
+    pendingUploadedFileReads.value = Math.max(
+      0,
+      pendingUploadedFileReads.value - 1
+    );
+  }
+
+  function initPendingUploadedFileReads() {
+    pendingUploadedFileReads.value = 0;
+  }
+
   return {
     setValidationStatusForKnotenarm,
     initUploadedFilesForKnotenarme,
     isSavingOfUploadedFilesPossible,
     uploadedFilesChanged,
+    startUploadedFileRead,
+    finishUploadedFileRead,
+    initPendingUploadedFileReads,
   };
 });

@@ -85,4 +85,37 @@ describe("ValidationStore", () => {
     store.setValidationStatusForKnotenarm(knotenarme[2] as KnotenarmDTO, true);
     expect(store.isSavingOfUploadedFilesPossible).toBe(true);
   });
+
+  it("isSavingOfUploadedFilesPossible requires pendingUploadedFileReads to be 0", () => {
+    const store = useValidationStore();
+    const knotenarme = [{ nummer: 1 }, { nummer: 2 }, { nummer: 3 }];
+
+    store.initUploadedFilesForKnotenarme(knotenarme as Array<KnotenarmDTO>);
+    store.initPendingUploadedFileReads();
+
+    // knotenarme alle false -> false
+    expect(store.isSavingOfUploadedFilesPossible).toBe(false);
+
+    // lese zwei Dateien
+    store.startUploadedFileRead();
+    store.startUploadedFileRead();
+    store.finishUploadedFileRead();
+    store.finishUploadedFileRead();
+
+    // setze zwei true, eines false -> false
+    store.setValidationStatusForKnotenarm(knotenarme[0] as KnotenarmDTO, true);
+    store.setValidationStatusForKnotenarm(knotenarme[1] as KnotenarmDTO, true);
+    expect(store.isSavingOfUploadedFilesPossible).toBe(false);
+
+    // lese dritte Datei
+    store.startUploadedFileRead();
+
+    // setze letzte Datei true; Lesen noch nicht abgeschlossen (unrealistisch, nur für Test) -> false
+    store.setValidationStatusForKnotenarm(knotenarme[2] as KnotenarmDTO, true);
+    expect(store.isSavingOfUploadedFilesPossible).toBe(false);
+
+    // Lesen abschließen -> true
+    store.finishUploadedFileRead();
+    expect(store.isSavingOfUploadedFilesPossible).toBe(true);
+  });
 });

@@ -967,92 +967,103 @@ function readFiles() {
       } else {
         const fileReader = new FileReader();
 
+        validationStore.startUploadedFileRead();
+
         // Eventlistener hinzufügen und angeben, was passieren soll, wenn ein File geladen wurde ('load'-Event)
         fileReader.addEventListener(
           "load",
           function () {
-            const csv: Array<string> = (fileReader.result as string).split(
-              /\r\n|\n/
-            );
-            const knotenarmnummerOfCsv: number = getKnotenarmnummerOfCsv(csv);
-            // Plausibilisierung: Kann die Datei einem Knotenarm der Zählung zugeordnet werden?
-            if (!isKnotenarmnummerInZaehlung(knotenarmnummerOfCsv)) {
-              snackbarStore.showError(
-                `Die Datei ${myFile.name} konnte keinem Knotenarm zugeordnet werden. Knotenarmnummer prüfen!`
+            try {
+              const csv: Array<string> = (fileReader.result as string).split(
+                /\r\n|\n/
               );
-            } else if (knotenarmeWithUploadedFiles.has(knotenarmnummerOfCsv)) {
-              // Plausibilisierung: Wurden mehrere Dateien mit dieser Knotenarmnummer hochgeladen?
-              const filename =
-                knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv)?.name ??
-                "";
+              const knotenarmnummerOfCsv: number = getKnotenarmnummerOfCsv(csv);
+              // Plausibilisierung: Kann die Datei einem Knotenarm der Zählung zugeordnet werden?
+              if (!isKnotenarmnummerInZaehlung(knotenarmnummerOfCsv)) {
+                snackbarStore.showError(
+                  `Die Datei ${myFile.name} konnte keinem Knotenarm zugeordnet werden. Knotenarmnummer prüfen!`
+                );
+              } else if (
+                knotenarmeWithUploadedFiles.has(knotenarmnummerOfCsv)
+              ) {
+                // Plausibilisierung: Wurden mehrere Dateien mit dieser Knotenarmnummer hochgeladen?
+                const filename =
+                  knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv)?.name ??
+                  "";
 
-              if (!errorTextKnotenarmnummer.includes(filename)) {
-                errorTextKnotenarmnummer = `${errorTextKnotenarmnummer}\n - ${knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv)?.name}: Knotenarmnummer ${knotenarmnummerOfCsv}\n`;
-              }
-              errorTextKnotenarmnummer = `${errorTextKnotenarmnummer}\n - ${myFile.name}: Knotenarmnummer ${knotenarmnummerOfCsv}\n`;
+                if (!errorTextKnotenarmnummer.includes(filename)) {
+                  errorTextKnotenarmnummer = `${errorTextKnotenarmnummer}\n - ${knotenarmeWithUploadedFiles.get(knotenarmnummerOfCsv)?.name}: Knotenarmnummer ${knotenarmnummerOfCsv}\n`;
+                }
+                errorTextKnotenarmnummer = `${errorTextKnotenarmnummer}\n - ${myFile.name}: Knotenarmnummer ${knotenarmnummerOfCsv}\n`;
 
-              snackbarStore.showError(
-                `Mehrere Dateien enthalten die gleiche Knotenarmnummer:`,
-                errorTextKnotenarmnummer
-              );
-            } else {
-              knotenarmeWithUploadedFiles.set(knotenarmnummerOfCsv, myFile);
-              validationStore.uploadedFilesChanged = true;
+                snackbarStore.showError(
+                  `Mehrere Dateien enthalten die gleiche Knotenarmnummer:`,
+                  errorTextKnotenarmnummer
+                );
+              } else {
+                knotenarmeWithUploadedFiles.set(knotenarmnummerOfCsv, myFile);
+                validationStore.uploadedFilesChanged = true;
 
-              itemsProcessed++;
-              zaehlung.value.knotenarme.forEach((zaehlungArm: KnotenarmDTO) => {
-                if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
-                  // Plausibilitätscheck
-                  const errorMessage: string = checkUploadedFiledata(
-                    knotenarmnummerOfCsv,
-                    csv,
-                    myFile.name
-                  );
-
-                  const isUploadedFileForKnotenarmPlausible =
-                    errorMessage.length === 0;
-                  validationStore.setValidationStatusForKnotenarm(
-                    zaehlungArm,
-                    isUploadedFileForKnotenarmPlausible
-                  );
-
-                  zaehlungArm.filename = myFile.name;
-                  zaehlungArm.filedata = csv;
-
-                  if (!isUploadedFileForKnotenarmPlausible) {
-                    successfull = false;
-                    errorText = `${errorText} ${myFile.name}: ${errorMessage}\n`;
-                  }
-
-                  // Wenn alle Files eingelesen wurden, dann zeige das Ergebnis an
-                  if (itemsProcessed === files.value.length) {
-                    // Damit nacheinander ein File mit identischem Namen hocheladen werden
-                    // kann, wird immer der FileInput zurückgesetzt
-                    resetFileInput.value = Math.floor(Math.random() * 10001);
-                    // wenn zu wenig Files hochgeladen wurden, dann Abbrechen
-                    const knotenarmWithoutFile = zaehlung.value.knotenarme.some(
-                      (kn) => !kn.filename
-                    );
-                    if (!isNil(files.value) && knotenarmWithoutFile) {
-                      snackbarStore.showError(
-                        `Zu wenig Dateien`,
-                        `Es muss pro Knotenarm genau eine Datei hochgeladen werden.`
+                itemsProcessed++;
+                zaehlung.value.knotenarme.forEach(
+                  (zaehlungArm: KnotenarmDTO) => {
+                    if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
+                      // Plausibilitätscheck
+                      const errorMessage: string = checkUploadedFiledata(
+                        knotenarmnummerOfCsv,
+                        csv,
+                        myFile.name
                       );
-                    } else {
-                      if (successfull) {
-                        snackbarStore.showSuccess(
-                          `Alle Dateien konnten einem Knotenarm zugeordnet werden.`
+
+                      const isUploadedFileForKnotenarmPlausible =
+                        errorMessage.length === 0;
+                      validationStore.setValidationStatusForKnotenarm(
+                        zaehlungArm,
+                        isUploadedFileForKnotenarmPlausible
+                      );
+
+                      zaehlungArm.filename = myFile.name;
+                      zaehlungArm.filedata = csv;
+
+                      if (!isUploadedFileForKnotenarmPlausible) {
+                        successfull = false;
+                        errorText = `${errorText} ${myFile.name}: ${errorMessage}\n`;
+                      }
+
+                      // Wenn alle Files eingelesen wurden, dann zeige das Ergebnis an
+                      if (itemsProcessed === files.value.length) {
+                        // Damit nacheinander ein File mit identischem Namen hocheladen werden
+                        // kann, wird immer der FileInput zurückgesetzt
+                        resetFileInput.value = Math.floor(
+                          Math.random() * 10001
                         );
-                      } else {
-                        snackbarStore.showError(
-                          `Folgende Dateien wurden abgelehnt:`,
-                          errorText
-                        );
+                        // wenn zu wenig Files hochgeladen wurden, dann Abbrechen
+                        const knotenarmWithoutFile =
+                          zaehlung.value.knotenarme.some((kn) => !kn.filename);
+                        if (!isNil(files.value) && knotenarmWithoutFile) {
+                          snackbarStore.showError(
+                            `Zu wenig Dateien`,
+                            `Es muss pro Knotenarm genau eine Datei hochgeladen werden.`
+                          );
+                        } else {
+                          if (successfull) {
+                            snackbarStore.showSuccess(
+                              `Alle Dateien konnten einem Knotenarm zugeordnet werden.`
+                            );
+                          } else {
+                            snackbarStore.showError(
+                              `Folgende Dateien wurden abgelehnt:`,
+                              errorText
+                            );
+                          }
+                        }
                       }
                     }
                   }
-                }
-              });
+                );
+              }
+            } finally {
+              validationStore.finishUploadedFileRead();
             }
           },
           false

@@ -85,6 +85,7 @@ watch(
     validationStore.initUploadedFilesForKnotenarme(knotenarme);
     eventbusStore.setResetFormEvent();
     validationStore.uploadedFilesChanged = false;
+    validationStore.initPendingUploadedFileReads();
   }
 );
 
