@@ -110,6 +110,8 @@ function save(): void {
   );
 
   if (!validationStore.uploadedFilesChanged) {
+    // Bewegungsbeziehungen auf leeres Array setzen, um ein Löschen der gespeicherten
+    // Zeitintervalle auf Backend-Seite zu verhindern
     if (zaehlung.value.zaehlart === Zaehlart.FJS) {
       zaehlung.value.laengsverkehr = [];
     } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
