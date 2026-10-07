@@ -255,18 +255,20 @@
               text-align: start;
               writing-mode: lr-tb;
               direction: ltr;
-              text-anchor: start;
+              text-anchor: middle;
               fill: #000000;
               stroke-width: 52.2711;
+              dominant-baseline: central;
             "
-            y="711.73895"
-            x="465.80084"
+            x="476"
+            y="700"
+            :transform="rotateNumber1Inverse"
           >
             <tspan
               id="number1_tspan"
               style="stroke-width: 52.2711"
-              x="465.80084"
-              y="711.73895"
+              x="476"
+              y="700"
             >
               {{ firstNode?.nummer }}
             </tspan>
@@ -296,17 +298,19 @@
               text-align: start;
               writing-mode: lr-tb;
               direction: ltr;
-              text-anchor: start;
+              text-anchor: middle;
               fill: #000000;
               stroke-width: 52.2711;
+              dominant-baseline: central;
             "
-            x="913.19183"
-            y="711.73895"
+            x="924"
+            y="700"
+            :transform="rotateNumber2Inverse"
           >
             <tspan
               id="number2_tspan"
-              x="913.19183"
-              y="711.73895"
+              x="924"
+              y="700"
               style="stroke-width: 52.2711"
             >
               {{ secondNode?.nummer }}
@@ -407,6 +411,7 @@
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ComputedRef, Ref } from "vue";
 
 import { cloneDeep, first, last, toArray } from "lodash";
 import { computed, onMounted, ref, watch } from "vue";
@@ -473,6 +478,50 @@ const rotateSvg = computed(() => {
   }
   return rotation;
 });
+
+const rotateNumber1Inverse = rotateNumberInverseFor(
+  availableNodeNumbers,
+  476,
+  700
+);
+const rotateNumber2Inverse = rotateNumberInverseFor(
+  availableNodeNumbers,
+  924,
+  700
+);
+
+/**
+ * Liefert ein computedRef für die inverse Rotation der Knotenarm-Nummern basierend auf den verfügbaren Knotenarm-Nummern.
+ * Die inverse Rotation ist notwendig, damit die Nummern immer horizontal dargestellt werden.
+ * @param availableKnotenarmNummern Ref oder ComputedRef mit number[]
+ * @param x x-Koordinate des Elements, um die rotiert werden soll
+ * @param y y-Koordinate des Elements, um die rotiert werden soll
+ * @returns ComputedRef<string> z.B. "rotate(90,700,700)"
+ */
+function rotateNumberInverseFor(
+  availableKnotenarmNummern: Ref<number[]> | ComputedRef<number[]>,
+  x: number,
+  y: number
+): ComputedRef<string> {
+  return computed(() => {
+    // Default: keine Rotation
+    let rotation = `rotate(0, ${x}, ${y})`;
+    // Reihenfolge wie in den Komponenten: spätere Bedingungen überschreiben frühere
+    if (availableKnotenarmNummern?.value?.includes(1)) {
+      rotation = `rotate(90,${x},${y})`;
+    }
+    if (availableKnotenarmNummern?.value?.includes(2)) {
+      rotation = `rotate(0,${x},${y})`;
+    }
+    if (availableKnotenarmNummern?.value?.includes(5)) {
+      rotation = `rotate(45,${x},${y})`;
+    }
+    if (availableKnotenarmNummern?.value?.includes(6)) {
+      rotation = `rotate(-45,${x},${y})`;
+    }
+    return rotation;
+  });
+}
 
 function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
   const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
