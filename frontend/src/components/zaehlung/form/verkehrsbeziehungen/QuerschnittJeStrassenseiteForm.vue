@@ -270,7 +270,7 @@
               x="476"
               y="700"
             >
-              {{ firstNode?.nummer }}
+              {{ firstKnotenarm?.nummer }}
             </tspan>
           </text>
         </g>
@@ -313,7 +313,7 @@
               y="700"
               style="stroke-width: 52.2711"
             >
-              {{ secondNode?.nummer }}
+              {{ secondKnotenarm?.nummer }}
             </tspan>
           </text>
         </g>
@@ -446,46 +446,46 @@ const selectedVerkehrsbeziehungen = computed(() => {
 const firstStreetname = ref<Array<string>>([]);
 const secondStreetname = ref<Array<string>>([]);
 
-const availableNodeNumbers = computed(() => {
-  return availableNodes.value.map((arm) => arm.nummer);
+const availableKnotenarmNummern = computed(() => {
+  return availableKnotenarme.value.map((arm) => arm.nummer);
 });
-const availableNodes = computed(() => {
+const availableKnotenarme = computed(() => {
   return zaehlung.value.knotenarme
     .toSorted(KnotenarmComparator.sortByNumber)
     .reverse();
 });
 
-const firstNode = computed(() => {
-  return first(availableNodes.value);
+const firstKnotenarm = computed(() => {
+  return first(availableKnotenarme.value);
 });
-const secondNode = computed(() => {
-  return last(availableNodes.value);
+const secondKnotenarm = computed(() => {
+  return last(availableKnotenarme.value);
 });
 const rotateSvg = computed(() => {
   // Die Viewbox der SVG liegt bei 1400 1400. Die Rotation muss in deren Zentrum stattfinden, daher 700 700
   let rotation = "rotate(0,700,700)";
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     rotation = "rotate(-90,700,700)";
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     rotation = "rotate(0,700,700)";
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     rotation = "rotate(-45,700,700)";
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     rotation = "rotate(45,700,700)";
   }
   return rotation;
 });
 
 const rotateNumber1Inverse = rotateNumberInverseFor(
-  availableNodeNumbers,
+  availableKnotenarmNummern,
   476,
   700
 );
 const rotateNumber2Inverse = rotateNumberInverseFor(
-  availableNodeNumbers,
+  availableKnotenarmNummern,
   924,
   700
 );
@@ -525,22 +525,22 @@ function rotateNumberInverseFor(
 
 function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
   const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 1;
     verkehrsbeziehung.nach = 3;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.W;
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     verkehrsbeziehung.von = 2;
     verkehrsbeziehung.nach = 4;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.N;
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 5;
     verkehrsbeziehung.nach = 7;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 6;
     verkehrsbeziehung.nach = 8;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
@@ -550,22 +550,22 @@ function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
 
 function createVerkehrsbeziehungArrowTwo(): VerkehrsbeziehungDTO {
   const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 3;
     verkehrsbeziehung.nach = 1;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.W;
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     verkehrsbeziehung.von = 4;
     verkehrsbeziehung.nach = 2;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.N;
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 7;
     verkehrsbeziehung.nach = 5;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 8;
     verkehrsbeziehung.nach = 6;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
@@ -575,22 +575,22 @@ function createVerkehrsbeziehungArrowTwo(): VerkehrsbeziehungDTO {
 
 function createVerkehrsbeziehungArrowThree(): VerkehrsbeziehungDTO {
   const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 1;
     verkehrsbeziehung.nach = 3;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.O;
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     verkehrsbeziehung.von = 2;
     verkehrsbeziehung.nach = 4;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.S;
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 5;
     verkehrsbeziehung.nach = 7;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 6;
     verkehrsbeziehung.nach = 8;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
@@ -600,22 +600,22 @@ function createVerkehrsbeziehungArrowThree(): VerkehrsbeziehungDTO {
 
 function createVerkehrsbeziehungArrowFour(): VerkehrsbeziehungDTO {
   const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 3;
     verkehrsbeziehung.nach = 1;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.O;
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     verkehrsbeziehung.von = 4;
     verkehrsbeziehung.nach = 2;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.S;
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 7;
     verkehrsbeziehung.nach = 5;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 8;
     verkehrsbeziehung.nach = 6;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
@@ -810,8 +810,8 @@ function resetForm(): void {
 }
 
 function prepareStreetnames(): void {
-  firstStreetname.value = getStreetname(firstNode.value);
-  secondStreetname.value = getStreetname(secondNode.value);
+  firstStreetname.value = getStreetname(firstKnotenarm.value);
+  secondStreetname.value = getStreetname(secondKnotenarm.value);
 }
 
 function getStreetname(knotenarm: KnotenarmDTO | undefined): Array<string> {
