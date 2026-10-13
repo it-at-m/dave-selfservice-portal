@@ -242,8 +242,8 @@
               stroke-dasharray: none;
               stroke-opacity: 1;
             "
-            cx="476"
-            cy="700"
+            :cx="xCoordNumberOne"
+            :cy="yCoordNumberOne"
             r="20.487822"
           />
           <text
@@ -255,20 +255,22 @@
               text-align: start;
               writing-mode: lr-tb;
               direction: ltr;
-              text-anchor: start;
+              text-anchor: middle;
               fill: #000000;
               stroke-width: 52.2711;
+              dominant-baseline: central;
             "
-            y="711.73895"
-            x="465.80084"
+            :x="xCoordNumberOne"
+            :y="yCoordNumberOne"
+            :transform="rotateNumberOneInverse"
           >
             <tspan
               id="number1_tspan"
               style="stroke-width: 52.2711"
-              x="465.80084"
-              y="711.73895"
+              :x="xCoordNumberOne"
+              :y="yCoordNumberOne"
             >
-              {{ firstNode?.nummer }}
+              {{ firstKnotenarm?.nummer }}
             </tspan>
           </text>
         </g>
@@ -283,8 +285,8 @@
               stroke-dasharray: none;
               stroke-opacity: 1;
             "
-            cx="924"
-            cy="700"
+            :cx="xCoordNumberTwo"
+            :cy="yCoordNumberTwo"
             r="20.487822"
           />
           <text
@@ -296,20 +298,22 @@
               text-align: start;
               writing-mode: lr-tb;
               direction: ltr;
-              text-anchor: start;
+              text-anchor: middle;
               fill: #000000;
               stroke-width: 52.2711;
+              dominant-baseline: central;
             "
-            x="913.19183"
-            y="711.73895"
+            :x="xCoordNumberTwo"
+            :y="yCoordNumberTwo"
+            :transform="rotateNumberTwoInverse"
           >
             <tspan
               id="number2_tspan"
-              x="913.19183"
-              y="711.73895"
+              :x="xCoordNumberTwo"
+              :y="yCoordNumberTwo"
               style="stroke-width: 52.2711"
             >
-              {{ secondNode?.nummer }}
+              {{ secondKnotenarm?.nummer }}
             </tspan>
           </text>
         </g>
@@ -407,6 +411,7 @@
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ComputedRef, Ref } from "vue";
 
 import { cloneDeep, first, last, toArray } from "lodash";
 import { computed, onMounted, ref, watch } from "vue";
@@ -441,57 +446,106 @@ const selectedVerkehrsbeziehungen = computed(() => {
 const firstStreetname = ref<Array<string>>([]);
 const secondStreetname = ref<Array<string>>([]);
 
-const availableNodeNumbers = computed(() => {
-  return availableNodes.value.map((arm) => arm.nummer);
+const xCoordNumberOne = 476;
+const yCoordNumberOne = 700;
+const xCoordNumberTwo = 924;
+const yCoordNumberTwo = 700;
+
+const availableKnotenarmNummern = computed(() => {
+  return availableKnotenarme.value.map((arm) => arm.nummer);
 });
-const availableNodes = computed(() => {
+const availableKnotenarme = computed(() => {
   return zaehlung.value.knotenarme
     .toSorted(KnotenarmComparator.sortByNumber)
     .reverse();
 });
 
-const firstNode = computed(() => {
-  return first(availableNodes.value);
+const firstKnotenarm = computed(() => {
+  return first(availableKnotenarme.value);
 });
-const secondNode = computed(() => {
-  return last(availableNodes.value);
+const secondKnotenarm = computed(() => {
+  return last(availableKnotenarme.value);
 });
 const rotateSvg = computed(() => {
   // Die Viewbox der SVG liegt bei 1400 1400. Die Rotation muss in deren Zentrum stattfinden, daher 700 700
   let rotation = "rotate(0,700,700)";
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     rotation = "rotate(-90,700,700)";
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     rotation = "rotate(0,700,700)";
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     rotation = "rotate(-45,700,700)";
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     rotation = "rotate(45,700,700)";
   }
   return rotation;
 });
 
+const rotateNumberOneInverse = rotateNumberInverseFor(
+  availableKnotenarmNummern,
+  xCoordNumberOne,
+  yCoordNumberOne
+);
+const rotateNumberTwoInverse = rotateNumberInverseFor(
+  availableKnotenarmNummern,
+  xCoordNumberTwo,
+  yCoordNumberTwo
+);
+
+/**
+ * Liefert ein computedRef für die inverse Rotation der Knotenarm-Nummern basierend auf den verfügbaren Knotenarm-Nummern.
+ * Die inverse Rotation ist notwendig, damit die Nummern immer horizontal dargestellt werden.
+ * @param availableKnotenarmNummern Ref oder ComputedRef mit number[]
+ * @param x x-Koordinate des Elements, um die rotiert werden soll
+ * @param y y-Koordinate des Elements, um die rotiert werden soll
+ * @returns ComputedRef<string> z.B. "rotate(90,700,700)"
+ */
+function rotateNumberInverseFor(
+  availableKnotenarmNummern: Ref<number[]> | ComputedRef<number[]>,
+  x: number,
+  y: number
+): ComputedRef<string> {
+  return computed(() => {
+    // Default: keine Rotation
+    let rotation = `rotate(0, ${x}, ${y})`;
+    // Reihenfolge wie in den Komponenten: spätere Bedingungen überschreiben frühere
+    if (availableKnotenarmNummern?.value?.includes(1)) {
+      rotation = `rotate(90,${x},${y})`;
+    }
+    if (availableKnotenarmNummern?.value?.includes(2)) {
+      rotation = `rotate(0,${x},${y})`;
+    }
+    if (availableKnotenarmNummern?.value?.includes(5)) {
+      rotation = `rotate(45,${x},${y})`;
+    }
+    if (availableKnotenarmNummern?.value?.includes(6)) {
+      rotation = `rotate(-45,${x},${y})`;
+    }
+    return rotation;
+  });
+}
+
 function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
   const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 1;
     verkehrsbeziehung.nach = 3;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.W;
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     verkehrsbeziehung.von = 2;
     verkehrsbeziehung.nach = 4;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.N;
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 5;
     verkehrsbeziehung.nach = 7;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 6;
     verkehrsbeziehung.nach = 8;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
@@ -501,22 +555,22 @@ function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
 
 function createVerkehrsbeziehungArrowTwo(): VerkehrsbeziehungDTO {
   const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 3;
     verkehrsbeziehung.nach = 1;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.W;
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     verkehrsbeziehung.von = 4;
     verkehrsbeziehung.nach = 2;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.N;
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 7;
     verkehrsbeziehung.nach = 5;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 8;
     verkehrsbeziehung.nach = 6;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
@@ -526,22 +580,22 @@ function createVerkehrsbeziehungArrowTwo(): VerkehrsbeziehungDTO {
 
 function createVerkehrsbeziehungArrowThree(): VerkehrsbeziehungDTO {
   const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 1;
     verkehrsbeziehung.nach = 3;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.O;
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     verkehrsbeziehung.von = 2;
     verkehrsbeziehung.nach = 4;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.S;
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 5;
     verkehrsbeziehung.nach = 7;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 6;
     verkehrsbeziehung.nach = 8;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
@@ -551,22 +605,22 @@ function createVerkehrsbeziehungArrowThree(): VerkehrsbeziehungDTO {
 
 function createVerkehrsbeziehungArrowFour(): VerkehrsbeziehungDTO {
   const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
-  if (availableNodeNumbers.value.includes(1)) {
+  if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 3;
     verkehrsbeziehung.nach = 1;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.O;
   }
-  if (availableNodeNumbers.value.includes(2)) {
+  if (availableKnotenarmNummern.value.includes(2)) {
     verkehrsbeziehung.von = 4;
     verkehrsbeziehung.nach = 2;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.S;
   }
-  if (availableNodeNumbers.value.includes(5)) {
+  if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 7;
     verkehrsbeziehung.nach = 5;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
   }
-  if (availableNodeNumbers.value.includes(6)) {
+  if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 8;
     verkehrsbeziehung.nach = 6;
     verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
@@ -761,8 +815,8 @@ function resetForm(): void {
 }
 
 function prepareStreetnames(): void {
-  firstStreetname.value = getStreetname(firstNode.value);
-  secondStreetname.value = getStreetname(secondNode.value);
+  firstStreetname.value = getStreetname(firstKnotenarm.value);
+  secondStreetname.value = getStreetname(secondKnotenarm.value);
 }
 
 function getStreetname(knotenarm: KnotenarmDTO | undefined): Array<string> {

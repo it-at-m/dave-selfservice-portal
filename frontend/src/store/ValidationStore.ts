@@ -16,8 +16,15 @@ export const useValidationStore = defineStore("validationStore", () => {
     const isEveryKnotenarmValid = knotenarmValidationResults.every(
       (fileForKnotenarmnummerValid) => fileForKnotenarmnummerValid
     );
-    return !isEmpty(knotenarmValidationResults) && isEveryKnotenarmValid;
+    return (
+      pendingUploadedFileReads.value === 0 &&
+      !isEmpty(knotenarmValidationResults) &&
+      isEveryKnotenarmValid
+    );
   });
+
+  const pendingUploadedFileReads = ref<number>(0);
+  const uploadedFilesChanged = ref<boolean>(false);
 
   function setValidationStatusForKnotenarm(
     knotenarm: KnotenarmDTO,
@@ -29,18 +36,39 @@ export const useValidationStore = defineStore("validationStore", () => {
     );
   }
 
-  function initUploadedFileForKnotenarmnummerAsInvalid(
-    knotenarme: Array<KnotenarmDTO>
-  ) {
+  function initUploadedFilesForKnotenarme(knotenarme: Array<KnotenarmDTO>) {
     uploadedFileForKnotenarmnummerValid.value = new Map<number, boolean>();
     knotenarme.forEach((knotenarm) => {
-      uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, false);
+      if (knotenarm.filename?.trim().length > 0) {
+        uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, true);
+      } else {
+        uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, false);
+      }
     });
+  }
+
+  function startUploadedFileRead() {
+    pendingUploadedFileReads.value++;
+  }
+
+  function finishUploadedFileRead() {
+    pendingUploadedFileReads.value = Math.max(
+      0,
+      pendingUploadedFileReads.value - 1
+    );
+  }
+
+  function initPendingUploadedFileReads() {
+    pendingUploadedFileReads.value = 0;
   }
 
   return {
     setValidationStatusForKnotenarm,
-    initUploadedFileForKnotenarmnummerAsInvalid,
+    initUploadedFilesForKnotenarme,
     isSavingOfUploadedFilesPossible,
+    uploadedFilesChanged,
+    startUploadedFileRead,
+    finishUploadedFileRead,
+    initPendingUploadedFileReads,
   };
 });
