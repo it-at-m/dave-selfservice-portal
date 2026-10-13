@@ -1,7 +1,4 @@
-export interface StartUhrzeitEndeUhrzeit {
-  startUhrzeit: string;
-  endeUhrzeit: string;
-}
+import type { StartUhrzeitEndeUhrzeit } from "@/types/common/StartUhrzeitEndeUhrzeit";
 
 export const intervallnummern = new Map<string, StartUhrzeitEndeUhrzeit>([
   // Block 1 - 00:00 - 06:00

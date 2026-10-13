@@ -1,6 +1,8 @@
-import type FahrbeziehungDTO from "@/domain/dto/FahrbeziehungDTO";
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
+import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
-export default class FahrbeziehungComparator {
+export default class VerkehrsbeziehungComparator {
   /**
    * Sortiert eine Liste von Knotenarmen nach der Nummer
    *
@@ -8,8 +10,8 @@ export default class FahrbeziehungComparator {
    * @param b
    */
   public static sortByActiveVonAndNach(
-    a: FahrbeziehungDTO,
-    b: FahrbeziehungDTO
+    a: VerkehrsbeziehungDTO,
+    b: VerkehrsbeziehungDTO
   ): number {
     // beide sind aktiv, dann nach von und dann nach nach
     if (a.active && b.active) {
@@ -58,5 +60,18 @@ export default class FahrbeziehungComparator {
       return 0;
     }
     return 0;
+  }
+
+  /**
+   * Sortiert eine Liste von Querungs- und LaengsverkehrDTO mit ihren Knotenarmen nach der Nummer
+   *
+   * @param a
+   * @param b
+   */
+  public static sortLaengsUndQuerungByNumber(
+    a: LaengsverkehrDTO | QuerungsverkehrDTO,
+    b: LaengsverkehrDTO | QuerungsverkehrDTO
+  ): number {
+    return a.knotenarm - b.knotenarm;
   }
 }

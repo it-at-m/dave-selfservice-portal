@@ -1,4 +1,7 @@
-import type MapConfigDTO from "@/types/karte/MapConfigDTO";
+import type ConfigurationDTO from "@/types/configuration/ConfigurationDTO";
+import type MapConfigurationDTO from "@/types/configuration/MapConfigurationDTO";
+import type TenantConfigurationDTO from "@/types/configuration/TenantConfigurationDTO";
+import type ZaehlstelleConfigurationDTO from "@/types/configuration/ZaehlstelleConfigurationDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
@@ -30,7 +33,21 @@ export default class DefaultObjectCreator {
     return zaehlung;
   }
 
-  public static createDefaultMapConfigDTO(): MapConfigDTO {
+  public static createDefaultConfigurationDTO(): ConfigurationDTO {
+    return {
+      zaehlstelle: this.createDefaultZaehlstelleConfigurationDTO(),
+      tenant: this.createDefaultTenantConfigurationDTO(),
+    };
+  }
+
+  public static createDefaultZaehlstelleConfigurationDTO(): ZaehlstelleConfigurationDTO {
+    return {
+      automaticNumberAssignment: true,
+      linkDocumentationCsvFileForUploadZaehlung: "",
+    };
+  }
+
+  public static createDefaultMapConfigurationDTO(): MapConfigurationDTO {
     return {
       // München Zentrum
       lat: "48.137227",
@@ -38,6 +55,13 @@ export default class DefaultObjectCreator {
       zoom: 12,
       baseLayers: [],
       overlayLayers: [],
+    };
+  }
+
+  public static createDefaultTenantConfigurationDTO(): TenantConfigurationDTO {
+    return {
+      datenportalHeader: "",
+      mapConfiguration: this.createDefaultMapConfigurationDTO(),
     };
   }
 }

@@ -57,14 +57,14 @@
           />
           <v-checkbox
             v-model="rad"
-            label="Radfahrer"
+            label="Radverkehr"
             color="grey-darken-1"
             hide-details
             readonly
           />
           <v-checkbox
             v-model="fuss"
-            label="Fußgänger"
+            label="Fußverkehr"
             color="grey-darken-1"
             hide-details
             readonly

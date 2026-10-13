@@ -9,7 +9,12 @@
   >
     <template #text>
       <div class="text-subtitle-1 pb-2">{{ snackbarTextPart1 }}</div>
-      <p>{{ snackbarTextPart2 }}</p>
+      <div
+        v-for="(line, index) in formattedSnackbarTextPart2"
+        :key="index"
+      >
+        {{ line }}
+      </div>
     </template>
 
     <template #actions>
@@ -26,7 +31,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { computed, ref, watch } from "vue";
 
 import { Levels } from "@/api/error";
 import { useSnackbarStore } from "@/store/SnackbarStore";
@@ -40,6 +45,10 @@ const snackbarTextPart2 = ref<string | undefined>("");
 const color = ref(Levels.INFO);
 
 const snackbarStore = useSnackbarStore();
+
+const formattedSnackbarTextPart2 = computed<string[]>(() =>
+  snackbarTextPart2.value ? snackbarTextPart2.value.split(/\r?\n/) : []
+);
 
 watch(
   () => snackbarStore.trigger,

@@ -19,8 +19,8 @@ import L, { CircleMarker, Icon, LatLng, Marker } from "leaflet";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 import markerIconRed from "@/assets/marker-icon-red.png";
+import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useEventbusStore } from "@/store/EventbusStore";
-import { useMapConfigStore } from "@/store/MapConfigStore";
 
 interface Props {
   height?: string;
@@ -38,7 +38,7 @@ const props = withDefaults(defineProps<Props>(), {
   editZaehlungMarker: false,
 });
 
-const mapConfigStore = useMapConfigStore();
+const configurationStore = useConfigurationStore();
 
 const cardmapRef = ref<HTMLDivElement | null>(null);
 
@@ -89,7 +89,8 @@ function createLayersAndAddToMap(): void {
 }
 
 function createBaseLayers(): L.Control.LayersObject {
-  const baseLayers = mapConfigStore.getMapConfig.baseLayers;
+  const baseLayers =
+    configurationStore.getTenantConfiguration.mapConfiguration.baseLayers;
   let layerConfig = baseLayers[0];
 
   const layer = L.tileLayer.wms(layerConfig.baseUrl, {

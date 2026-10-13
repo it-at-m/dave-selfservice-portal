@@ -1,0 +1,859 @@
+<template>
+  <v-sheet
+    width="100%"
+    :height="height"
+    :max-height="height"
+    color="transparent"
+    class="d-flex flex-row justify-center overflow-y-auto"
+  >
+    <svg
+      v-if="isKnotenLageFormValid"
+      :height="height"
+      :width="height"
+      viewBox="0 0 1400 1400"
+      preserveAspectRatio="xMidYMid"
+      fill-rule="evenodd"
+      stroke-width="28.222"
+      stroke-linejoin="round"
+      xmlns="http://www.w3.org/2000/svg"
+      xml:space="preserve"
+      :style="{ pointerEvents: clickable ? 'auto' : 'none' }"
+    >
+      <g
+        id="querschnitt"
+        :transform="rotateSvg"
+      >
+        <g id="strassenname1">
+          <text
+            v-if="firstStreetname.length === 1 && showStreetnames"
+            id="strassenname1_text"
+            xml:space="preserve"
+            style="
+              font-style: normal;
+              font-variant: normal;
+              font-weight: normal;
+              font-stretch: normal;
+              font-size: 33.4058px;
+              font-family: sans-serif;
+              font-variant-ligatures: normal;
+              font-variant-caps: normal;
+              font-variant-numeric: normal;
+              font-variant-east-asian: normal;
+              text-align: start;
+              writing-mode: lr-tb;
+              direction: ltr;
+              text-anchor: start;
+              fill: #000000;
+              stroke-width: 39.1848;
+            "
+            x="68.368858"
+            y="712.17938"
+          >
+            <tspan
+              id="strassenname1_tspan"
+              style="stroke-width: 39.1848"
+              x="68.368858"
+              y="712.17938"
+            >
+              {{ firstStreetname[0] }}
+            </tspan>
+          </text>
+          <text
+            v-if="firstStreetname.length === 2 && showStreetnames"
+            id="strassenname1_multirow1_text"
+            xml:space="preserve"
+            style="
+              font-style: normal;
+              font-variant: normal;
+              font-weight: normal;
+              font-stretch: normal;
+              font-size: 33.4058px;
+              font-family: sans-serif;
+              font-variant-ligatures: normal;
+              font-variant-caps: normal;
+              font-variant-numeric: normal;
+              font-variant-east-asian: normal;
+              text-align: start;
+              writing-mode: lr-tb;
+              direction: ltr;
+              text-anchor: start;
+              fill: #000000;
+              stroke-width: 39.1848;
+            "
+            x="68.368858"
+            y="691.19336"
+          >
+            <tspan
+              id="strassenname1_multirow1_tspan"
+              style="stroke-width: 39.1848"
+              x="68.368858"
+              y="691.19336"
+            >
+              {{ firstStreetname[0] }}
+            </tspan>
+          </text>
+          <text
+            v-if="firstStreetname.length === 2 && showStreetnames"
+            id="strassenname1_multirow2_text"
+            xml:space="preserve"
+            style="
+              font-style: normal;
+              font-variant: normal;
+              font-weight: normal;
+              font-stretch: normal;
+              font-size: 33.4058px;
+              font-family: sans-serif;
+              font-variant-ligatures: normal;
+              font-variant-caps: normal;
+              font-variant-numeric: normal;
+              font-variant-east-asian: normal;
+              text-align: start;
+              writing-mode: lr-tb;
+              direction: ltr;
+              text-anchor: start;
+              fill: #000000;
+              stroke-width: 39.1848;
+            "
+            x="68.368858"
+            y="732.95062"
+          >
+            <tspan
+              id="strassenname1_multirow2_tspan"
+              style="stroke-width: 39.1848"
+              x="68.368858"
+              y="732.95062"
+            >
+              {{ firstStreetname[1] }}
+            </tspan>
+          </text>
+        </g>
+        <g id="strassenname2">
+          <text
+            v-if="secondStreetname.length === 1 && showStreetnames"
+            id="strassenname2_text"
+            xml:space="preserve"
+            style="
+              font-style: normal;
+              font-variant: normal;
+              font-weight: normal;
+              font-stretch: normal;
+              font-size: 33.4058px;
+              font-family: sans-serif;
+              font-variant-ligatures: normal;
+              font-variant-caps: normal;
+              font-variant-numeric: normal;
+              font-variant-east-asian: normal;
+              text-align: start;
+              writing-mode: rl-tb;
+              direction: rtl;
+              text-anchor: start;
+              fill: #000000;
+              stroke-width: 39.1848;
+            "
+            x="1332.2212"
+            y="712.01141"
+          >
+            <tspan
+              id="strassenname2_tspan"
+              style="stroke-width: 38.9194; unicode-bidi: plaintext"
+              x="1332.2212"
+              y="712.01141"
+            >
+              {{ secondStreetname[0] }}
+            </tspan>
+          </text>
+          <text
+            v-if="secondStreetname.length === 2 && showStreetnames"
+            id="strassenname2_multirow1_text"
+            xml:space="preserve"
+            style="
+              font-style: normal;
+              font-variant: normal;
+              font-weight: normal;
+              font-stretch: normal;
+              font-size: 33.4058px;
+              font-family: sans-serif;
+              font-variant-ligatures: normal;
+              font-variant-caps: normal;
+              font-variant-numeric: normal;
+              font-variant-east-asian: normal;
+              text-align: start;
+              writing-mode: rl-tb;
+              direction: rtl;
+              text-anchor: start;
+              fill: #000000;
+              stroke-width: 39.1848;
+            "
+            y="691.19336"
+            x="1332.2212"
+          >
+            <tspan
+              id="strassenname2_multirow1_tspan"
+              style="stroke-width: 39.1848; unicode-bidi: plaintext"
+              x="1332.2212"
+              y="691.19336"
+            >
+              {{ secondStreetname[0] }}
+            </tspan>
+          </text>
+          <text
+            v-if="secondStreetname.length === 2 && showStreetnames"
+            id="strassenname2_multirow2_text"
+            xml:space="preserve"
+            style="
+              font-style: normal;
+              font-variant: normal;
+              font-weight: normal;
+              font-stretch: normal;
+              font-size: 33.4058px;
+              font-family: sans-serif;
+              font-variant-ligatures: normal;
+              font-variant-caps: normal;
+              font-variant-numeric: normal;
+              font-variant-east-asian: normal;
+              text-align: start;
+              writing-mode: rl-tb;
+              direction: rtl;
+              text-anchor: start;
+              fill: #000000;
+              stroke-width: 39.1848;
+            "
+            y="732.95062"
+            x="1332.2212"
+          >
+            <tspan
+              id="strassenname2_multirow2_tspan"
+              style="stroke-width: 39.1848; unicode-bidi: plaintext"
+              x="1332.2212"
+              y="732.95062"
+            >
+              {{ secondStreetname[1] }}
+            </tspan>
+          </text>
+        </g>
+        <g id="number1">
+          <circle
+            id="number1_circle"
+            style="
+              fill: none;
+              fill-opacity: 1;
+              stroke: #000000;
+              stroke-width: 1.02435;
+              stroke-dasharray: none;
+              stroke-opacity: 1;
+            "
+            :cx="xCoordNumberOne"
+            :cy="yCoordNumberOne"
+            r="20.487822"
+          />
+          <text
+            id="number1_text"
+            xml:space="preserve"
+            style="
+              font-size: 33.4058px;
+              font-family: sans-serif;
+              text-align: start;
+              writing-mode: lr-tb;
+              direction: ltr;
+              text-anchor: middle;
+              fill: #000000;
+              stroke-width: 52.2711;
+              dominant-baseline: central;
+            "
+            :x="xCoordNumberOne"
+            :y="yCoordNumberOne"
+            :transform="rotateNumberOneInverse"
+          >
+            <tspan
+              id="number1_tspan"
+              style="stroke-width: 52.2711"
+              :x="xCoordNumberOne"
+              :y="yCoordNumberOne"
+            >
+              {{ firstKnotenarm?.nummer }}
+            </tspan>
+          </text>
+        </g>
+        <g id="number2">
+          <circle
+            id="number2_circle"
+            style="
+              fill: none;
+              fill-opacity: 1;
+              stroke: #000000;
+              stroke-width: 1.02435;
+              stroke-dasharray: none;
+              stroke-opacity: 1;
+            "
+            :cx="xCoordNumberTwo"
+            :cy="yCoordNumberTwo"
+            r="20.487822"
+          />
+          <text
+            id="number2_text"
+            xml:space="preserve"
+            style="
+              font-size: 33.4058px;
+              font-family: sans-serif;
+              text-align: start;
+              writing-mode: lr-tb;
+              direction: ltr;
+              text-anchor: middle;
+              fill: #000000;
+              stroke-width: 52.2711;
+              dominant-baseline: central;
+            "
+            :x="xCoordNumberTwo"
+            :y="yCoordNumberTwo"
+            :transform="rotateNumberTwoInverse"
+          >
+            <tspan
+              id="number2_tspan"
+              :x="xCoordNumberTwo"
+              :y="yCoordNumberTwo"
+              style="stroke-width: 52.2711"
+            >
+              {{ secondKnotenarm?.nummer }}
+            </tspan>
+          </text>
+        </g>
+        <g id="arrows">
+          <g
+            id="arrow1"
+            style="cursor: pointer"
+            @click="handleClickOnQuerschnittsverkehrJeStrassenseiteArrowOne()"
+          >
+            <path
+              id="arrow1_shaft"
+              :fill="calculateColorOfVerkehrsbeziehungArrowOne()"
+              d="M 69.999999,567 V 539 H 1330 v 27.998 z"
+            />
+            <path
+              id="arrow1_tip"
+              :fill="calculateColorOfVerkehrsbeziehungArrowOne()"
+              d="m 15265.992,17469.828 -304.316,176.002 -0.265,-351.547 z"
+              transform="matrix(-0.09192953,0,0,-0.07964786,1438.3955,1944.4526)"
+            />
+          </g>
+          <g
+            id="arrow2"
+            style="cursor: pointer"
+            @click="handleClickOnQuerschnittsverkehrJeStrassenseiteArrowTwo()"
+          >
+            <path
+              id="arrow2_shaft"
+              :fill="calculateColorOfVerkehrsbeziehungArrowTwo()"
+              d="M 69.999999,623 V 595 H 1330 v 27.997 z"
+            />
+            <path
+              id="arrow2_tip"
+              :fill="calculateColorOfVerkehrsbeziehungArrowTwo()"
+              d="m 15265.992,17469.828 -304.316,176.002 -0.265,-351.547 z"
+              transform="matrix(0.09192953,0,0,0.07964786,-38.395512,-782.45264)"
+            />
+          </g>
+          <g
+            id="arrow3"
+            style="cursor: pointer"
+            @click="handleClickOnQuerschnittsverkehrJeStrassenseiteArrowThree()"
+          >
+            <path
+              id="arrow3_shaft"
+              :fill="calculateColorOfVerkehrsbeziehungArrowThree()"
+              d="m 69.999999,804.99999 v -28 H 1330 v 27.997 z"
+            />
+            <path
+              id="arrow3_tip"
+              :fill="calculateColorOfVerkehrsbeziehungArrowThree()"
+              d="m 15265.992,17469.828 -304.316,176.002 -0.265,-351.547 z"
+              transform="matrix(-0.09192953,0,0,-0.07964786,1438.3955,2182.4526)"
+            />
+          </g>
+          <g
+            id="arrow4"
+            style="cursor: pointer"
+            @click="handleClickOnQuerschnittsverkehrJeStrassenseiteArrowFour()"
+          >
+            <path
+              id="arrow4_shaft"
+              :fill="calculateColorOfVerkehrsbeziehungArrowFour()"
+              d="m 69.999999,860.99999 v -28 H 1330 v 27.997 z"
+            />
+            <path
+              id="arrow4_tip"
+              :fill="calculateColorOfVerkehrsbeziehungArrowFour()"
+              d="m 15265.992,17469.828 -304.316,176.002 -0.265,-351.547 z"
+              transform="matrix(0.09192953,0,0,0.07964786,-38.395512,-544.45264)"
+            />
+          </g>
+        </g>
+      </g>
+    </svg>
+
+    <v-banner
+      v-else
+      lines="one"
+      width="100%"
+      text="Es wurden nicht exakt 2 gegenüberliegende Knotenarme ausgewählt."
+    >
+      <template #prepend>
+        <v-icon
+          icon="mdi-alert-decagram-outline"
+          size="36"
+          color="error"
+        />
+      </template>
+    </v-banner>
+  </v-sheet>
+</template>
+
+<script setup lang="ts">
+import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ComputedRef, Ref } from "vue";
+
+import { cloneDeep, first, last, toArray } from "lodash";
+import { computed, onMounted, ref, watch } from "vue";
+
+import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
+import KnotenarmComparator from "@/util/KnotenarmComparator";
+
+interface Props {
+  height: string;
+  isKnotenLageFormValid: boolean;
+  clickable: boolean;
+  showStreetnames?: boolean;
+}
+
+const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
+  required: true,
+});
+
+const props = withDefaults(defineProps<Props>(), {
+  clickable: true,
+  showStreetnames: true,
+});
+const clickable = computed(() => props.clickable);
+
+const activeColor = "#D50000";
+const passiveColor = "#9E9E9E";
+
+const selectedVerkehrsbeziehungen = computed(() => {
+  return zaehlung.value.verkehrsbeziehungen;
+});
+
+const firstStreetname = ref<Array<string>>([]);
+const secondStreetname = ref<Array<string>>([]);
+
+const xCoordNumberOne = 476;
+const yCoordNumberOne = 700;
+const xCoordNumberTwo = 924;
+const yCoordNumberTwo = 700;
+
+const availableKnotenarmNummern = computed(() => {
+  return availableKnotenarme.value.map((arm) => arm.nummer);
+});
+const availableKnotenarme = computed(() => {
+  return zaehlung.value.knotenarme
+    .toSorted(KnotenarmComparator.sortByNumber)
+    .reverse();
+});
+
+const firstKnotenarm = computed(() => {
+  return first(availableKnotenarme.value);
+});
+const secondKnotenarm = computed(() => {
+  return last(availableKnotenarme.value);
+});
+const rotateSvg = computed(() => {
+  // Die Viewbox der SVG liegt bei 1400 1400. Die Rotation muss in deren Zentrum stattfinden, daher 700 700
+  let rotation = "rotate(0,700,700)";
+  if (availableKnotenarmNummern.value.includes(1)) {
+    rotation = "rotate(-90,700,700)";
+  }
+  if (availableKnotenarmNummern.value.includes(2)) {
+    rotation = "rotate(0,700,700)";
+  }
+  if (availableKnotenarmNummern.value.includes(5)) {
+    rotation = "rotate(-45,700,700)";
+  }
+  if (availableKnotenarmNummern.value.includes(6)) {
+    rotation = "rotate(45,700,700)";
+  }
+  return rotation;
+});
+
+const rotateNumberOneInverse = rotateNumberInverseFor(
+  availableKnotenarmNummern,
+  xCoordNumberOne,
+  yCoordNumberOne
+);
+const rotateNumberTwoInverse = rotateNumberInverseFor(
+  availableKnotenarmNummern,
+  xCoordNumberTwo,
+  yCoordNumberTwo
+);
+
+/**
+ * Liefert ein computedRef für die inverse Rotation der Knotenarm-Nummern basierend auf den verfügbaren Knotenarm-Nummern.
+ * Die inverse Rotation ist notwendig, damit die Nummern immer horizontal dargestellt werden.
+ * @param availableKnotenarmNummern Ref oder ComputedRef mit number[]
+ * @param x x-Koordinate des Elements, um die rotiert werden soll
+ * @param y y-Koordinate des Elements, um die rotiert werden soll
+ * @returns ComputedRef<string> z.B. "rotate(90,700,700)"
+ */
+function rotateNumberInverseFor(
+  availableKnotenarmNummern: Ref<number[]> | ComputedRef<number[]>,
+  x: number,
+  y: number
+): ComputedRef<string> {
+  return computed(() => {
+    // Default: keine Rotation
+    let rotation = `rotate(0, ${x}, ${y})`;
+    // Reihenfolge wie in den Komponenten: spätere Bedingungen überschreiben frühere
+    if (availableKnotenarmNummern?.value?.includes(1)) {
+      rotation = `rotate(90,${x},${y})`;
+    }
+    if (availableKnotenarmNummern?.value?.includes(2)) {
+      rotation = `rotate(0,${x},${y})`;
+    }
+    if (availableKnotenarmNummern?.value?.includes(5)) {
+      rotation = `rotate(45,${x},${y})`;
+    }
+    if (availableKnotenarmNummern?.value?.includes(6)) {
+      rotation = `rotate(-45,${x},${y})`;
+    }
+    return rotation;
+  });
+}
+
+function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+  if (availableKnotenarmNummern.value.includes(1)) {
+    verkehrsbeziehung.von = 1;
+    verkehrsbeziehung.nach = 3;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.W;
+  }
+  if (availableKnotenarmNummern.value.includes(2)) {
+    verkehrsbeziehung.von = 2;
+    verkehrsbeziehung.nach = 4;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.N;
+  }
+  if (availableKnotenarmNummern.value.includes(5)) {
+    verkehrsbeziehung.von = 5;
+    verkehrsbeziehung.nach = 7;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
+  }
+  if (availableKnotenarmNummern.value.includes(6)) {
+    verkehrsbeziehung.von = 6;
+    verkehrsbeziehung.nach = 8;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
+  }
+  return verkehrsbeziehung;
+}
+
+function createVerkehrsbeziehungArrowTwo(): VerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+  if (availableKnotenarmNummern.value.includes(1)) {
+    verkehrsbeziehung.von = 3;
+    verkehrsbeziehung.nach = 1;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.W;
+  }
+  if (availableKnotenarmNummern.value.includes(2)) {
+    verkehrsbeziehung.von = 4;
+    verkehrsbeziehung.nach = 2;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.N;
+  }
+  if (availableKnotenarmNummern.value.includes(5)) {
+    verkehrsbeziehung.von = 7;
+    verkehrsbeziehung.nach = 5;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
+  }
+  if (availableKnotenarmNummern.value.includes(6)) {
+    verkehrsbeziehung.von = 8;
+    verkehrsbeziehung.nach = 6;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
+  }
+  return verkehrsbeziehung;
+}
+
+function createVerkehrsbeziehungArrowThree(): VerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+  if (availableKnotenarmNummern.value.includes(1)) {
+    verkehrsbeziehung.von = 1;
+    verkehrsbeziehung.nach = 3;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.O;
+  }
+  if (availableKnotenarmNummern.value.includes(2)) {
+    verkehrsbeziehung.von = 2;
+    verkehrsbeziehung.nach = 4;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.S;
+  }
+  if (availableKnotenarmNummern.value.includes(5)) {
+    verkehrsbeziehung.von = 5;
+    verkehrsbeziehung.nach = 7;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
+  }
+  if (availableKnotenarmNummern.value.includes(6)) {
+    verkehrsbeziehung.von = 6;
+    verkehrsbeziehung.nach = 8;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
+  }
+  return verkehrsbeziehung;
+}
+
+function createVerkehrsbeziehungArrowFour(): VerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+  if (availableKnotenarmNummern.value.includes(1)) {
+    verkehrsbeziehung.von = 3;
+    verkehrsbeziehung.nach = 1;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.O;
+  }
+  if (availableKnotenarmNummern.value.includes(2)) {
+    verkehrsbeziehung.von = 4;
+    verkehrsbeziehung.nach = 2;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.S;
+  }
+  if (availableKnotenarmNummern.value.includes(5)) {
+    verkehrsbeziehung.von = 7;
+    verkehrsbeziehung.nach = 5;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
+  }
+  if (availableKnotenarmNummern.value.includes(6)) {
+    verkehrsbeziehung.von = 8;
+    verkehrsbeziehung.nach = 6;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
+  }
+  return verkehrsbeziehung;
+}
+
+function handleClickOnQuerschnittsverkehrJeStrassenseiteArrowOne() {
+  const verkehrsbeziehung = createVerkehrsbeziehungArrowOne();
+
+  const index =
+    findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
+      verkehrsbeziehung
+    );
+
+  const verkehrsbeziehungen = toArray(
+    cloneDeep(selectedVerkehrsbeziehungen.value)
+  );
+
+  if (index >= 0) {
+    verkehrsbeziehungen.splice(index, 1);
+  } else {
+    verkehrsbeziehungen.push(verkehrsbeziehung);
+  }
+
+  zaehlung.value.verkehrsbeziehungen = verkehrsbeziehungen;
+}
+
+function handleClickOnQuerschnittsverkehrJeStrassenseiteArrowTwo() {
+  const verkehrsbeziehung = createVerkehrsbeziehungArrowTwo();
+
+  const index =
+    findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
+      verkehrsbeziehung
+    );
+
+  const verkehrsbeziehungen = toArray(
+    cloneDeep(selectedVerkehrsbeziehungen.value)
+  );
+
+  if (index >= 0) {
+    verkehrsbeziehungen.splice(index, 1);
+  } else {
+    verkehrsbeziehungen.push(verkehrsbeziehung);
+  }
+
+  zaehlung.value.verkehrsbeziehungen = verkehrsbeziehungen;
+}
+
+function handleClickOnQuerschnittsverkehrJeStrassenseiteArrowThree() {
+  const verkehrsbeziehung = createVerkehrsbeziehungArrowThree();
+
+  const index =
+    findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
+      verkehrsbeziehung
+    );
+
+  const verkehrsbeziehungen = toArray(
+    cloneDeep(selectedVerkehrsbeziehungen.value)
+  );
+
+  if (index >= 0) {
+    verkehrsbeziehungen.splice(index, 1);
+  } else {
+    verkehrsbeziehungen.push(verkehrsbeziehung);
+  }
+
+  zaehlung.value.verkehrsbeziehungen = verkehrsbeziehungen;
+}
+
+function handleClickOnQuerschnittsverkehrJeStrassenseiteArrowFour() {
+  const verkehrsbeziehung = createVerkehrsbeziehungArrowFour();
+
+  const index =
+    findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
+      verkehrsbeziehung
+    );
+
+  const verkehrsbeziehungen = toArray(
+    cloneDeep(selectedVerkehrsbeziehungen.value)
+  );
+
+  if (index >= 0) {
+    verkehrsbeziehungen.splice(index, 1);
+  } else {
+    verkehrsbeziehungen.push(verkehrsbeziehung);
+  }
+
+  zaehlung.value.verkehrsbeziehungen = verkehrsbeziehungen;
+}
+
+function findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
+  clickedVerkehrsbeziehung: VerkehrsbeziehungDTO
+) {
+  return selectedVerkehrsbeziehungen.value.findIndex(
+    (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
+      return (
+        verkehrsbeziehung.von === clickedVerkehrsbeziehung.von &&
+        verkehrsbeziehung.nach === clickedVerkehrsbeziehung.nach &&
+        verkehrsbeziehung.strassenseite ===
+          clickedVerkehrsbeziehung.strassenseite
+      );
+    }
+  );
+}
+
+onMounted(() => {
+  resetForm();
+  prepareStreetnames();
+});
+
+watch(
+  () => zaehlung.value.knotenarme,
+  () => {
+    resetForm();
+    prepareStreetnames();
+  },
+  { deep: true, immediate: true }
+);
+
+function calculateColorOfVerkehrsbeziehungArrowOne(): string | undefined {
+  const verkehrsbeziehung = createVerkehrsbeziehungArrowOne();
+
+  const index =
+    findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
+      verkehrsbeziehung
+    );
+
+  let color = passiveColor;
+
+  if (index >= 0) {
+    color = activeColor;
+  }
+
+  return color;
+}
+
+function calculateColorOfVerkehrsbeziehungArrowTwo(): string | undefined {
+  const verkehrsbeziehung = createVerkehrsbeziehungArrowTwo();
+
+  const index =
+    findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
+      verkehrsbeziehung
+    );
+
+  let color = passiveColor;
+
+  if (index >= 0) {
+    color = activeColor;
+  }
+
+  return color;
+}
+
+function calculateColorOfVerkehrsbeziehungArrowThree(): string | undefined {
+  const verkehrsbeziehung = createVerkehrsbeziehungArrowThree();
+
+  const index =
+    findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
+      verkehrsbeziehung
+    );
+
+  let color = passiveColor;
+
+  if (index >= 0) {
+    color = activeColor;
+  }
+
+  return color;
+}
+
+function calculateColorOfVerkehrsbeziehungArrowFour(): string | undefined {
+  const verkehrsbeziehung = createVerkehrsbeziehungArrowFour();
+
+  const index =
+    findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
+      verkehrsbeziehung
+    );
+
+  let color = passiveColor;
+
+  if (index >= 0) {
+    color = activeColor;
+  }
+
+  return color;
+}
+
+function resetForm(): void {
+  firstStreetname.value = [];
+  secondStreetname.value = [];
+}
+
+function prepareStreetnames(): void {
+  firstStreetname.value = getStreetname(firstKnotenarm.value);
+  secondStreetname.value = getStreetname(secondKnotenarm.value);
+}
+
+function getStreetname(knotenarm: KnotenarmDTO | undefined): Array<string> {
+  let strasse = "";
+  if (knotenarm && knotenarm.strassenname) {
+    strasse = knotenarm.strassenname;
+  }
+  let pieces = [strasse];
+  const zeichen = strasse.length;
+  // Anzahl Zeichen
+  if (zeichen > 17) {
+    pieces = ["", ""];
+    if (strasse.endsWith("str.")) {
+      const index = strasse.indexOf("str.");
+      pieces[0] = strasse.substring(0, zeichen - 4);
+      pieces[1] = strasse.substring(index, 4);
+    }
+    // Platz
+    if (strasse.endsWith("pl.")) {
+      const index = strasse.indexOf("pl.");
+      pieces[0] = strasse.substring(0, zeichen - 3);
+      pieces[1] = strasse.substring(index, 3);
+    }
+    // Bindestrich
+    if (strasse.includes("-")) {
+      // pieces = strasse.split(trenner);
+      const index = strasse.indexOf("-");
+      pieces[0] = strasse.substring(0, index + 1);
+      pieces[1] = strasse.substring(index + 1);
+    }
+    // Leerzeichen
+    else if (strasse.includes(" ")) {
+      const index = strasse.indexOf(" ");
+      pieces[0] = strasse.substring(0, index + 1);
+      pieces[1] = strasse.substring(index + 1);
+    }
+  }
+  return pieces;
+}
+</script>

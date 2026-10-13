@@ -10,16 +10,19 @@ import { mdi, aliases as mdiAliases } from "vuetify/iconsets/mdi";
 import { de } from "vuetify/locale";
 
 // Zaehlart
+import artFJS from "@/components/icons/ArtIcons/ArtFJS.vue";
 import artH from "@/components/icons/ArtIcons/ArtH.vue";
 import artN from "@/components/icons/ArtIcons/ArtN.vue";
 import artQ from "@/components/icons/ArtIcons/ArtQ.vue";
 import artQB from "@/components/icons/ArtIcons/ArtQB.vue";
 import artQH from "@/components/icons/ArtIcons/ArtQH.vue";
 import artQI from "@/components/icons/ArtIcons/ArtQI.vue";
+import artQJS from "@/components/icons/ArtIcons/ArtQJS.vue";
 import artQR from "@/components/icons/ArtIcons/ArtQR.vue";
 import artQS from "@/components/icons/ArtIcons/ArtQS.vue";
 import artQSt from "@/components/icons/ArtIcons/ArtQSt.vue";
 import artQT from "@/components/icons/ArtIcons/ArtQT.vue";
+import artQU from "@/components/icons/ArtIcons/ArtQU.vue";
 import artR from "@/components/icons/ArtIcons/ArtR.vue";
 import artT from "@/components/icons/ArtIcons/ArtT.vue";
 import artTK from "@/components/icons/ArtIcons/ArtTK.vue";
@@ -71,6 +74,9 @@ export default createVuetify({
       artQSt,
       artQT,
       artR,
+      artQJS,
+      artFJS,
+      artQU,
       artT,
       artTK,
     },

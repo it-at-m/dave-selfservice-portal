@@ -35,4 +35,70 @@ describe("TheSnackbar.vue", () => {
 
     expect(wrapper.html()).toContain(message);
   });
+
+  describe("formattedSnackbarTextPart2 split logic", () => {
+    function createWrapper() {
+      return shallowMount(TheSnackbar, {
+        global: {
+          plugins: [pinia, vuetify],
+        },
+      });
+    }
+
+    it("splits LF-only newlines into separate lines", () => {
+      const wrapper = createWrapper();
+
+      const vm: any = wrapper.vm;
+      vm.snackbarTextPart2 = "line1\nline2\nline3";
+
+      expect(vm.formattedSnackbarTextPart2).toEqual([
+        "line1",
+        "line2",
+        "line3",
+      ]);
+    });
+
+    it("splits CRLF newlines without leaving trailing \\r characters", () => {
+      const wrapper = createWrapper();
+
+      const vm: any = wrapper.vm;
+      vm.snackbarTextPart2 = "line1\r\nline2\r\nline3";
+
+      expect(vm.formattedSnackbarTextPart2).toEqual([
+        "line1",
+        "line2",
+        "line3",
+      ]);
+      vm.formattedSnackbarTextPart2.forEach((line: string) =>
+        expect(line).not.toContain("\r")
+      );
+    });
+
+    it("returns an empty array for undefined input", () => {
+      const wrapper = createWrapper();
+
+      const vm: any = wrapper.vm;
+      vm.snackbarTextPart2 = undefined;
+
+      expect(vm.formattedSnackbarTextPart2).toEqual([]);
+    });
+
+    it("returns an empty array for an empty string", () => {
+      const wrapper = createWrapper();
+
+      const vm: any = wrapper.vm;
+      vm.snackbarTextPart2 = "";
+
+      expect(vm.formattedSnackbarTextPart2).toEqual([]);
+    });
+
+    it("handles a single line (no newline) as a one-element array", () => {
+      const wrapper = createWrapper();
+
+      const vm: any = wrapper.vm;
+      vm.snackbarTextPart2 = "only one line";
+
+      expect(vm.formattedSnackbarTextPart2).toEqual(["only one line"]);
+    });
+  });
 });

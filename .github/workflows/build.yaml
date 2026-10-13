@@ -1,4 +1,4 @@
-name: compliance check and build test
+name: build test
 
 on: [push]
 
@@ -10,4 +10,4 @@ jobs:
     steps:
       - name: Build with Maven
         id: maven
-        uses: it-at-m/lhm_actions/action-templates/actions/action-maven-build@v1.0.20
+        uses: it-at-m/lhm_actions/action-templates/actions/action-maven-build@v1.0.29

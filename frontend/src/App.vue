@@ -52,18 +52,18 @@
 </template>
 
 <script setup lang="ts">
-import type MapConfigDTO from "@/types/karte/MapConfigDTO";
+import type ConfigurationDTO from "@/types/configuration/ConfigurationDTO";
 
 import { ref } from "vue";
 import { useRoute } from "vue-router";
 
-import MapConfigService from "@/api/service/MapConfigService";
+import ConfigurationService from "@/api/service/ConfigurationService";
 import SsoUserInfoService from "@/api/service/SsoUserInfoService";
 import VersionInfoService from "@/api/service/VersionInfoService";
 import TheSnackbar from "@/components/common/TheSnackbar.vue";
 import SsoUserInfoResponse from "@/domain/SsoUserInfoResponse";
 import VersionInfoResponse from "@/domain/VersionInfoResponse";
-import { useMapConfigStore } from "@/store/MapConfigStore";
+import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useUserStore } from "@/store/UserStore";
 
@@ -78,7 +78,7 @@ const frontendVersion = ref<string>("");
 const userStore = useUserStore();
 const route = useRoute();
 const snackbarStore = useSnackbarStore();
-const mapConfigStore = useMapConfigStore();
+const configurationStore = useConfigurationStore();
 
 created();
 
@@ -107,9 +107,11 @@ function created() {
     .catch(() => {
       backendVersion.value = "error";
     });
-  MapConfigService.getMapConfig().then((res: MapConfigDTO) => {
-    mapConfigStore.setMapConfig(res);
-  });
+  ConfigurationService.getConfiguration().then(
+    (configuration: ConfigurationDTO) => {
+      configurationStore.setConfiguration(configuration);
+    }
+  );
 }
 
 function navigateToHandbuch() {
@@ -129,5 +131,10 @@ function navigateToHandbuch() {
   /* Um auf der Y-Achse direkt unter der App Bar zu liegen */
   padding-top: var(--app-bar-height);
   position: fixed;
+}
+
+.v-data-table th:not(:last-child),
+.v-data-table td:not(:last-child) {
+  border-right: 1px solid rgba(0, 0, 0, 0.12) !important;
 }
 </style>
