@@ -1,50 +1,48 @@
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 
-import { isEmpty } from "lodash";
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
+import UploadedFileStatus from "@/types/enum/UploadedFileStatus";
+
 export const useValidationStore = defineStore("validationStore", () => {
-  const uploadedFileForKnotenarmnummerValid = ref<Map<number, boolean>>(
-    new Map<number, boolean>()
+  const uploadedFileStatusByKnotenarm = ref<Map<number, UploadedFileStatus>>(
+    new Map<number, UploadedFileStatus>()
   );
 
   const isSavingOfUploadedFilesPossible = computed(() => {
-    const knotenarmValidationResults = Array.from(
-      uploadedFileForKnotenarmnummerValid.value.values()
+    if (pendingUploadedFileReads.value > 0) {
+      return false;
+    }
+    const statuses = Array.from(uploadedFileStatusByKnotenarm.value.values());
+    const noFilesUploaded = statuses.every(
+      (status) => status === UploadedFileStatus.MISSING
     );
-    const isEveryKnotenarmValid = knotenarmValidationResults.every(
-      (fileForKnotenarmnummerValid) => fileForKnotenarmnummerValid
+    const everyFileIsValid = statuses.every(
+      (status) => status === UploadedFileStatus.VALID
     );
-    return (
-      pendingUploadedFileReads.value === 0 &&
-      !isEmpty(knotenarmValidationResults) &&
-      isEveryKnotenarmValid
-    );
+    return noFilesUploaded || everyFileIsValid;
   });
 
   const pendingUploadedFileReads = ref<number>(0);
   const uploadedFilesChanged = ref<boolean>(false);
 
-  function setValidationStatusForKnotenarm(
+  function setUploadedFileStatus(
     knotenarm: KnotenarmDTO,
-    isUploadedFileValid: boolean
+    status: UploadedFileStatus
   ) {
-    uploadedFileForKnotenarmnummerValid.value.set(
-      knotenarm.nummer,
-      isUploadedFileValid
-    );
+    uploadedFileStatusByKnotenarm.value.set(knotenarm.nummer, status);
   }
 
   function initUploadedFilesForKnotenarme(knotenarme: Array<KnotenarmDTO>) {
-    uploadedFileForKnotenarmnummerValid.value = new Map<number, boolean>();
-    knotenarme.forEach((knotenarm) => {
-      if (knotenarm.filename?.trim().length > 0) {
-        uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, true);
-      } else {
-        uploadedFileForKnotenarmnummerValid.value.set(knotenarm.nummer, false);
-      }
-    });
+    uploadedFileStatusByKnotenarm.value = new Map(
+      knotenarme.map((knotenarm) => [
+        knotenarm.nummer,
+        knotenarm.filename?.trim()
+          ? UploadedFileStatus.VALID
+          : UploadedFileStatus.MISSING,
+      ])
+    );
   }
 
   function startUploadedFileRead() {
@@ -63,7 +61,7 @@ export const useValidationStore = defineStore("validationStore", () => {
   }
 
   return {
-    setValidationStatusForKnotenarm,
+    setUploadedFileStatus,
     initUploadedFilesForKnotenarme,
     isSavingOfUploadedFilesPossible,
     uploadedFilesChanged,
