@@ -72,19 +72,6 @@ export default class FetchUtils {
   }
 
   /**
-   * Liefert eine default DELETE-Config für fetch
-   */
-  static getDELETEConfig(): RequestInit {
-    return {
-      method: "DELETE",
-      headers: FetchUtils.getHeaders(),
-      mode: "cors",
-      credentials: "same-origin",
-      redirect: "manual",
-    };
-  }
-
-  /**
    *  Baut den Header fuer den Request auf
    * @returns {Headers}
    */
