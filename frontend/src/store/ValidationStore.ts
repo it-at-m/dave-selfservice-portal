@@ -10,7 +10,7 @@ export const useValidationStore = defineStore("validationStore", () => {
     new Map<number, UploadedFileStatus>()
   );
 
-  const isSavingOfUploadedFilesPossible = computed(() => {
+  const isSavingPossible = computed(() => {
     if (pendingUploadedFileReads.value > 0) {
       return false;
     }
@@ -34,7 +34,7 @@ export const useValidationStore = defineStore("validationStore", () => {
     uploadedFileStatusByKnotenarm.value.set(knotenarm.nummer, status);
   }
 
-  function initUploadedFilesForKnotenarme(knotenarme: Array<KnotenarmDTO>) {
+  function initUploadedFileStatus(knotenarme: Array<KnotenarmDTO>) {
     uploadedFileStatusByKnotenarm.value = new Map(
       knotenarme.map((knotenarm) => [
         knotenarm.nummer,
@@ -62,8 +62,8 @@ export const useValidationStore = defineStore("validationStore", () => {
 
   return {
     setUploadedFileStatus,
-    initUploadedFilesForKnotenarme,
-    isSavingOfUploadedFilesPossible,
+    initUploadedFileStatus,
+    isSavingPossible,
     uploadedFilesChanged,
     startUploadedFileRead,
     finishUploadedFileRead,
