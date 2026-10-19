@@ -77,7 +77,7 @@ describe("ValidationStore", () => {
     expect(store.isSavingPossible).toBe(true);
   });
 
-  it("isSavingPossible requires all entries MISSING or all VALID", () => {
+  it("isSavingPossible requires all entries MISSING or all VALID (1)", () => {
     const store = useValidationStore();
     const knotenarme = [{ nummer: 1 }, { nummer: 2 }, { nummer: 3 }];
 
@@ -100,6 +100,49 @@ describe("ValidationStore", () => {
     // setze letztes VALID -> true
     store.setUploadedFileStatus(
       knotenarme[2] as KnotenarmDTO,
+      UploadedFileStatus.VALID
+    );
+    expect(store.isSavingPossible).toBe(true);
+  });
+
+  it("isSavingPossible requires all entries MISSING or all VALID (2)", () => {
+    const store = useValidationStore();
+    const knotenarme = [{ nummer: 1 }, { nummer: 2 }];
+
+    store.initUploadedFileStatus(knotenarme as Array<KnotenarmDTO>);
+
+    // nach init alle Files MISSING -> isSavingPossible true
+    expect(store.isSavingPossible).toBe(true);
+
+    // Dateien hochladen (beide INVALID) -> isSavingPossible false
+    store.setUploadedFileStatus(
+      knotenarme[0] as KnotenarmDTO,
+      UploadedFileStatus.INVALID
+    );
+    store.setUploadedFileStatus(
+      knotenarme[1] as KnotenarmDTO,
+      UploadedFileStatus.INVALID
+    );
+    expect(store.isSavingPossible).toBe(false);
+
+    // Beide Dateien löschen -> isSavingPossible true
+    store.setUploadedFileStatus(
+      knotenarme[0] as KnotenarmDTO,
+      UploadedFileStatus.MISSING
+    );
+    store.setUploadedFileStatus(
+      knotenarme[1] as KnotenarmDTO,
+      UploadedFileStatus.MISSING
+    );
+    expect(store.isSavingPossible).toBe(true);
+
+    // Dateien erneut hochladen (beide VALID) -> isSavingPossible true
+    store.setUploadedFileStatus(
+      knotenarme[0] as KnotenarmDTO,
+      UploadedFileStatus.VALID
+    );
+    store.setUploadedFileStatus(
+      knotenarme[1] as KnotenarmDTO,
       UploadedFileStatus.VALID
     );
     expect(store.isSavingPossible).toBe(true);
