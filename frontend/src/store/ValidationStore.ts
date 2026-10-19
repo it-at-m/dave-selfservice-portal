@@ -27,6 +27,13 @@ export const useValidationStore = defineStore("validationStore", () => {
   const pendingUploadedFileReads = ref<number>(0);
   const uploadedFilesChanged = ref<boolean>(false);
 
+  /**
+   * Setzt den UploadFileStatus (MISSING, VALID, INVALID) für den übergebenen Knotenarm in der
+   * uploadedFileStatusByKnotenarm-Map.
+   *
+   * @param knotenarm dessen Status aktualisiert werden soll
+   * @param status neuer Status des Knotenarms
+   */
   function setUploadedFileStatus(
     knotenarm: KnotenarmDTO,
     status: UploadedFileStatus
@@ -34,6 +41,12 @@ export const useValidationStore = defineStore("validationStore", () => {
     uploadedFileStatusByKnotenarm.value.set(knotenarm.nummer, status);
   }
 
+  /**
+   * Initialisiert die uploadedFileStatusByKnotenarm-Map für alle Knotenarme der Zählung.
+   * Wenn bereits Dateien hochgeladen wurden, wird der Status auf VALID gesetzt, sonst auf MISSING.
+   *
+   * @param knotenarme Array von KnotenarmDTOs der Zählung
+   */
   function initUploadedFileStatus(knotenarme: Array<KnotenarmDTO>) {
     uploadedFileStatusByKnotenarm.value = new Map(
       knotenarme.map((knotenarm) => [
