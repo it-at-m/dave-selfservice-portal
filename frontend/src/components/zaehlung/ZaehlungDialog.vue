@@ -25,7 +25,7 @@
           color="secondary"
           text="Speichern"
           variant="elevated"
-          :disabled="!isSavingOfUploadedFilesPossible"
+          :disabled="!isSavingPossible"
           @click="save()"
         />
         <v-btn
@@ -82,15 +82,15 @@ watch(
   () => props.showDialog,
   () => {
     const knotenarme = zaehlung.value.knotenarme;
-    validationStore.initUploadedFilesForKnotenarme(knotenarme);
+    validationStore.initUploadedFileStatus(knotenarme);
     eventbusStore.setResetFormEvent();
     validationStore.uploadedFilesChanged = false;
     validationStore.initPendingUploadedFileReads();
   }
 );
 
-const isSavingOfUploadedFilesPossible = computed<boolean>(
-  () => validationStore.isSavingOfUploadedFilesPossible
+const isSavingPossible = computed<boolean>(
+  () => validationStore.isSavingPossible
 );
 
 const showDialog = computed<boolean>(() => props.showDialog);
