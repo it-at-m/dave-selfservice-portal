@@ -159,6 +159,7 @@ import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrF
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
+import UploadedFileStatus from "@/types/enum/UploadedFileStatus";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
@@ -377,7 +378,7 @@ function deleteFile(nummer: number): void {
   validationStore.uploadedFilesChanged = true;
   zaehlung.value.knotenarme.forEach((arm: KnotenarmDTO) => {
     if (arm.nummer === nummer) {
-      validationStore.setValidationStatusForKnotenarm(arm, false);
+      validationStore.setUploadedFileStatus(arm, UploadedFileStatus.MISSING);
       arm.filename = "";
       arm.filedata = [];
     }
@@ -1017,9 +1018,11 @@ function readFiles() {
 
                       const isUploadedFileForKnotenarmPlausible =
                         errorMessage.length === 0;
-                      validationStore.setValidationStatusForKnotenarm(
+                      validationStore.setUploadedFileStatus(
                         zaehlungArm,
                         isUploadedFileForKnotenarmPlausible
+                          ? UploadedFileStatus.VALID
+                          : UploadedFileStatus.INVALID
                       );
 
                       zaehlungArm.filename = myFile.name;
