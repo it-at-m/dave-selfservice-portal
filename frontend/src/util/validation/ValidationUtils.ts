@@ -1,3 +1,4 @@
+import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { isEmpty, isNil, join, sum, toArray, trim, uniq } from "lodash";
@@ -483,6 +484,44 @@ export function useValidationUtils() {
     return "";
   }
 
+  function validateKnotenarmWithoutFile(zaehlung: ZaehlungDTO): boolean {
+    return getRelevantKnotenarmeForFileUpload(zaehlung).some(
+      (kn) => !kn.filename
+    );
+  }
+
+  // Ermitteln der relevanten Knotenarme für Dateiupload.
+  // Es sind nur Knotenarme relevant die einen abfließenden Verkehr besitzen.
+  function getRelevantKnotenarmeForFileUpload(
+    zaehlung: ZaehlungDTO
+  ): Array<KnotenarmDTO> {
+    let relevantKnotenarmNumbers = Array<number>();
+    if (zaehlung.zaehlart === Zaehlart.FJS) {
+      relevantKnotenarmNumbers = toArray(zaehlung.laengsverkehr)
+        .filter((l) => !isNil(l.knotenarm))
+        .map((l) => l.knotenarm);
+    } else if (zaehlung.zaehlart === Zaehlart.QU) {
+      relevantKnotenarmNumbers = toArray(zaehlung.querungsverkehr)
+        .filter((q) => !isNil(q.knotenarm))
+        .map((q) => q.knotenarm);
+    } else {
+      const verkehrsbeziehungen = toArray(zaehlung.verkehrsbeziehungen);
+      if (zaehlung.kreisverkehr) {
+        relevantKnotenarmNumbers = verkehrsbeziehungen
+          .filter((v) => !isNil(v.knotenarm))
+          .map((v) => v.knotenarm);
+      } else {
+        relevantKnotenarmNumbers = verkehrsbeziehungen
+          .filter((v) => !isNil(v.von))
+          .map((v) => v.von);
+      }
+    }
+
+    return toArray(zaehlung.knotenarme).filter((knotenarm) =>
+      relevantKnotenarmNumbers.includes(knotenarm.nummer)
+    );
+  }
+
   return {
     SEPARATOR,
     EXPECTED_META_HEADER,
@@ -506,5 +545,7 @@ export function useValidationUtils() {
     validateZaehlwerteOccurrence,
     validateZaehlwerteValues,
     validateIsColumnValueEmpty,
+    validateKnotenarmWithoutFile,
+    getRelevantKnotenarmeForFileUpload,
   };
 }

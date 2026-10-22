@@ -84,7 +84,7 @@
             <v-spacer />
           </v-row>
           <v-row
-            v-for="arm in knotenarme"
+            v-for="arm in relevantKnotenarme"
             :key="arm.id"
             dense
             no-gutters
@@ -194,8 +194,10 @@ const resetFileInput = ref<number>(0);
 
 const files = ref<Array<File>>([]);
 
-const knotenarme = computed<Array<KnotenarmDTO>>(() => {
-  const knotenarme = zaehlung.value.knotenarme;
+const relevantKnotenarme = computed<Array<KnotenarmDTO>>(() => {
+  const knotenarme = validationUtils.getRelevantKnotenarmeForFileUpload(
+    zaehlung.value
+  );
   return knotenarme.sort(KnotenarmComparator.sortByNumber);
 });
 
@@ -375,7 +377,7 @@ function wrongFileType(file: File): boolean {
 
 function deleteFile(nummer: number): void {
   validationStore.uploadedFilesChanged = true;
-  zaehlung.value.knotenarme.forEach((arm: KnotenarmDTO) => {
+  relevantKnotenarme.value.forEach((arm: KnotenarmDTO) => {
     if (arm.nummer === nummer) {
       validationStore.setValidationStatusForKnotenarm(arm, false);
       arm.filename = "";
@@ -920,7 +922,7 @@ function onFileSelect() {
   // wenn zu viele Files hochgeladen wurden, dann Abbrechen
   if (
     !isNil(files.value) &&
-    files.value.length > zaehlung.value.knotenarme.length
+    files.value.length > relevantKnotenarme.value.length
   ) {
     // Damit nacheinander ein File mit identischem Namen hocheladen werden
     // kann, wird immer der FileInput zurückgesetzt
@@ -942,7 +944,7 @@ function onFileSelect() {
  * @returns true, wenn die Knotenarmnummer in der Zählung enthalten ist.
  */
 function isKnotenarmnummerInZaehlung(knotenarmnummer: number): boolean {
-  return zaehlung.value.knotenarme.some(
+  return relevantKnotenarme.value.some(
     (zaehlungArm: KnotenarmDTO) => zaehlungArm.nummer === knotenarmnummer
   );
 }
@@ -1005,7 +1007,7 @@ function readFiles() {
                 validationStore.uploadedFilesChanged = true;
 
                 itemsProcessed++;
-                zaehlung.value.knotenarme.forEach(
+                relevantKnotenarme.value.forEach(
                   (zaehlungArm: KnotenarmDTO) => {
                     if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
                       // Plausibilitätscheck
@@ -1039,7 +1041,9 @@ function readFiles() {
                         );
                         // wenn zu wenig Files hochgeladen wurden, dann Abbrechen
                         const knotenarmWithoutFile =
-                          zaehlung.value.knotenarme.some((kn) => !kn.filename);
+                          validationUtils.validateKnotenarmWithoutFile(
+                            zaehlung.value
+                          );
                         if (!isNil(files.value) && knotenarmWithoutFile) {
                           snackbarStore.showError(
                             `Zu wenig Dateien`,
