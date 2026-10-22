@@ -1,3 +1,4 @@
+import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { isEmpty, isNil, join, sum, toArray, trim, uniq } from "lodash";
@@ -483,6 +484,56 @@ export function useValidationUtils() {
     return "";
   }
 
+  /**
+   * Prüft, ob für mindestens einen upload-relevanten Knotenarm keine Datei hinterlegt ist.
+   *
+   * @param zaehlung Zählung, deren Knotenarme geprüft werden.
+   * @return `true`, wenn mindestens einem relevanten Knotenarm ein Dateiname fehlt.
+   */
+  function validateKnotenarmWithoutFile(zaehlung: ZaehlungDTO): boolean {
+    return getRelevantKnotenarmeForFileUpload(zaehlung).some(
+      (kn) => !kn.filename
+    );
+  }
+
+  /**
+   * Ermittelt die Knotenarme, für die eine Datei hochgeladen werden muss.
+   * Berücksichtigt werden nur Knotenarme mit abfließendem Verkehr: bei FJS und QU
+   * die referenzierten Knotenarme, bei Kreisverkehren `knotenarm` und sonst `von`.
+   *
+   * @param zaehlung Zählung, aus der die relevanten Knotenarme ermittelt werden.
+   * @return Die Knotenarme, die einen Dateiupload benötigen.
+   */
+  function getRelevantKnotenarmeForFileUpload(
+    zaehlung: ZaehlungDTO
+  ): Array<KnotenarmDTO> {
+    let relevantKnotenarmNumbers = Array<number>();
+    if (zaehlung.zaehlart === Zaehlart.FJS) {
+      relevantKnotenarmNumbers = toArray(zaehlung.laengsverkehr)
+        .filter((l) => !isNil(l.knotenarm))
+        .map((l) => l.knotenarm);
+    } else if (zaehlung.zaehlart === Zaehlart.QU) {
+      relevantKnotenarmNumbers = toArray(zaehlung.querungsverkehr)
+        .filter((q) => !isNil(q.knotenarm))
+        .map((q) => q.knotenarm);
+    } else {
+      const verkehrsbeziehungen = toArray(zaehlung.verkehrsbeziehungen);
+      if (zaehlung.kreisverkehr) {
+        relevantKnotenarmNumbers = verkehrsbeziehungen
+          .filter((v) => !isNil(v.knotenarm))
+          .map((v) => v.knotenarm);
+      } else {
+        relevantKnotenarmNumbers = verkehrsbeziehungen
+          .filter((v) => !isNil(v.von))
+          .map((v) => v.von);
+      }
+    }
+
+    return toArray(zaehlung.knotenarme).filter((knotenarm) =>
+      relevantKnotenarmNumbers.includes(knotenarm.nummer)
+    );
+  }
+
   return {
     SEPARATOR,
     EXPECTED_META_HEADER,
@@ -506,5 +557,7 @@ export function useValidationUtils() {
     validateZaehlwerteOccurrence,
     validateZaehlwerteValues,
     validateIsColumnValueEmpty,
+    validateKnotenarmWithoutFile,
+    getRelevantKnotenarmeForFileUpload,
   };
 }

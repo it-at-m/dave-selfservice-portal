@@ -30,12 +30,16 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
     setActivePinia(createPinia());
   });
 
-  it("returns true when the knotenarmnummer exists in zaehlung.knotenarme", async () => {
+  it("returns true when the knotenarmnummer belongs to a relevant knotenarm", async () => {
     const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
     zaehlung.knotenarme = [
       createKnotenarmDTOWithNumber(1),
       createKnotenarmDTOWithNumber(3),
     ];
+    zaehlung.verkehrsbeziehungen = [
+      { von: 1 },
+      { von: 3 },
+    ] as Array<VerkehrsbeziehungDTO>;
     const wrapper = shallowMount(KnotenLageForm, {
       props: {
         height: "400px",
