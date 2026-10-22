@@ -128,8 +128,8 @@
           <v-data-table
             v-if="isNotKreisverkehr"
             density="compact"
-            :headers="verkehrsbeziehungenHeader"
-            :items="verkehrsbeziehungen"
+            :headers="bewegungsbeziehungenHeader"
+            :items="bewegungsbeziehungen"
             item-key="id"
             :items-per-page="-1"
             hide-default-footer
@@ -229,7 +229,7 @@ const isZaehlungEditable = computed<boolean>(() => {
   return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
-const verkehrsbeziehungen = computed<
+const bewegungsbeziehungen = computed<
   Array<VerkehrsbeziehungDTO | QuerungsverkehrDTO | LaengsverkehrDTO>
 >(() => {
   const zaehlart = zaehlung.value?.zaehlart;
@@ -265,7 +265,7 @@ const verkehrsbeziehungen = computed<
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
 
 // Dynamische Header basierend auf der Zählart
-const verkehrsbeziehungenHeader = computed<Array<any>>(() => {
+const bewegungsbeziehungenHeader = computed<Array<any>>(() => {
   const zaehlart = zaehlung.value.zaehlart;
 
   // Header für QjS (Querschnitt je Strassenseite)
