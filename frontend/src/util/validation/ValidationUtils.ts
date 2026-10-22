@@ -484,14 +484,26 @@ export function useValidationUtils() {
     return "";
   }
 
+  /**
+   * Prüft, ob für mindestens einen upload-relevanten Knotenarm keine Datei hinterlegt ist.
+   *
+   * @param zaehlung Zählung, deren Knotenarme geprüft werden.
+   * @return `true`, wenn mindestens einem relevanten Knotenarm ein Dateiname fehlt.
+   */
   function validateKnotenarmWithoutFile(zaehlung: ZaehlungDTO): boolean {
     return getRelevantKnotenarmeForFileUpload(zaehlung).some(
       (kn) => !kn.filename
     );
   }
 
-  // Ermitteln der relevanten Knotenarme für Dateiupload.
-  // Es sind nur Knotenarme relevant die einen abfließenden Verkehr besitzen.
+  /**
+   * Ermittelt die Knotenarme, für die eine Datei hochgeladen werden muss.
+   * Berücksichtigt werden nur Knotenarme mit abfließendem Verkehr: bei FJS und QU
+   * die referenzierten Knotenarme, bei Kreisverkehren `knotenarm` und sonst `von`.
+   *
+   * @param zaehlung Zählung, aus der die relevanten Knotenarme ermittelt werden.
+   * @return Die Knotenarme, die einen Dateiupload benötigen.
+   */
   function getRelevantKnotenarmeForFileUpload(
     zaehlung: ZaehlungDTO
   ): Array<KnotenarmDTO> {
