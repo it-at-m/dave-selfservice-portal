@@ -6,7 +6,7 @@
     <artifactId>dave-selfservice-portal</artifactId>
     <version>11.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>dave_selfserviceportal_frontend</name>
+    <name>dave_selfserviceportal</name>
 
     <scm>
         <connection>scm:git:https://github.com/it-at-m/dave-selfservice-portal.git</connection>
