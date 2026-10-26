@@ -929,7 +929,7 @@ function onFileSelect() {
     resetFileInput.value = Math.floor(Math.random() * 10001);
     snackbarStore.showError(
       `Zu viele Dateien`,
-      `Es darf pro Knotenarm nur eine Datei hochgeladen werden.`
+      `Je hochzuladenden Knotenarm ist exakt eine Datei erforderlich.`
     );
   } else {
     // Einlesen
