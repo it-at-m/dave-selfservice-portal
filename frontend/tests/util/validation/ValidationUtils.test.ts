@@ -32,7 +32,7 @@ const {
   validateZaehlwerteOccurrence,
   validateZaehlwerteValues,
   validateIsColumnValueEmpty,
-  validateKnotenarmWithoutFile,
+  hasAnyRelevantKnotenarmNoFile,
   getRelevantKnotenarmeForFileUpload,
 } = useValidationUtils();
 
@@ -790,12 +790,12 @@ describe("ValidationUtils -> validateKnotenarmWithoutFile", () => {
       { nummer: 1, filename: "" },
       { nummer: 2, filename: "" },
     ] as typeof zaehlung.knotenarme;
-    expect(validateKnotenarmWithoutFile(zaehlung)).toBe(true);
+    expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(true);
 
     zaehlung.knotenarme[0].filename = "uploaded.csv";
-    expect(validateKnotenarmWithoutFile(zaehlung)).toBe(false);
+    expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(false);
 
     zaehlung.querungsverkehr = [];
-    expect(validateKnotenarmWithoutFile(zaehlung)).toBe(false);
+    expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(false);
   });
 });
