@@ -15,7 +15,7 @@
     <packaging>jar</packaging>
     <name>dave_selfserviceportal_apigateway</name>
 
-    <url>https://github.com/it-at-m/dave-adminportal</url>
+    <url>https://github.com/it-at-m/dave-selfserviceportal</url>
     <licenses>
         <license>
             <name>MIT</name>
@@ -192,7 +192,7 @@
         <!-- Frontend Lib -->
         <dependency>
             <groupId>de.muenchen.dave.frontend</groupId>
-            <artifactId>dave-adminportal-frontend</artifactId>
+            <artifactId>dave-selfserviceportal-frontend</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
