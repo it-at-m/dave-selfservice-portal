@@ -1,15 +1,16 @@
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
+
+
 import { isEmpty, isNil, join, sum, toArray, trim, uniq } from "lodash";
+
+
 
 import Fahrzeug from "@/types/enum/Fahrzeug";
 import Zaehlart from "@/types/enum/Zaehlart";
-import {
-  Zaehldauer,
-  zaehldauerIntervallnummern,
-  zaehldauerText,
-} from "@/types/enum/Zaehldauer";
+import { Zaehldauer, zaehldauerIntervallnummern, zaehldauerText } from "@/types/enum/Zaehldauer";
+
 
 export function useValidationUtils() {
   const SEPARATOR = ";";
@@ -490,7 +491,7 @@ export function useValidationUtils() {
    * @param zaehlung Zählung, deren Knotenarme geprüft werden.
    * @return `true`, wenn mindestens einem relevanten Knotenarm ein Dateiname fehlt.
    */
-  function validateKnotenarmWithoutFile(zaehlung: ZaehlungDTO): boolean {
+  function hasAnyRelevantKnotenarmNoFile(zaehlung: ZaehlungDTO): boolean {
     return getRelevantKnotenarmeForFileUpload(zaehlung).some(
       (kn) => !kn.filename
     );
@@ -557,7 +558,7 @@ export function useValidationUtils() {
     validateZaehlwerteOccurrence,
     validateZaehlwerteValues,
     validateIsColumnValueEmpty,
-    validateKnotenarmWithoutFile,
+    hasAnyRelevantKnotenarmNoFile,
     getRelevantKnotenarmeForFileUpload,
   };
 }

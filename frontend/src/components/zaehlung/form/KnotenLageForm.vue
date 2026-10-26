@@ -1041,7 +1041,7 @@ function readFiles() {
                         );
                         // wenn zu wenig Files hochgeladen wurden, dann Abbrechen
                         const knotenarmWithoutFile =
-                          validationUtils.validateKnotenarmWithoutFile(
+                          validationUtils.hasAnyRelevantKnotenarmNoFile(
                             zaehlung.value
                           );
                         if (!isNil(files.value) && knotenarmWithoutFile) {
