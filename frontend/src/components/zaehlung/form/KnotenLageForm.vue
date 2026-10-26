@@ -938,12 +938,12 @@ function onFileSelect() {
 }
 
 /**
- * Prüft, ob die aktuelle Zählung einen Knotenarm mit der übergebenen Knotenarmnummer enthält.
+ * Prüft, ob der Knotenarm mit der angegebenen Nummer für den CSV-Upload der aktuellen Zählung relevant ist.
  *
- * @param knotenarmnummer zu prüfende Knotenarmnummer.
- * @returns true, wenn die Knotenarmnummer in der Zählung enthalten ist.
+ * @param knotenarmnummer Nummer des zu prüfenden Knotenarms.
+ * @returns true, wenn der Knotenarm für den CSV-Upload relevant ist, andernfalls false.
  */
-function isKnotenarmnummerInZaehlung(knotenarmnummer: number): boolean {
+function isKnotenarmRelevantForFileUpload(knotenarmnummer: number): boolean {
   return relevantKnotenarme.value.some(
     (zaehlungArm: KnotenarmDTO) => zaehlungArm.nummer === knotenarmnummer
   );
@@ -981,7 +981,7 @@ function readFiles() {
               );
               const knotenarmnummerOfCsv: number = getKnotenarmnummerOfCsv(csv);
               // Plausibilisierung: Kann die Datei einem Knotenarm der Zählung zugeordnet werden?
-              if (!isKnotenarmnummerInZaehlung(knotenarmnummerOfCsv)) {
+              if (!isKnotenarmRelevantForFileUpload(knotenarmnummerOfCsv)) {
                 snackbarStore.showError(
                   `Die Datei ${myFile.name} konnte keinem Knotenarm zugeordnet werden. Knotenarmnummer prüfen!`
                 );
