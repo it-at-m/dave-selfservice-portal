@@ -77,7 +77,7 @@
                   single-line
                   multiple
                   accept=".csv"
-                  @update:model-value="onFileSelect()"
+                  @update:model-value="handleCsvFileSelection()"
                 />
               </v-form>
             </v-col>
@@ -918,7 +918,12 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
   return "";
 }
 
-function onFileSelect() {
+/**
+ * Verarbeitet die Auswahl der CSV-Dateien.
+ * Zeigt bei zu vielen Dateien eine Fehlermeldung an.
+ * Startet andernfalls das Einlesen und Validieren der ausgewählten Dateien.
+ */
+function handleCsvFileSelection() {
   // wenn zu viele Files hochgeladen wurden, dann Abbrechen
   if (
     !isNil(files.value) &&
