@@ -924,8 +924,8 @@ function onFileSelect() {
     !isNil(files.value) &&
     files.value.length > relevantKnotenarme.value.length
   ) {
-    // Damit nacheinander ein File mit identischem Namen hocheladen werden
-    // kann, wird immer der FileInput zurückgesetzt
+    // Damit nacheinander ein File mit identischen Namen hochgeladen werden
+    // kann, wird der FileInput immer zurückgesetzt
     resetFileInput.value = Math.floor(Math.random() * 10001);
     snackbarStore.showError(
       `Zu viele Dateien`,
