@@ -933,7 +933,7 @@ function onFileSelect() {
     );
   } else {
     // Einlesen
-    readFiles();
+    readAndValidateUploadedCsvFiles();
   }
 }
 
@@ -950,9 +950,11 @@ function isKnotenarmRelevantForFileUpload(knotenarmnummer: number): boolean {
 }
 
 /**
- * Methode zum Einlesen der Files.
+ * Liest die ausgewählten CSV-Dateien ein und ordnet sie den relevanten Knotenarmen zu.
+ * Prüft die CSV-Daten und speichert Dateiname, Dateiinhalt und Validierungsstatus am jeweiligen Knotenarm.
+ * Zeigt Erfolgs- oder Fehlermeldungen an.
  */
-function readFiles() {
+function readAndValidateUploadedCsvFiles() {
   let successfull = true;
   let errorText = "";
   let itemsProcessed = 0;
