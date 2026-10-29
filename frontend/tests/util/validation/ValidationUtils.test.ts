@@ -7,6 +7,7 @@ import {
   zaehldauerIntervallnummern,
   zaehldauerText,
 } from "@/types/enum/Zaehldauer";
+import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
 const {
@@ -31,6 +32,8 @@ const {
   validateZaehlwerteOccurrence,
   validateZaehlwerteValues,
   validateIsColumnValueEmpty,
+  hasAnyRelevantKnotenarmNoFile,
+  getRelevantKnotenarmeForFileUpload,
 } = useValidationUtils();
 
 describe("ValidationUtils - isWholeNonNegativeIntegerString", () => {
@@ -718,5 +721,81 @@ describe("ValidationUtils -> validateIsColumnValueEmpty", () => {
   test("returns empty for undefined or null (treated as empty)", () => {
     expect(validateIsColumnValueEmpty(undefined as any, "NullCol")).toBe("");
     expect(validateIsColumnValueEmpty(null as any, "NullCol")).toBe("");
+  });
+});
+
+describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
+  test("returns only Knotenarme with outgoing traffic for every counting type", () => {
+    const createZaehlung = () => {
+      const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+      zaehlung.knotenarme = [
+        { nummer: 1, filename: "one.csv" },
+        { nummer: 2, filename: "two.csv" },
+        { nummer: 3, filename: "three.csv" },
+      ] as typeof zaehlung.knotenarme;
+      return zaehlung;
+    };
+
+    const fjsZaehlung = createZaehlung();
+    fjsZaehlung.zaehlart = Zaehlart.FJS;
+    fjsZaehlung.laengsverkehr = [
+      { knotenarm: 2 },
+      { knotenarm: undefined },
+    ] as typeof fjsZaehlung.laengsverkehr;
+    expect(getRelevantKnotenarmeForFileUpload(fjsZaehlung)).toEqual([
+      fjsZaehlung.knotenarme[1],
+    ]);
+
+    const quZaehlung = createZaehlung();
+    quZaehlung.zaehlart = Zaehlart.QU;
+    quZaehlung.querungsverkehr = [
+      { knotenarm: 3 },
+      { knotenarm: undefined },
+    ] as typeof quZaehlung.querungsverkehr;
+    expect(getRelevantKnotenarmeForFileUpload(quZaehlung)).toEqual([
+      quZaehlung.knotenarme[2],
+    ]);
+
+    const kreisverkehrZaehlung = createZaehlung();
+    kreisverkehrZaehlung.zaehlart = Zaehlart.N;
+    kreisverkehrZaehlung.kreisverkehr = true;
+    kreisverkehrZaehlung.verkehrsbeziehungen = [
+      { knotenarm: 1 },
+      { knotenarm: undefined },
+    ] as typeof kreisverkehrZaehlung.verkehrsbeziehungen;
+    expect(getRelevantKnotenarmeForFileUpload(kreisverkehrZaehlung)).toEqual([
+      kreisverkehrZaehlung.knotenarme[0],
+    ]);
+
+    const kreuzungZaehlung = createZaehlung();
+    kreuzungZaehlung.zaehlart = Zaehlart.N;
+    kreuzungZaehlung.verkehrsbeziehungen = [
+      { von: 2 },
+      { von: undefined },
+    ] as typeof kreuzungZaehlung.verkehrsbeziehungen;
+    expect(getRelevantKnotenarmeForFileUpload(kreuzungZaehlung)).toEqual([
+      kreuzungZaehlung.knotenarme[1],
+    ]);
+  });
+});
+
+describe("ValidationUtils -> validateKnotenarmWithoutFile", () => {
+  test("returns true only when a relevant Knotenarm has no filename", () => {
+    const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+    zaehlung.zaehlart = Zaehlart.QU;
+    zaehlung.querungsverkehr = [
+      { knotenarm: 1 },
+    ] as typeof zaehlung.querungsverkehr;
+    zaehlung.knotenarme = [
+      { nummer: 1, filename: "" },
+      { nummer: 2, filename: "" },
+    ] as typeof zaehlung.knotenarme;
+    expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(true);
+
+    zaehlung.knotenarme[0].filename = "uploaded.csv";
+    expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(false);
+
+    zaehlung.querungsverkehr = [];
+    expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(false);
   });
 });

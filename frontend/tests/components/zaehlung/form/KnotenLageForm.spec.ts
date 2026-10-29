@@ -25,17 +25,21 @@ function createKnotenarmDTOWithNumber(number: number): KnotenarmDTO {
   };
 }
 
-describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
+describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
   beforeAll(() => {
     setActivePinia(createPinia());
   });
 
-  it("returns true when the knotenarmnummer exists in zaehlung.knotenarme", async () => {
+  it("returns true when the knotenarmnummer belongs to a relevant knotenarm", async () => {
     const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
     zaehlung.knotenarme = [
       createKnotenarmDTOWithNumber(1),
       createKnotenarmDTOWithNumber(3),
     ];
+    zaehlung.verkehrsbeziehungen = [
+      { von: 1 },
+      { von: 3 },
+    ] as Array<VerkehrsbeziehungDTO>;
     const wrapper = shallowMount(KnotenLageForm, {
       props: {
         height: "400px",
@@ -44,8 +48,8 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
     });
 
     const vm: any = wrapper.vm;
-    expect(vm.isKnotenarmnummerInZaehlung(1)).toBe(true);
-    expect(vm.isKnotenarmnummerInZaehlung(3)).toBe(true);
+    expect(vm.isKnotenarmRelevantForFileUpload(1)).toBe(true);
+    expect(vm.isKnotenarmRelevantForFileUpload(3)).toBe(true);
   });
 
   it("returns false when the knotenarmnummer does not exist in zaehlung.knotenarme", async () => {
@@ -59,8 +63,8 @@ describe("KnotenLageForm.vue - isKnotenarmnummerInZaehlung", () => {
     });
 
     const vm: any = wrapper.vm;
-    expect(vm.isKnotenarmnummerInZaehlung(2)).toBe(false);
-    expect(vm.isKnotenarmnummerInZaehlung(3)).toBe(false);
+    expect(vm.isKnotenarmRelevantForFileUpload(2)).toBe(false);
+    expect(vm.isKnotenarmRelevantForFileUpload(3)).toBe(false);
   });
 
   describe("validateIntervallsWithRequiredRichtungsinformationAreExistent", () => {
