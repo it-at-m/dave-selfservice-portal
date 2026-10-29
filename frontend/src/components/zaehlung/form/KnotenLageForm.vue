@@ -77,14 +77,14 @@
                   single-line
                   multiple
                   accept=".csv"
-                  @update:model-value="onFileSelect()"
+                  @update:model-value="handleCsvFileSelection()"
                 />
               </v-form>
             </v-col>
             <v-spacer />
           </v-row>
           <v-row
-            v-for="arm in knotenarme"
+            v-for="arm in relevantKnotenarme"
             :key="arm.id"
             dense
             no-gutters
@@ -128,8 +128,8 @@
           <v-data-table
             v-if="isNotKreisverkehr"
             density="compact"
-            :headers="verkehrsbeziehungenHeader"
-            :items="verkehrsbeziehungen"
+            :headers="bewegungsbeziehungenHeader"
+            :items="bewegungsbeziehungen"
             item-key="id"
             :items-per-page="-1"
             hide-default-footer
@@ -194,8 +194,10 @@ const resetFileInput = ref<number>(0);
 
 const files = ref<Array<File>>([]);
 
-const knotenarme = computed<Array<KnotenarmDTO>>(() => {
-  const knotenarme = zaehlung.value.knotenarme;
+const relevantKnotenarme = computed<Array<KnotenarmDTO>>(() => {
+  const knotenarme = validationUtils.getRelevantKnotenarmeForFileUpload(
+    zaehlung.value
+  );
   return knotenarme.sort(KnotenarmComparator.sortByNumber);
 });
 
@@ -229,7 +231,7 @@ const isZaehlungEditable = computed<boolean>(() => {
   return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
 });
 
-const verkehrsbeziehungen = computed<
+const bewegungsbeziehungen = computed<
   Array<VerkehrsbeziehungDTO | QuerungsverkehrDTO | LaengsverkehrDTO>
 >(() => {
   const zaehlart = zaehlung.value?.zaehlart;
@@ -265,7 +267,7 @@ const verkehrsbeziehungen = computed<
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
 
 // Dynamische Header basierend auf der Zählart
-const verkehrsbeziehungenHeader = computed<Array<any>>(() => {
+const bewegungsbeziehungenHeader = computed<Array<any>>(() => {
   const zaehlart = zaehlung.value.zaehlart;
 
   // Header für QjS (Querschnitt je Strassenseite)
@@ -375,7 +377,7 @@ function wrongFileType(file: File): boolean {
 
 function deleteFile(nummer: number): void {
   validationStore.uploadedFilesChanged = true;
-  zaehlung.value.knotenarme.forEach((arm: KnotenarmDTO) => {
+  relevantKnotenarme.value.forEach((arm: KnotenarmDTO) => {
     if (arm.nummer === nummer) {
       validationStore.setValidationStatusForKnotenarm(arm, false);
       arm.filename = "";
@@ -916,41 +918,48 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
   return "";
 }
 
-function onFileSelect() {
+/**
+ * Verarbeitet die Auswahl der CSV-Dateien.
+ * Zeigt bei zu vielen Dateien eine Fehlermeldung an.
+ * Startet andernfalls das Einlesen und Validieren der ausgewählten Dateien.
+ */
+function handleCsvFileSelection() {
   // wenn zu viele Files hochgeladen wurden, dann Abbrechen
   if (
     !isNil(files.value) &&
-    files.value.length > zaehlung.value.knotenarme.length
+    files.value.length > relevantKnotenarme.value.length
   ) {
-    // Damit nacheinander ein File mit identischem Namen hocheladen werden
-    // kann, wird immer der FileInput zurückgesetzt
+    // Damit nacheinander ein File mit identischen Namen hochgeladen werden
+    // kann, wird der FileInput immer zurückgesetzt
     resetFileInput.value = Math.floor(Math.random() * 10001);
     snackbarStore.showError(
       `Zu viele Dateien`,
-      `Es darf pro Knotenarm nur eine Datei hochgeladen werden.`
+      `Je hochzuladenden Knotenarm ist exakt eine Datei erforderlich.`
     );
   } else {
     // Einlesen
-    readFiles();
+    readAndValidateUploadedCsvFiles();
   }
 }
 
 /**
- * Prüft, ob die aktuelle Zählung einen Knotenarm mit der übergebenen Knotenarmnummer enthält.
+ * Prüft, ob der Knotenarm mit der angegebenen Nummer für den CSV-Upload der aktuellen Zählung relevant ist.
  *
- * @param knotenarmnummer zu prüfende Knotenarmnummer.
- * @returns true, wenn die Knotenarmnummer in der Zählung enthalten ist.
+ * @param knotenarmnummer Nummer des zu prüfenden Knotenarms.
+ * @returns true, wenn der Knotenarm für den CSV-Upload relevant ist, andernfalls false.
  */
-function isKnotenarmnummerInZaehlung(knotenarmnummer: number): boolean {
-  return zaehlung.value.knotenarme.some(
+function isKnotenarmRelevantForFileUpload(knotenarmnummer: number): boolean {
+  return relevantKnotenarme.value.some(
     (zaehlungArm: KnotenarmDTO) => zaehlungArm.nummer === knotenarmnummer
   );
 }
 
 /**
- * Methode zum Einlesen der Files.
+ * Liest die ausgewählten CSV-Dateien ein und ordnet sie den relevanten Knotenarmen zu.
+ * Prüft die CSV-Daten und speichert Dateiname, Dateiinhalt und Validierungsstatus am jeweiligen Knotenarm.
+ * Zeigt Erfolgs- oder Fehlermeldungen an.
  */
-function readFiles() {
+function readAndValidateUploadedCsvFiles() {
   let successfull = true;
   let errorText = "";
   let itemsProcessed = 0;
@@ -979,7 +988,7 @@ function readFiles() {
               );
               const knotenarmnummerOfCsv: number = getKnotenarmnummerOfCsv(csv);
               // Plausibilisierung: Kann die Datei einem Knotenarm der Zählung zugeordnet werden?
-              if (!isKnotenarmnummerInZaehlung(knotenarmnummerOfCsv)) {
+              if (!isKnotenarmRelevantForFileUpload(knotenarmnummerOfCsv)) {
                 snackbarStore.showError(
                   `Die Datei ${myFile.name} konnte keinem Knotenarm zugeordnet werden. Knotenarmnummer prüfen!`
                 );
@@ -1005,7 +1014,7 @@ function readFiles() {
                 validationStore.uploadedFilesChanged = true;
 
                 itemsProcessed++;
-                zaehlung.value.knotenarme.forEach(
+                relevantKnotenarme.value.forEach(
                   (zaehlungArm: KnotenarmDTO) => {
                     if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
                       // Plausibilitätscheck
@@ -1039,7 +1048,9 @@ function readFiles() {
                         );
                         // wenn zu wenig Files hochgeladen wurden, dann Abbrechen
                         const knotenarmWithoutFile =
-                          zaehlung.value.knotenarme.some((kn) => !kn.filename);
+                          validationUtils.hasAnyRelevantKnotenarmNoFile(
+                            zaehlung.value
+                          );
                         if (!isNil(files.value) && knotenarmWithoutFile) {
                           snackbarStore.showError(
                             `Zu wenig Dateien`,
