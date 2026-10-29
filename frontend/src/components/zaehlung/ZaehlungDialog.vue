@@ -54,6 +54,7 @@ import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
+import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
 interface Props {
   showDialog: boolean;
@@ -74,6 +75,7 @@ const { mobile } = useDisplay();
 const eventbusStore = useEventbusStore();
 const snackbarStore = useSnackbarStore();
 const validationStore = useValidationStore();
+const validationUtils = useValidationUtils();
 
 const csvToZeitintervallTransformationUtils =
   useCsvToZeitintervallTransformationUtils();
@@ -81,7 +83,9 @@ const csvToZeitintervallTransformationUtils =
 watch(
   () => props.showDialog,
   () => {
-    const knotenarme = zaehlung.value.knotenarme;
+    const knotenarme = validationUtils.getRelevantKnotenarmeForFileUpload(
+      zaehlung.value
+    );
     validationStore.initUploadedFileStatus(knotenarme);
     eventbusStore.setResetFormEvent();
     validationStore.uploadedFilesChanged = false;
