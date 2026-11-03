@@ -25,26 +25,6 @@ export default class FetchService {
     return FetchService.sendRequest(url, request, errorMessage);
   }
 
-  static patchData(
-    dataToSave: any,
-    endpoint: string,
-    errorMessage: string
-  ): Promise<any> {
-    const url = `${this.BASE}/${endpoint}`;
-    const request = FetchUtils.getPATCHConfig(dataToSave);
-    return FetchService.sendRequest(url, request, errorMessage);
-  }
-
-  static putData(
-    dataToSave: any,
-    endpoint: string,
-    errorMessage: string
-  ): Promise<any> {
-    const url = `${this.BASE}/${endpoint}`;
-    const request = FetchUtils.getPUTConfig(dataToSave);
-    return FetchService.sendRequest(url, request, errorMessage);
-  }
-
   private static sendRequest(
     url: string,
     request: RequestInit,
@@ -98,41 +78,6 @@ export default class FetchService {
         } else {
           return response.json();
         }
-      });
-  }
-
-  static postForPdf(
-    dataToSave: any,
-    endpoint: string,
-    errorMessage: string
-  ): Promise<any> {
-    const url = `${this.BASE}/${endpoint}`;
-    const request = FetchUtils.getPdfPOSTConfig(dataToSave);
-    return FetchService.sendRequestForPDF(url, request, errorMessage);
-  }
-
-  private static sendRequestForPDF(
-    url: string,
-    request: RequestInit,
-    errorMessage: string
-  ): Promise<any> {
-    return fetch(url, request)
-      .catch((error) => {
-        throw new ApiError(
-          Levels.ERROR,
-          `Die Verbindung zum Service konnte nicht aufgebaut werden.`,
-          error
-        );
-      })
-      .then((response) => {
-        if (!response.ok) {
-          throw new ApiError(
-            Levels.ERROR,
-            errorMessage,
-            `Fehler: ${response.status} ${response.statusText}`
-          );
-        }
-        return response;
       });
   }
 }
