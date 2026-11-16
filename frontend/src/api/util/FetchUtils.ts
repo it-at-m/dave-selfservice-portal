@@ -9,7 +9,7 @@ export default class FetchUtils {
     return {
       headers: this.getHeaders(),
       mode: "cors",
-      credentials: "same-origin",
+      credentials: "include",
       redirect: "manual",
     };
   }
@@ -24,7 +24,56 @@ export default class FetchUtils {
       body: JSON.stringify(body),
       headers: FetchUtils.getHeaders(),
       mode: "cors",
-      credentials: "same-origin",
+      credentials: "include",
+      redirect: "manual",
+    };
+  }
+
+  /**
+   * Liefert eine default PUT-Config für fetch
+   * In dieser wird, wenn vorhanden, die Version der zu aktualisierenden Entität
+   * als "If-Match"-Header mitgesetzt.
+   * @param body zu übertragender Body
+   */
+  static getPUTConfig(body: any): RequestInit {
+    return {
+      method: "PUT",
+      body: JSON.stringify(body),
+      headers: this.getHeadersWithEtag(body),
+      mode: "cors",
+      credentials: "include",
+      redirect: "manual",
+    };
+  }
+
+  /**
+   * Liefert eine default PATCH-Config für fetch
+   * In dieser wird, wenn vorhanden, die Version der zu aktualisierenden Entität
+   * als "If-Match"-Header mitgesetzt.
+   * @param body zu übertragender Body
+   */
+  static getPATCHConfig(body: any): RequestInit {
+    return {
+      method: "PATCH",
+      body: JSON.stringify(body),
+      headers: this.getHeadersWithEtag(body),
+      mode: "cors",
+      credentials: "include",
+      redirect: "manual",
+    };
+  }
+
+  /**
+   * Liefert eine default DELETE-Config für fetch
+   * @param body zur Ermittlung der Entity-Version für den Header "If-Match"
+   * falls in Body gesetzt.
+   */
+  static getDELETEConfig(body: any): RequestInit {
+    return {
+      method: "DELETE",
+      headers: this.getHeadersWithEtag(body),
+      mode: "cors",
+      credentials: "include",
       redirect: "manual",
     };
   }
@@ -39,5 +88,31 @@ export default class FetchUtils {
       "Accept-Language": "de-DE",
       "X-XSRF-TOKEN": XsrfTokenExtractor.getXsrfToken().toString(),
     });
+  }
+
+  static getOpenApiFetch(): typeof fetch {
+    return (url, init) => {
+      const headers = new Headers(init?.headers);
+      this.getHeaders().forEach((value, key) => headers.set(key, value));
+      return fetch(url, {
+        ...init,
+        headers,
+        mode: "cors",
+        credentials: "include",
+        redirect: "manual",
+      });
+    };
+  }
+
+  /**
+   * Baut den Header fuer den Request mit einem Etag auf.
+   * @returns {Headers}
+   */
+  static getHeadersWithEtag(body: any): Headers {
+    const headers = FetchUtils.getHeaders();
+    if (body && body.entityVersion != null) {
+      headers.append("If-Match", body.entityVersion);
+    }
+    return headers;
   }
 }

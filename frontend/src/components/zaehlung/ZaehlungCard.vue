@@ -185,7 +185,7 @@
 </template>
 
 <script setup lang="ts">
-import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
+import type { UpdateStatusDTO } from "@/api/client";
 import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type GeoPoint from "@/domain/GeoPoint";
 import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
