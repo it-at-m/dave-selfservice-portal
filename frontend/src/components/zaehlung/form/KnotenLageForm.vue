@@ -156,6 +156,7 @@ import { computed, ref } from "vue";
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrForm.vue";
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
@@ -187,6 +188,7 @@ const FILE_INPUT_FIELD_ID = "fileInputField";
 const snackbarStore = useSnackbarStore();
 
 const validationStore = useValidationStore();
+const knotenarmFileStore = useKnotenarmFileStore();
 
 const fussverkehrValidationUtils = useFussverkehrValidationUtils();
 const kfzVerkehrValidationUtils = useKfzVerkehrValidationUtils();
@@ -382,7 +384,7 @@ function deleteFile(nummer: number): void {
     if (arm.nummer === nummer) {
       validationStore.setUploadedFileStatus(arm, UploadedFileStatus.MISSING);
       arm.filename = "";
-      arm.filedata = [];
+      knotenarmFileStore.deleteFiledata(arm.nummer);
     }
   });
 }
@@ -957,10 +959,11 @@ function isKnotenarmRelevantForFileUpload(knotenarmnummer: number): boolean {
 
 /**
  * Liest die ausgewählten CSV-Dateien ein und ordnet sie den relevanten Knotenarmen zu.
- * Prüft die CSV-Daten und speichert Dateiname, Dateiinhalt und Validierungsstatus am jeweiligen Knotenarm.
+ * Prüft die CSV-Daten und speichert den Dateinamen am Knotenarm sowie Dateiinhalt und Validierungsstatus in den Stores.
  * Zeigt Erfolgs- oder Fehlermeldungen an.
  */
 function readAndValidateUploadedCsvFiles() {
+  const filedataByKnotenarm = knotenarmFileStore.filedataByKnotenarm;
   let successfull = true;
   let errorText = "";
   let itemsProcessed = 0;
@@ -983,6 +986,12 @@ function readAndValidateUploadedCsvFiles() {
         fileReader.addEventListener(
           "load",
           function () {
+            // Nach einem Dialogwechsel dürfen ausstehende Uploads keine Daten mehr ändern.
+            if (
+              filedataByKnotenarm !== knotenarmFileStore.filedataByKnotenarm
+            ) {
+              return;
+            }
             try {
               const csv: Array<string> = (fileReader.result as string).split(
                 /\r\n|\n/
@@ -1035,7 +1044,7 @@ function readAndValidateUploadedCsvFiles() {
                       );
 
                       zaehlungArm.filename = myFile.name;
-                      zaehlungArm.filedata = csv;
+                      knotenarmFileStore.setFiledata(zaehlungArm.nummer, csv);
 
                       if (!isUploadedFileForKnotenarmPlausible) {
                         successfull = false;

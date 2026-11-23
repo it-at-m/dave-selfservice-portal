@@ -5,11 +5,14 @@ import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
 
 import { shallowMount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import KnotenLageForm from "@/components/zaehlung/form/KnotenLageForm.vue";
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
+import { useValidationStore } from "@/store/ValidationStore";
 import Bewegungsrichtung from "@/types/enum/Bewegungsrichtung";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
+import UploadedFileStatus from "@/types/enum/UploadedFileStatus";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 
@@ -18,7 +21,6 @@ function createKnotenarmDTOWithNumber(number: number): KnotenarmDTO {
     nummer: number,
     strassenname: "",
     filename: "",
-    filedata: [],
     id: "",
     entityVersion: 0,
     createdTime: "",
@@ -26,8 +28,102 @@ function createKnotenarmDTOWithNumber(number: number): KnotenarmDTO {
 }
 
 describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
-  beforeAll(() => {
+  beforeEach(() => {
     setActivePinia(createPinia());
+  });
+
+  it("stores uploaded CSV lines separately from the knotenarm DTO", async () => {
+    const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+    zaehlung.knotenarme = [createKnotenarmDTOWithNumber(1)];
+    zaehlung.verkehrsbeziehungen = [
+      { von: 1, nach: 2 },
+    ] as Array<VerkehrsbeziehungDTO>;
+    const wrapper = shallowMount(KnotenLageForm, {
+      props: { height: "400px", modelValue: zaehlung },
+    });
+    const csv = [
+      "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
+      "164701;;2026-03-10;1;;;;;;;",
+      "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
+      "1;2;;;1;2;3;4;5;6;0",
+    ];
+    const vm = wrapper.vm as unknown as {
+      files: Array<File>;
+      readAndValidateUploadedCsvFiles: () => void;
+    };
+    vm.files = [new File([csv.join("\r\n")], "upload.csv")];
+    vm.readAndValidateUploadedCsvFiles();
+
+    await vi.waitFor(() => {
+      expect(useKnotenarmFileStore().getFiledata(1)).toEqual(csv);
+    });
+    expect(zaehlung.knotenarme[0].filename).toBe("upload.csv");
+    expect(zaehlung.knotenarme[0]).not.toHaveProperty("filedata");
+    wrapper.unmount();
+  });
+
+  it("deletes CSV data and synchronizes filename and validation status", () => {
+    const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+    const arm = createKnotenarmDTOWithNumber(1);
+    arm.filename = "upload.csv";
+    zaehlung.knotenarme = [arm];
+    zaehlung.verkehrsbeziehungen = [{ von: 1 }] as Array<VerkehrsbeziehungDTO>;
+    const fileStore = useKnotenarmFileStore();
+    fileStore.setFiledata(1, ["CSV-Inhalt"]);
+    fileStore.setFiledata(2, ["Andere CSV"]);
+    const validationStore = useValidationStore();
+    validationStore.initUploadedFileStatus([arm]);
+    const wrapper = shallowMount(KnotenLageForm, {
+      props: { height: "400px", modelValue: zaehlung },
+    });
+
+    const vm = wrapper.vm as unknown as {
+      deleteFile: (nummer: number) => void;
+    };
+    vm.deleteFile(1);
+
+    expect(fileStore.getFiledata(1)).toEqual([]);
+    expect(fileStore.getFiledata(2)).toEqual(["Andere CSV"]);
+    expect(arm.filename).toBe("");
+    expect(validationStore.uploadedFilesChanged).toBe(true);
+    expect(validationStore.isSavingPossible).toBe(true);
+    validationStore.setUploadedFileStatus(arm, UploadedFileStatus.INVALID);
+    expect(validationStore.isSavingPossible).toBe(false);
+    wrapper.unmount();
+  });
+
+  it("ignores pending CSV reads after the editing session has been reset", () => {
+    const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
+    zaehlung.knotenarme = [createKnotenarmDTOWithNumber(1)];
+    zaehlung.verkehrsbeziehungen = [{ von: 1 }] as Array<VerkehrsbeziehungDTO>;
+    const wrapper = shallowMount(KnotenLageForm, {
+      props: { height: "400px", modelValue: zaehlung },
+    });
+    const readSpy = vi
+      .spyOn(FileReader.prototype, "readAsText")
+      .mockImplementation(() => {});
+    try {
+      const vm = wrapper.vm as unknown as {
+        files: Array<File>;
+        readAndValidateUploadedCsvFiles: () => void;
+      };
+      vm.files = [new File(["CSV-Inhalt"], "upload.csv")];
+      vm.readAndValidateUploadedCsvFiles();
+      const fileStore = useKnotenarmFileStore();
+      fileStore.reset();
+      useValidationStore().initPendingUploadedFileReads();
+      fileStore.setFiledata(1, ["Neue Bearbeitung"]);
+
+      const reader = readSpy.mock.instances[0] as unknown as FileReader;
+      reader.dispatchEvent(new Event("load"));
+
+      expect(fileStore.getFiledata(1)).toEqual(["Neue Bearbeitung"]);
+      expect(zaehlung.knotenarme[0].filename).toBe("");
+      expect(useValidationStore().uploadedFilesChanged).toBe(false);
+    } finally {
+      readSpy.mockRestore();
+      wrapper.unmount();
+    }
   });
 
   it("returns true when the knotenarmnummer belongs to a relevant knotenarm", async () => {

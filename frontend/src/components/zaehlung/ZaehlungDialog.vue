@@ -49,6 +49,7 @@ import { ApiError } from "@/api/error";
 import ZaehlungService from "@/api/service/ZaehlungService";
 import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
 import { useEventbusStore } from "@/store/EventbusStore";
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
@@ -75,6 +76,7 @@ const { mobile } = useDisplay();
 const eventbusStore = useEventbusStore();
 const snackbarStore = useSnackbarStore();
 const validationStore = useValidationStore();
+const knotenarmFileStore = useKnotenarmFileStore();
 const validationUtils = useValidationUtils();
 
 const csvToZeitintervallTransformationUtils =
@@ -83,6 +85,7 @@ const csvToZeitintervallTransformationUtils =
 watch(
   () => props.showDialog,
   () => {
+    knotenarmFileStore.reset();
     const knotenarme = validationUtils.getRelevantKnotenarmeForFileUpload(
       zaehlung.value
     );

@@ -1,8 +1,10 @@
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
-import { describe, expect, it } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
 
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
@@ -11,11 +13,37 @@ import Zaehlart from "@/types/enum/Zaehlart";
 import Zaehldauer from "@/types/enum/Zaehldauer";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
-const csvToZeitintervallTransformationUtils =
-  useCsvToZeitintervallTransformationUtils();
-
 describe("prepareForSaveZaehlung", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   it("should properly transform CSV data into time intervals", () => {
+    const csvToZeitintervallTransformationUtils =
+      useCsvToZeitintervallTransformationUtils();
+    const fileStore = useKnotenarmFileStore();
+    fileStore.setFiledata(1, [
+      "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
+      "164701;;2026-03-10;1;;;;;;;",
+      "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
+      "1;2;;;1;2;3;4;5;6;0",
+      "2;2;;;1;1;1;1;1;1;0",
+      "3;2;;;2;2;2;2;2;2;0",
+      "4;2;;;3;3;3;3;3;3;0",
+      "5;2;;;4;4;4;4;4;4;0",
+      "6;2;;;5;5;5;5;5;5;0",
+    ]);
+    fileStore.setFiledata(2, [
+      "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
+      "164702;;2026-03-10;2;;;;;;;",
+      "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
+      "1;1;;;7;6;5;4;3;2;1",
+      "2;1;;;2;2;2;2;2;2;2",
+      "3;1;;;3;3;3;3;3;3;3",
+      "4;1;;;4;4;4;4;4;4;4",
+      "5;1;;;5;5;5;5;5;5;5",
+      "6;1;;;6;6;6;6;6;6;6",
+    ]);
     const zaehlung: ZaehlungDTO = {
       id: "1",
       entityVersion: 0,
@@ -45,17 +73,6 @@ describe("prepareForSaveZaehlung", () => {
           nummer: 1,
           strassenname: "Street A",
           filename: "file1.csv",
-          filedata: [
-            "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
-            "164701;;2026-03-10;1;;;;;;;",
-            "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
-            "1;2;;;1;2;3;4;5;6;0",
-            "2;2;;;1;1;1;1;1;1;0",
-            "3;2;;;2;2;2;2;2;2;0",
-            "4;2;;;3;3;3;3;3;3;0",
-            "5;2;;;4;4;4;4;4;4;0",
-            "6;2;;;5;5;5;5;5;5;0",
-          ],
         },
         {
           id: "1",
@@ -64,17 +81,6 @@ describe("prepareForSaveZaehlung", () => {
           nummer: 2,
           strassenname: "Street B",
           filename: "file2.csv",
-          filedata: [
-            "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
-            "164702;;2026-03-10;2;;;;;;;",
-            "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
-            "1;1;;;7;6;5;4;3;2;1",
-            "2;1;;;2;2;2;2;2;2;2",
-            "3;1;;;3;3;3;3;3;3;3",
-            "4;1;;;4;4;4;4;4;4;4",
-            "5;1;;;5;5;5;5;5;5;5",
-            "6;1;;;6;6;6;6;6;6;6",
-          ],
         },
       ],
       verkehrsbeziehungen: [

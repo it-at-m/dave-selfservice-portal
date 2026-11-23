@@ -8,12 +8,15 @@ import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { parseInt } from "lodash";
 
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { intervallnummern } from "@/types/enum/Intervallnummern";
 import Zaehlart from "@/types/enum/Zaehlart";
 
 const SEPARATOR = ";";
 
 export function useCsvToZeitintervallTransformationUtils() {
+  const knotenarmFileStore = useKnotenarmFileStore();
+
   function transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
     zaehlung: ZaehlungDTO
   ) {
@@ -43,8 +46,9 @@ export function useCsvToZeitintervallTransformationUtils() {
       Array<ZeitintervallDTO>
     > = new Map<string, Array<ZeitintervallDTO>>();
     zaehlung.knotenarme.forEach((arm: KnotenarmDTO) => {
-      if (arm.filename && arm.filedata && arm.filedata.length > 0) {
-        transformCsvDataToVerkehrsbeziehung(arm).forEach((value, key) => {
+      const filedata = knotenarmFileStore.getFiledata(arm.nummer);
+      if (arm.filename && filedata.length > 0) {
+        transformCsvDataToVerkehrsbeziehung(filedata).forEach((value, key) => {
           zeitintervalleProVerkehrsbeziehung.set(key, value);
         });
       }
@@ -73,16 +77,10 @@ export function useCsvToZeitintervallTransformationUtils() {
     > = new Map<string, Map<string, Map<string, Array<ZeitintervallDTO>>>>();
 
     zaehlung.knotenarme.forEach((knotenarm: KnotenarmDTO) => {
-      if (
-        knotenarm.filename &&
-        knotenarm.filedata &&
-        knotenarm.filedata.length > 0
-      ) {
-        const knotenarmNr: string = knotenarm.filedata[1].split(SEPARATOR)[3];
-        const fileDataWithoutHeader = knotenarm.filedata.slice(
-          3,
-          knotenarm.filedata.length
-        );
+      const filedata = knotenarmFileStore.getFiledata(knotenarm.nummer);
+      if (knotenarm.filename && filedata.length > 0) {
+        const knotenarmNr: string = filedata[1].split(SEPARATOR)[3];
+        const fileDataWithoutHeader = filedata.slice(3);
 
         // Alle weiteren Zeilen enthalten Zähldaten
         fileDataWithoutHeader.forEach((line: string) => {
@@ -203,16 +201,10 @@ export function useCsvToZeitintervallTransformationUtils() {
     > = new Map<string, Map<string, Map<string, Array<ZeitintervallDTO>>>>();
 
     zaehlung.knotenarme.forEach((knotenarm: KnotenarmDTO) => {
-      if (
-        knotenarm.filename &&
-        knotenarm.filedata &&
-        knotenarm.filedata.length > 0
-      ) {
-        const knotenarmNr: string = knotenarm.filedata[1].split(SEPARATOR)[3];
-        const fileDataWithoutHeader = knotenarm.filedata.slice(
-          3,
-          knotenarm.filedata.length
-        );
+      const filedata = knotenarmFileStore.getFiledata(knotenarm.nummer);
+      if (knotenarm.filename && filedata.length > 0) {
+        const knotenarmNr: string = filedata[1].split(SEPARATOR)[3];
+        const fileDataWithoutHeader = filedata.slice(3);
 
         // Alle weiteren Zeilen enthalten Zähldaten
         fileDataWithoutHeader.forEach((line: string) => {
@@ -332,18 +324,12 @@ export function useCsvToZeitintervallTransformationUtils() {
       Map<string, Array<ZeitintervallDTO>>
     > = new Map<string, Map<string, Array<ZeitintervallDTO>>>();
 
-    // Alle Knotenarme (enthalten CSV-Daten) durchlaufen
+    // CSV-Daten aller Knotenarme aus dem Store auslesen
     zaehlung.knotenarme.forEach((knotenarm: KnotenarmDTO) => {
-      if (
-        knotenarm.filename &&
-        knotenarm.filedata &&
-        knotenarm.filedata.length > 0
-      ) {
-        const knotenarmNr: string = knotenarm.filedata[1].split(SEPARATOR)[3];
-        const fileDataWithoutHeader = knotenarm.filedata.slice(
-          3,
-          knotenarm.filedata.length
-        );
+      const filedata = knotenarmFileStore.getFiledata(knotenarm.nummer);
+      if (knotenarm.filename && filedata.length > 0) {
+        const knotenarmNr: string = filedata[1].split(SEPARATOR)[3];
+        const fileDataWithoutHeader = filedata.slice(3);
 
         // Alle weiteren Zeilen enthalten Zähldaten
         fileDataWithoutHeader.forEach((line: string) => {
@@ -413,11 +399,11 @@ export function useCsvToZeitintervallTransformationUtils() {
   }
 
   /**
-   * Wandelt die am Knotenarm hinterlegten Daten aus der CSV in ein Array vom Typ ZeitintervallDTO um.
-   * @param arm Knotenarm mit den Daten der csv
+   * Wandelt CSV-Daten in Zeitintervalle pro Verkehrsbeziehung um.
+   * @param filedata Zeilen der CSV-Datei
    */
   function transformCsvDataToVerkehrsbeziehung(
-    knotenarm: KnotenarmDTO
+    filedata: Array<string>
   ): Map<string, Array<ZeitintervallDTO>> {
     const verkehrsbeziehungen: Map<string, Array<ZeitintervallDTO>> = new Map<
       string,
@@ -428,11 +414,8 @@ export function useCsvToZeitintervallTransformationUtils() {
       Array<ZeitintervallDTO>
     >();
 
-    const knotenarmNr: string = knotenarm.filedata[1].split(SEPARATOR)[3];
-    const fileDataWithoutHeader = knotenarm.filedata.slice(
-      3,
-      knotenarm.filedata.length
-    );
+    const knotenarmNr: string = filedata[1].split(SEPARATOR)[3];
+    const fileDataWithoutHeader = filedata.slice(3);
 
     // Alle weiteren Zeilen enthalten Zähldaten
     fileDataWithoutHeader.forEach((line: string) => {

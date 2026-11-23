@@ -2,8 +2,10 @@ import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
-import { describe, expect, it } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
 
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import Bewegungsrichtung from "@/types/enum/Bewegungsrichtung";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
@@ -13,11 +15,27 @@ import Zaehlart from "@/types/enum/Zaehlart";
 import Zaehldauer from "@/types/enum/Zaehldauer";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
-const csvToZeitintervallTransformationUtils =
-  useCsvToZeitintervallTransformationUtils();
-
 describe("prepareForSaveZaehlungFjs", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   it("sollte FJS-Verkehr aus CSV-Datei mit Strassenseite und Richtung parsen", () => {
+    const csvToZeitintervallTransformationUtils =
+      useCsvToZeitintervallTransformationUtils();
+    useKnotenarmFileStore().setFiledata(1, [
+      "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
+      "164704;FJS;2026-03-10;1;;;;;;;",
+      "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
+      "1;;O;EIN;;;;;;1;1",
+      "2;;O;EIN;;;;;;2;2",
+      "1;;O;AUS;;;;;;3;4",
+      "2;;O;AUS;;;;;;5;6",
+      "1;;W;AUS;;;;;;1;1",
+      "2;;W;AUS;;;;;;1;1",
+      "1;;W;EIN;;;;;;5;6",
+      "2;;W;EIN;;;;;;7;8",
+    ]);
     const zaehlung: ZaehlungDTO = {
       id: "2-test",
       entityVersion: 0,
@@ -47,19 +65,6 @@ describe("prepareForSaveZaehlungFjs", () => {
           nummer: 1,
           strassenname: "Street C",
           filename: "file_fjs.csv",
-          filedata: [
-            "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
-            "164704;FJS;2026-03-10;1;;;;;;;",
-            "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
-            "1;;O;EIN;;;;;;1;1",
-            "2;;O;EIN;;;;;;2;2",
-            "1;;O;AUS;;;;;;3;4",
-            "2;;O;AUS;;;;;;5;6",
-            "1;;W;AUS;;;;;;1;1",
-            "2;;W;AUS;;;;;;1;1",
-            "1;;W;EIN;;;;;;5;6",
-            "2;;W;EIN;;;;;;7;8",
-          ],
         },
       ],
       verkehrsbeziehungen: [],

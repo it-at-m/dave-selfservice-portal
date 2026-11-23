@@ -3,8 +3,10 @@ import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
 import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
 import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
-import { describe, expect, it } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
 
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
@@ -13,11 +15,37 @@ import Zaehlart from "@/types/enum/Zaehlart";
 import Zaehldauer from "@/types/enum/Zaehldauer";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
-const csvToZeitintervallTransformationUtils =
-  useCsvToZeitintervallTransformationUtils();
-
 describe("prepareForSaveZaehlungQjs", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   it("should properly transform CSV data into time intervals", () => {
+    const csvToZeitintervallTransformationUtils =
+      useCsvToZeitintervallTransformationUtils();
+    const fileStore = useKnotenarmFileStore();
+    fileStore.setFiledata(1, [
+      "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
+      "164701;;2026-03-10;1;;;;;;;",
+      "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
+      "1;2;N;;;;;;;6;0",
+      "2;2;N;;;;;;;1;0",
+      "3;2;N;;;;;;;2;0",
+      "1;2;S;;;;;;;3;0",
+      "2;2;S;;;;;;;4;0",
+      "3;2;S;;;;;;;5;0",
+    ]);
+    fileStore.setFiledata(2, [
+      "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
+      "164702;;2026-03-10;2;;;;;;;",
+      "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
+      "1;1;N;;;;;;;2;1",
+      "2;1;N;;;;;;;1;2",
+      "3;1;N;;;;;;;2;3",
+      "1;1;S;;;;;;;3;4",
+      "2;1;S;;;;;;;4;5",
+      "3;1;S;;;;;;;5;6",
+    ]);
     const hfexample: HochrechnungsfaktorDTO = {
       id: "1",
       entityVersion: 0,
@@ -57,17 +85,6 @@ describe("prepareForSaveZaehlungQjs", () => {
           nummer: 1,
           strassenname: "Street A",
           filename: "file1.csv",
-          filedata: [
-            "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
-            "164701;;2026-03-10;1;;;;;;;",
-            "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
-            "1;2;N;;;;;;;6;0",
-            "2;2;N;;;;;;;1;0",
-            "3;2;N;;;;;;;2;0",
-            "1;2;S;;;;;;;3;0",
-            "2;2;S;;;;;;;4;0",
-            "3;2;S;;;;;;;5;0",
-          ],
         },
         {
           id: "1",
@@ -76,17 +93,6 @@ describe("prepareForSaveZaehlungQjs", () => {
           nummer: 2,
           strassenname: "Street B",
           filename: "file2.csv",
-          filedata: [
-            "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
-            "164702;;2026-03-10;2;;;;;;;",
-            "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
-            "1;1;N;;;;;;;2;1",
-            "2;1;N;;;;;;;1;2",
-            "3;1;N;;;;;;;2;3",
-            "1;1;S;;;;;;;3;4",
-            "2;1;S;;;;;;;4;5",
-            "3;1;S;;;;;;;5;6",
-          ],
         },
       ],
       verkehrsbeziehungen: [

@@ -11,8 +11,7 @@ import createBackendApiConfiguration from "@/api/util/BackendApiConfiguration";
 import { handleOpenApiError } from "@/api/util/OpenApiErrorHandler";
 
 export default class ZaehlungService {
-  private static readonly ENDPOINT: string =
-    "api/dave-backend-service/zaehlung";
+  private static readonly ENDPOINT: string = "api/dave-backend-service";
   private static readonly API = new ZaehlungControllerApi(
     createBackendApiConfiguration(this.ENDPOINT)
   );
@@ -42,14 +41,14 @@ export default class ZaehlungService {
   static saveZaehlung(data: ZaehlungDTO): Promise<void> {
     return FetchService.postData(
       data,
-      `${this.ENDPOINT}/saveExternal`,
+      `${this.ENDPOINT}/zaehlung/saveExternal`,
       "Beim Speichern der Zählung ist ein Fehler aufgetreten. Bitte Daten kontrollieren."
     );
   }
 
   static getAllRelevantZaehlungen(): Promise<Array<ZaehlungDTO>> {
     return FetchService.getData(
-      `${this.ENDPOINT}/getZaehlungenForExternal`,
+      `${this.ENDPOINT}/zaehlung/getZaehlungenForExternal`,
       "Beim Laden der Zählung ist ein Fehler aufgetreten."
     );
   }
