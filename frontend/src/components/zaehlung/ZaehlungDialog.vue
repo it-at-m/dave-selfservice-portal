@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ExternalZaehlungDTO } from "@/api/client";
 
 import { computed, watch } from "vue";
 import { useDisplay } from "vuetify";
@@ -68,7 +68,7 @@ const emits = defineEmits<{
   (e: "close-dialog"): void;
 }>();
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 
@@ -129,7 +129,7 @@ function save(): void {
     }
   }
 
-  ZaehlungService.saveZaehlung(zaehlung.value)
+  ZaehlungService.saveExternalZaehlung(zaehlung.value)
     .then(() => {
       snackbarStore.showSuccess("Die Zählung wurde aktualisiert.");
       emits("saved");

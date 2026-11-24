@@ -76,7 +76,7 @@
 </template>
 
 <script setup lang="ts">
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ExternalZaehlungDTO } from "@/api/client";
 
 import { ref } from "vue";
 
@@ -87,15 +87,29 @@ interface Props {
 }
 defineProps<Props>();
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 
-const pkw = ref<boolean>(zaehlung.value.kategorien.includes(Fahrzeug.PKW));
-const lkw = ref<boolean>(zaehlung.value.kategorien.includes(Fahrzeug.LKW));
-const lz = ref<boolean>(zaehlung.value.kategorien.includes(Fahrzeug.LZ));
-const bus = ref<boolean>(zaehlung.value.kategorien.includes(Fahrzeug.BUS));
-const krad = ref<boolean>(zaehlung.value.kategorien.includes(Fahrzeug.KRAD));
-const rad = ref<boolean>(zaehlung.value.kategorien.includes(Fahrzeug.RAD));
-const fuss = ref<boolean>(zaehlung.value.kategorien.includes(Fahrzeug.FUSS));
+const pkw = ref<boolean>(
+  zaehlung.value.kategorien?.includes(Fahrzeug.PKW) ?? false
+);
+const lkw = ref<boolean>(
+  zaehlung.value.kategorien?.includes(Fahrzeug.LKW) ?? false
+);
+const lz = ref<boolean>(
+  zaehlung.value.kategorien?.includes(Fahrzeug.LZ) ?? false
+);
+const bus = ref<boolean>(
+  zaehlung.value.kategorien?.includes(Fahrzeug.BUS) ?? false
+);
+const krad = ref<boolean>(
+  zaehlung.value.kategorien?.includes(Fahrzeug.KRAD) ?? false
+);
+const rad = ref<boolean>(
+  zaehlung.value.kategorien?.includes(Fahrzeug.RAD) ?? false
+);
+const fuss = ref<boolean>(
+  zaehlung.value.kategorien?.includes(Fahrzeug.FUSS) ?? false
+);
 </script>

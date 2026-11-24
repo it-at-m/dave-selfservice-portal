@@ -20,7 +20,7 @@
   <zaehlung-geometrie
     v-else
     id="geo"
-    v-model="zaehlung.knotenarme"
+    :model-value="zaehlung.knotenarme ?? []"
     :height="height"
     :width="width"
     active-color="#1565C0"
@@ -29,7 +29,7 @@
 </template>
 
 <script setup lang="ts">
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ExternalZaehlungDTO } from "@/api/client";
 
 import KnotenverkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/KnotenverkehrForm.vue";
 import QuerschnittJeStrassenseiteForm from "@/components/zaehlung/form/verkehrsbeziehungen/QuerschnittJeStrassenseiteForm.vue";
@@ -42,7 +42,7 @@ interface Props {
 }
 defineProps<Props>();
 
-const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
+const zaehlung = defineModel<ExternalZaehlungDTO>("zaehlung", {
   required: true,
 });
 </script>

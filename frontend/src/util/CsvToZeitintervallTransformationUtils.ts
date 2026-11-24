@@ -1,10 +1,12 @@
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalLaengsverkehrDTO,
+  ExternalQuerungsverkehrDTO,
+  ExternalVerkehrsbeziehungDTO,
+  ExternalZaehlungDTO,
+  ZeitintervallDTO,
+} from "@/api/client";
 import type { StartUhrzeitEndeUhrzeit } from "@/types/common/StartUhrzeitEndeUhrzeit";
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { parseInt } from "lodash";
 
@@ -18,7 +20,7 @@ export function useCsvToZeitintervallTransformationUtils() {
   const knotenarmFileStore = useKnotenarmFileStore();
 
   function transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
-    zaehlung: ZaehlungDTO
+    zaehlung: ExternalZaehlungDTO
   ) {
     const zaehlart = zaehlung.zaehlart;
 
@@ -38,14 +40,14 @@ export function useCsvToZeitintervallTransformationUtils() {
    * Bereitet die tiefen Kopie auf das Speichern vor.
    * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
    * und den Verkehrsbeziehungen zu geordnet. Für alle Zählarten außer FJS, QJS und QU.
-   * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
+   * @param {ExternalZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
    */
-  function prepareForSaveZaehlung(zaehlung: ZaehlungDTO) {
+  function prepareForSaveZaehlung(zaehlung: ExternalZaehlungDTO) {
     const zeitintervalleProVerkehrsbeziehung: Map<
       string,
       Array<ZeitintervallDTO>
     > = new Map<string, Array<ZeitintervallDTO>>();
-    zaehlung.knotenarme.forEach((arm: KnotenarmDTO) => {
+    zaehlung.knotenarme?.forEach((arm: ExternalKnotenarmDTO) => {
       const filedata = knotenarmFileStore.getFiledata(arm.nummer);
       if (arm.filename && filedata.length > 0) {
         transformCsvDataToVerkehrsbeziehung(filedata).forEach((value, key) => {
@@ -54,29 +56,34 @@ export function useCsvToZeitintervallTransformationUtils() {
       }
     });
 
-    zaehlung.verkehrsbeziehungen.forEach((fz: VerkehrsbeziehungDTO) => {
-      const key: string = getKeyOfVerkehrsbeziehung(fz, zaehlung.kreisverkehr);
-      if (zeitintervalleProVerkehrsbeziehung.has(key)) {
-        fz.zeitintervalle = zeitintervalleProVerkehrsbeziehung.get(key)!;
+    zaehlung.verkehrsbeziehungen?.forEach(
+      (fz: ExternalVerkehrsbeziehungDTO) => {
+        const key: string = getKeyOfVerkehrsbeziehung(
+          fz,
+          zaehlung.kreisverkehr
+        );
+        if (zeitintervalleProVerkehrsbeziehung.has(key)) {
+          fz.zeitintervalle = zeitintervalleProVerkehrsbeziehung.get(key)!;
+        }
+        fz.isKreuzung = !zaehlung.kreisverkehr;
       }
-      fz.isKreuzung = !zaehlung.kreisverkehr;
-    });
+    );
   }
 
   /**
    * Diese Funktion bereitet die FJS-Daten für die Speicherung vor.
    * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
    * und den Längsverkehren zu geordnet.
-   * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
+   * @param {ExternalZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
    */
-  function prepareForSaveZaehlungFjs(zaehlung: ZaehlungDTO) {
+  function prepareForSaveZaehlungFjs(zaehlung: ExternalZaehlungDTO) {
     // Map[knotenarmnr][richtung][strassenseite][zeitintervalle]
     const zeitintervalleProStrassenseiteProRichtungProKnotenarm: Map<
       string,
       Map<string, Map<string, Array<ZeitintervallDTO>>>
     > = new Map<string, Map<string, Map<string, Array<ZeitintervallDTO>>>>();
 
-    zaehlung.knotenarme.forEach((knotenarm: KnotenarmDTO) => {
+    zaehlung.knotenarme?.forEach((knotenarm: ExternalKnotenarmDTO) => {
       const filedata = knotenarmFileStore.getFiledata(knotenarm.nummer);
       if (knotenarm.filename && filedata.length > 0) {
         const knotenarmNr: string = filedata[1].split(SEPARATOR)[3];
@@ -156,7 +163,14 @@ export function useCsvToZeitintervallTransformationUtils() {
     });
 
     // Zeitintervalle in bereits vorhandene Längsverkehre einsortieren
-    zaehlung.laengsverkehr.forEach((lv: LaengsverkehrDTO) => {
+    zaehlung.laengsverkehr?.forEach((lv: ExternalLaengsverkehrDTO) => {
+      if (
+        lv.knotenarm == null ||
+        lv.richtung == null ||
+        lv.strassenseite == null
+      ) {
+        return;
+      }
       if (
         zeitintervalleProStrassenseiteProRichtungProKnotenarm.has(
           lv.knotenarm.toString()
@@ -191,16 +205,16 @@ export function useCsvToZeitintervallTransformationUtils() {
    * Diese Funktion bereitet die QJS-Daten für die Speicherung vor.
    * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
    * und den Verkehrsbeziehungen zu geordnet.
-   * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
+   * @param {ExternalZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
    */
-  function prepareForSaveZaehlungQjs(zaehlung: ZaehlungDTO) {
+  function prepareForSaveZaehlungQjs(zaehlung: ExternalZaehlungDTO) {
     // Map[knotenarmnr][zielknotenarmnr (nach)][strassenseite][zeitintervalle]
     const zeitintervalleProKnotenarmProZielknotenarmProStrassenseite: Map<
       string,
       Map<string, Map<string, Array<ZeitintervallDTO>>>
     > = new Map<string, Map<string, Map<string, Array<ZeitintervallDTO>>>>();
 
-    zaehlung.knotenarme.forEach((knotenarm: KnotenarmDTO) => {
+    zaehlung.knotenarme?.forEach((knotenarm: ExternalKnotenarmDTO) => {
       const filedata = knotenarmFileStore.getFiledata(knotenarm.nummer);
       if (knotenarm.filename && filedata.length > 0) {
         const knotenarmNr: string = filedata[1].split(SEPARATOR)[3];
@@ -280,44 +294,53 @@ export function useCsvToZeitintervallTransformationUtils() {
     });
 
     // Zeitintervalle in bereits vorhandenen Verkehrsbeziehungen einsortieren
-    zaehlung.verkehrsbeziehungen.forEach((vz: VerkehrsbeziehungDTO) => {
-      if (
-        zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.has(
-          vz.von.toString()
-        )
-      ) {
-        const zeitintervalleProZielknotenarmProStrassenseite: Map<
-          string,
-          Map<string, Array<ZeitintervallDTO>>
-        > = zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.get(
-          vz.von.toString()
-        )!;
+    zaehlung.verkehrsbeziehungen?.forEach(
+      (vz: ExternalVerkehrsbeziehungDTO) => {
+        if (vz.von == null || vz.nach == null || vz.strassenseite == null) {
+          return;
+        }
         if (
-          zeitintervalleProZielknotenarmProStrassenseite.has(vz.nach.toString())
+          zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.has(
+            vz.von.toString()
+          )
         ) {
-          const zeitintervalleProStrassenseite: Map<
+          const zeitintervalleProZielknotenarmProStrassenseite: Map<
             string,
-            Array<ZeitintervallDTO>
-          > = zeitintervalleProZielknotenarmProStrassenseite.get(
-            vz.nach.toString()
+            Map<string, Array<ZeitintervallDTO>>
+          > = zeitintervalleProKnotenarmProZielknotenarmProStrassenseite.get(
+            vz.von.toString()
           )!;
-          if (zeitintervalleProStrassenseite.has(vz.strassenseite.toString())) {
-            vz.zeitintervalle = zeitintervalleProStrassenseite.get(
-              vz.strassenseite.toString()
+          if (
+            zeitintervalleProZielknotenarmProStrassenseite.has(
+              vz.nach.toString()
+            )
+          ) {
+            const zeitintervalleProStrassenseite: Map<
+              string,
+              Array<ZeitintervallDTO>
+            > = zeitintervalleProZielknotenarmProStrassenseite.get(
+              vz.nach.toString()
             )!;
+            if (
+              zeitintervalleProStrassenseite.has(vz.strassenseite.toString())
+            ) {
+              vz.zeitintervalle = zeitintervalleProStrassenseite.get(
+                vz.strassenseite.toString()
+              )!;
+            }
           }
         }
       }
-    });
+    );
   }
 
   /**
    * Bereitet die QU-Daten für das Speichern vor.
    * D.h. es werden die CSV-Files in Zeitintervall-Objekte umgewandelt
    * und den Querungsverkehren zu geordnet.
-   * @param {ZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
+   * @param {ExternalZaehlungDTO} zaehlung - Die Zählung, die zum Speichern aufbereitet werden soll.
    */
-  function prepareForSaveZaehlungQu(zaehlung: ZaehlungDTO) {
+  function prepareForSaveZaehlungQu(zaehlung: ExternalZaehlungDTO) {
     // Map[knotenarmnr][richtung][zeitintervalle]
     const zeitintervalleProRichtungProKnotenarm: Map<
       string,
@@ -325,7 +348,7 @@ export function useCsvToZeitintervallTransformationUtils() {
     > = new Map<string, Map<string, Array<ZeitintervallDTO>>>();
 
     // CSV-Daten aller Knotenarme aus dem Store auslesen
-    zaehlung.knotenarme.forEach((knotenarm: KnotenarmDTO) => {
+    zaehlung.knotenarme?.forEach((knotenarm: ExternalKnotenarmDTO) => {
       const filedata = knotenarmFileStore.getFiledata(knotenarm.nummer);
       if (knotenarm.filename && filedata.length > 0) {
         const knotenarmNr: string = filedata[1].split(SEPARATOR)[3];
@@ -383,7 +406,10 @@ export function useCsvToZeitintervallTransformationUtils() {
     });
 
     // Zeitintervalle in bereits vorhandene Querungsverkehre einsortieren
-    zaehlung.querungsverkehr.forEach((qu: QuerungsverkehrDTO) => {
+    zaehlung.querungsverkehr?.forEach((qu: ExternalQuerungsverkehrDTO) => {
+      if (qu.knotenarm == null || qu.richtung == null) {
+        return;
+      }
       if (zeitintervalleProRichtungProKnotenarm.has(qu.knotenarm.toString())) {
         const zeitintervalleProRichtung: Map<
           string,
@@ -476,14 +502,14 @@ export function useCsvToZeitintervallTransformationUtils() {
     const startEndeOfIntervallnummer: StartUhrzeitEndeUhrzeit =
       getStartEndeOfIntervallnummer(intervallNr);
 
-    const intervall: ZeitintervallDTO = {} as ZeitintervallDTO;
-    intervall.startUhrzeit = startEndeOfIntervallnummer.startUhrzeit;
-    intervall.endeUhrzeit = startEndeOfIntervallnummer.endeUhrzeit;
-    return intervall;
+    return {
+      startUhrzeit: startEndeOfIntervallnummer.startUhrzeit,
+      endeUhrzeit: startEndeOfIntervallnummer.endeUhrzeit,
+    };
   }
 
   function getKeyOfVerkehrsbeziehung(
-    fz: VerkehrsbeziehungDTO,
+    fz: ExternalVerkehrsbeziehungDTO,
     isKreisverkehr: boolean
   ): string {
     let key = `${fz.knotenarm}`;

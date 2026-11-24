@@ -14,21 +14,21 @@ export default class ZaehlungCardObjectComparator {
     a: ZaehlungCardObject,
     b: ZaehlungCardObject
   ): number {
-    if (a.zaehlung.datum > b.zaehlung.datum) {
+    const datumA = a.zaehlung.datum?.getTime() ?? 0;
+    const datumB = b.zaehlung.datum?.getTime() ?? 0;
+    if (datumA > datumB) {
       return -1;
     }
-    if (a.zaehlung.datum < b.zaehlung.datum) {
+    if (datumA < datumB) {
       return 1;
     }
     // Gibt es zwei neuste Zählungen mit dem selben Datum und eine davon ist
     // eine "klassische" Zählung, dann wird die als erstes ausgewählt.
-    if (a.zaehlung.datum === b.zaehlung.datum) {
-      if (a.zaehlung.zaehlart !== Zaehlart.N) {
-        return 1;
-      }
-      if (a.zaehlung.zaehlart === Zaehlart.N) {
-        return -1;
-      }
+    if (datumA === datumB) {
+      return (
+        Number(b.zaehlung.zaehlart === Zaehlart.N) -
+        Number(a.zaehlung.zaehlart === Zaehlart.N)
+      );
     }
     return 0;
   }

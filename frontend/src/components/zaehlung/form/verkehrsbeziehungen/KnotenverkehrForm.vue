@@ -1250,10 +1250,12 @@
 </template>
 
 <script setup lang="ts">
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalLaengsverkehrDTO,
+  ExternalQuerungsverkehrDTO,
+  ExternalZaehlungDTO,
+} from "@/api/client";
 
 import { cloneDeep, isEmpty, remove, toArray } from "lodash";
 import { computed } from "vue";
@@ -1271,7 +1273,7 @@ const props = withDefaults(defineProps<Props>(), {
   clickable: true,
 });
 
-const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
+const zaehlung = defineModel<ExternalZaehlungDTO>("zaehlung", {
   required: true,
 });
 
@@ -1281,18 +1283,22 @@ const activeColor = "#D50000";
 const passiveColor = "#9E9E9E";
 
 const availableKnotenarme = computed(() => {
-  return zaehlung.value.knotenarme.map((arm: KnotenarmDTO) => arm.nummer);
+  return (zaehlung.value.knotenarme ?? []).map(
+    (arm: ExternalKnotenarmDTO) => arm.nummer
+  );
 });
 const hasAvailableKnotenarme = computed(() => {
   return availableKnotenarme.value.length > 0;
 });
 
-const selectedLaengsverkehre = computed<Array<LaengsverkehrDTO>>(() => {
+const selectedLaengsverkehre = computed<Array<ExternalLaengsverkehrDTO>>(() => {
   return toArray(zaehlung.value.laengsverkehr);
 });
-const selectedQuerungsverkehre = computed<Array<QuerungsverkehrDTO>>(() => {
-  return toArray(zaehlung.value.querungsverkehr);
-});
+const selectedQuerungsverkehre = computed<Array<ExternalQuerungsverkehrDTO>>(
+  () => {
+    return toArray(zaehlung.value.querungsverkehr);
+  }
+);
 
 function isKnotenarmAvailable(knotenarm: number): boolean {
   return availableKnotenarme.value.includes(knotenarm);
@@ -1311,7 +1317,7 @@ function calculateColorOfLaengsverkehr(
   strassenseite: Himmelsrichtung
 ): string | undefined {
   let color = passiveColor;
-  const clickedLaengsverkehr: LaengsverkehrDTO = createLaengsverkehr(
+  const clickedLaengsverkehr: ExternalLaengsverkehrDTO = createLaengsverkehr(
     knotenarm,
     richtung,
     strassenseite
@@ -1338,10 +1344,8 @@ function calculateColorOfQuerungsverkehr(
   richtung: Himmelsrichtung
 ): string | undefined {
   let color = passiveColor;
-  const clickedQuerungsverkehr: QuerungsverkehrDTO = createQuerungsverkehr(
-    knotenarm,
-    richtung
-  );
+  const clickedQuerungsverkehr: ExternalQuerungsverkehrDTO =
+    createQuerungsverkehr(knotenarm, richtung);
   const index = findIndexInSelectedQuerungsverkehreForClickedQuerungsverkehr(
     clickedQuerungsverkehr
   );
@@ -1414,7 +1418,7 @@ function activateOrDeactivateTotalKnotenarm(knotenarm: number) {
 
 function deselectLaengsverkehreOfKnotenarm(knotenarm: number) {
   const laengsverkehre = toArray(cloneDeep(selectedLaengsverkehre.value));
-  remove(laengsverkehre, function (laengsverkehr: LaengsverkehrDTO) {
+  remove(laengsverkehre, function (laengsverkehr: ExternalLaengsverkehrDTO) {
     return laengsverkehr.knotenarm === knotenarm;
   });
   zaehlung.value.laengsverkehr = laengsverkehre;
@@ -1423,7 +1427,8 @@ function deselectLaengsverkehreOfKnotenarm(knotenarm: number) {
 function laengsverkehrForKnotenarmStillSelected(knotenarm: number): boolean {
   return !isEmpty(
     selectedLaengsverkehre.value.filter(
-      (laengsverkehr: LaengsverkehrDTO) => laengsverkehr.knotenarm === knotenarm
+      (laengsverkehr: ExternalLaengsverkehrDTO) =>
+        laengsverkehr.knotenarm === knotenarm
     )
   );
 }
@@ -1678,16 +1683,19 @@ function selectAllLaengsverkehreForKnotenarmOne() {
 
 function deselectQuerungsverkehreOfKnotenarm(knotenarm: number) {
   const querungsverkehre = toArray(cloneDeep(selectedQuerungsverkehre.value));
-  remove(querungsverkehre, function (querungsverkehr: QuerungsverkehrDTO) {
-    return querungsverkehr.knotenarm === knotenarm;
-  });
+  remove(
+    querungsverkehre,
+    function (querungsverkehr: ExternalQuerungsverkehrDTO) {
+      return querungsverkehr.knotenarm === knotenarm;
+    }
+  );
   zaehlung.value.querungsverkehr = querungsverkehre;
 }
 
 function querungsverkehreForKnotenarmStillSelected(knotenarm: number): boolean {
   return !isEmpty(
     selectedQuerungsverkehre.value.filter(
-      (querungsverkehr: QuerungsverkehrDTO) =>
+      (querungsverkehr: ExternalQuerungsverkehrDTO) =>
         querungsverkehr.knotenarm === knotenarm
     )
   );
@@ -1802,7 +1810,7 @@ function handleClickOnLaengsverkehr(
   richtung: Bewegungsrichtung,
   strassenseite: Himmelsrichtung
 ): void {
-  const clickedLaengsverkehr: LaengsverkehrDTO = createLaengsverkehr(
+  const clickedLaengsverkehr: ExternalLaengsverkehrDTO = createLaengsverkehr(
     knotenarm,
     richtung,
     strassenseite
@@ -1828,10 +1836,8 @@ function handleClickOnQuerungsverkehr(
   knotenarm: number,
   richtung: Himmelsrichtung
 ): void {
-  const clickedQuerungsverkehr: QuerungsverkehrDTO = createQuerungsverkehr(
-    knotenarm,
-    richtung
-  );
+  const clickedQuerungsverkehr: ExternalQuerungsverkehrDTO =
+    createQuerungsverkehr(knotenarm, richtung);
 
   const querungsverkehre = toArray(cloneDeep(selectedQuerungsverkehre.value));
 
@@ -1849,10 +1855,10 @@ function handleClickOnQuerungsverkehr(
 }
 
 function findIndexInSelectedLaengsverkehreForClickedLaengsverkehr(
-  clickedLaengsverkehr: LaengsverkehrDTO
+  clickedLaengsverkehr: ExternalLaengsverkehrDTO
 ) {
   return selectedLaengsverkehre.value.findIndex(
-    (laengsverkehr: LaengsverkehrDTO) => {
+    (laengsverkehr: ExternalLaengsverkehrDTO) => {
       return (
         laengsverkehr.knotenarm === clickedLaengsverkehr.knotenarm &&
         laengsverkehr.richtung === clickedLaengsverkehr.richtung &&
@@ -1863,10 +1869,10 @@ function findIndexInSelectedLaengsverkehreForClickedLaengsverkehr(
 }
 
 function findIndexInSelectedQuerungsverkehreForClickedQuerungsverkehr(
-  clickedQuerungsverkehr: QuerungsverkehrDTO
+  clickedQuerungsverkehr: ExternalQuerungsverkehrDTO
 ) {
   return selectedQuerungsverkehre.value.findIndex(
-    (querungsverkehr: QuerungsverkehrDTO) => {
+    (querungsverkehr: ExternalQuerungsverkehrDTO) => {
       return (
         querungsverkehr.knotenarm === clickedQuerungsverkehr.knotenarm &&
         querungsverkehr.richtung === clickedQuerungsverkehr.richtung
@@ -1879,8 +1885,8 @@ function createLaengsverkehr(
   knotenarm: number,
   richtung: Bewegungsrichtung,
   strassenseite: Himmelsrichtung
-): LaengsverkehrDTO {
-  const laengsverkehr = {} as LaengsverkehrDTO;
+): ExternalLaengsverkehrDTO {
+  const laengsverkehr = {} as ExternalLaengsverkehrDTO;
   laengsverkehr.knotenarm = knotenarm;
   laengsverkehr.richtung = richtung;
   laengsverkehr.strassenseite = strassenseite;
@@ -1890,8 +1896,8 @@ function createLaengsverkehr(
 function createQuerungsverkehr(
   knotenarm: number,
   richtung: Himmelsrichtung
-): QuerungsverkehrDTO {
-  const querungsverkehr = {} as QuerungsverkehrDTO;
+): ExternalQuerungsverkehrDTO {
+  const querungsverkehr = {} as ExternalQuerungsverkehrDTO;
   querungsverkehr.knotenarm = knotenarm;
   querungsverkehr.richtung = richtung;
   return querungsverkehr;

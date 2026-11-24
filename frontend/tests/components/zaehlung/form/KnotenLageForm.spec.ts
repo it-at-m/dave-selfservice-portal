@@ -1,7 +1,9 @@
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalLaengsverkehrDTO,
+  ExternalQuerungsverkehrDTO,
+  ExternalVerkehrsbeziehungDTO,
+} from "@/api/client";
 
 import { shallowMount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
@@ -16,14 +18,11 @@ import UploadedFileStatus from "@/types/enum/UploadedFileStatus";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 
-function createKnotenarmDTOWithNumber(number: number): KnotenarmDTO {
+function createKnotenarmDTOWithNumber(number: number): ExternalKnotenarmDTO {
   return {
     nummer: number,
     strassenname: "",
     filename: "",
-    id: "",
-    entityVersion: 0,
-    createdTime: "",
   };
 }
 
@@ -37,7 +36,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
     zaehlung.knotenarme = [createKnotenarmDTOWithNumber(1)];
     zaehlung.verkehrsbeziehungen = [
       { von: 1, nach: 2 },
-    ] as Array<VerkehrsbeziehungDTO>;
+    ] as Array<ExternalVerkehrsbeziehungDTO>;
     const wrapper = shallowMount(KnotenLageForm, {
       props: { height: "400px", modelValue: zaehlung },
     });
@@ -67,7 +66,9 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
     const arm = createKnotenarmDTOWithNumber(1);
     arm.filename = "upload.csv";
     zaehlung.knotenarme = [arm];
-    zaehlung.verkehrsbeziehungen = [{ von: 1 }] as Array<VerkehrsbeziehungDTO>;
+    zaehlung.verkehrsbeziehungen = [
+      { von: 1 },
+    ] as Array<ExternalVerkehrsbeziehungDTO>;
     const fileStore = useKnotenarmFileStore();
     fileStore.setFiledata(1, ["CSV-Inhalt"]);
     fileStore.setFiledata(2, ["Andere CSV"]);
@@ -95,7 +96,9 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
   it("ignores pending CSV reads after the editing session has been reset", () => {
     const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
     zaehlung.knotenarme = [createKnotenarmDTOWithNumber(1)];
-    zaehlung.verkehrsbeziehungen = [{ von: 1 }] as Array<VerkehrsbeziehungDTO>;
+    zaehlung.verkehrsbeziehungen = [
+      { von: 1 },
+    ] as Array<ExternalVerkehrsbeziehungDTO>;
     const wrapper = shallowMount(KnotenLageForm, {
       props: { height: "400px", modelValue: zaehlung },
     });
@@ -135,7 +138,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
     zaehlung.verkehrsbeziehungen = [
       { von: 1 },
       { von: 3 },
-    ] as Array<VerkehrsbeziehungDTO>;
+    ] as Array<ExternalVerkehrsbeziehungDTO>;
     const wrapper = shallowMount(KnotenLageForm, {
       props: {
         height: "400px",
@@ -170,7 +173,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       zaehlung.verkehrsbeziehungen = [
         { von: 1, nach: 2, strassenseite: Himmelsrichtung.N },
         { von: 1, nach: 3, strassenseite: Himmelsrichtung.S },
-      ] as Array<VerkehrsbeziehungDTO>;
+      ] as Array<ExternalVerkehrsbeziehungDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -194,7 +197,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       zaehlung.verkehrsbeziehungen = [
         { von: 1, nach: 2, strassenseite: Himmelsrichtung.N },
         { von: 1, nach: 3, strassenseite: Himmelsrichtung.S },
-      ] as Array<VerkehrsbeziehungDTO>;
+      ] as Array<ExternalVerkehrsbeziehungDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -227,7 +230,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
           strassenseite: Himmelsrichtung.S,
           richtung: Bewegungsrichtung.AUS,
         },
-      ] as Array<LaengsverkehrDTO>;
+      ] as Array<ExternalLaengsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -259,7 +262,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
           strassenseite: Himmelsrichtung.S,
           richtung: Bewegungsrichtung.AUS,
         },
-      ] as Array<LaengsverkehrDTO>;
+      ] as Array<ExternalLaengsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -286,7 +289,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       zaehlung.querungsverkehr = [
         { knotenarm: 1, richtung: Himmelsrichtung.O },
         { knotenarm: 1, richtung: Himmelsrichtung.W },
-      ] as Array<QuerungsverkehrDTO>;
+      ] as Array<ExternalQuerungsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -310,7 +313,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       zaehlung.querungsverkehr = [
         { knotenarm: 1, richtung: Himmelsrichtung.N },
         { knotenarm: 1, richtung: Himmelsrichtung.O },
-      ] as Array<QuerungsverkehrDTO>;
+      ] as Array<ExternalQuerungsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -378,7 +381,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       zaehlung.zaehlart = Zaehlart.QJS;
       zaehlung.verkehrsbeziehungen = [
         { von: 1, nach: 2, strassenseite: Himmelsrichtung.N },
-      ] as Array<VerkehrsbeziehungDTO>;
+      ] as Array<ExternalVerkehrsbeziehungDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -406,7 +409,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
           strassenseite: Himmelsrichtung.N,
           richtung: Bewegungsrichtung.EIN,
         },
-      ] as Array<LaengsverkehrDTO>;
+      ] as Array<ExternalLaengsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -433,7 +436,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       zaehlung.zaehlart = Zaehlart.QU;
       zaehlung.querungsverkehr = [
         { knotenarm: 1, richtung: Himmelsrichtung.W },
-      ] as Array<QuerungsverkehrDTO>;
+      ] as Array<ExternalQuerungsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -458,7 +461,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       zaehlung.kreisverkehr = false;
       zaehlung.verkehrsbeziehungen = [
         { von: 1, nach: 2 },
-      ] as Array<VerkehrsbeziehungDTO>;
+      ] as Array<ExternalVerkehrsbeziehungDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });
@@ -488,7 +491,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
           vorbei: false,
           heraus: false,
         },
-      ] as Array<VerkehrsbeziehungDTO>;
+      ] as Array<ExternalVerkehrsbeziehungDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
         props: { height: "400px", modelValue: zaehlung },
       });

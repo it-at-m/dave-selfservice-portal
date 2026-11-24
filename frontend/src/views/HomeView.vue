@@ -60,8 +60,8 @@
 </template>
 
 <script setup lang="ts">
+import type { ExternalZaehlungDTO } from "@/api/client";
 import type ZaehlungCardObject from "@/domain/ZaehlungCardObject";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { cloneDeep, isEmpty } from "lodash";
 import { computed, onMounted, ref } from "vue";
@@ -81,7 +81,7 @@ const showZaehlungDialog = ref<boolean>(false);
 
 const showChatDialog = ref<boolean>(false);
 
-const zaehlung = ref<ZaehlungDTO>(
+const zaehlung = ref<ExternalZaehlungDTO>(
   DefaultObjectCreator.createDefaultZaehlungDTO()
 );
 
@@ -103,8 +103,8 @@ const contentHeight = computed(() => {
 function loadZaehlungen(): void {
   zaehlungCards.value = [];
   ZaehlungService.getAllRelevantZaehlungen()
-    .then((zaehlungen: Array<ZaehlungDTO>) => {
-      zaehlungen.forEach((zaehlung: ZaehlungDTO) => {
+    .then((zaehlungen: Array<ExternalZaehlungDTO>) => {
+      zaehlungen.forEach((zaehlung: ExternalZaehlungDTO) => {
         zaehlungCards.value.push({ zaehlung: zaehlung });
       });
       zaehlungCards.value.sort(ZaehlungCardObjectComparator.sortByDatumDesc);
@@ -121,12 +121,12 @@ function closeZaehlungDialog() {
   showZaehlungDialog.value = false;
 }
 
-function openZaehlungDialog(zaehlungToEdit: ZaehlungDTO) {
+function openZaehlungDialog(zaehlungToEdit: ExternalZaehlungDTO) {
   zaehlung.value = cloneDeep(zaehlungToEdit);
   showZaehlungDialog.value = true;
 }
 
-function openChatDialog(zaehlungToChat: ZaehlungDTO) {
+function openChatDialog(zaehlungToChat: ExternalZaehlungDTO) {
   zaehlung.value = cloneDeep(zaehlungToChat);
   showChatDialog.value = true;
 }

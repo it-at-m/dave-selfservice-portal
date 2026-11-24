@@ -1,9 +1,9 @@
-import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ZeitintervallDTO } from "@/api/client";
 
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { ExternalZaehlungDTOFromJSON } from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
@@ -44,13 +44,13 @@ describe("prepareForSaveZaehlung", () => {
       "5;1;;;5;5;5;5;5;5;5",
       "6;1;;;6;6;6;6;6;6;6",
     ]);
-    const zaehlung: ZaehlungDTO = {
+    const zaehlung = ExternalZaehlungDTOFromJSON({
       id: "1",
       entityVersion: 0,
       createdTime: "0",
       datum: "2026-03-10",
       zaehlart: Zaehlart.N,
-      punkt: { lat: "0", lon: "0" },
+      punkt: { lat: 0, lon: 0 },
       projektNummer: "P123",
       projektName: "Project Name",
       kreuzungsname: "Intersection Name",
@@ -107,7 +107,7 @@ describe("prepareForSaveZaehlung", () => {
           isKreuzung: false,
           strassenseite: {} as Himmelsrichtung,
           active: true,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          zeitintervalle: [],
         },
         {
           id: "2",
@@ -132,24 +132,24 @@ describe("prepareForSaveZaehlung", () => {
           isKreuzung: true,
           strassenseite: {} as Himmelsrichtung,
           active: true,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          zeitintervalle: [],
         },
       ],
       querungsverkehr: [],
       laengsverkehr: [],
       zaehlstelleNummer: "Z123",
       zaehlstelleStadtbezirk: "District A",
-      zaehlstellePunkt: { lat: "0", lon: "0" },
+      zaehlstellePunkt: { lat: 0, lon: 0 },
       zaehlstelleKommentar: "Comment",
       unreadMessagesDienstleister: false,
-    };
+    });
 
     csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
       zaehlung
     );
 
     expect(zaehlung.verkehrsbeziehungen).toBeDefined();
-    expect(zaehlung.verkehrsbeziehungen.length).toBe(2);
+    expect(zaehlung.verkehrsbeziehungen?.length).toBe(2);
 
     const expectedTimeIntervals1: ZeitintervallDTO[] = [
       {
@@ -288,10 +288,10 @@ describe("prepareForSaveZaehlung", () => {
         fussgaenger: 6,
       },
     ];
-    expect(zaehlung.verkehrsbeziehungen[0].zeitintervalle).toEqual(
+    expect(zaehlung.verkehrsbeziehungen?.[0].zeitintervalle).toEqual(
       expectedTimeIntervals1
     );
-    expect(zaehlung.verkehrsbeziehungen[1].zeitintervalle).toEqual(
+    expect(zaehlung.verkehrsbeziehungen?.[1].zeitintervalle).toEqual(
       expectedTimeIntervals2
     );
   });

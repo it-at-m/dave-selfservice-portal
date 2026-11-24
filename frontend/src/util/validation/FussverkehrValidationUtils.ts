@@ -1,6 +1,8 @@
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
+import type {
+  ExternalLaengsverkehrDTO,
+  ExternalQuerungsverkehrDTO,
+  ExternalVerkehrsbeziehungDTO,
+} from "@/api/client";
 
 import { difference, isEmpty, toArray } from "lodash";
 
@@ -40,8 +42,11 @@ export function useFussverkehrValidationUtils() {
    * @param nach csv-Spalte für nach.
    * @return Fehlermeldung
    */
-  function validateNachOccurrence(zaehlart: Zaehlart, nach: string) {
-    if ([Zaehlart.FJS, Zaehlart.QU].includes(zaehlart) && nach.trim()) {
+  function validateNachOccurrence(zaehlart: string | undefined, nach: string) {
+    if (
+      (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QU) &&
+      nach.trim()
+    ) {
       return `Der Zielknotenarm (nach) darf nicht gefüllt sein.`;
     }
     if (zaehlart === Zaehlart.QJS && !nach.trim()) {
@@ -79,11 +84,11 @@ export function useFussverkehrValidationUtils() {
    * @return Fehlermeldung
    */
   function validateStrassenseiteOccurrence(
-    zaehlart: Zaehlart,
+    zaehlart: string | undefined,
     strassenseite: string
   ) {
     if (
-      [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
+      (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) &&
       !strassenseite?.trim()
     ) {
       return `Die Strassenseite darf nicht leer sein.`;
@@ -108,7 +113,7 @@ export function useFussverkehrValidationUtils() {
   function validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+    verkehrsbeziehungen: Array<ExternalVerkehrsbeziehungDTO> = []
   ) {
     const nachAndStrassenseiteOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -149,7 +154,7 @@ export function useFussverkehrValidationUtils() {
   function validateNonRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+    verkehrsbeziehungen: Array<ExternalVerkehrsbeziehungDTO> = []
   ) {
     const nachAndStrassenseiteOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -190,7 +195,7 @@ export function useFussverkehrValidationUtils() {
   function validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    laengsverkehre: Array<LaengsverkehrDTO>
+    laengsverkehre: Array<ExternalLaengsverkehrDTO> = []
   ) {
     const strassenseiteAndRichtungOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -229,7 +234,7 @@ export function useFussverkehrValidationUtils() {
   function validateNonRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    laengsverkehre: Array<LaengsverkehrDTO>
+    laengsverkehre: Array<ExternalLaengsverkehrDTO> = []
   ) {
     const strassenseiteAndRichtungOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -268,7 +273,7 @@ export function useFussverkehrValidationUtils() {
   function validateRequiredRichtungIntervallsForQuAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    querungsverkehre: Array<QuerungsverkehrDTO>
+    querungsverkehre: Array<ExternalQuerungsverkehrDTO> = []
   ) {
     const richtungOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -302,7 +307,7 @@ export function useFussverkehrValidationUtils() {
   function validateNonRequiredRichtungIntervallsForQuAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    querungsverkehre: Array<QuerungsverkehrDTO>
+    querungsverkehre: Array<ExternalQuerungsverkehrDTO> = []
   ) {
     const richtungOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -335,7 +340,7 @@ export function useFussverkehrValidationUtils() {
    * @return Fehlermeldung
    */
   function validateStrassenseiteValue(
-    zaehlart: Zaehlart,
+    zaehlart: string | undefined,
     strassenseite: string,
     armNummer: number
   ) {
@@ -378,7 +383,10 @@ export function useFussverkehrValidationUtils() {
    * @param richtung csv-Spalte für Richtung.
    * @return Fehlermeldung
    */
-  function validateRichtungOccurrence(zaehlart: Zaehlart, richtung: string) {
+  function validateRichtungOccurrence(
+    zaehlart: string | undefined,
+    richtung: string
+  ) {
     // Prüfung der Richtung
     if (zaehlart === Zaehlart.QU) {
       if (
@@ -416,7 +424,7 @@ export function useFussverkehrValidationUtils() {
    * @return Fehlermeldung
    */
   function validateRichtungValue(
-    zaehlart: Zaehlart,
+    zaehlart: string | undefined,
     armNummer: number,
     richtung: string
   ) {

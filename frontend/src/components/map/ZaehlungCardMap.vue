@@ -91,7 +91,7 @@ function createLayersAndAddToMap(): void {
 function createBaseLayers(): L.Control.LayersObject {
   const baseLayers =
     configurationStore.getTenantConfiguration.mapConfiguration.baseLayers;
-  let layerConfig = baseLayers[0];
+  const layerConfig = baseLayers[0];
 
   const layer = L.tileLayer.wms(layerConfig.baseUrl, {
     layers: layerConfig.layerName,

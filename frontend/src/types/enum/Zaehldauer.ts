@@ -65,7 +65,7 @@ export const zaehldauerDropDown = new Array<KeyVal>(
 );
 
 export const zaehldauerIntervallnummern = new Map<
-  Zaehldauer,
+  string,
   Array<StartIntervallnummerEndeIntervallnummer>
 >([
   [

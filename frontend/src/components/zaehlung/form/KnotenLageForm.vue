@@ -85,7 +85,7 @@
           </v-row>
           <v-row
             v-for="arm in relevantKnotenarme"
-            :key="arm.id"
+            :key="arm.nummer"
             dense
             no-gutters
           >
@@ -142,12 +142,13 @@
 </template>
 
 <script setup lang="ts">
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type GeoPoint from "@/domain/GeoPoint";
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalLaengsverkehrDTO,
+  ExternalQuerungsverkehrDTO,
+  ExternalVerkehrsbeziehungDTO,
+  ExternalZaehlungDTO,
+} from "@/api/client";
 
 import { LatLng } from "leaflet";
 import { isEmpty, isNil, parseInt, toArray } from "lodash";
@@ -175,7 +176,7 @@ interface Props {
 
 defineProps<Props>();
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 
@@ -197,7 +198,7 @@ const resetFileInput = ref<number>(0);
 
 const files = ref<Array<File>>([]);
 
-const relevantKnotenarme = computed<Array<KnotenarmDTO>>(() => {
+const relevantKnotenarme = computed<Array<ExternalKnotenarmDTO>>(() => {
   const knotenarme = validationUtils.getRelevantKnotenarmeForFileUpload(
     zaehlung.value
   );
@@ -213,49 +214,56 @@ const uploadIcon = computed<string>(() =>
 );
 
 const coordsZaehlstelle = computed<LatLng>(() => {
-  const punkt: GeoPoint = zaehlung.value.zaehlstellePunkt;
-  if (punkt) {
-    return new LatLng(parseFloat(punkt.lat), parseFloat(punkt.lon));
+  const punkt = zaehlung.value.zaehlstellePunkt;
+  if (punkt?.lat != null && punkt.lon != null) {
+    return new LatLng(punkt.lat, punkt.lon);
   } else {
     return DefaultObjectCreator.createCenterOfMunichLatLng();
   }
 });
 
 const coordsZaehlung = computed<LatLng>(() => {
-  const punkt: GeoPoint = zaehlung.value.punkt;
-  if (punkt) {
-    return new LatLng(parseFloat(punkt.lat), parseFloat(punkt.lon));
+  const punkt = zaehlung.value.punkt;
+  if (punkt?.lat != null && punkt.lon != null) {
+    return new LatLng(punkt.lat, punkt.lon);
   } else {
     return coordsZaehlstelle.value;
   }
 });
 
 const isZaehlungEditable = computed<boolean>(() => {
-  return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
+  return (
+    zaehlung.value.status === Status.COUNTING ||
+    zaehlung.value.status === Status.CORRECTION
+  );
 });
 
 const bewegungsbeziehungen = computed<
-  Array<VerkehrsbeziehungDTO | QuerungsverkehrDTO | LaengsverkehrDTO>
+  Array<
+    | ExternalVerkehrsbeziehungDTO
+    | ExternalQuerungsverkehrDTO
+    | ExternalLaengsverkehrDTO
+  >
 >(() => {
   const zaehlart = zaehlung.value?.zaehlart;
 
   let source:
-    | Array<VerkehrsbeziehungDTO>
-    | Array<QuerungsverkehrDTO>
-    | Array<LaengsverkehrDTO>
+    | Array<ExternalVerkehrsbeziehungDTO>
+    | Array<ExternalQuerungsverkehrDTO>
+    | Array<ExternalLaengsverkehrDTO>
     | undefined;
 
   if (zaehlart === Zaehlart.QU) {
     source = zaehlung.value?.querungsverkehr as
-      | Array<QuerungsverkehrDTO>
+      | Array<ExternalQuerungsverkehrDTO>
       | undefined;
   } else if (zaehlart === Zaehlart.FJS) {
     source = zaehlung.value?.laengsverkehr as
-      | Array<LaengsverkehrDTO>
+      | Array<ExternalLaengsverkehrDTO>
       | undefined;
   } else {
     source = zaehlung.value?.verkehrsbeziehungen as
-      | Array<VerkehrsbeziehungDTO>
+      | Array<ExternalVerkehrsbeziehungDTO>
       | undefined;
   }
   // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
@@ -264,7 +272,7 @@ const bewegungsbeziehungen = computed<
     ? toArray(source).sort(
         VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber
       )
-    : toArray(source).sort(VerkehrsbeziehungComparator.sortByActiveVonAndNach);
+    : toArray(source).sort(VerkehrsbeziehungComparator.sortByVonAndNach);
 });
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
@@ -366,7 +374,7 @@ function fileUpload(): void {
   }
 }
 
-function getStyle(arm: KnotenarmDTO): string {
+function getStyle(arm: ExternalKnotenarmDTO): string {
   let style = "display: none";
   if (arm.filename && arm.filename.trim().length > 0) {
     style = "";
@@ -380,7 +388,7 @@ function wrongFileType(file: File): boolean {
 
 function deleteFile(nummer: number): void {
   validationStore.uploadedFilesChanged = true;
-  relevantKnotenarme.value.forEach((arm: KnotenarmDTO) => {
+  relevantKnotenarme.value.forEach((arm: ExternalKnotenarmDTO) => {
     if (arm.nummer === nummer) {
       validationStore.setUploadedFileStatus(arm, UploadedFileStatus.MISSING);
       arm.filename = "";
@@ -812,7 +820,7 @@ function checkFussverkehrData(
 function validateIntervallsWithRequiredRichtungsinformationAreExistent(
   armNummer: number,
   csvDataWithoutHeader: Array<string>,
-  zaehlung: ZaehlungDTO
+  zaehlung: ExternalZaehlungDTO
 ): string {
   if (zaehlung.zaehlart === Zaehlart.QJS) {
     const nachAndStrassenseiteIntervallsAreExistent =
@@ -953,7 +961,8 @@ function handleCsvFileSelection() {
  */
 function isKnotenarmRelevantForFileUpload(knotenarmnummer: number): boolean {
   return relevantKnotenarme.value.some(
-    (zaehlungArm: KnotenarmDTO) => zaehlungArm.nummer === knotenarmnummer
+    (zaehlungArm: ExternalKnotenarmDTO) =>
+      zaehlungArm.nummer === knotenarmnummer
   );
 }
 
@@ -1025,7 +1034,7 @@ function readAndValidateUploadedCsvFiles() {
 
                 itemsProcessed++;
                 relevantKnotenarme.value.forEach(
-                  (zaehlungArm: KnotenarmDTO) => {
+                  (zaehlungArm: ExternalKnotenarmDTO) => {
                     if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
                       // Plausibilitätscheck
                       const errorMessage: string = checkUploadedFiledata(

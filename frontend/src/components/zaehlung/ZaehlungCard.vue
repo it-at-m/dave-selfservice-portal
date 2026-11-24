@@ -45,7 +45,7 @@
         <v-col cols="4">
           <v-card-title>
             <zaehlung-geometrie
-              v-model="zaehlung.knotenarme"
+              :model-value="zaehlung.knotenarme ?? []"
               height="60"
               width="60"
               active-color="#1565C0"
@@ -64,28 +64,28 @@
           <v-spacer />
           <v-col cols="1">
             <zaehlart-icon
-              :zaehlart="zaehlung.zaehlart"
+              :zaehlart="zaehlung.zaehlart ?? ''"
               :color="ICON_COLOR"
             ></zaehlart-icon>
           </v-col>
           <v-spacer />
           <v-col cols="1">
             <wetter-icon
-              :wetter="zaehlung.wetter"
+              :wetter="zaehlung.wetter ?? ''"
               :color="ICON_COLOR"
             ></wetter-icon>
           </v-col>
           <v-spacer />
           <v-col cols="1">
             <zaehldauer-icon
-              :zaehldauer="zaehlung.zaehldauer"
+              :zaehldauer="zaehlung.zaehldauer ?? ''"
               :color="ICON_COLOR"
             ></zaehldauer-icon>
           </v-col>
           <v-spacer />
           <v-col cols="1">
             <quelle-icon
-              :quelle="zaehlung.quelle"
+              :quelle="zaehlung.quelle ?? ''"
               :color="ICON_COLOR"
             ></quelle-icon>
           </v-col>
@@ -185,18 +185,18 @@
 </template>
 
 <script setup lang="ts">
-import type { UpdateStatusDTO } from "@/api/client";
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type GeoPoint from "@/domain/GeoPoint";
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalZaehlungDTO,
+  GeoPoint,
+  UpdateStatusDTO,
+} from "@/api/client";
 
 import { LatLng } from "leaflet";
 import { cloneDeep, isEmpty, isNil } from "lodash";
 import { computed, ref } from "vue";
 
+import { serializeDate } from "@/api/client/runtime";
 import { ApiError } from "@/api/error";
 import ZaehlungService from "@/api/service/ZaehlungService";
 import IconOptions from "@/components/icons/IconOptions";
@@ -212,17 +212,19 @@ import { useSnackbarStore } from "@/store/SnackbarStore";
 import Status, { statusIcon } from "@/types/enum/Status";
 import Zaehlart from "@/types/enum/Zaehlart";
 import { useDateUtils } from "@/util/DateUtils";
+import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
+import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 
 const emits = defineEmits<{
   (e: "saved"): void;
   (e: "cancel"): void;
-  (e: "openZaehlungDialog", zaehlung: ZaehlungDTO): void;
-  (e: "openChatDialog", zaehlung: ZaehlungDTO): void;
+  (e: "openZaehlungDialog", zaehlung: ExternalZaehlungDTO): void;
+  (e: "openChatDialog", zaehlung: ExternalZaehlungDTO): void;
 }>();
 
 const ICON_COLOR = "black";
@@ -232,17 +234,17 @@ const loading = ref<boolean>(false);
 const snackbarStore = useSnackbarStore();
 const configurationStore = useConfigurationStore();
 const dateUtils = useDateUtils();
+const validationUtils = useValidationUtils();
 
 const coordsZaehlstelle = computed<LatLng>(() => {
-  return createLatLngFromString(
-    zaehlung.value.zaehlstellePunkt.lat,
-    zaehlung.value.zaehlstellePunkt.lon
+  return (
+    createLatLng(zaehlung.value.zaehlstellePunkt) ??
+    DefaultObjectCreator.createCenterOfMunichLatLng()
   );
 });
 
 const coordsZaehlung = computed(() => {
-  const geoPoint: GeoPoint = zaehlung.value.punkt;
-  return createLatLngFromString(geoPoint.lat, geoPoint.lon);
+  return createLatLng(zaehlung.value.punkt) ?? coordsZaehlstelle.value;
 });
 
 const datum = computed(() => {
@@ -250,7 +252,7 @@ const datum = computed(() => {
 });
 
 const streets = computed(() => {
-  return cloneDeep(zaehlung.value.knotenarme).sort(
+  return cloneDeep(zaehlung.value.knotenarme ?? []).sort(
     KnotenarmComparator.sortByNumber
   );
 });
@@ -272,7 +274,9 @@ const streetsHeader = [
 ];
 
 const statusDesign = computed(() => {
-  let design: IconOptions | undefined = statusIcon.get(zaehlung.value.status);
+  let design: IconOptions | undefined = statusIcon.get(
+    zaehlung.value.status ?? ""
+  );
   if (!design) {
     design = {} as IconOptions;
     design.color = "deep-orange-lighten-4";
@@ -291,40 +295,16 @@ const showButtonAbschliessen = computed<boolean>(() => {
 });
 
 // Liefert nur die Knotenarme zurueck, die ausgehenden Verkehr haben
-const knotenarmeWithOutgoingTraffic = computed<Array<KnotenarmDTO>>(() => {
-  let outgoingKnotenarmnummern = [];
-  if (zaehlung.value.zaehlart === Zaehlart.FJS) {
-    outgoingKnotenarmnummern = zaehlung.value.laengsverkehr.map(
-      (laengsverkehr: LaengsverkehrDTO) => {
-        return laengsverkehr.knotenarm;
-      }
-    );
-  } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
-    outgoingKnotenarmnummern = zaehlung.value.querungsverkehr.map(
-      (querungsverkehr: QuerungsverkehrDTO) => {
-        return querungsverkehr.knotenarm;
-      }
-    );
-  } else {
-    outgoingKnotenarmnummern = zaehlung.value.verkehrsbeziehungen.map(
-      (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
-        if (zaehlung.value.kreisverkehr) {
-          return verkehrsbeziehung.knotenarm;
-        } else {
-          return verkehrsbeziehung.von;
-        }
-      }
-    );
+const knotenarmeWithOutgoingTraffic = computed<Array<ExternalKnotenarmDTO>>(
+  () => {
+    return validationUtils.getRelevantKnotenarmeForFileUpload(zaehlung.value);
   }
-  return zaehlung.value.knotenarme.filter((arm: KnotenarmDTO) => {
-    return !isNil(arm) && outgoingKnotenarmnummern.includes(arm.nummer);
-  });
-});
+);
 
 const hasUploadedData = computed<boolean>(() => {
   // Jeder Knotenarm mit ausgehendem Verkehr braucht eine Datei mit den Zaehldaten
   return isEmpty(
-    knotenarmeWithOutgoingTraffic.value.filter((arm: KnotenarmDTO) => {
+    knotenarmeWithOutgoingTraffic.value.filter((arm: ExternalKnotenarmDTO) => {
       return (
         !isNil(arm) && (isNil(arm.filename) || isEmpty(arm.filename.trim()))
       );
@@ -332,9 +312,11 @@ const hasUploadedData = computed<boolean>(() => {
   );
 });
 
-// Erzeugt aus den String Koordinaten ein Objekt von Typ LatLng
-function createLatLngFromString(lat: string, lng: string): LatLng {
-  return new LatLng(parseFloat(lat), parseFloat(lng));
+function createLatLng(punkt: GeoPoint | undefined): LatLng | undefined {
+  if (punkt?.lat != null && punkt.lon != null) {
+    return new LatLng(punkt.lat, punkt.lon);
+  }
+  return undefined;
 }
 
 function zaehlungAbschliessen(): void {
@@ -388,15 +370,20 @@ function openZaehlungDialog() {
 
 function downloadDummyCsv(): void {
   // Beispiel: 62301Q_2021-04-23_Knotenarm_X.csv
-  const zaehlstelleNummer: string = zaehlung.value.zaehlstelleNummer;
+  const zaehlstelleNummer = zaehlung.value.zaehlstelleNummer ?? "";
   const zaehlartForFileContent: string =
-    zaehlung.value.zaehlart === Zaehlart.N ? "" : zaehlung.value.zaehlart;
-  const filename = `${zaehlstelleNummer}${zaehlartForFileContent}_${zaehlung.value.datum}_Knotenarm_X.csv`;
+    zaehlung.value.zaehlart === Zaehlart.N
+      ? ""
+      : (zaehlung.value.zaehlart ?? "");
+  const datumForCsv = zaehlung.value.datum
+    ? serializeDate(zaehlung.value.datum)
+    : "";
+  const filename = `${zaehlstelleNummer}${zaehlartForFileContent}_${datumForCsv}_Knotenarm_X.csv`;
 
   const csvFileContent = getCsvContentForAllZaehlarten(
     zaehlstelleNummer,
     zaehlartForFileContent,
-    zaehlung.value.datum
+    datumForCsv
   );
   const csvContentWithFileMetadata =
     "data:text/csv;charset=utf-8," + csvFileContent;

@@ -1,8 +1,8 @@
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ExternalKnotenarmDTO, ExternalZaehlungDTO } from "@/api/client";
 
 import { isEmpty, isNil, join, sum, toArray, trim, uniq } from "lodash";
 
+import { serializeDate } from "@/api/client/runtime";
 import Fahrzeug from "@/types/enum/Fahrzeug";
 import Zaehlart from "@/types/enum/Zaehlart";
 import {
@@ -112,7 +112,7 @@ export function useValidationUtils() {
   function hasCorrectMetadata(
     csvData: Array<string>,
     knotenarmNr: number,
-    zaehlung: ZaehlungDTO
+    zaehlung: ExternalZaehlungDTO
   ): string {
     //Erstellen der erwarteten Metadaten
     const metaZaehlart =
@@ -120,7 +120,7 @@ export function useValidationUtils() {
     const expectedMetaDataArray = [
       zaehlung.zaehlstelleNummer,
       metaZaehlart,
-      zaehlung.datum,
+      zaehlung.datum ? serializeDate(zaehlung.datum) : "",
       knotenarmNr,
     ];
     // Fülle das Array mit leeren Feldern, bis die Länge den erwarteten Spalten entspricht
@@ -264,8 +264,7 @@ export function useValidationUtils() {
       Array.from(
         csvLinesByIntervallnummerByBewegungsinformation.values()
       ).flatMap((csvLinesByIntervallnummer) => {
-        const entries = Array.from(csvLinesByIntervallnummer.entries());
-        return entries;
+        return Array.from(csvLinesByIntervallnummer.entries());
       })
     )
       .filter(
@@ -290,11 +289,11 @@ export function useValidationUtils() {
    */
   function checkForCorrectNumberOfIntervalsAccordingZaehldauer(
     csvDataWithoutHeader: Array<string>,
-    zaehldauer: Zaehldauer
+    zaehldauer: string | undefined
   ): string {
     if (zaehldauer != Zaehldauer.SONSTIGE) {
       const startIntervallnummerEndeIntervallnummer = toArray(
-        zaehldauerIntervallnummern.get(zaehldauer)
+        zaehldauerIntervallnummern.get(zaehldauer ?? "")
       );
 
       const csvDataWithoutEmptyLines =
@@ -329,7 +328,7 @@ export function useValidationUtils() {
           numberOfIntervalsAccordingZaehldauer !==
           csvLinesOfBewegungsinformation.length
         ) {
-          return `Die Menge von ${csvLinesOfBewegungsinformation.length} Intervallnummern in der CSV-Datei entspricht nicht der erwarteten Anzahl von ${numberOfIntervalsAccordingZaehldauer} Intervallen der Zähldauer ${zaehldauerText.get(zaehldauer)}.`;
+          return `Die Menge von ${csvLinesOfBewegungsinformation.length} Intervallnummern in der CSV-Datei entspricht nicht der erwarteten Anzahl von ${numberOfIntervalsAccordingZaehldauer} Intervallen der Zähldauer ${zaehldauerText.get(zaehldauer ?? "")}.`;
         }
       }
     }
@@ -345,11 +344,11 @@ export function useValidationUtils() {
    */
   function checkForAlignmentOfIntervallsAccordingZaehldauer(
     csvDataWithoutHeader: Array<string>,
-    zaehldauer: Zaehldauer
+    zaehldauer: string | undefined
   ): string {
     if (zaehldauer != Zaehldauer.SONSTIGE) {
       const startIntervallnummerEndeIntervallnummer = toArray(
-        zaehldauerIntervallnummern.get(zaehldauer)
+        zaehldauerIntervallnummern.get(zaehldauer ?? "")
       );
 
       const csvDataWithoutEmptyLines =
@@ -377,7 +376,7 @@ export function useValidationUtils() {
           Array.from(intervallnummernNotWithin.values()).sort(),
           ", "
         );
-        return `In der CSV-Datei existieren folgende Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer ${zaehldauerText.get(zaehldauer)} befinden: ${commaSeperatedIntervallnummern}`;
+        return `In der CSV-Datei existieren folgende Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer ${zaehldauerText.get(zaehldauer ?? "")} befinden: ${commaSeperatedIntervallnummern}`;
       }
     }
     return "";
@@ -391,7 +390,7 @@ export function useValidationUtils() {
    * @return Fehlermeldung
    */
   function validateZaehlwerteOccurrence(
-    requestedKategorien: Array<string>,
+    requestedKategorien: Array<string> = [],
     splittedLine: Array<string>
   ) {
     if (requestedKategorien.includes(Fahrzeug.PKW.valueOf())) {
@@ -490,7 +489,9 @@ export function useValidationUtils() {
    * @param zaehlung Zählung, deren Knotenarme geprüft werden.
    * @return `true`, wenn mindestens einem relevanten Knotenarm ein Dateiname fehlt.
    */
-  function hasAnyRelevantKnotenarmNoFile(zaehlung: ZaehlungDTO): boolean {
+  function hasAnyRelevantKnotenarmNoFile(
+    zaehlung: ExternalZaehlungDTO
+  ): boolean {
     return getRelevantKnotenarmeForFileUpload(zaehlung).some(
       (kn) => !kn.filename
     );
@@ -505,27 +506,27 @@ export function useValidationUtils() {
    * @return Die Knotenarme, die einen Dateiupload benötigen.
    */
   function getRelevantKnotenarmeForFileUpload(
-    zaehlung: ZaehlungDTO
-  ): Array<KnotenarmDTO> {
+    zaehlung: ExternalZaehlungDTO
+  ): Array<ExternalKnotenarmDTO> {
     let relevantKnotenarmNumbers = Array<number>();
     if (zaehlung.zaehlart === Zaehlart.FJS) {
       relevantKnotenarmNumbers = toArray(zaehlung.laengsverkehr)
-        .filter((l) => !isNil(l.knotenarm))
-        .map((l) => l.knotenarm);
+        .map((l) => l.knotenarm)
+        .filter((nummer): nummer is number => nummer != null);
     } else if (zaehlung.zaehlart === Zaehlart.QU) {
       relevantKnotenarmNumbers = toArray(zaehlung.querungsverkehr)
-        .filter((q) => !isNil(q.knotenarm))
-        .map((q) => q.knotenarm);
+        .map((q) => q.knotenarm)
+        .filter((nummer): nummer is number => nummer != null);
     } else {
       const verkehrsbeziehungen = toArray(zaehlung.verkehrsbeziehungen);
       if (zaehlung.kreisverkehr) {
         relevantKnotenarmNumbers = verkehrsbeziehungen
-          .filter((v) => !isNil(v.knotenarm))
-          .map((v) => v.knotenarm);
+          .map((v) => v.knotenarm)
+          .filter((nummer): nummer is number => nummer != null);
       } else {
         relevantKnotenarmNumbers = verkehrsbeziehungen
-          .filter((v) => !isNil(v.von))
-          .map((v) => v.von);
+          .map((v) => v.von)
+          .filter((nummer): nummer is number => nummer != null);
       }
     }
 

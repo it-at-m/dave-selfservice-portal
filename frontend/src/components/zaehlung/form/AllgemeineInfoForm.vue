@@ -192,8 +192,8 @@
 </template>
 
 <script setup lang="ts">
+import type { ExternalZaehlungDTO } from "@/api/client";
 import type KeyVal from "@/types/common/KeyVal";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { computed, onMounted, ref } from "vue";
 
@@ -220,7 +220,7 @@ onMounted(() => {
   resetDatum();
 });
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 
@@ -229,11 +229,11 @@ const getSonderzaehlungText = computed<string>(() => {
 });
 
 const getZaehldauer = computed<string | undefined>(() => {
-  return zaehldauerText.get(zaehlung.value.zaehldauer);
+  return zaehldauerText.get(zaehlung.value.zaehldauer ?? "");
 });
 
 const getQuelle = computed<string | undefined>(() => {
-  return quelleText.get(zaehlung.value.quelle);
+  return quelleText.get(zaehlung.value.quelle ?? "");
 });
 
 const getZaehlintervall = computed<string>(() => {
@@ -249,7 +249,10 @@ const getZaehlarten = computed<Array<KeyVal>>(() => {
 });
 
 const isZaehlungReadonly = computed<boolean>(() => {
-  return ![Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
+  return (
+    zaehlung.value.status !== Status.COUNTING &&
+    zaehlung.value.status !== Status.CORRECTION
+  );
 });
 
 const formattedDate = computed(() => {
@@ -265,16 +268,16 @@ const formattedDateAsText = computed<string>(() => {
 });
 
 const getZaehlart = computed<string | undefined>(() => {
-  return zaehlartText.get(zaehlung.value.zaehlart);
+  return zaehlartText.get(zaehlung.value.zaehlart ?? "");
 });
 
 function resetDatum(): void {
-  datepickerModel.value = dateUtils.getDatumOfString(zaehlung.value.datum);
+  datepickerModel.value = zaehlung.value.datum ?? new Date();
 }
 
 function saveDate(): void {
   datepickerMenuModel.value = false;
-  zaehlung.value.datum = dateUtils.formatDateForBackend(datepickerModel.value);
+  zaehlung.value.datum = datepickerModel.value;
 }
 
 function closeMenu(): void {

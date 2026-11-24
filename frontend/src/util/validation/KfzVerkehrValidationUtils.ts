@@ -1,4 +1,4 @@
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+import type { ExternalVerkehrsbeziehungDTO } from "@/api/client";
 
 import {
   difference,
@@ -49,7 +49,7 @@ export function useKfzVerkehrValidationUtils() {
   function validateRequiredNachIntervallsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+    verkehrsbeziehungen: Array<ExternalVerkehrsbeziehungDTO> = []
   ): string {
     const nachOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -83,7 +83,7 @@ export function useKfzVerkehrValidationUtils() {
   function validateNonRequiredNachIntervallsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+    verkehrsbeziehungen: Array<ExternalVerkehrsbeziehungDTO> = []
   ): string {
     const nachOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -117,7 +117,7 @@ export function useKfzVerkehrValidationUtils() {
   function validateRequiredNachIntervallsAreExistentForKreisverkehr(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+    verkehrsbeziehungen: Array<ExternalVerkehrsbeziehungDTO> = []
   ): string {
     const nachOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -163,7 +163,7 @@ export function useKfzVerkehrValidationUtils() {
   function validateNonRequiredNachIntervallsAreExistentForKreisverkehr(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+    verkehrsbeziehungen: Array<ExternalVerkehrsbeziehungDTO> = []
   ): string {
     const nachOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -208,7 +208,7 @@ export function useKfzVerkehrValidationUtils() {
    * @return Fehlermeldung
    */
   function validateVerkehrsbeziehungForKreisverkehr(
-    verkehrsbeziehungen: VerkehrsbeziehungDTO[],
+    verkehrsbeziehungen: ExternalVerkehrsbeziehungDTO[] = [],
     armNummer: number,
     nachArmNumber: string
   ) {
@@ -234,7 +234,7 @@ export function useKfzVerkehrValidationUtils() {
    * @return Fehlermeldung
    */
   function validateNachValueForKreuzung(
-    verkehrsbeziehungen: VerkehrsbeziehungDTO[],
+    verkehrsbeziehungen: ExternalVerkehrsbeziehungDTO[] = [],
     armNummer: number,
     nachArmNumber: string
   ) {

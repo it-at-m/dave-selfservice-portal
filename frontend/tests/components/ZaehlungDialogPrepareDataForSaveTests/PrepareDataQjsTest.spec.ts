@@ -1,11 +1,12 @@
-import type HochrechnungsfaktorDTO from "@/domain/dto/HochrechnungsfaktorDTO";
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  ExternalVerkehrsbeziehungDTO,
+  HochrechnungsfaktorDTO,
+} from "@/api/client";
 
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { ExternalZaehlungDTOFromJSON } from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
@@ -49,20 +50,20 @@ describe("prepareForSaveZaehlungQjs", () => {
     const hfexample: HochrechnungsfaktorDTO = {
       id: "1",
       entityVersion: 0,
-      createdTime: "0",
+      active: true,
       matrix: "string",
       kfz: 1,
       sv: 1,
       gv: 1,
       defaultFaktor: true,
     };
-    const zaehlung: ZaehlungDTO = {
+    const zaehlung = ExternalZaehlungDTOFromJSON({
       id: "1",
       entityVersion: 0,
       createdTime: "0",
       datum: "2026-03-10",
       zaehlart: Zaehlart.QJS,
-      punkt: { lat: "0", lon: "0" },
+      punkt: { lat: 0, lon: 0 },
       projektNummer: "P123",
       projektName: "Project Name",
       kreuzungsname: "Intersection Name",
@@ -110,7 +111,7 @@ describe("prepareForSaveZaehlungQjs", () => {
           isKreuzung: false,
           strassenseite: Himmelsrichtung.S,
           active: true,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          zeitintervalle: [],
         },
         {
           id: "1",
@@ -126,7 +127,7 @@ describe("prepareForSaveZaehlungQjs", () => {
           isKreuzung: false,
           strassenseite: Himmelsrichtung.N,
           active: true,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          zeitintervalle: [],
         },
         {
           id: "3",
@@ -142,7 +143,7 @@ describe("prepareForSaveZaehlungQjs", () => {
           isKreuzung: true,
           strassenseite: Himmelsrichtung.S,
           active: true,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          zeitintervalle: [],
         },
         {
           id: "3",
@@ -158,33 +159,33 @@ describe("prepareForSaveZaehlungQjs", () => {
           isKreuzung: true,
           strassenseite: Himmelsrichtung.N,
           active: true,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          zeitintervalle: [],
         },
       ],
       querungsverkehr: [],
       laengsverkehr: [],
       zaehlstelleNummer: "Z123",
       zaehlstelleStadtbezirk: "District A",
-      zaehlstellePunkt: { lat: "0", lon: "0" },
+      zaehlstellePunkt: { lat: 0, lon: 0 },
       zaehlstelleKommentar: "Comment",
       unreadMessagesDienstleister: false,
-    };
+    });
 
     csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
       zaehlung
     );
 
     expect(zaehlung.verkehrsbeziehungen).toBeDefined();
-    expect(zaehlung.verkehrsbeziehungen.length).toBe(4);
+    expect(zaehlung.verkehrsbeziehungen?.length).toBe(4);
 
     // von 1 → 2, N
-    const von1nach2n = zaehlung.verkehrsbeziehungen.find(
+    const von1nach2n = zaehlung.verkehrsbeziehungen?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.N && v.von === 1 && v.nach === 2
-    ) as VerkehrsbeziehungDTO;
+    ) as ExternalVerkehrsbeziehungDTO;
     expect(von1nach2n).toBeDefined();
-    expect(von1nach2n?.zeitintervalle.length).toBe(3);
-    expect(von1nach2n?.zeitintervalle[0]).toEqual({
+    expect(von1nach2n?.zeitintervalle?.length).toBe(3);
+    expect(von1nach2n?.zeitintervalle?.[0]).toEqual({
       startUhrzeit: "00:00",
       endeUhrzeit: "00:15",
       pkw: undefined,
@@ -195,7 +196,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       fahrradfahrer: 6,
       fussgaenger: 0,
     });
-    expect(von1nach2n?.zeitintervalle[1]).toEqual({
+    expect(von1nach2n?.zeitintervalle?.[1]).toEqual({
       startUhrzeit: "00:15",
       endeUhrzeit: "00:30",
       pkw: undefined,
@@ -206,7 +207,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       fahrradfahrer: 1,
       fussgaenger: 0,
     });
-    expect(von1nach2n?.zeitintervalle[2]).toEqual({
+    expect(von1nach2n?.zeitintervalle?.[2]).toEqual({
       startUhrzeit: "00:30",
       endeUhrzeit: "00:45",
       pkw: undefined,
@@ -219,13 +220,13 @@ describe("prepareForSaveZaehlungQjs", () => {
     });
 
     // von 1 → 2, S
-    const von1nach2s = zaehlung.verkehrsbeziehungen.find(
+    const von1nach2s = zaehlung.verkehrsbeziehungen?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.S && v.von === 1 && v.nach === 2
-    ) as VerkehrsbeziehungDTO;
+    ) as ExternalVerkehrsbeziehungDTO;
     expect(von1nach2s).toBeDefined();
-    expect(von1nach2s?.zeitintervalle.length).toBe(3);
-    expect(von1nach2s?.zeitintervalle[0]).toEqual({
+    expect(von1nach2s?.zeitintervalle?.length).toBe(3);
+    expect(von1nach2s?.zeitintervalle?.[0]).toEqual({
       startUhrzeit: "00:00",
       endeUhrzeit: "00:15",
       pkw: undefined,
@@ -236,7 +237,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       fahrradfahrer: 3,
       fussgaenger: 0,
     });
-    expect(von1nach2s?.zeitintervalle[1]).toEqual({
+    expect(von1nach2s?.zeitintervalle?.[1]).toEqual({
       startUhrzeit: "00:15",
       endeUhrzeit: "00:30",
       pkw: undefined,
@@ -247,7 +248,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       fahrradfahrer: 4,
       fussgaenger: 0,
     });
-    expect(von1nach2s?.zeitintervalle[2]).toEqual({
+    expect(von1nach2s?.zeitintervalle?.[2]).toEqual({
       startUhrzeit: "00:30",
       endeUhrzeit: "00:45",
       pkw: undefined,
@@ -260,13 +261,13 @@ describe("prepareForSaveZaehlungQjs", () => {
     });
 
     // von 2 → 1, N
-    const von2nach1n = zaehlung.verkehrsbeziehungen.find(
+    const von2nach1n = zaehlung.verkehrsbeziehungen?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.N && v.von === 2 && v.nach === 1
-    ) as VerkehrsbeziehungDTO;
+    ) as ExternalVerkehrsbeziehungDTO;
     expect(von2nach1n).toBeDefined();
-    expect(von2nach1n?.zeitintervalle.length).toBe(3);
-    expect(von2nach1n?.zeitintervalle[0]).toEqual({
+    expect(von2nach1n?.zeitintervalle?.length).toBe(3);
+    expect(von2nach1n?.zeitintervalle?.[0]).toEqual({
       startUhrzeit: "00:00",
       endeUhrzeit: "00:15",
       pkw: undefined,
@@ -277,7 +278,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       fahrradfahrer: 2,
       fussgaenger: 1,
     });
-    expect(von2nach1n?.zeitintervalle[1]).toEqual({
+    expect(von2nach1n?.zeitintervalle?.[1]).toEqual({
       startUhrzeit: "00:15",
       endeUhrzeit: "00:30",
       pkw: undefined,
@@ -288,7 +289,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       fahrradfahrer: 1,
       fussgaenger: 2,
     });
-    expect(von2nach1n?.zeitintervalle[2]).toEqual({
+    expect(von2nach1n?.zeitintervalle?.[2]).toEqual({
       startUhrzeit: "00:30",
       endeUhrzeit: "00:45",
       pkw: undefined,
@@ -301,13 +302,13 @@ describe("prepareForSaveZaehlungQjs", () => {
     });
 
     // von 2 → 1, S
-    const von2nach1s = zaehlung.verkehrsbeziehungen.find(
+    const von2nach1s = zaehlung.verkehrsbeziehungen?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.S && v.von === 2 && v.nach === 1
-    ) as VerkehrsbeziehungDTO;
+    ) as ExternalVerkehrsbeziehungDTO;
     expect(von2nach1s).toBeDefined();
-    expect(von2nach1s?.zeitintervalle.length).toBe(3);
-    expect(von2nach1s?.zeitintervalle[0]).toEqual({
+    expect(von2nach1s?.zeitintervalle?.length).toBe(3);
+    expect(von2nach1s?.zeitintervalle?.[0]).toEqual({
       startUhrzeit: "00:00",
       endeUhrzeit: "00:15",
       pkw: undefined,
@@ -318,7 +319,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       fahrradfahrer: 3,
       fussgaenger: 4,
     });
-    expect(von2nach1s?.zeitintervalle[1]).toEqual({
+    expect(von2nach1s?.zeitintervalle?.[1]).toEqual({
       startUhrzeit: "00:15",
       endeUhrzeit: "00:30",
       pkw: undefined,
@@ -329,7 +330,7 @@ describe("prepareForSaveZaehlungQjs", () => {
       fahrradfahrer: 4,
       fussgaenger: 5,
     });
-    expect(von2nach1s?.zeitintervalle[2]).toEqual({
+    expect(von2nach1s?.zeitintervalle?.[2]).toEqual({
       startUhrzeit: "00:30",
       endeUhrzeit: "00:45",
       pkw: undefined,

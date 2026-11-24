@@ -1,4 +1,4 @@
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type { ExternalKnotenarmDTO } from "@/api/client";
 
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
@@ -21,7 +21,7 @@ describe("ValidationStore", () => {
     const store = useValidationStore();
     const knotenarme = [{ nummer: 1 }, { nummer: 2 }];
 
-    store.initUploadedFileStatus(knotenarme as Array<KnotenarmDTO>);
+    store.initUploadedFileStatus(knotenarme as Array<ExternalKnotenarmDTO>);
 
     // nach init sind alle Einträge MISSING => computed true
     expect(store.isSavingPossible).toBe(true);
@@ -40,7 +40,7 @@ describe("ValidationStore", () => {
       { nummer: 2 },
     ];
 
-    store.initUploadedFileStatus(knotenarme as Array<KnotenarmDTO>);
+    store.initUploadedFileStatus(knotenarme as Array<ExternalKnotenarmDTO>);
 
     // Nur der erste Knotenarm hat Status VALID => computed ist false
     expect(store.isSavingPossible).toBe(false);
@@ -56,7 +56,7 @@ describe("ValidationStore", () => {
 
     // ohne vorheriges init: set fügt Eintrag hinzu
     store.setUploadedFileStatus(
-      newKnotenarm as KnotenarmDTO,
+      newKnotenarm as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     expect(store.isSavingPossible).toBe(true);
@@ -64,14 +64,14 @@ describe("ValidationStore", () => {
     // wenn ein hinzugefügter Eintrag INVALID ist, result false
     const another = { nummer: 100 };
     store.setUploadedFileStatus(
-      another as KnotenarmDTO,
+      another as ExternalKnotenarmDTO,
       UploadedFileStatus.INVALID
     );
     expect(store.isSavingPossible).toBe(false);
 
     // setze auf VALID -> true
     store.setUploadedFileStatus(
-      another as KnotenarmDTO,
+      another as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     expect(store.isSavingPossible).toBe(true);
@@ -81,25 +81,25 @@ describe("ValidationStore", () => {
     const store = useValidationStore();
     const knotenarme = [{ nummer: 1 }, { nummer: 2 }, { nummer: 3 }];
 
-    store.initUploadedFileStatus(knotenarme as Array<KnotenarmDTO>);
+    store.initUploadedFileStatus(knotenarme as Array<ExternalKnotenarmDTO>);
 
     // alle MISSING -> true
     expect(store.isSavingPossible).toBe(true);
 
     // setze zwei VALID, eines immer noch MISSING -> false
     store.setUploadedFileStatus(
-      knotenarme[0] as KnotenarmDTO,
+      knotenarme[0] as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     store.setUploadedFileStatus(
-      knotenarme[1] as KnotenarmDTO,
+      knotenarme[1] as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     expect(store.isSavingPossible).toBe(false);
 
     // setze letztes VALID -> true
     store.setUploadedFileStatus(
-      knotenarme[2] as KnotenarmDTO,
+      knotenarme[2] as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     expect(store.isSavingPossible).toBe(true);
@@ -109,40 +109,40 @@ describe("ValidationStore", () => {
     const store = useValidationStore();
     const knotenarme = [{ nummer: 1 }, { nummer: 2 }];
 
-    store.initUploadedFileStatus(knotenarme as Array<KnotenarmDTO>);
+    store.initUploadedFileStatus(knotenarme as Array<ExternalKnotenarmDTO>);
 
     // nach init alle Files MISSING -> isSavingPossible true
     expect(store.isSavingPossible).toBe(true);
 
     // Dateien hochladen (beide INVALID) -> isSavingPossible false
     store.setUploadedFileStatus(
-      knotenarme[0] as KnotenarmDTO,
+      knotenarme[0] as ExternalKnotenarmDTO,
       UploadedFileStatus.INVALID
     );
     store.setUploadedFileStatus(
-      knotenarme[1] as KnotenarmDTO,
+      knotenarme[1] as ExternalKnotenarmDTO,
       UploadedFileStatus.INVALID
     );
     expect(store.isSavingPossible).toBe(false);
 
     // Beide Dateien löschen -> isSavingPossible true
     store.setUploadedFileStatus(
-      knotenarme[0] as KnotenarmDTO,
+      knotenarme[0] as ExternalKnotenarmDTO,
       UploadedFileStatus.MISSING
     );
     store.setUploadedFileStatus(
-      knotenarme[1] as KnotenarmDTO,
+      knotenarme[1] as ExternalKnotenarmDTO,
       UploadedFileStatus.MISSING
     );
     expect(store.isSavingPossible).toBe(true);
 
     // Dateien erneut hochladen (beide VALID) -> isSavingPossible true
     store.setUploadedFileStatus(
-      knotenarme[0] as KnotenarmDTO,
+      knotenarme[0] as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     store.setUploadedFileStatus(
-      knotenarme[1] as KnotenarmDTO,
+      knotenarme[1] as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     expect(store.isSavingPossible).toBe(true);
@@ -152,7 +152,7 @@ describe("ValidationStore", () => {
     const store = useValidationStore();
     const knotenarme = [{ nummer: 1 }, { nummer: 2 }, { nummer: 3 }];
 
-    store.initUploadedFileStatus(knotenarme as Array<KnotenarmDTO>);
+    store.initUploadedFileStatus(knotenarme as Array<ExternalKnotenarmDTO>);
     store.initPendingUploadedFileReads();
 
     // alle Knotenarme haben Status MISSING -> true
@@ -166,11 +166,11 @@ describe("ValidationStore", () => {
 
     // setze zwei VALID, eine MISSING -> false
     store.setUploadedFileStatus(
-      knotenarme[0] as KnotenarmDTO,
+      knotenarme[0] as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     store.setUploadedFileStatus(
-      knotenarme[1] as KnotenarmDTO,
+      knotenarme[1] as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     expect(store.isSavingPossible).toBe(false);
@@ -180,7 +180,7 @@ describe("ValidationStore", () => {
 
     // setze letzte Datei VALID; Lesen noch nicht abgeschlossen (unrealistisch, nur für Test) -> false
     store.setUploadedFileStatus(
-      knotenarme[2] as KnotenarmDTO,
+      knotenarme[2] as ExternalKnotenarmDTO,
       UploadedFileStatus.VALID
     );
     expect(store.isSavingPossible).toBe(false);

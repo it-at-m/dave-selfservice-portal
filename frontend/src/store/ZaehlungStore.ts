@@ -1,15 +1,18 @@
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalVerkehrsbeziehungDTO,
+  ExternalZaehlungDTO,
+} from "@/api/client";
 
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
 import Fahrzeug from "@/types/enum/Fahrzeug";
 import Status from "@/types/enum/Status";
+import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 
 export const useZaehlungStore = defineStore("zaehlungStore", () => {
-  const zaehlung = ref<ZaehlungDTO>({} as ZaehlungDTO);
+  const zaehlung = ref(DefaultObjectCreator.createDefaultZaehlungDTO());
 
   const getZaehlung = computed(() => zaehlung.value);
 
@@ -21,8 +24,10 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
   });
 
   const isHochrechnungsfaktorEditable = computed(() => {
-    const editableStatus: Array<Status> = [Status.CREATED, Status.INSTRUCTED];
-    return editableStatus.includes(zaehlung.value.status);
+    return (
+      zaehlung.value.status === Status.CREATED ||
+      zaehlung.value.status === Status.INSTRUCTED
+    );
   });
 
   const getKnotenarme = computed(() =>
@@ -37,22 +42,34 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     zaehlung.value.kategorien ? zaehlung.value.kategorien : []
   );
 
-  function setZaehlung(payload: ZaehlungDTO) {
-    zaehlung.value = payload;
+  function setZaehlung(payload: ExternalZaehlungDTO) {
+    zaehlung.value = Object.assign(payload, {
+      knotenarme: payload.knotenarme ?? [],
+      kategorien: payload.kategorien ?? [],
+      verkehrsbeziehungen: payload.verkehrsbeziehungen ?? [],
+      laengsverkehr: payload.laengsverkehr ?? [],
+      querungsverkehr: payload.querungsverkehr ?? [],
+    });
   }
 
-  function setKnotenarme(payload: Array<KnotenarmDTO>) {
+  function setKnotenarme(payload: Array<ExternalKnotenarmDTO>) {
     zaehlung.value.knotenarme = payload;
   }
 
-  function addKnotenarm(payload: KnotenarmDTO) {
+  function addKnotenarm(payload: ExternalKnotenarmDTO) {
+    if (!zaehlung.value.knotenarme) {
+      zaehlung.value.knotenarme = [];
+    }
     zaehlung.value.knotenarme.push(payload);
   }
 
   function deleteKnotenarm(payload: number) {
-    let toDelete: KnotenarmDTO | undefined = undefined;
+    let toDelete: ExternalKnotenarmDTO | undefined = undefined;
+    if (!zaehlung.value.knotenarme) {
+      zaehlung.value.knotenarme = [];
+    }
     // Zu löschendes Element suchen
-    zaehlung.value.knotenarme.forEach((knotenarm: KnotenarmDTO) => {
+    zaehlung.value.knotenarme.forEach((knotenarm: ExternalKnotenarmDTO) => {
       if (knotenarm.nummer === payload) {
         toDelete = knotenarm;
       }
@@ -66,10 +83,13 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     }
   }
 
-  function addOrUpdateKnotenarm(payload: KnotenarmDTO) {
-    let toUpdate: KnotenarmDTO | undefined = undefined;
+  function addOrUpdateKnotenarm(payload: ExternalKnotenarmDTO) {
+    let toUpdate: ExternalKnotenarmDTO | undefined = undefined;
+    if (!zaehlung.value.knotenarme) {
+      zaehlung.value.knotenarme = [];
+    }
     // Zu aktualisierendes Element suchen
-    zaehlung.value.knotenarme.forEach((knotenarm: KnotenarmDTO) => {
+    zaehlung.value.knotenarme.forEach((knotenarm: ExternalKnotenarmDTO) => {
       if (knotenarm.nummer === payload.nummer) {
         toUpdate = knotenarm;
       }
@@ -88,20 +108,25 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
   }
 
   function addKategorie(payload: Fahrzeug) {
+    if (!zaehlung.value.kategorien) {
+      zaehlung.value.kategorien = [];
+    }
     zaehlung.value.kategorien.push(payload);
   }
 
   function deleteKategorie(payload: Fahrzeug) {
-    const index: number = zaehlung.value.kategorien.indexOf(payload);
-    if (index > -1) {
-      zaehlung.value.kategorien.splice(index, 1);
+    if (zaehlung.value.kategorien) {
+      const index: number = zaehlung.value.kategorien.indexOf(payload);
+      if (index > -1) {
+        zaehlung.value.kategorien.splice(index, 1);
+      }
     }
   }
 
   function addAllKategorien(payload: Array<Fahrzeug>) {
     zaehlung.value.kategorien = [];
     payload.forEach((fahrzeug: Fahrzeug) => {
-      zaehlung.value.kategorien.push(fahrzeug);
+      zaehlung.value.kategorien!.push(fahrzeug);
     });
   }
 
@@ -109,77 +134,89 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     zaehlung.value.kategorien = [];
   }
 
-  function addAllVerkehrsbeziehungen(payload: Array<VerkehrsbeziehungDTO>) {
+  function addAllVerkehrsbeziehungen(
+    payload: Array<ExternalVerkehrsbeziehungDTO>
+  ) {
     zaehlung.value.verkehrsbeziehungen = [];
-    payload.forEach((verkehrsbeziehungDTO: VerkehrsbeziehungDTO) => {
-      zaehlung.value.verkehrsbeziehungen.push(verkehrsbeziehungDTO);
+    payload.forEach((verkehrsbeziehungDTO: ExternalVerkehrsbeziehungDTO) => {
+      zaehlung.value.verkehrsbeziehungen!.push(verkehrsbeziehungDTO);
     });
   }
 
   function deleteVerkehrsbeziehungByKnotenarmnummer(payload: number) {
-    const toDelete: Array<VerkehrsbeziehungDTO> = [];
-    // Alle zu löschenden Verkehrsbeziehungen entfernen
-    zaehlung.value.verkehrsbeziehungen.forEach((fz: VerkehrsbeziehungDTO) => {
-      // Vom Knotenarm ausgehende Verkehrsbeziehungen heraussuchen
-      if (fz.von === payload) {
-        toDelete.push(fz);
-      }
-      // In den Knotenarm eingehende Verkehrsbeziehungen heraussuchen
-      // U-Turn wird oben schon entfernt
-      if (fz.von !== fz.nach && fz.nach === payload) {
-        toDelete.push(fz);
-      }
-    });
-    // Alle gefundenen Verkehrsbeziehungen entfernen
-    toDelete.forEach((deleteMe: VerkehrsbeziehungDTO) => {
-      const index: number =
-        zaehlung.value.verkehrsbeziehungen.indexOf(deleteMe);
-      if (index > -1) {
-        zaehlung.value.verkehrsbeziehungen.splice(index, 1);
-      }
-    });
-  }
-
-  function updateVerkehrsbeziehung(payload: VerkehrsbeziehungDTO) {
-    let toUpdate: VerkehrsbeziehungDTO | undefined = undefined;
-    // Zu aktualisierendes Element suchen
-    zaehlung.value.verkehrsbeziehungen.forEach(
-      (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
-        if (
-          verkehrsbeziehung.von === payload.von &&
-          verkehrsbeziehung.nach === payload.nach
-        ) {
-          toUpdate = verkehrsbeziehung;
+    if (zaehlung.value.verkehrsbeziehungen) {
+      const toDelete: Array<ExternalVerkehrsbeziehungDTO> = [];
+      // Alle zu löschenden Verkehrsbeziehungen entfernen
+      zaehlung.value.verkehrsbeziehungen.forEach(
+        (fz: ExternalVerkehrsbeziehungDTO) => {
+          // Vom Knotenarm ausgehende Verkehrsbeziehungen heraussuchen
+          if (fz.von === payload) {
+            toDelete.push(fz);
+          }
+          // In den Knotenarm eingehende Verkehrsbeziehungen heraussuchen
+          // U-Turn wird oben schon entfernt
+          if (fz.von !== fz.nach && fz.nach === payload) {
+            toDelete.push(fz);
+          }
         }
-      }
-    );
-    // Wenn das Element existiert, wird dieses im Array durch das Aktualiserte ersetzt
-    if (toUpdate) {
-      const index: number =
-        zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
-      if (index > -1) {
-        zaehlung.value.verkehrsbeziehungen[index] = payload;
-      }
-    } else {
-      // Ansonsten wird eine neue Verkehrsbeziehung hinzugefügt
-      zaehlung.value.verkehrsbeziehungen.push(payload);
+      );
+      // Alle gefundenen Verkehrsbeziehungen entfernen
+      toDelete.forEach((deleteMe: ExternalVerkehrsbeziehungDTO) => {
+        const index: number =
+          zaehlung.value.verkehrsbeziehungen!.indexOf(deleteMe);
+        if (index > -1) {
+          zaehlung.value.verkehrsbeziehungen!.splice(index, 1);
+        }
+      });
     }
   }
 
-  function deleteVerkehrsbeziehung(payload: VerkehrsbeziehungDTO) {
-    let toDelete: VerkehrsbeziehungDTO | undefined = undefined;
-    // Alle zu löschenden Verkehrsbeziehungen entfernen
-    zaehlung.value.verkehrsbeziehungen.forEach((fz: VerkehrsbeziehungDTO) => {
-      // Vom Knotenarm ausgehende Verkehrsbeziehungen heraussuchen
-      if (fz.von === payload.von && fz.nach === payload.nach) {
-        toDelete = fz;
+  function updateVerkehrsbeziehung(payload: ExternalVerkehrsbeziehungDTO) {
+    if (zaehlung.value.verkehrsbeziehungen) {
+      let toUpdate: ExternalVerkehrsbeziehungDTO | undefined = undefined;
+      // Zu aktualisierendes Element suchen
+      zaehlung.value.verkehrsbeziehungen.forEach(
+        (verkehrsbeziehung: ExternalVerkehrsbeziehungDTO) => {
+          if (
+            verkehrsbeziehung.von === payload.von &&
+            verkehrsbeziehung.nach === payload.nach
+          ) {
+            toUpdate = verkehrsbeziehung;
+          }
+        }
+      );
+      // Wenn das Element existiert, wird dieses im Array durch das Aktualiserte ersetzt
+      if (toUpdate) {
+        const index: number =
+          zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
+        if (index > -1) {
+          zaehlung.value.verkehrsbeziehungen[index] = payload;
+        }
+      } else {
+        // Ansonsten wird eine neue Verkehrsbeziehung hinzugefügt
+        zaehlung.value.verkehrsbeziehungen.push(payload);
       }
-    });
-    if (toDelete) {
-      const index: number =
-        zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
-      if (index > -1) {
-        zaehlung.value.verkehrsbeziehungen.splice(index, 1);
+    }
+  }
+
+  function deleteVerkehrsbeziehung(payload: ExternalVerkehrsbeziehungDTO) {
+    if (zaehlung.value.verkehrsbeziehungen) {
+      let toDelete: ExternalVerkehrsbeziehungDTO | undefined = undefined;
+      // Alle zu löschenden Verkehrsbeziehungen entfernen
+      zaehlung.value.verkehrsbeziehungen.forEach(
+        (fz: ExternalVerkehrsbeziehungDTO) => {
+          // Vom Knotenarm ausgehende Verkehrsbeziehungen heraussuchen
+          if (fz.von === payload.von && fz.nach === payload.nach) {
+            toDelete = fz;
+          }
+        }
+      );
+      if (toDelete) {
+        const index: number =
+          zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
+        if (index > -1) {
+          zaehlung.value.verkehrsbeziehungen.splice(index, 1);
+        }
       }
     }
   }
@@ -188,53 +225,63 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
     zaehlung.value.verkehrsbeziehungen = [];
   }
 
-  function updateVerkehrsbeziehungKreisverkehr(payload: VerkehrsbeziehungDTO) {
-    let toUpdate: VerkehrsbeziehungDTO | undefined = undefined;
-    // Zu aktualisierendes Element suchen
-    zaehlung.value.verkehrsbeziehungen.forEach(
-      (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
-        if (
-          verkehrsbeziehung.knotenarm === payload.knotenarm &&
-          verkehrsbeziehung.heraus === payload.heraus &&
-          verkehrsbeziehung.hinein === payload.hinein &&
-          verkehrsbeziehung.vorbei === payload.vorbei
-        ) {
-          toUpdate = verkehrsbeziehung;
+  function updateVerkehrsbeziehungKreisverkehr(
+    payload: ExternalVerkehrsbeziehungDTO
+  ) {
+    if (zaehlung.value.verkehrsbeziehungen) {
+      let toUpdate: ExternalVerkehrsbeziehungDTO | undefined = undefined;
+      // Zu aktualisierendes Element suchen
+      zaehlung.value.verkehrsbeziehungen.forEach(
+        (verkehrsbeziehung: ExternalVerkehrsbeziehungDTO) => {
+          if (
+            verkehrsbeziehung.knotenarm === payload.knotenarm &&
+            verkehrsbeziehung.heraus === payload.heraus &&
+            verkehrsbeziehung.hinein === payload.hinein &&
+            verkehrsbeziehung.vorbei === payload.vorbei
+          ) {
+            toUpdate = verkehrsbeziehung;
+          }
         }
+      );
+      // Wenn das Element existiert, wird dieses im Array durch das Aktualiserte ersetzt
+      if (toUpdate) {
+        const index: number =
+          zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
+        if (index > -1) {
+          zaehlung.value.verkehrsbeziehungen[index] = payload;
+        }
+      } else {
+        // Ansonsten wird eine neue Verkehrsbeziehung hinzugefügt
+        zaehlung.value.verkehrsbeziehungen.push(payload);
       }
-    );
-    // Wenn das Element existiert, wird dieses im Array durch das Aktualiserte ersetzt
-    if (toUpdate) {
-      const index: number =
-        zaehlung.value.verkehrsbeziehungen.indexOf(toUpdate);
-      if (index > -1) {
-        zaehlung.value.verkehrsbeziehungen[index] = payload;
-      }
-    } else {
-      // Ansonsten wird eine neue Verkehrsbeziehung hinzugefügt
-      zaehlung.value.verkehrsbeziehungen.push(payload);
     }
   }
 
-  function deleteVerkehrsbeziehungKreisverkehr(payload: VerkehrsbeziehungDTO) {
-    let toDelete: VerkehrsbeziehungDTO | undefined = undefined;
-    // Alle zu löschenden Verkehrsbeziehungen entfernen
-    zaehlung.value.verkehrsbeziehungen.forEach((fz: VerkehrsbeziehungDTO) => {
-      // Vom Knotenarm ausgehende Verkehrsbeziehungen heraussuchen
-      if (
-        fz.knotenarm === payload.knotenarm &&
-        fz.heraus === payload.heraus &&
-        fz.hinein === payload.hinein &&
-        fz.vorbei === payload.vorbei
-      ) {
-        toDelete = fz;
-      }
-    });
-    if (toDelete) {
-      const index: number =
-        zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
-      if (index > -1) {
-        zaehlung.value.verkehrsbeziehungen.splice(index, 1);
+  function deleteVerkehrsbeziehungKreisverkehr(
+    payload: ExternalVerkehrsbeziehungDTO
+  ) {
+    if (zaehlung.value.verkehrsbeziehungen) {
+      let toDelete: ExternalVerkehrsbeziehungDTO | undefined = undefined;
+      // Alle zu löschenden Verkehrsbeziehungen entfernen
+      zaehlung.value.verkehrsbeziehungen.forEach(
+        (fz: ExternalVerkehrsbeziehungDTO) => {
+          // Vom Knotenarm ausgehende Verkehrsbeziehungen heraussuchen
+          if (
+            fz.knotenarm === payload.knotenarm &&
+            fz.heraus === payload.heraus &&
+            fz.hinein === payload.hinein &&
+            fz.vorbei === payload.vorbei
+          ) {
+            toDelete = fz;
+          }
+        }
+      );
+      if (toDelete) {
+        const index: number =
+          zaehlung.value.verkehrsbeziehungen.indexOf(toDelete);
+        if (index > -1) {
+          zaehlung.value.verkehrsbeziehungen.splice(index, 1);
+        }
       }
     }
   }

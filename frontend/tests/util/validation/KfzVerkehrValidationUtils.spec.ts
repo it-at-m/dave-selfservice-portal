@@ -1,4 +1,4 @@
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
+import type { ExternalVerkehrsbeziehungDTO } from "@/api/client";
 
 import { describe, expect, it } from "vitest";
 
@@ -41,7 +41,7 @@ describe("useKfzVerkehrValidationUtils", () => {
           hinein: true,
           vorbei: false,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
       ];
       expect(
         utils.validateVerkehrsbeziehungForKreisverkehr(
@@ -59,7 +59,7 @@ describe("useKfzVerkehrValidationUtils", () => {
           hinein: false,
           vorbei: true,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
       ];
       expect(
         utils.validateVerkehrsbeziehungForKreisverkehr(
@@ -71,7 +71,7 @@ describe("useKfzVerkehrValidationUtils", () => {
     });
 
     it("returns an error when no matching verkehrsbeziehung exists", () => {
-      const verkehrsbeziehungen: Array<VerkehrsbeziehungDTO> = [];
+      const verkehrsbeziehungen: Array<ExternalVerkehrsbeziehungDTO> = [];
       expect(
         utils.validateVerkehrsbeziehungForKreisverkehr(
           verkehrsbeziehungen,
@@ -89,8 +89,8 @@ describe("useKfzVerkehrValidationUtils", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["10;2", "11;3", "12;2"];
       const verkehrsbeziehungen = [
-        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
-        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 2 } as ExternalVerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as ExternalVerkehrsbeziehungDTO,
       ];
       expect(
         utils.validateRequiredNachIntervallsAreExistent(
@@ -105,8 +105,8 @@ describe("useKfzVerkehrValidationUtils", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["10;2"]; // missing 3
       const verkehrsbeziehungen = [
-        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
-        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 2 } as ExternalVerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as ExternalVerkehrsbeziehungDTO,
       ];
       const result = utils.validateRequiredNachIntervallsAreExistent(
         armNummer,
@@ -124,8 +124,8 @@ describe("useKfzVerkehrValidationUtils", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["10;2", "11;3"];
       const verkehrsbeziehungen = [
-        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
-        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 2 } as ExternalVerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as ExternalVerkehrsbeziehungDTO,
       ];
       expect(
         utils.validateNonRequiredNachIntervallsAreExistent(
@@ -140,8 +140,8 @@ describe("useKfzVerkehrValidationUtils", () => {
       const armNummer = 1;
       const csvDataWithoutHeader = ["10;2", "11;99"];
       const verkehrsbeziehungen = [
-        { von: 1, nach: 2 } as VerkehrsbeziehungDTO,
-        { von: 1, nach: 3 } as VerkehrsbeziehungDTO,
+        { von: 1, nach: 2 } as ExternalVerkehrsbeziehungDTO,
+        { von: 1, nach: 3 } as ExternalVerkehrsbeziehungDTO,
       ];
       const result = utils.validateNonRequiredNachIntervallsAreExistent(
         armNummer,
@@ -166,13 +166,13 @@ describe("useKfzVerkehrValidationUtils", () => {
           hinein: true,
           vorbei: false,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
         {
           knotenarm: 1,
           hinein: false,
           vorbei: true,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
       ];
       expect(
         utils.validateRequiredNachIntervallsAreExistentForKreisverkehr(
@@ -192,13 +192,13 @@ describe("useKfzVerkehrValidationUtils", () => {
           hinein: true,
           vorbei: false,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
         {
           knotenarm: 1,
           hinein: false,
           vorbei: true,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
       ];
       const result =
         utils.validateRequiredNachIntervallsAreExistentForKreisverkehr(
@@ -222,13 +222,13 @@ describe("useKfzVerkehrValidationUtils", () => {
           hinein: true,
           vorbei: false,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
         {
           knotenarm: 1,
           hinein: false,
           vorbei: true,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
       ];
       expect(
         utils.validateNonRequiredNachIntervallsAreExistentForKreisverkehr(
@@ -248,13 +248,13 @@ describe("useKfzVerkehrValidationUtils", () => {
           hinein: true,
           vorbei: false,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
         {
           knotenarm: 1,
           hinein: false,
           vorbei: true,
           heraus: false,
-        } as VerkehrsbeziehungDTO,
+        } as ExternalVerkehrsbeziehungDTO,
       ];
       const result =
         utils.validateNonRequiredNachIntervallsAreExistentForKreisverkehr(
@@ -272,14 +272,18 @@ describe("useKfzVerkehrValidationUtils", () => {
 
   describe("validateNachValueForKreuzung", () => {
     it("returns undefined when a matching verkehrsbeziehung exists (trim and parse)", () => {
-      const verkehrsbeziehungen = [{ von: 1, nach: 2 } as VerkehrsbeziehungDTO];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 2 } as ExternalVerkehrsbeziehungDTO,
+      ];
       expect(
         utils.validateNachValueForKreuzung(verkehrsbeziehungen, 1, " 2 ")
       ).toBeUndefined();
     });
 
     it("returns an error when no matching verkehrsbeziehung exists", () => {
-      const verkehrsbeziehungen = [{ von: 1, nach: 3 } as VerkehrsbeziehungDTO];
+      const verkehrsbeziehungen = [
+        { von: 1, nach: 3 } as ExternalVerkehrsbeziehungDTO,
+      ];
       expect(
         utils.validateNachValueForKreuzung(verkehrsbeziehungen, 1, "2")
       ).toBe(

@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 
+import { serializeDate } from "@/api/client";
 import Fahrzeug from "@/types/enum/Fahrzeug";
 import Zaehlart from "@/types/enum/Zaehlart";
 import {
@@ -344,14 +345,14 @@ describe("ValidationUtils -> hasCorrectMetadata", () => {
     const zaehlung = {
       zaehlstelleNummer: "ZS123",
       zaehlart: Zaehlart.QJS,
-      datum: "2023-01-01",
+      datum: new Date(2023, 0, 1),
     };
     const metaZaehlart =
       zaehlung.zaehlart === Zaehlart.N ? "" : zaehlung.zaehlart;
     const expectedMetaDataArray = [
       zaehlung.zaehlstelleNummer,
       metaZaehlart,
-      zaehlung.datum,
+      serializeDate(zaehlung.datum),
       knotenarmNr,
     ];
     while (expectedMetaDataArray.length < COLUMN_COUNT) {
@@ -369,14 +370,14 @@ describe("ValidationUtils -> hasCorrectMetadata", () => {
     const zaehlung = {
       zaehlstelleNummer: "ZS999",
       zaehlart: Zaehlart.N,
-      datum: "2022-12-31",
+      datum: new Date(2022, 11, 31),
     };
     const metaZaehlart =
       zaehlung.zaehlart === Zaehlart.N ? "" : zaehlung.zaehlart;
     const expectedMetaDataArray = [
       zaehlung.zaehlstelleNummer,
       metaZaehlart,
-      zaehlung.datum,
+      serializeDate(zaehlung.datum),
       knotenarmNr,
     ];
     while (expectedMetaDataArray.length < COLUMN_COUNT) {
@@ -743,7 +744,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
       { knotenarm: undefined },
     ] as typeof fjsZaehlung.laengsverkehr;
     expect(getRelevantKnotenarmeForFileUpload(fjsZaehlung)).toEqual([
-      fjsZaehlung.knotenarme[1],
+      fjsZaehlung.knotenarme![1],
     ]);
 
     const quZaehlung = createZaehlung();
@@ -753,7 +754,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
       { knotenarm: undefined },
     ] as typeof quZaehlung.querungsverkehr;
     expect(getRelevantKnotenarmeForFileUpload(quZaehlung)).toEqual([
-      quZaehlung.knotenarme[2],
+      quZaehlung.knotenarme![2],
     ]);
 
     const kreisverkehrZaehlung = createZaehlung();
@@ -764,7 +765,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
       { knotenarm: undefined },
     ] as typeof kreisverkehrZaehlung.verkehrsbeziehungen;
     expect(getRelevantKnotenarmeForFileUpload(kreisverkehrZaehlung)).toEqual([
-      kreisverkehrZaehlung.knotenarme[0],
+      kreisverkehrZaehlung.knotenarme![0],
     ]);
 
     const kreuzungZaehlung = createZaehlung();
@@ -774,7 +775,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
       { von: undefined },
     ] as typeof kreuzungZaehlung.verkehrsbeziehungen;
     expect(getRelevantKnotenarmeForFileUpload(kreuzungZaehlung)).toEqual([
-      kreuzungZaehlung.knotenarme[1],
+      kreuzungZaehlung.knotenarme![1],
     ]);
   });
 });
@@ -792,7 +793,7 @@ describe("ValidationUtils -> validateKnotenarmWithoutFile", () => {
     ] as typeof zaehlung.knotenarme;
     expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(true);
 
-    zaehlung.knotenarme[0].filename = "uploaded.csv";
+    zaehlung.knotenarme![0].filename = "uploaded.csv";
     expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(false);
 
     zaehlung.querungsverkehr = [];

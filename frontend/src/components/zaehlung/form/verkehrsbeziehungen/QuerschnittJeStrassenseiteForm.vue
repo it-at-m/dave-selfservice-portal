@@ -408,9 +408,11 @@
 </template>
 
 <script setup lang="ts">
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalVerkehrsbeziehungDTO,
+  ExternalZaehlungDTO,
+} from "@/api/client";
 import type { ComputedRef, Ref } from "vue";
 
 import { cloneDeep, first, last, toArray } from "lodash";
@@ -426,7 +428,7 @@ interface Props {
   showStreetnames?: boolean;
 }
 
-const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
+const zaehlung = defineModel<ExternalZaehlungDTO>("zaehlung", {
   required: true,
 });
 
@@ -440,7 +442,7 @@ const activeColor = "#D50000";
 const passiveColor = "#9E9E9E";
 
 const selectedVerkehrsbeziehungen = computed(() => {
-  return zaehlung.value.verkehrsbeziehungen;
+  return zaehlung.value.verkehrsbeziehungen ?? [];
 });
 
 const firstStreetname = ref<Array<string>>([]);
@@ -455,7 +457,7 @@ const availableKnotenarmNummern = computed(() => {
   return availableKnotenarme.value.map((arm) => arm.nummer);
 });
 const availableKnotenarme = computed(() => {
-  return zaehlung.value.knotenarme
+  return (zaehlung.value.knotenarme ?? [])
     .toSorted(KnotenarmComparator.sortByNumber)
     .reverse();
 });
@@ -528,8 +530,8 @@ function rotateNumberInverseFor(
   });
 }
 
-function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
-  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+function createVerkehrsbeziehungArrowOne(): ExternalVerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as ExternalVerkehrsbeziehungDTO;
   if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 1;
     verkehrsbeziehung.nach = 3;
@@ -553,8 +555,8 @@ function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
   return verkehrsbeziehung;
 }
 
-function createVerkehrsbeziehungArrowTwo(): VerkehrsbeziehungDTO {
-  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+function createVerkehrsbeziehungArrowTwo(): ExternalVerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as ExternalVerkehrsbeziehungDTO;
   if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 3;
     verkehrsbeziehung.nach = 1;
@@ -578,8 +580,8 @@ function createVerkehrsbeziehungArrowTwo(): VerkehrsbeziehungDTO {
   return verkehrsbeziehung;
 }
 
-function createVerkehrsbeziehungArrowThree(): VerkehrsbeziehungDTO {
-  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+function createVerkehrsbeziehungArrowThree(): ExternalVerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as ExternalVerkehrsbeziehungDTO;
   if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 1;
     verkehrsbeziehung.nach = 3;
@@ -603,8 +605,8 @@ function createVerkehrsbeziehungArrowThree(): VerkehrsbeziehungDTO {
   return verkehrsbeziehung;
 }
 
-function createVerkehrsbeziehungArrowFour(): VerkehrsbeziehungDTO {
-  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+function createVerkehrsbeziehungArrowFour(): ExternalVerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as ExternalVerkehrsbeziehungDTO;
   if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 3;
     verkehrsbeziehung.nach = 1;
@@ -713,10 +715,10 @@ function handleClickOnQuerschnittsverkehrJeStrassenseiteArrowFour() {
 }
 
 function findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
-  clickedVerkehrsbeziehung: VerkehrsbeziehungDTO
+  clickedVerkehrsbeziehung: ExternalVerkehrsbeziehungDTO
 ) {
   return selectedVerkehrsbeziehungen.value.findIndex(
-    (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
+    (verkehrsbeziehung: ExternalVerkehrsbeziehungDTO) => {
       return (
         verkehrsbeziehung.von === clickedVerkehrsbeziehung.von &&
         verkehrsbeziehung.nach === clickedVerkehrsbeziehung.nach &&
@@ -819,7 +821,9 @@ function prepareStreetnames(): void {
   secondStreetname.value = getStreetname(secondKnotenarm.value);
 }
 
-function getStreetname(knotenarm: KnotenarmDTO | undefined): Array<string> {
+function getStreetname(
+  knotenarm: ExternalKnotenarmDTO | undefined
+): Array<string> {
   let strasse = "";
   if (knotenarm && knotenarm.strassenname) {
     strasse = knotenarm.strassenname;

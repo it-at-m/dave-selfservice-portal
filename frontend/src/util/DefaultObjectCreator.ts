@@ -1,8 +1,8 @@
+import type { ExternalZaehlungDTO } from "@/api/client";
 import type ConfigurationDTO from "@/types/configuration/ConfigurationDTO";
 import type MapConfigurationDTO from "@/types/configuration/MapConfigurationDTO";
 import type TenantConfigurationDTO from "@/types/configuration/TenantConfigurationDTO";
 import type ZaehlstelleConfigurationDTO from "@/types/configuration/ZaehlstelleConfigurationDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { LatLng } from "leaflet";
 
@@ -21,16 +21,21 @@ export default class DefaultObjectCreator {
     );
   }
 
-  public static createDefaultZaehlungDTO(): ZaehlungDTO {
-    const zaehlung: ZaehlungDTO = {} as ZaehlungDTO;
-    zaehlung.knotenarme = [];
-    zaehlung.kategorien = [];
-    zaehlung.quelle = Quelle.MANUALLY;
-    zaehlung.wetter = Wetter.NO_INFORMATION;
-    zaehlung.status = Status.CREATED;
-    zaehlung.kreisverkehr = false;
-    zaehlung.sonderzaehlung = false;
-    return zaehlung;
+  public static createDefaultZaehlungDTO(): ExternalZaehlungDTO {
+    return {
+      knotenarme: [],
+      kategorien: [],
+      verkehrsbeziehungen: [],
+      laengsverkehr: [],
+      querungsverkehr: [],
+      quelle: Quelle.MANUALLY,
+      wetter: Wetter.NO_INFORMATION,
+      status: Status.CREATED,
+      kreisverkehr: false,
+      sonderzaehlung: false,
+      zaehlIntervall: 15,
+      unreadMessagesDienstleister: false,
+    };
   }
 
   public static createDefaultConfigurationDTO(): ConfigurationDTO {
