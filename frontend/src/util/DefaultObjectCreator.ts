@@ -1,8 +1,10 @@
-import type { ExternalZaehlungDTO } from "@/api/client";
-import type ConfigurationDTO from "@/types/configuration/ConfigurationDTO";
-import type MapConfigurationDTO from "@/types/configuration/MapConfigurationDTO";
-import type TenantConfigurationDTO from "@/types/configuration/TenantConfigurationDTO";
-import type ZaehlstelleConfigurationDTO from "@/types/configuration/ZaehlstelleConfigurationDTO";
+import type {
+  ConfigurationDTO,
+  ExternalZaehlungDTO,
+  MapConfigurationDTO,
+  TenantConfigurationDTO,
+  ZaehlstelleConfigurationDTO,
+} from "@/api/client";
 
 import { LatLng } from "leaflet";
 
