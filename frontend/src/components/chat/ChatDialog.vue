@@ -168,8 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import type { ExternalZaehlungDTO } from "@/api/client";
-import type ChatMessageDTO from "@/types/chat/ChatMessageDTO";
+import type { ChatMessageDTO, ExternalZaehlungDTO } from "@/api/client";
 
 import { isEmpty, isNil } from "lodash";
 import { computed, ref, watch } from "vue";
