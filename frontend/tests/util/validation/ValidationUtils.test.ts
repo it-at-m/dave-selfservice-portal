@@ -1,13 +1,12 @@
 import { describe, expect, test } from "vitest";
 
-import { serializeDate } from "@/api/client";
+import { serializeDate, Zaehldauer } from "@/api/client";
 import Fahrzeug from "@/types/enum/Fahrzeug";
 import Zaehlart from "@/types/enum/Zaehlart";
 import {
-  Zaehldauer,
   zaehldauerIntervallnummern,
   zaehldauerText,
-} from "@/types/enum/Zaehldauer";
+} from "@/types/enum/ZaehldauerText";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
@@ -486,7 +485,7 @@ describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", 
     expect(
       checkForAlignmentOfIntervallsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.DAUER_24_STUNDEN
+        Zaehldauer.Dauer24Stunden
       )
     ).toBe("");
   });
@@ -496,7 +495,7 @@ describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", 
     expect(
       checkForAlignmentOfIntervallsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.DAUER_24_STUNDEN
+        Zaehldauer.Dauer24Stunden
       )
     ).toBe(
       "In der CSV-Datei existieren folgende Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer Ganztageszählung befinden: 0, 97"
@@ -508,7 +507,7 @@ describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", 
     expect(
       checkForAlignmentOfIntervallsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.SONSTIGE
+        Zaehldauer.Sonstige
       )
     ).toBe("");
   });
@@ -525,9 +524,7 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
   }
 
   test("returns empty when number of intervalls per bewegungsinformation matches expected for 2x4h (two bewegungsinformationen)", () => {
-    const ranges = zaehldauerIntervallnummern.get(
-      Zaehldauer.DAUER_2_X_4_STUNDEN
-    )!;
+    const ranges = zaehldauerIntervallnummern.get(Zaehldauer.Dauer2X4Stunden)!;
     const csvLines: Array<string> = [];
     // build all intervall numbers for the zaehldauer for two different bewegungsinformationen (A and B)
     ranges.forEach((r) => {
@@ -542,15 +539,13 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     expect(
       checkForCorrectNumberOfIntervalsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.DAUER_2_X_4_STUNDEN
+        Zaehldauer.Dauer2X4Stunden
       )
     ).toBe("");
   });
 
   test("returns descriptive message when count does not match expected for 2x4h (one bewegungsinformation wrong)", () => {
-    const ranges = zaehldauerIntervallnummern.get(
-      Zaehldauer.DAUER_2_X_4_STUNDEN
-    )!;
+    const ranges = zaehldauerIntervallnummern.get(Zaehldauer.Dauer2X4Stunden)!;
     const csvLines: Array<string> = [];
     // Build two bewegungsinformationen: A (correct), B (one missing intervall)
     // bewegungsinformation A
@@ -574,12 +569,12 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     );
     // actual count for the offending bewegungsinformation (B) is expectedTotal - 1
     const actualCount = expectedTotal - 1;
-    const expectedMessage = `Die Menge von ${actualCount} Intervallnummern in der CSV-Datei entspricht nicht der erwarteten Anzahl von ${expectedTotal} Intervallen der Zähldauer ${zaehldauerText.get(Zaehldauer.DAUER_2_X_4_STUNDEN)}.`;
+    const expectedMessage = `Die Menge von ${actualCount} Intervallnummern in der CSV-Datei entspricht nicht der erwarteten Anzahl von ${expectedTotal} Intervallen der Zähldauer ${zaehldauerText.get(Zaehldauer.Dauer2X4Stunden)}.`;
 
     expect(
       checkForCorrectNumberOfIntervalsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.DAUER_2_X_4_STUNDEN
+        Zaehldauer.Dauer2X4Stunden
       )
     ).toBe(expectedMessage);
   });
@@ -589,7 +584,7 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     expect(
       checkForCorrectNumberOfIntervalsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.SONSTIGE
+        Zaehldauer.Sonstige
       )
     ).toBe("");
   });

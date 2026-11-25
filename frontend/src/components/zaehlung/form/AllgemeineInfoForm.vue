@@ -202,7 +202,7 @@ import { quelleText } from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import { wetterDropDown } from "@/types/enum/Wetter";
 import { zaehlartenDropDown, zaehlartText } from "@/types/enum/Zaehlart";
-import { zaehldauerText } from "@/types/enum/Zaehldauer";
+import { zaehldauerText } from "@/types/enum/ZaehldauerText";
 import { useDateUtils } from "@/util/DateUtils";
 
 interface Props {

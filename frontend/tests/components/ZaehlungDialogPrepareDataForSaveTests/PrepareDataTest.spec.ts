@@ -3,14 +3,13 @@ import type { ZeitintervallDTO } from "@/api/client";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { ExternalZaehlungDTOFromJSON } from "@/api/client";
+import { ExternalZaehlungDTOFromJSON, Zaehldauer } from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import Wetter from "@/types/enum/Wetter";
 import Zaehlart from "@/types/enum/Zaehlart";
-import Zaehldauer from "@/types/enum/Zaehldauer";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
 describe("prepareForSaveZaehlung", () => {
@@ -60,7 +59,7 @@ describe("prepareForSaveZaehlung", () => {
       zaehlsituation: "Situation",
       zaehlsituationErweitert: "Extended Situation",
       zaehlIntervall: 15,
-      zaehldauer: Zaehldauer.DAUER_24_STUNDEN,
+      zaehldauer: Zaehldauer.Dauer24Stunden,
       wetter: Wetter.NO_INFORMATION,
       status: Status.COUNTING,
       quelle: Quelle.MANUALLY,

@@ -2,14 +2,14 @@ import type { ExternalKnotenarmDTO, ExternalZaehlungDTO } from "@/api/client";
 
 import { isEmpty, isNil, join, sum, toArray, trim, uniq } from "lodash";
 
+import { Zaehldauer } from "@/api/client";
 import { serializeDate } from "@/api/client/runtime";
 import Fahrzeug from "@/types/enum/Fahrzeug";
 import Zaehlart from "@/types/enum/Zaehlart";
 import {
-  Zaehldauer,
   zaehldauerIntervallnummern,
   zaehldauerText,
-} from "@/types/enum/Zaehldauer";
+} from "@/types/enum/ZaehldauerText";
 
 export function useValidationUtils() {
   const SEPARATOR = ";";
@@ -291,7 +291,7 @@ export function useValidationUtils() {
     csvDataWithoutHeader: Array<string>,
     zaehldauer: string | undefined
   ): string {
-    if (zaehldauer != Zaehldauer.SONSTIGE) {
+    if (zaehldauer != Zaehldauer.Sonstige) {
       const startIntervallnummerEndeIntervallnummer = toArray(
         zaehldauerIntervallnummern.get(zaehldauer ?? "")
       );
@@ -346,7 +346,7 @@ export function useValidationUtils() {
     csvDataWithoutHeader: Array<string>,
     zaehldauer: string | undefined
   ): string {
-    if (zaehldauer != Zaehldauer.SONSTIGE) {
+    if (zaehldauer != Zaehldauer.Sonstige) {
       const startIntervallnummerEndeIntervallnummer = toArray(
         zaehldauerIntervallnummern.get(zaehldauer ?? "")
       );
