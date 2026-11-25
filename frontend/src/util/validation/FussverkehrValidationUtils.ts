@@ -6,9 +6,8 @@ import type {
 
 import { difference, isEmpty, toArray } from "lodash";
 
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
-import Richtung from "@/types/enum/Richtung";
-import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
+import { Bewegungsrichtung, Himmelsrichtung } from "@/api/client";
+import { himmelsrichtungText } from "@/types/enum/HimmelsrichtungText";
 import Zaehlart from "@/types/enum/Zaehlart";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
@@ -27,11 +26,11 @@ export function useFussverkehrValidationUtils() {
     strassenseite: string,
     armNummer: number,
     validArmNummern: Array<number>,
-    validStrassenseiten: Array<Strassenseite>
+    validStrassenseiten: Array<Himmelsrichtung>
   ): boolean {
     return (
       validArmNummern.includes(armNummer) &&
-      !validStrassenseiten.includes(strassenseite as Strassenseite)
+      !validStrassenseiten.includes(strassenseite as Himmelsrichtung)
     );
   }
 
@@ -97,7 +96,7 @@ export function useFussverkehrValidationUtils() {
       return `Die Strassenseite muss leer sein.`;
     }
     if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
-      if (!StrassenseiteText.has(strassenseite.trim())) {
+      if (!himmelsrichtungText.has(strassenseite.trim())) {
         return `Die Strassenseite ist ungültig: ${strassenseite}.`;
       }
     }
@@ -350,25 +349,25 @@ export function useFussverkehrValidationUtils() {
           strassenseite,
           armNummer,
           [1, 3],
-          [Strassenseite.W, Strassenseite.O]
+          [Himmelsrichtung.W, Himmelsrichtung.O]
         ) ||
         isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [2, 4],
-          [Strassenseite.N, Strassenseite.S]
+          [Himmelsrichtung.N, Himmelsrichtung.S]
         ) ||
         isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [5, 7],
-          [Strassenseite.NW, Strassenseite.SO]
+          [Himmelsrichtung.Nw, Himmelsrichtung.So]
         ) ||
         isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [6, 8],
-          [Strassenseite.NO, Strassenseite.SW]
+          [Himmelsrichtung.No, Himmelsrichtung.Sw]
         )
       ) {
         return `Die Strassenseite ${strassenseite} ist ungültig für den Knotenarm.`;
@@ -391,20 +390,24 @@ export function useFussverkehrValidationUtils() {
     if (zaehlart === Zaehlart.QU) {
       if (
         ![
-          Richtung.N,
-          Richtung.O,
-          Richtung.S,
-          Richtung.W,
-          Richtung.NO,
-          Richtung.SO,
-          Richtung.NW,
-          Richtung.SW,
-        ].includes(richtung.trim() as Richtung)
+          Himmelsrichtung.N,
+          Himmelsrichtung.O,
+          Himmelsrichtung.S,
+          Himmelsrichtung.W,
+          Himmelsrichtung.No,
+          Himmelsrichtung.So,
+          Himmelsrichtung.Nw,
+          Himmelsrichtung.Sw,
+        ].includes(richtung.trim() as Himmelsrichtung)
       ) {
         return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.QU}.`;
       }
     } else if (zaehlart === Zaehlart.FJS) {
-      if (![Richtung.EIN, Richtung.AUS].includes(richtung.trim() as Richtung)) {
+      if (
+        ![Bewegungsrichtung.Ein, Bewegungsrichtung.Aus].includes(
+          richtung.trim() as Bewegungsrichtung
+        )
+      ) {
         return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.FJS}.`;
       }
     } else {
@@ -445,17 +448,17 @@ export function useFussverkehrValidationUtils() {
         richtung !== Himmelsrichtung.N.valueOf() &&
         richtung !== Himmelsrichtung.S.valueOf()) ||
       (armNummer === 5 &&
-        richtung !== Himmelsrichtung.NW.valueOf() &&
-        richtung !== Himmelsrichtung.SO.valueOf()) ||
+        richtung !== Himmelsrichtung.Nw.valueOf() &&
+        richtung !== Himmelsrichtung.So.valueOf()) ||
       (armNummer === 6 &&
-        richtung !== Himmelsrichtung.NO.valueOf() &&
-        richtung !== Himmelsrichtung.SW.valueOf()) ||
+        richtung !== Himmelsrichtung.No.valueOf() &&
+        richtung !== Himmelsrichtung.Sw.valueOf()) ||
       (armNummer === 7 &&
-        richtung !== Himmelsrichtung.NW.valueOf() &&
-        richtung !== Himmelsrichtung.SO.valueOf()) ||
+        richtung !== Himmelsrichtung.Nw.valueOf() &&
+        richtung !== Himmelsrichtung.So.valueOf()) ||
       (armNummer === 8 &&
-        richtung !== Himmelsrichtung.NO.valueOf() &&
-        richtung !== Himmelsrichtung.SW.valueOf())
+        richtung !== Himmelsrichtung.No.valueOf() &&
+        richtung !== Himmelsrichtung.Sw.valueOf())
     ) {
       return `Die Richtung ${richtung} ist ungültig für den Knotenarm ${armNummer}.`;
     }

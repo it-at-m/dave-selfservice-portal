@@ -9,11 +9,10 @@ import { shallowMount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+import { Bewegungsrichtung, Himmelsrichtung } from "@/api/client";
 import KnotenLageForm from "@/components/zaehlung/form/KnotenLageForm.vue";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useValidationStore } from "@/store/ValidationStore";
-import Bewegungsrichtung from "@/types/enum/Bewegungsrichtung";
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import UploadedFileStatus from "@/types/enum/UploadedFileStatus";
 import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
@@ -223,12 +222,12 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
         {
           knotenarm: 1,
           strassenseite: Himmelsrichtung.N,
-          richtung: Bewegungsrichtung.EIN,
+          richtung: Bewegungsrichtung.Ein,
         },
         {
           knotenarm: 1,
           strassenseite: Himmelsrichtung.S,
-          richtung: Bewegungsrichtung.AUS,
+          richtung: Bewegungsrichtung.Aus,
         },
       ] as Array<ExternalLaengsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
@@ -236,8 +235,8 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       });
       const vm: any = wrapper.vm;
       const csvDataWithoutHeader = [
-        `1;1;${Himmelsrichtung.N};${Bewegungsrichtung.EIN}`,
-        `2;1;${Himmelsrichtung.S};${Bewegungsrichtung.AUS}`,
+        `1;1;${Himmelsrichtung.N};${Bewegungsrichtung.Ein}`,
+        `2;1;${Himmelsrichtung.S};${Bewegungsrichtung.Aus}`,
       ];
       const res =
         vm.validateIntervallsWithRequiredRichtungsinformationAreExistent(
@@ -255,12 +254,12 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
         {
           knotenarm: 1,
           strassenseite: Himmelsrichtung.N,
-          richtung: Bewegungsrichtung.EIN,
+          richtung: Bewegungsrichtung.Ein,
         },
         {
           knotenarm: 1,
           strassenseite: Himmelsrichtung.S,
-          richtung: Bewegungsrichtung.AUS,
+          richtung: Bewegungsrichtung.Aus,
         },
       ] as Array<ExternalLaengsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
@@ -268,7 +267,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       });
       const vm: any = wrapper.vm;
       const csvDataWithoutHeader = [
-        `1;1;${Himmelsrichtung.N};${Bewegungsrichtung.EIN}`,
+        `1;1;${Himmelsrichtung.N};${Bewegungsrichtung.Ein}`,
       ];
       const res =
         vm.validateIntervallsWithRequiredRichtungsinformationAreExistent(
@@ -280,7 +279,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       expect(res).toContain(
         "Für folgende Straßenseite- und Richtungsinformationen"
       );
-      expect(res).toContain(`${Himmelsrichtung.S} ${Bewegungsrichtung.AUS}`);
+      expect(res).toContain(`${Himmelsrichtung.S} ${Bewegungsrichtung.Aus}`);
     });
 
     it("returns empty for QU when all required richtung values are present", () => {
@@ -407,7 +406,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
         {
           knotenarm: 1,
           strassenseite: Himmelsrichtung.N,
-          richtung: Bewegungsrichtung.EIN,
+          richtung: Bewegungsrichtung.Ein,
         },
       ] as Array<ExternalLaengsverkehrDTO>;
       const wrapper = shallowMount(KnotenLageForm, {
@@ -415,7 +414,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
       });
       const vm: any = wrapper.vm;
       const csvDataWithoutHeader = [
-        `1;;${Himmelsrichtung.N};${Bewegungsrichtung.EIN}`,
+        `1;;${Himmelsrichtung.N};${Bewegungsrichtung.Ein}`,
         `2;;Z;EIN`,
       ];
       const res =

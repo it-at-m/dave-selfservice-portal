@@ -113,7 +113,7 @@ export function useCsvToZeitintervallTransformationUtils() {
               strassenseite = values[2];
             }
 
-            // Himmelsrichtung auslesen
+            // HimmelsrichtungText auslesen
             let richtung: string = "";
             if (values[3].trim().length > 0) {
               richtung = values[3];
@@ -372,7 +372,7 @@ export function useCsvToZeitintervallTransformationUtils() {
               intervall.fussgaenger = parseInt(values[10]);
             }
 
-            // Himmelsrichtung auslesen
+            // HimmelsrichtungText auslesen
             let richtung: string = "";
             if (values[3].trim().length > 0) {
               richtung = values[3];

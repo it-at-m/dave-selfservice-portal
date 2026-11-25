@@ -1,11 +1,10 @@
-import type { ZeitintervallDTO } from "@/api/client";
+import type { Himmelsrichtung, ZeitintervallDTO } from "@/api/client";
 
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { ExternalZaehlungDTOFromJSON, Zaehldauer } from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import Wetter from "@/types/enum/Wetter";

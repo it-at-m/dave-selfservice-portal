@@ -418,7 +418,7 @@ import type { ComputedRef, Ref } from "vue";
 import { cloneDeep, first, last, toArray } from "lodash";
 import { computed, onMounted, ref, watch } from "vue";
 
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
+import { Himmelsrichtung } from "@/api/client";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 
 interface Props {
@@ -545,12 +545,12 @@ function createVerkehrsbeziehungArrowOne(): ExternalVerkehrsbeziehungDTO {
   if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 5;
     verkehrsbeziehung.nach = 7;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.Nw;
   }
   if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 6;
     verkehrsbeziehung.nach = 8;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.No;
   }
   return verkehrsbeziehung;
 }
@@ -570,12 +570,12 @@ function createVerkehrsbeziehungArrowTwo(): ExternalVerkehrsbeziehungDTO {
   if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 7;
     verkehrsbeziehung.nach = 5;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.Nw;
   }
   if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 8;
     verkehrsbeziehung.nach = 6;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.No;
   }
   return verkehrsbeziehung;
 }
@@ -595,12 +595,12 @@ function createVerkehrsbeziehungArrowThree(): ExternalVerkehrsbeziehungDTO {
   if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 5;
     verkehrsbeziehung.nach = 7;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.So;
   }
   if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 6;
     verkehrsbeziehung.nach = 8;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.Sw;
   }
   return verkehrsbeziehung;
 }
@@ -620,12 +620,12 @@ function createVerkehrsbeziehungArrowFour(): ExternalVerkehrsbeziehungDTO {
   if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 7;
     verkehrsbeziehung.nach = 5;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.So;
   }
   if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 8;
     verkehrsbeziehung.nach = 6;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.Sw;
   }
   return verkehrsbeziehung;
 }

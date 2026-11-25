@@ -6,9 +6,8 @@ import type {
 
 import { beforeEach, describe, expect, it } from "vitest";
 
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
-import Richtung from "@/types/enum/Richtung";
-import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
+import { Bewegungsrichtung, Himmelsrichtung } from "@/api/client";
+import { himmelsrichtungText } from "@/types/enum/HimmelsrichtungText";
 import Zaehlart from "@/types/enum/Zaehlart";
 import { useFussverkehrValidationUtils } from "@/util/validation/FussverkehrValidationUtils";
 
@@ -104,14 +103,14 @@ describe("FussverkehrValidationUtils", () => {
       // arm 2 should accept N or S — use N
       const err = utils.validateStrassenseiteOccurrence(
         Zaehlart.QJS,
-        Strassenseite.N
+        Himmelsrichtung.N
       );
       expect(err).toBeUndefined();
     });
 
     it("treats known StrassenseiteText values as valid", () => {
       // use a known key from StrassenseiteText
-      const someKey = Array.from(StrassenseiteText.keys())[0];
+      const someKey = Array.from(himmelsrichtungText.keys())[0];
       const err = utils.validateStrassenseiteOccurrence(Zaehlart.FJS, someKey);
       // If it's a valid mapping and not incompatible with arm 2, undefined expected
       // In the unlikely case of arm incompatibility, at least no "ungültig text" message should be present.
@@ -379,7 +378,7 @@ describe("FussverkehrValidationUtils", () => {
     it("returns undefined for a valid combination (FJS, arm 1 -> W)", () => {
       const result = utils.validateStrassenseiteValue(
         Zaehlart.FJS,
-        Strassenseite.W,
+        Himmelsrichtung.W,
         1
       );
       expect(result).toBeUndefined();
@@ -388,7 +387,7 @@ describe("FussverkehrValidationUtils", () => {
     it("returns an error string for an invalid combination (FJS, arm 1 -> N)", () => {
       const result = utils.validateStrassenseiteValue(
         Zaehlart.FJS,
-        Strassenseite.N,
+        Himmelsrichtung.N,
         1
       );
       expect(result).toBeDefined();
@@ -398,7 +397,7 @@ describe("FussverkehrValidationUtils", () => {
     it("returns undefined for a valid QJS combination (arm 6 -> NO)", () => {
       const result = utils.validateStrassenseiteValue(
         Zaehlart.QJS,
-        Strassenseite.NO,
+        Himmelsrichtung.No,
         6
       );
       expect(result).toBeUndefined();
@@ -407,7 +406,7 @@ describe("FussverkehrValidationUtils", () => {
     it("does not validate for Zaehlart.QU (should return undefined)", () => {
       const result = utils.validateStrassenseiteValue(
         Zaehlart.QU,
-        Strassenseite.N,
+        Himmelsrichtung.N,
         1
       );
       expect(result).toBeUndefined();
@@ -423,23 +422,29 @@ describe("FussverkehrValidationUtils", () => {
     });
 
     it("accepts a valid QU direction (e.g. N)", () => {
-      const err = utils.validateRichtungOccurrence(Zaehlart.QU, Richtung.N);
+      const err = utils.validateRichtungOccurrence(
+        Zaehlart.QU,
+        Himmelsrichtung.N
+      );
       expect(err).toBeUndefined();
     });
 
     it("accepts EIN/AUS for FJS", () => {
       expect(
-        utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.EIN)
+        utils.validateRichtungOccurrence(Zaehlart.FJS, Bewegungsrichtung.Ein)
       ).toBeUndefined();
       expect(
-        utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.AUS)
+        utils.validateRichtungOccurrence(Zaehlart.FJS, Bewegungsrichtung.Aus)
       ).toBeUndefined();
     });
 
     it("returns error for FJS when direction is not EIN/AUS", () => {
-      const err = utils.validateRichtungOccurrence(Zaehlart.FJS, Richtung.N);
+      const err = utils.validateRichtungOccurrence(
+        Zaehlart.FJS,
+        Himmelsrichtung.N
+      );
       expect(err).toBe(
-        `Die Richtung ${Richtung.N} ist ungültig für Zählart ${Zaehlart.FJS}.`
+        `Die Richtung ${Himmelsrichtung.N} ist ungültig für Zählart ${Zaehlart.FJS}.`
       );
     });
 
@@ -488,12 +493,12 @@ describe("FussverkehrValidationUtils", () => {
       const resNO = utils.validateRichtungValue(
         Zaehlart.QU,
         6,
-        Himmelsrichtung.NO
+        Himmelsrichtung.No
       );
       const resSW = utils.validateRichtungValue(
         Zaehlart.QU,
         6,
-        Himmelsrichtung.SW
+        Himmelsrichtung.Sw
       );
       expect(resNO).toBeUndefined();
       expect(resSW).toBeUndefined();

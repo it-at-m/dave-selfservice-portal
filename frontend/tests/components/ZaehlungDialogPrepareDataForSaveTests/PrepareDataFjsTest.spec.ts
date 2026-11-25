@@ -3,10 +3,13 @@ import type { ExternalLaengsverkehrDTO } from "@/api/client";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { ExternalZaehlungDTOFromJSON, Zaehldauer } from "@/api/client";
+import {
+  Bewegungsrichtung,
+  ExternalZaehlungDTOFromJSON,
+  Himmelsrichtung,
+  Zaehldauer,
+} from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
-import Bewegungsrichtung from "@/types/enum/Bewegungsrichtung";
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import Wetter from "@/types/enum/Wetter";
@@ -74,7 +77,7 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 1,
           strassenseite: Himmelsrichtung.O,
-          richtung: Bewegungsrichtung.EIN,
+          richtung: Bewegungsrichtung.Ein,
           zeitintervalle: [],
         },
         {
@@ -83,7 +86,7 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 1,
           strassenseite: Himmelsrichtung.O,
-          richtung: Bewegungsrichtung.AUS,
+          richtung: Bewegungsrichtung.Aus,
           zeitintervalle: [],
         },
         {
@@ -92,7 +95,7 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 1,
           strassenseite: Himmelsrichtung.W,
-          richtung: Bewegungsrichtung.EIN,
+          richtung: Bewegungsrichtung.Ein,
           zeitintervalle: [],
         },
         {
@@ -101,7 +104,7 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 1,
           strassenseite: Himmelsrichtung.W,
-          richtung: Bewegungsrichtung.AUS,
+          richtung: Bewegungsrichtung.Aus,
           zeitintervalle: [],
         },
         {
@@ -110,7 +113,7 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 2,
           strassenseite: Himmelsrichtung.N,
-          richtung: Bewegungsrichtung.EIN,
+          richtung: Bewegungsrichtung.Ein,
           zeitintervalle: [],
         },
         {
@@ -119,7 +122,7 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 2,
           strassenseite: Himmelsrichtung.N,
-          richtung: Bewegungsrichtung.AUS,
+          richtung: Bewegungsrichtung.Aus,
           zeitintervalle: [],
         },
         {
@@ -128,7 +131,7 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 2,
           strassenseite: Himmelsrichtung.S,
-          richtung: Bewegungsrichtung.EIN,
+          richtung: Bewegungsrichtung.Ein,
           zeitintervalle: [],
         },
         {
@@ -137,7 +140,7 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 2,
           strassenseite: Himmelsrichtung.S,
-          richtung: Bewegungsrichtung.AUS,
+          richtung: Bewegungsrichtung.Aus,
           zeitintervalle: [],
         },
       ],
@@ -159,7 +162,7 @@ describe("prepareForSaveZaehlungFjs", () => {
     const oEin = zaehlung.laengsverkehr?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.O &&
-        v.richtung === Bewegungsrichtung.EIN
+        v.richtung === Bewegungsrichtung.Ein
     ) as ExternalLaengsverkehrDTO;
     expect(oEin).toBeDefined();
     expect(oEin?.zeitintervalle?.length).toBe(2);
@@ -190,7 +193,7 @@ describe("prepareForSaveZaehlungFjs", () => {
     const oAus = zaehlung.laengsverkehr?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.O &&
-        v.richtung === Bewegungsrichtung.AUS
+        v.richtung === Bewegungsrichtung.Aus
     ) as ExternalLaengsverkehrDTO;
     expect(oAus).toBeDefined();
     expect(oAus?.zeitintervalle?.length).toBe(2);
@@ -221,7 +224,7 @@ describe("prepareForSaveZaehlungFjs", () => {
     const wAus = zaehlung.laengsverkehr?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.W &&
-        v.richtung === Bewegungsrichtung.AUS
+        v.richtung === Bewegungsrichtung.Aus
     ) as ExternalLaengsverkehrDTO;
     expect(wAus).toBeDefined();
     expect(wAus?.zeitintervalle?.length).toBe(2);
@@ -252,7 +255,7 @@ describe("prepareForSaveZaehlungFjs", () => {
     const wEin = zaehlung.laengsverkehr?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.W &&
-        v.richtung === Bewegungsrichtung.EIN
+        v.richtung === Bewegungsrichtung.Ein
     ) as ExternalLaengsverkehrDTO;
     expect(wEin).toBeDefined();
     expect(wEin?.zeitintervalle?.length).toBe(2);
