@@ -9,9 +9,9 @@
 <script setup lang="ts">
 import { computed } from "vue";
 
+import { Quelle } from "@/api/client";
 import IconTooltip from "@/components/icons/IconTooltip";
 import TooltipWithIcon from "@/components/icons/TooltipWithIcon.vue";
-import Quelle from "@/types/enum/Quelle";
 
 interface Props {
   size?: string;
@@ -29,12 +29,12 @@ const props = withDefaults(defineProps<Props>(), {
  */
 const quelleIcons: Map<string, IconTooltip> = new Map([
   [
-    Quelle.MANUALLY,
+    Quelle.Manually,
     new IconTooltip("mdi-clipboard-account", "Manuelle Zählung"),
   ],
-  [Quelle.DETECTOR, new IconTooltip("mdi-robot", "Detektorzählung")],
-  [Quelle.RADAR, new IconTooltip("mdi-radar", "Radarzählung")],
-  [Quelle.VIDEO, new IconTooltip("mdi-video", "Videozählung")],
+  [Quelle.Detector, new IconTooltip("mdi-robot", "Detektorzählung")],
+  [Quelle.Radar, new IconTooltip("mdi-radar", "Radarzählung")],
+  [Quelle.Video, new IconTooltip("mdi-video", "Videozählung")],
 ]);
 
 /**

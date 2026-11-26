@@ -224,6 +224,7 @@ models/PkwEinheitRequestBody.ts
 models/PositionUTM.ts
 models/QjsStrassenseiteValue.ts
 models/QuKnotenarmValue.ts
+models/Quelle.ts
 models/Querungsverkehr.ts
 models/QuerungsverkehrValue.ts
 models/ReadMessfaehigkeitDTO.ts
@@ -233,6 +234,7 @@ models/RepresentationModelObject.ts
 models/ResetAuffaelligkeitenDTO.ts
 models/Rounding.ts
 models/SearchAndFilterOptionsDTO.ts
+models/Status.ts
 models/StepLineSeriesEntryBaseDTO.ts
 models/StepLineSeriesEntryBigDecimalDTO.ts
 models/StepLineSeriesEntryIntegerDTO.ts
@@ -252,6 +254,7 @@ models/Verkehrsart.ts
 models/Verkehrsbeziehung.ts
 models/VerkehrsbeziehungValue.ts
 models/VerkehrsbeziehungVisumDTO.ts
+models/Wetter.ts
 models/Zaehlart.ts
 models/ZaehlartenKarteDTO.ts
 models/ZaehldatenIntervall.ts

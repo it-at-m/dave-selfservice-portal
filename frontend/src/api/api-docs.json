@@ -7813,6 +7813,162 @@
           }
         }
       },
+      "EntityModelChatMessage": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "zaehlungId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "content": {
+            "type": "string"
+          },
+          "participantId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string"
+          },
+          "uploaded": {
+            "type": "boolean"
+          },
+          "viewed": {
+            "type": "boolean"
+          },
+          "entityVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PagedModelEntityModelChatMessage": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "chatMessages": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityModelChatMessage"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "CollectionModelEntityModelChatMessage": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "chatMessages": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityModelChatMessage"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "EntityModelHochrechnungsfaktor": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "matrix": {
+            "type": "string"
+          },
+          "kfz": {
+            "type": "number",
+            "format": "double"
+          },
+          "sv": {
+            "type": "number",
+            "format": "double"
+          },
+          "gv": {
+            "type": "number",
+            "format": "double"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "defaultFaktor": {
+            "type": "boolean"
+          },
+          "entityVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PagedModelEntityModelHochrechnungsfaktor": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "hochrechnungsfaktors": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityModelHochrechnungsfaktor"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
       "EntityModelInfoMessage": {
         "type": "object",
         "properties": {
@@ -7889,6 +8045,282 @@
           },
           "_links": {
             "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "Fahrzeugklasse": {
+        "type": "string",
+        "enum": ["RAD", "SUMME_KFZ", "ZWEI_PLUS_EINS", "ACHT_PLUS_EINS"]
+      },
+      "ZaehldatenIntervall": {
+        "type": "string",
+        "enum": [
+          "STUNDE_VIERTEL",
+          "STUNDE_VIERTEL_EINGESCHRAENKT",
+          "STUNDE_HALB",
+          "STUNDE_KOMPLETT"
+        ]
+      },
+      "EntityModelOptionsmenueSettings": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "fahrzeugklasse": {
+            "$ref": "#/components/schemas/Fahrzeugklasse"
+          },
+          "intervall": {
+            "$ref": "#/components/schemas/ZaehldatenIntervall"
+          },
+          "kraftfahrzeugverkehrChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "schwerverkehrChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "gueterverkehrChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "schwerverkehrsanteilProzentChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "gueterverkehrsanteilProzentChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "radverkehrChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "fussverkehrChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "lastkraftwagenChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "lastzuegeChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "busseChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "kraftraederChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "personenkraftwagenChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "lieferwagenChoosableIntervals": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ZaehldatenIntervall"
+            }
+          },
+          "entityVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PagedModelEntityModelOptionsmenueSettings": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "optionsmenueSettingses": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityModelOptionsmenueSettings"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "EntityModelDienstleister": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "kennung": {
+            "type": "string"
+          },
+          "emailAddresses": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "entityVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PagedModelEntityModelDienstleister": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "dienstleisters": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityModelDienstleister"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "CollectionModelEntityModelDienstleister": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "dienstleisters": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityModelDienstleister"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "EntityModelEmailAddress": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "participantId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "emailAddress": {
+            "type": "string"
+          },
+          "entityVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PagedModelEntityModelEmailAddress": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "emailAddresses": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityModelEmailAddress"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
           }
         }
       },
@@ -8115,49 +8547,19 @@
           }
         }
       },
-      "PkwEinheit": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "pkw": {
-            "type": "number"
-          },
-          "lkw": {
-            "type": "number"
-          },
-          "lastzuege": {
-            "type": "number"
-          },
-          "busse": {
-            "type": "number"
-          },
-          "kraftraeder": {
-            "type": "number"
-          },
-          "fahrradfahrer": {
-            "type": "number"
-          },
-          "fussgaenger": {
-            "type": "number"
-          },
-          "entityVersion": {
-            "type": "integer",
-            "format": "int64"
-          }
-        }
+      "TagesTyp": {
+        "type": "string",
+        "enum": [
+          "UNSPECIFIED",
+          "WERKTAG_DI_MI_DO",
+          "WERKTAG_MO_FR",
+          "SAMSTAG",
+          "SONNTAG_FEIERTAG",
+          "WERKTAG_FERIEN",
+          "MO_SO"
+        ]
       },
-      "EntityModelPkwEinheit": {
+      "EntityModelUnauffaelligerTag": {
         "type": "object",
         "properties": {
           "id": {
@@ -8172,26 +8574,8 @@
             "type": "integer",
             "format": "int64"
           },
-          "pkw": {
-            "type": "number"
-          },
-          "lkw": {
-            "type": "number"
-          },
-          "lastzuege": {
-            "type": "number"
-          },
-          "busse": {
-            "type": "number"
-          },
-          "kraftraeder": {
-            "type": "number"
-          },
-          "fahrradfahrer": {
-            "type": "number"
-          },
-          "fussgaenger": {
-            "type": "number"
+          "mstId": {
+            "type": "string"
           },
           "entityVersion": {
             "type": "integer",
@@ -8202,16 +8586,16 @@
           }
         }
       },
-      "PagedModelEntityModelPkwEinheit": {
+      "PagedModelEntityModelUnauffaelligerTag": {
         "type": "object",
         "properties": {
           "_embedded": {
             "type": "object",
             "properties": {
-              "pkwEinheits": {
+              "unauffaelligerTags": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/components/schemas/EntityModelPkwEinheit"
+                  "$ref": "#/components/schemas/EntityModelUnauffaelligerTag"
                 }
               }
             }
@@ -8221,6 +8605,78 @@
           },
           "page": {
             "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "EntityModelKalendertag": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "version": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "datum": {
+            "type": "string",
+            "format": "date"
+          },
+          "tagestyp": {
+            "$ref": "#/components/schemas/TagesTyp"
+          },
+          "nextStartDateToLoadUnauffaelligeTage": {
+            "type": "boolean"
+          },
+          "entityVersion": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "CollectionModelObject": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "objects": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "CollectionModelEntityModelUnauffaelligerTag": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "unauffaelligerTags": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityModelUnauffaelligerTag"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
           }
         }
       },
@@ -8267,6 +8723,32 @@
           },
           "strassenname": {
             "type": "string"
+          }
+        }
+      },
+      "PkwEinheit": {
+        "type": "object",
+        "properties": {
+          "pkw": {
+            "type": "number"
+          },
+          "lkw": {
+            "type": "number"
+          },
+          "lastzuege": {
+            "type": "number"
+          },
+          "busse": {
+            "type": "number"
+          },
+          "kraftraeder": {
+            "type": "number"
+          },
+          "fahrradfahrer": {
+            "type": "number"
+          },
+          "fussgaenger": {
+            "type": "number"
           }
         }
       },
@@ -8529,19 +9011,7 @@
           }
         }
       },
-      "TagesTyp": {
-        "type": "string",
-        "enum": [
-          "UNSPECIFIED",
-          "WERKTAG_DI_MI_DO",
-          "WERKTAG_MO_FR",
-          "SAMSTAG",
-          "SONNTAG_FEIERTAG",
-          "WERKTAG_FERIEN",
-          "MO_SO"
-        ]
-      },
-      "EntityModelKalendertag": {
+      "EntityModelPkwEinheit": {
         "type": "object",
         "properties": {
           "id": {
@@ -8556,15 +9026,26 @@
             "type": "integer",
             "format": "int64"
           },
-          "datum": {
-            "type": "string",
-            "format": "date"
+          "pkw": {
+            "type": "number"
           },
-          "tagestyp": {
-            "$ref": "#/components/schemas/TagesTyp"
+          "lkw": {
+            "type": "number"
           },
-          "nextStartDateToLoadUnauffaelligeTage": {
-            "type": "boolean"
+          "lastzuege": {
+            "type": "number"
+          },
+          "busse": {
+            "type": "number"
+          },
+          "kraftraeder": {
+            "type": "number"
+          },
+          "fahrradfahrer": {
+            "type": "number"
+          },
+          "fussgaenger": {
+            "type": "number"
           },
           "entityVersion": {
             "type": "integer",
@@ -8572,6 +9053,28 @@
           },
           "_links": {
             "$ref": "#/components/schemas/Links"
+          }
+        }
+      },
+      "PagedModelEntityModelPkwEinheit": {
+        "type": "object",
+        "properties": {
+          "_embedded": {
+            "type": "object",
+            "properties": {
+              "pkwEinheits": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/EntityModelPkwEinheit"
+                }
+              }
+            }
+          },
+          "_links": {
+            "$ref": "#/components/schemas/Links"
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
           }
         }
       },
@@ -8615,77 +9118,6 @@
             "$ref": "#/components/schemas/Links"
           }
         }
-      },
-      "EntityModelHochrechnungsfaktor": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "matrix": {
-            "type": "string"
-          },
-          "kfz": {
-            "type": "number",
-            "format": "double"
-          },
-          "sv": {
-            "type": "number",
-            "format": "double"
-          },
-          "gv": {
-            "type": "number",
-            "format": "double"
-          },
-          "active": {
-            "type": "boolean"
-          },
-          "defaultFaktor": {
-            "type": "boolean"
-          },
-          "entityVersion": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "PagedModelEntityModelHochrechnungsfaktor": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "hochrechnungsfaktors": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EntityModelHochrechnungsfaktor"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          },
-          "page": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
-        }
-      },
-      "Fahrzeugklasse": {
-        "type": "string",
-        "enum": ["RAD", "SUMME_KFZ", "ZWEI_PLUS_EINS", "ACHT_PLUS_EINS"]
       },
       "Messfaehigkeit": {
         "type": "object",
@@ -8743,15 +9175,6 @@
       "Verkehrsart": {
         "type": "string",
         "enum": ["KFZ", "RAD", "UNBEKANNT"]
-      },
-      "ZaehldatenIntervall": {
-        "type": "string",
-        "enum": [
-          "STUNDE_VIERTEL",
-          "STUNDE_VIERTEL_EINGESCHRAENKT",
-          "STUNDE_HALB",
-          "STUNDE_KOMPLETT"
-        ]
       },
       "EntityModelMessstelle": {
         "type": "object",
@@ -8885,445 +9308,6 @@
           },
           "_links": {
             "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "EntityModelDienstleister": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "name": {
-            "type": "string"
-          },
-          "kennung": {
-            "type": "string"
-          },
-          "emailAddresses": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "active": {
-            "type": "boolean"
-          },
-          "entityVersion": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "PagedModelEntityModelDienstleister": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "dienstleisters": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EntityModelDienstleister"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          },
-          "page": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
-        }
-      },
-      "CollectionModelEntityModelDienstleister": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "dienstleisters": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EntityModelDienstleister"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "EntityModelChatMessage": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "zaehlungId": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "content": {
-            "type": "string"
-          },
-          "participantId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "timestamp": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "type": {
-            "type": "string"
-          },
-          "uploaded": {
-            "type": "boolean"
-          },
-          "viewed": {
-            "type": "boolean"
-          },
-          "entityVersion": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "PagedModelEntityModelChatMessage": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "chatMessages": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EntityModelChatMessage"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          },
-          "page": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
-        }
-      },
-      "CollectionModelEntityModelChatMessage": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "chatMessages": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EntityModelChatMessage"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "EntityModelOptionsmenueSettings": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "fahrzeugklasse": {
-            "$ref": "#/components/schemas/Fahrzeugklasse"
-          },
-          "intervall": {
-            "$ref": "#/components/schemas/ZaehldatenIntervall"
-          },
-          "kraftfahrzeugverkehrChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "schwerverkehrChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "gueterverkehrChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "schwerverkehrsanteilProzentChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "gueterverkehrsanteilProzentChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "radverkehrChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "fussverkehrChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "lastkraftwagenChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "lastzuegeChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "busseChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "kraftraederChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "personenkraftwagenChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "lieferwagenChoosableIntervals": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ZaehldatenIntervall"
-            }
-          },
-          "entityVersion": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "PagedModelEntityModelOptionsmenueSettings": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "optionsmenueSettingses": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EntityModelOptionsmenueSettings"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          },
-          "page": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
-        }
-      },
-      "EntityModelUnauffaelligerTag": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "mstId": {
-            "type": "string"
-          },
-          "entityVersion": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "PagedModelEntityModelUnauffaelligerTag": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "unauffaelligerTags": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EntityModelUnauffaelligerTag"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          },
-          "page": {
-            "$ref": "#/components/schemas/PageMetadata"
-          }
-        }
-      },
-      "CollectionModelObject": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "objects": {
-                "type": "array",
-                "items": {
-                  "type": "object"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "CollectionModelEntityModelUnauffaelligerTag": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "unauffaelligerTags": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EntityModelUnauffaelligerTag"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "EntityModelEmailAddress": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "createdTime": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "version": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "participantId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "emailAddress": {
-            "type": "string"
-          },
-          "entityVersion": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          }
-        }
-      },
-      "PagedModelEntityModelEmailAddress": {
-        "type": "object",
-        "properties": {
-          "_embedded": {
-            "type": "object",
-            "properties": {
-              "emailAddresses": {
-                "type": "array",
-                "items": {
-                  "$ref": "#/components/schemas/EntityModelEmailAddress"
-                }
-              }
-            }
-          },
-          "_links": {
-            "$ref": "#/components/schemas/Links"
-          },
-          "page": {
-            "$ref": "#/components/schemas/PageMetadata"
           }
         }
       },
@@ -10524,7 +10508,7 @@
             "format": "date"
           },
           "zaehlart": {
-            "type": "string"
+            "$ref": "#/components/schemas/Zaehlart"
           },
           "punkt": {
             "$ref": "#/components/schemas/GeoPoint"
@@ -10561,16 +10545,16 @@
             "format": "int32"
           },
           "wetter": {
-            "type": "string"
+            "$ref": "#/components/schemas/Wetter"
           },
           "status": {
-            "type": "string"
+            "$ref": "#/components/schemas/Status"
           },
           "quelle": {
-            "type": "string"
+            "$ref": "#/components/schemas/Quelle"
           },
           "zaehldauer": {
-            "type": "string"
+            "$ref": "#/components/schemas/Zaehldauer"
           },
           "kommentar": {
             "type": "string"
@@ -10618,6 +10602,66 @@
             "type": "string"
           }
         }
+      },
+      "Quelle": {
+        "type": "string",
+        "enum": ["MANUALLY", "DETECTOR", "RADAR", "VIDEO"]
+      },
+      "Status": {
+        "type": "string",
+        "enum": [
+          "CREATED",
+          "INSTRUCTED",
+          "COUNTING",
+          "ACCOMPLISHED",
+          "CORRECTION",
+          "ACTIVE",
+          "INACTIVE"
+        ]
+      },
+      "Wetter": {
+        "type": "string",
+        "enum": [
+          "SUNNY",
+          "SUNNY_COLD",
+          "CLOUDY",
+          "RAINY",
+          "CONTINUOUS_RAINY",
+          "FOGGY",
+          "SNOWY",
+          "NO_INFORMATION"
+        ]
+      },
+      "Zaehlart": {
+        "type": "string",
+        "enum": [
+          "N",
+          "H",
+          "Q",
+          "Q_",
+          "QB",
+          "QH",
+          "QI",
+          "QS",
+          "QT",
+          "QR",
+          "R",
+          "QJS",
+          "FJS",
+          "QU",
+          "T",
+          "TK"
+        ]
+      },
+      "Zaehldauer": {
+        "type": "string",
+        "enum": [
+          "DAUER_2_X_4_STUNDEN",
+          "DAUER_24_STUNDEN",
+          "DAUER_16_STUNDEN",
+          "DAUER_13_STUNDEN",
+          "SONSTIGE"
+        ]
       },
       "BearbeiteZaehlstelleDTO": {
         "required": ["lat", "lng", "punkt", "stadtbezirkNummer"],
@@ -11270,16 +11314,6 @@
       "Rounding": {
         "type": "string",
         "enum": ["NONE", "R10", "R100"]
-      },
-      "Zaehldauer": {
-        "type": "string",
-        "enum": [
-          "DAUER_2_X_4_STUNDEN",
-          "DAUER_24_STUNDEN",
-          "DAUER_16_STUNDEN",
-          "DAUER_13_STUNDEN",
-          "SONSTIGE"
-        ]
       },
       "Zeitblock": {
         "type": "string",
@@ -11981,22 +12015,22 @@
             "type": "integer",
             "format": "int32"
           },
+          "anteilGueterverkehrAnKfzProzent": {
+            "type": "number"
+          },
+          "anteilSchwerverkehrAnKfzProzent": {
+            "type": "number"
+          },
           "gesamt": {
             "type": "number"
           },
           "kfz": {
             "type": "number"
           },
-          "schwerverkehr": {
-            "type": "number"
-          },
           "gueterverkehr": {
             "type": "number"
           },
-          "anteilSchwerverkehrAnKfzProzent": {
-            "type": "number"
-          },
-          "anteilGueterverkehrAnKfzProzent": {
+          "schwerverkehr": {
             "type": "number"
           }
         }
@@ -12672,17 +12706,17 @@
           "rightBorderAnteile": {
             "type": "string"
           },
-          "showTabsFahrzeugtypen": {
-            "type": "boolean"
-          },
           "showTabsFahrzeugklassen": {
             "type": "boolean"
           },
-          "colWidthFahrzeugtypen": {
+          "showTabsFahrzeugtypen": {
+            "type": "boolean"
+          },
+          "colWidthFahrzeugklassen": {
             "type": "integer",
             "format": "int32"
           },
-          "colWidthFahrzeugklassen": {
+          "colWidthFahrzeugtypen": {
             "type": "integer",
             "format": "int32"
           },
@@ -12693,10 +12727,10 @@
           "showTabsAnteile": {
             "type": "boolean"
           },
-          "rightBorderFahrzeugtypen": {
+          "rightBorderFahrzeugklassen": {
             "type": "string"
           },
-          "rightBorderFahrzeugklassen": {
+          "rightBorderFahrzeugtypen": {
             "type": "string"
           }
         }
@@ -14005,27 +14039,6 @@
           }
         }
       },
-      "Zaehlart": {
-        "type": "string",
-        "enum": [
-          "N",
-          "H",
-          "Q",
-          "Q_",
-          "QB",
-          "QH",
-          "QI",
-          "QS",
-          "QT",
-          "QR",
-          "R",
-          "QJS",
-          "FJS",
-          "QU",
-          "T",
-          "TK"
-        ]
-      },
       "LadeAuswertungSpitzenstundeDTO": {
         "required": [
           "anteilGueterverkehrAnKfzProzent",
@@ -14127,22 +14140,22 @@
           "zaehlsituationErweitert": {
             "type": "string"
           },
+          "anteilGueterverkehrAnKfzProzent": {
+            "type": "number"
+          },
+          "anteilSchwerverkehrAnKfzProzent": {
+            "type": "number"
+          },
           "gesamt": {
             "type": "number"
           },
           "kfz": {
             "type": "number"
           },
-          "schwerverkehr": {
-            "type": "number"
-          },
           "gueterverkehr": {
             "type": "number"
           },
-          "anteilSchwerverkehrAnKfzProzent": {
-            "type": "number"
-          },
-          "anteilGueterverkehrAnKfzProzent": {
+          "schwerverkehr": {
             "type": "number"
           }
         }
@@ -14274,10 +14287,10 @@
         "discriminator": {
           "propertyName": "belastungsplanTyp",
           "mapping": {
-            "DEFAULT": "#/components/schemas/LadeBelastungsplanDTO",
-            "QJS": "#/components/schemas/LadeBelastungsplanQjsDTO",
             "QU": "#/components/schemas/LadeBelastungsplanQuDTO",
-            "FJS": "#/components/schemas/LadeBelastungsplanFjsDTO"
+            "FJS": "#/components/schemas/LadeBelastungsplanFjsDTO",
+            "DEFAULT": "#/components/schemas/LadeBelastungsplanDTO",
+            "QJS": "#/components/schemas/LadeBelastungsplanQjsDTO"
           }
         },
         "oneOf": [

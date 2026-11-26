@@ -197,10 +197,10 @@ import type KeyVal from "@/types/common/KeyVal";
 
 import { computed, onMounted, ref } from "vue";
 
+import { Status } from "@/api/client";
 import LhmTextField from "@/components/common/LhmTextField.vue";
-import { quelleText } from "@/types/enum/Quelle";
-import Status from "@/types/enum/Status";
-import { wetterDropDown } from "@/types/enum/Wetter";
+import { quelleText } from "@/types/enum/QuelleText";
+import { wetterDropDown } from "@/types/enum/WetterText";
 import { zaehlartenDropDown, zaehlartText } from "@/types/enum/ZaehlartText";
 import { zaehldauerText } from "@/types/enum/ZaehldauerText";
 import { useDateUtils } from "@/util/DateUtils";
@@ -250,8 +250,8 @@ const getZaehlarten = computed<Array<KeyVal>>(() => {
 
 const isZaehlungReadonly = computed<boolean>(() => {
   return (
-    zaehlung.value.status !== Status.COUNTING &&
-    zaehlung.value.status !== Status.CORRECTION
+    zaehlung.value.status !== Status.Counting &&
+    zaehlung.value.status !== Status.Correction
   );
 });
 
@@ -260,7 +260,7 @@ const formattedDate = computed(() => {
 });
 
 const isZaehlungInstructed = computed<boolean>(() => {
-  return zaehlung.value.status === Status.INSTRUCTED;
+  return zaehlung.value.status === Status.Instructed;
 });
 
 const formattedDateAsText = computed<string>(() => {

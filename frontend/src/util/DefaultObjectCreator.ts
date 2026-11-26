@@ -8,9 +8,7 @@ import type {
 
 import { LatLng } from "leaflet";
 
-import Quelle from "@/types/enum/Quelle";
-import Status from "@/types/enum/Status";
-import Wetter from "@/types/enum/Wetter";
+import { Quelle, Status, Wetter } from "@/api/client";
 
 export default class DefaultObjectCreator {
   private static readonly MUNICH_CENTER_LATITUDE: number = 48.137227;
@@ -30,9 +28,9 @@ export default class DefaultObjectCreator {
       verkehrsbeziehungen: [],
       laengsverkehr: [],
       querungsverkehr: [],
-      quelle: Quelle.MANUALLY,
-      wetter: Wetter.NO_INFORMATION,
-      status: Status.CREATED,
+      quelle: Quelle.Manually,
+      wetter: Wetter.NoInformation,
+      status: Status.Created,
       kreisverkehr: false,
       sonderzaehlung: false,
       zaehlIntervall: 15,

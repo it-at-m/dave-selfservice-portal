@@ -5,13 +5,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import {
   ExternalZaehlungDTOFromJSON,
+  Quelle,
+  Status,
+  Wetter,
   Zaehlart,
   Zaehldauer,
 } from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
-import Quelle from "@/types/enum/Quelle";
-import Status from "@/types/enum/Status";
-import Wetter from "@/types/enum/Wetter";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
 describe("prepareForSaveZaehlung", () => {
@@ -62,9 +62,9 @@ describe("prepareForSaveZaehlung", () => {
       zaehlsituationErweitert: "Extended Situation",
       zaehlIntervall: 15,
       zaehldauer: Zaehldauer.Dauer24Stunden,
-      wetter: Wetter.NO_INFORMATION,
-      status: Status.COUNTING,
-      quelle: Quelle.MANUALLY,
+      wetter: Wetter.NoInformation,
+      status: Status.Counting,
+      quelle: Quelle.Manually,
       kommentar: "Comment",
       knotenarme: [
         {

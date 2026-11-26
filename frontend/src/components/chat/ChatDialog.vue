@@ -228,7 +228,7 @@ function getTitle(item: ChatMessageDTO) {
     : "Mobilitätsreferat";
 }
 function getMessageTime(item: ChatMessageDTO) {
-  return dateUtils.getShortVersionOfDateWithTime(item.timestamp);
+  return dateUtils.getShortVersionOfDateWithTime(item.timestamp || "");
 }
 
 function loadMessages() {

@@ -196,12 +196,13 @@ import { LatLng } from "leaflet";
 import { cloneDeep, isEmpty, isNil } from "lodash";
 import { computed, ref } from "vue";
 
-import { Zaehlart } from "@/api/client";
+import { Status, Zaehlart } from "@/api/client";
 import { serializeDate } from "@/api/client/runtime";
 import { ApiError } from "@/api/error";
 import ZaehlungService from "@/api/service/ZaehlungService";
 import IconOptions from "@/components/icons/IconOptions";
 import QuelleIcon from "@/components/icons/QuelleIcon.vue";
+import { statusIcon } from "@/components/icons/StatusIcon";
 import WetterIcon from "@/components/icons/WetterIcon.vue";
 import ZaehlartIcon from "@/components/icons/ZaehlartIcon.vue";
 import ZaehldauerIcon from "@/components/icons/ZaehldauerIcon.vue";
@@ -210,7 +211,6 @@ import ZaehlungGeometrie from "@/components/zaehlung/form/verkehrsbeziehungen/Za
 import { getCsvContentForAllZaehlarten } from "@/components/zaehlung/ZaehlungCsvHeader";
 import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
-import Status, { statusIcon } from "@/types/enum/Status";
 import { useDateUtils } from "@/util/DateUtils";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
@@ -287,11 +287,11 @@ const statusDesign = computed(() => {
 });
 
 const showButtonKorrektur = computed<boolean>(() => {
-  return hasUploadedData.value && zaehlung.value.status === Status.CORRECTION;
+  return hasUploadedData.value && zaehlung.value.status === Status.Correction;
 });
 
 const showButtonAbschliessen = computed<boolean>(() => {
-  return hasUploadedData.value && zaehlung.value.status === Status.COUNTING;
+  return hasUploadedData.value && zaehlung.value.status === Status.Counting;
 });
 
 // Liefert nur die Knotenarme zurueck, die ausgehenden Verkehr haben
@@ -325,7 +325,7 @@ function zaehlungAbschliessen(): void {
   if (hasUploadedData.value) {
     const updateZaehlung: UpdateStatusDTO = {} as UpdateStatusDTO;
     updateZaehlung.zaehlungId = zaehlung.value.id;
-    updateZaehlung.status = Status.ACCOMPLISHED;
+    updateZaehlung.status = Status.Accomplished;
     ZaehlungService.updateStatus(updateZaehlung)
       .then(() => {
         snackbarStore.showSuccess(
@@ -347,7 +347,7 @@ function zaehlungKorrigieren(): void {
   if (hasUploadedData.value) {
     const updateZaehlung: UpdateStatusDTO = {} as UpdateStatusDTO;
     updateZaehlung.zaehlungId = zaehlung.value.id;
-    updateZaehlung.status = Status.ACCOMPLISHED;
+    updateZaehlung.status = Status.Accomplished;
     ZaehlungService.updateStatus(updateZaehlung)
       .then(() => {
         snackbarStore.showSuccess(

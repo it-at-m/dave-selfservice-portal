@@ -18,6 +18,11 @@ import type { ExternalQuerungsverkehrDTO } from "./ExternalQuerungsverkehrDTO";
 import type { ExternalVerkehrsbeziehungDTO } from "./ExternalVerkehrsbeziehungDTO";
 import type { Fahrzeug } from "./Fahrzeug";
 import type { GeoPoint } from "./GeoPoint";
+import type { Quelle } from "./Quelle";
+import type { Status } from "./Status";
+import type { Wetter } from "./Wetter";
+import type { Zaehlart } from "./Zaehlart";
+import type { Zaehldauer } from "./Zaehldauer";
 
 import {
   mapValues,
@@ -62,6 +67,36 @@ import {
   GeoPointToJSON,
   GeoPointToJSONTyped,
 } from "./GeoPoint";
+import {
+  QuelleFromJSON,
+  QuelleFromJSONTyped,
+  QuelleToJSON,
+  QuelleToJSONTyped,
+} from "./Quelle";
+import {
+  StatusFromJSON,
+  StatusFromJSONTyped,
+  StatusToJSON,
+  StatusToJSONTyped,
+} from "./Status";
+import {
+  WetterFromJSON,
+  WetterFromJSONTyped,
+  WetterToJSON,
+  WetterToJSONTyped,
+} from "./Wetter";
+import {
+  ZaehlartFromJSON,
+  ZaehlartFromJSONTyped,
+  ZaehlartToJSON,
+  ZaehlartToJSONTyped,
+} from "./Zaehlart";
+import {
+  ZaehldauerFromJSON,
+  ZaehldauerFromJSONTyped,
+  ZaehldauerToJSON,
+  ZaehldauerToJSONTyped,
+} from "./Zaehldauer";
 
 /**
  *
@@ -80,7 +115,7 @@ export interface ExternalZaehlungDTO {
   /**
    *
    */
-  zaehlart?: string;
+  zaehlart?: Zaehlart;
   /**
    *
    */
@@ -124,19 +159,19 @@ export interface ExternalZaehlungDTO {
   /**
    *
    */
-  wetter?: string;
+  wetter?: Wetter;
   /**
    *
    */
-  status?: string;
+  status?: Status;
   /**
    *
    */
-  quelle?: string;
+  quelle?: Quelle;
   /**
    *
    */
-  zaehldauer?: string;
+  zaehldauer?: Zaehldauer;
   /**
    *
    */
@@ -217,7 +252,8 @@ export function ExternalZaehlungDTOFromJSONTyped(
   return {
     id: json["id"] == null ? undefined : json["id"],
     datum: json["datum"] == null ? undefined : parseDate(json["datum"]),
-    zaehlart: json["zaehlart"] == null ? undefined : json["zaehlart"],
+    zaehlart:
+      json["zaehlart"] == null ? undefined : ZaehlartFromJSON(json["zaehlart"]),
     punkt: json["punkt"] == null ? undefined : GeoPointFromJSON(json["punkt"]),
     projektNummer:
       json["projektNummer"] == null ? undefined : json["projektNummer"],
@@ -237,10 +273,13 @@ export function ExternalZaehlungDTOFromJSONTyped(
         ? undefined
         : json["zaehlsituationErweitert"],
     zaehlIntervall: json["zaehlIntervall"],
-    wetter: json["wetter"] == null ? undefined : json["wetter"],
-    status: json["status"] == null ? undefined : json["status"],
-    quelle: json["quelle"] == null ? undefined : json["quelle"],
-    zaehldauer: json["zaehldauer"] == null ? undefined : json["zaehldauer"],
+    wetter: json["wetter"] == null ? undefined : WetterFromJSON(json["wetter"]),
+    status: json["status"] == null ? undefined : StatusFromJSON(json["status"]),
+    quelle: json["quelle"] == null ? undefined : QuelleFromJSON(json["quelle"]),
+    zaehldauer:
+      json["zaehldauer"] == null
+        ? undefined
+        : ZaehldauerFromJSON(json["zaehldauer"]),
     kommentar: json["kommentar"] == null ? undefined : json["kommentar"],
     knotenarme:
       json["knotenarme"] == null
@@ -302,7 +341,7 @@ export function ExternalZaehlungDTOToJSONTyped(
     id: value["id"],
     datum:
       value["datum"] == null ? value["datum"] : serializeDate(value["datum"]),
-    zaehlart: value["zaehlart"],
+    zaehlart: ZaehlartToJSON(value["zaehlart"]),
     punkt: GeoPointToJSON(value["punkt"]),
     projektNummer: value["projektNummer"],
     projektName: value["projektName"],
@@ -316,10 +355,10 @@ export function ExternalZaehlungDTOToJSONTyped(
     zaehlsituation: value["zaehlsituation"],
     zaehlsituationErweitert: value["zaehlsituationErweitert"],
     zaehlIntervall: value["zaehlIntervall"],
-    wetter: value["wetter"],
-    status: value["status"],
-    quelle: value["quelle"],
-    zaehldauer: value["zaehldauer"],
+    wetter: WetterToJSON(value["wetter"]),
+    status: StatusToJSON(value["status"]),
+    quelle: QuelleToJSON(value["quelle"]),
+    zaehldauer: ZaehldauerToJSON(value["zaehldauer"]),
     kommentar: value["kommentar"],
     knotenarme:
       value["knotenarme"] == null

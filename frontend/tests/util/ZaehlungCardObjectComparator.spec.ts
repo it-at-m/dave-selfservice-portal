@@ -6,7 +6,7 @@ import { Zaehlart } from "@/api/client";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import ZaehlungCardObjectComparator from "@/util/ZaehlungCardObjectComparator";
 
-function card(datum: Date, zaehlart: string) {
+function card(datum: Date, zaehlart: Zaehlart) {
   const zaehlung: ExternalZaehlungDTO = {
     ...DefaultObjectCreator.createDefaultZaehlungDTO(),
     datum,

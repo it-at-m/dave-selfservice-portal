@@ -8,7 +8,7 @@ import type {
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
-import Status from "@/types/enum/Status";
+import { Status } from "@/api/client";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 
 export const useZaehlungStore = defineStore("zaehlungStore", () => {
@@ -18,15 +18,15 @@ export const useZaehlungStore = defineStore("zaehlungStore", () => {
 
   const isZaehlungEditable = computed(() => {
     return (
-      zaehlung.value.status === Status.COUNTING ||
-      zaehlung.value.status === Status.CORRECTION
+      zaehlung.value.status === Status.Counting ||
+      zaehlung.value.status === Status.Correction
     );
   });
 
   const isHochrechnungsfaktorEditable = computed(() => {
     return (
-      zaehlung.value.status === Status.CREATED ||
-      zaehlung.value.status === Status.INSTRUCTED
+      zaehlung.value.status === Status.Created ||
+      zaehlung.value.status === Status.Instructed
     );
   });
 

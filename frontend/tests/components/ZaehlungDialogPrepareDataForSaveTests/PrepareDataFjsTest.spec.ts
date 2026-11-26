@@ -7,13 +7,13 @@ import {
   Bewegungsrichtung,
   ExternalZaehlungDTOFromJSON,
   Himmelsrichtung,
+  Quelle,
+  Status,
+  Wetter,
   Zaehlart,
   Zaehldauer,
 } from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
-import Quelle from "@/types/enum/Quelle";
-import Status from "@/types/enum/Status";
-import Wetter from "@/types/enum/Wetter";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
 describe("prepareForSaveZaehlungFjs", () => {
@@ -54,9 +54,9 @@ describe("prepareForSaveZaehlungFjs", () => {
       zaehlsituationErweitert: "Extended Situation FJS",
       zaehlIntervall: 15,
       zaehldauer: Zaehldauer.Dauer24Stunden,
-      wetter: Wetter.NO_INFORMATION,
-      status: Status.COUNTING,
-      quelle: Quelle.MANUALLY,
+      wetter: Wetter.NoInformation,
+      status: Status.Counting,
+      quelle: Quelle.Manually,
       kommentar: "Comment FJS",
       knotenarme: [
         {

@@ -154,14 +154,13 @@ import { LatLng } from "leaflet";
 import { isEmpty, isNil, parseInt, toArray } from "lodash";
 import { computed, ref } from "vue";
 
-import { Zaehlart } from "@/api/client";
+import { Status, Zaehlart } from "@/api/client";
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrForm.vue";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
-import Status from "@/types/enum/Status";
 import UploadedFileStatus from "@/types/enum/UploadedFileStatus";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
@@ -233,8 +232,8 @@ const coordsZaehlung = computed<LatLng>(() => {
 
 const isZaehlungEditable = computed<boolean>(() => {
   return (
-    zaehlung.value.status === Status.COUNTING ||
-    zaehlung.value.status === Status.CORRECTION
+    zaehlung.value.status === Status.Counting ||
+    zaehlung.value.status === Status.Correction
   );
 });
 
