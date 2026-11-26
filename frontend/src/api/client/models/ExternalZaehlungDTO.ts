@@ -16,6 +16,7 @@ import type { ExternalKnotenarmDTO } from "./ExternalKnotenarmDTO";
 import type { ExternalLaengsverkehrDTO } from "./ExternalLaengsverkehrDTO";
 import type { ExternalQuerungsverkehrDTO } from "./ExternalQuerungsverkehrDTO";
 import type { ExternalVerkehrsbeziehungDTO } from "./ExternalVerkehrsbeziehungDTO";
+import type { Fahrzeug } from "./Fahrzeug";
 import type { GeoPoint } from "./GeoPoint";
 
 import {
@@ -49,6 +50,12 @@ import {
   ExternalVerkehrsbeziehungDTOToJSON,
   ExternalVerkehrsbeziehungDTOToJSONTyped,
 } from "./ExternalVerkehrsbeziehungDTO";
+import {
+  FahrzeugFromJSON,
+  FahrzeugFromJSONTyped,
+  FahrzeugToJSON,
+  FahrzeugToJSONTyped,
+} from "./Fahrzeug";
 import {
   GeoPointFromJSON,
   GeoPointFromJSONTyped,
@@ -101,7 +108,7 @@ export interface ExternalZaehlungDTO {
   /**
    *
    */
-  kategorien?: Array<ExternalZaehlungDTOKategorienEnum>;
+  kategorien?: Array<Fahrzeug>;
   /**
    *
    */
@@ -177,27 +184,6 @@ export interface ExternalZaehlungDTO {
 }
 
 /**
- * @export
- */
-export const ExternalZaehlungDTOKategorienEnum = {
-  Kfz: "KFZ",
-  Sv: "SV",
-  Gv: "GV",
-  SvP: "SV_P",
-  GvP: "GV_P",
-  Pkw: "PKW",
-  Lkw: "LKW",
-  Lz: "LZ",
-  Bus: "BUS",
-  Krad: "KRAD",
-  Rad: "RAD",
-  Fuss: "FUSS",
-  PkwEinheit: "PKW_EINHEIT",
-} as const;
-export type ExternalZaehlungDTOKategorienEnum =
-  (typeof ExternalZaehlungDTOKategorienEnum)[keyof typeof ExternalZaehlungDTOKategorienEnum];
-
-/**
  * Check if a given object implements the ExternalZaehlungDTO interface.
  */
 export function instanceOfExternalZaehlungDTO(
@@ -240,7 +226,10 @@ export function ExternalZaehlungDTOFromJSONTyped(
       json["kreuzungsname"] == null ? undefined : json["kreuzungsname"],
     sonderzaehlung: json["sonderzaehlung"],
     kreisverkehr: json["kreisverkehr"],
-    kategorien: json["kategorien"] == null ? undefined : json["kategorien"],
+    kategorien:
+      json["kategorien"] == null
+        ? undefined
+        : (json["kategorien"] as Array<any>).map(FahrzeugFromJSON),
     zaehlsituation:
       json["zaehlsituation"] == null ? undefined : json["zaehlsituation"],
     zaehlsituationErweitert:
@@ -320,7 +309,10 @@ export function ExternalZaehlungDTOToJSONTyped(
     kreuzungsname: value["kreuzungsname"],
     sonderzaehlung: value["sonderzaehlung"],
     kreisverkehr: value["kreisverkehr"],
-    kategorien: value["kategorien"],
+    kategorien:
+      value["kategorien"] == null
+        ? undefined
+        : (value["kategorien"] as Array<any>).map(FahrzeugToJSON),
     zaehlsituation: value["zaehlsituation"],
     zaehlsituationErweitert: value["zaehlsituationErweitert"],
     zaehlIntervall: value["zaehlIntervall"],

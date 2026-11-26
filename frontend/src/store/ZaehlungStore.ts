@@ -2,12 +2,12 @@ import type {
   ExternalKnotenarmDTO,
   ExternalVerkehrsbeziehungDTO,
   ExternalZaehlungDTO,
+  Fahrzeug,
 } from "@/api/client";
 
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 
-import Fahrzeug from "@/types/enum/Fahrzeug";
 import Status from "@/types/enum/Status";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 

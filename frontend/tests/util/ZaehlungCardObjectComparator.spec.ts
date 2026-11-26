@@ -2,7 +2,7 @@ import type { ExternalZaehlungDTO } from "@/api/client";
 
 import { describe, expect, it } from "vitest";
 
-import Zaehlart from "@/types/enum/Zaehlart";
+import { Zaehlart } from "@/api/client";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import ZaehlungCardObjectComparator from "@/util/ZaehlungCardObjectComparator";
 
@@ -19,7 +19,7 @@ describe("ZaehlungCardObjectComparator", () => {
   it("sorts generated dates descending and prefers standard counts on the same calendar day", () => {
     const older = card(new Date(2026, 2, 9), Zaehlart.N);
     const standard = card(new Date(2026, 2, 10), Zaehlart.N);
-    const other = card(new Date(2026, 2, 10), Zaehlart.QJS);
+    const other = card(new Date(2026, 2, 10), Zaehlart.Qjs);
 
     expect(
       [older, other, standard].sort(

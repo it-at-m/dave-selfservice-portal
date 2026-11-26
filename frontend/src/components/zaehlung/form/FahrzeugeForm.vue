@@ -80,7 +80,7 @@ import type { ExternalZaehlungDTO } from "@/api/client";
 
 import { ref } from "vue";
 
-import Fahrzeug from "@/types/enum/Fahrzeug";
+import { Fahrzeug } from "@/api/client";
 
 interface Props {
   height: string;
@@ -92,24 +92,24 @@ const zaehlung = defineModel<ExternalZaehlungDTO>({
 });
 
 const pkw = ref<boolean>(
-  zaehlung.value.kategorien?.includes(Fahrzeug.PKW) ?? false
+  zaehlung.value.kategorien?.includes(Fahrzeug.Pkw) ?? false
 );
 const lkw = ref<boolean>(
-  zaehlung.value.kategorien?.includes(Fahrzeug.LKW) ?? false
+  zaehlung.value.kategorien?.includes(Fahrzeug.Lkw) ?? false
 );
 const lz = ref<boolean>(
-  zaehlung.value.kategorien?.includes(Fahrzeug.LZ) ?? false
+  zaehlung.value.kategorien?.includes(Fahrzeug.Lz) ?? false
 );
 const bus = ref<boolean>(
-  zaehlung.value.kategorien?.includes(Fahrzeug.BUS) ?? false
+  zaehlung.value.kategorien?.includes(Fahrzeug.Bus) ?? false
 );
 const krad = ref<boolean>(
-  zaehlung.value.kategorien?.includes(Fahrzeug.KRAD) ?? false
+  zaehlung.value.kategorien?.includes(Fahrzeug.Krad) ?? false
 );
 const rad = ref<boolean>(
-  zaehlung.value.kategorien?.includes(Fahrzeug.RAD) ?? false
+  zaehlung.value.kategorien?.includes(Fahrzeug.Rad) ?? false
 );
 const fuss = ref<boolean>(
-  zaehlung.value.kategorien?.includes(Fahrzeug.FUSS) ?? false
+  zaehlung.value.kategorien?.includes(Fahrzeug.Fuss) ?? false
 );
 </script>

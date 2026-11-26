@@ -9,12 +9,11 @@ import { shallowMount } from "@vue/test-utils";
 import { createPinia, setActivePinia } from "pinia";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { Bewegungsrichtung, Himmelsrichtung } from "@/api/client";
+import { Bewegungsrichtung, Himmelsrichtung, Zaehlart } from "@/api/client";
 import KnotenLageForm from "@/components/zaehlung/form/KnotenLageForm.vue";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import UploadedFileStatus from "@/types/enum/UploadedFileStatus";
-import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 
 function createKnotenarmDTOWithNumber(number: number): ExternalKnotenarmDTO {
@@ -168,7 +167,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
   describe("validateIntervallsWithRequiredRichtungsinformationAreExistent", () => {
     it("returns empty for QJS when all required nach+strassenseite combos exist", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-      zaehlung.zaehlart = Zaehlart.QJS;
+      zaehlung.zaehlart = Zaehlart.Qjs;
       zaehlung.verkehrsbeziehungen = [
         { von: 1, nach: 2, strassenseite: Himmelsrichtung.N },
         { von: 1, nach: 3, strassenseite: Himmelsrichtung.S },
@@ -192,7 +191,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
 
     it("returns error for QJS when a required combo is missing", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-      zaehlung.zaehlart = Zaehlart.QJS;
+      zaehlung.zaehlart = Zaehlart.Qjs;
       zaehlung.verkehrsbeziehungen = [
         { von: 1, nach: 2, strassenseite: Himmelsrichtung.N },
         { von: 1, nach: 3, strassenseite: Himmelsrichtung.S },
@@ -217,7 +216,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
 
     it("returns empty for FJS when all required strassenseite+richtung combos exist", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-      zaehlung.zaehlart = Zaehlart.FJS;
+      zaehlung.zaehlart = Zaehlart.Fjs;
       zaehlung.laengsverkehr = [
         {
           knotenarm: 1,
@@ -249,7 +248,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
 
     it("returns error for FJS when a required strassenseite+richtung combo is missing", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-      zaehlung.zaehlart = Zaehlart.FJS;
+      zaehlung.zaehlart = Zaehlart.Fjs;
       zaehlung.laengsverkehr = [
         {
           knotenarm: 1,
@@ -284,7 +283,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
 
     it("returns empty for QU when all required richtung values are present", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-      zaehlung.zaehlart = Zaehlart.QU;
+      zaehlung.zaehlart = Zaehlart.Qu;
       zaehlung.querungsverkehr = [
         { knotenarm: 1, richtung: Himmelsrichtung.O },
         { knotenarm: 1, richtung: Himmelsrichtung.W },
@@ -308,7 +307,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
 
     it("returns error for QU when a required richtung is missing", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-      zaehlung.zaehlart = Zaehlart.QU;
+      zaehlung.zaehlart = Zaehlart.Qu;
       zaehlung.querungsverkehr = [
         { knotenarm: 1, richtung: Himmelsrichtung.N },
         { knotenarm: 1, richtung: Himmelsrichtung.O },
@@ -377,7 +376,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
 
     it("returns error for QJS when csv contains non-requested nach+strassenseite combos", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-      zaehlung.zaehlart = Zaehlart.QJS;
+      zaehlung.zaehlart = Zaehlart.Qjs;
       zaehlung.verkehrsbeziehungen = [
         { von: 1, nach: 2, strassenseite: Himmelsrichtung.N },
       ] as Array<ExternalVerkehrsbeziehungDTO>;
@@ -401,7 +400,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
 
     it("returns error for FJS when csv contains strassenseite+richtung not requested", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-      zaehlung.zaehlart = Zaehlart.FJS;
+      zaehlung.zaehlart = Zaehlart.Fjs;
       zaehlung.laengsverkehr = [
         {
           knotenarm: 1,
@@ -432,7 +431,7 @@ describe("KnotenLageForm.vue - isKnotenarmRelevantForFileUpload", () => {
 
     it("returns error for QU when csv contains richtung values not requested", () => {
       const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-      zaehlung.zaehlart = Zaehlart.QU;
+      zaehlung.zaehlart = Zaehlart.Qu;
       zaehlung.querungsverkehr = [
         { knotenarm: 1, richtung: Himmelsrichtung.W },
       ] as Array<ExternalQuerungsverkehrDTO>;

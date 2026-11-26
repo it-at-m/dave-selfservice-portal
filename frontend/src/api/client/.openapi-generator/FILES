@@ -114,13 +114,12 @@ models/ExternalLaengsverkehrDTO.ts
 models/ExternalQuerungsverkehrDTO.ts
 models/ExternalVerkehrsbeziehungDTO.ts
 models/ExternalZaehlungDTO.ts
+models/Fahrzeug.ts
 models/FahrzeugOptionsDTO.ts
 models/Fahrzeugklasse.ts
 models/FjsKnotenarmValue.ts
 models/FjsStrassenseiteValue.ts
 models/GenerateMessstellePdfRequest.ts
-models/GeneratePdfAuswertungRequest.ts
-models/GeneratePdfReportRequest.ts
 models/GeneratePdfReportRequestAssetsInner.ts
 models/GenerateZaehlungPdfRequest.ts
 models/GeoPoint.ts
@@ -253,6 +252,7 @@ models/Verkehrsart.ts
 models/Verkehrsbeziehung.ts
 models/VerkehrsbeziehungValue.ts
 models/VerkehrsbeziehungVisumDTO.ts
+models/Zaehlart.ts
 models/ZaehlartenKarteDTO.ts
 models/ZaehldatenIntervall.ts
 models/Zaehldauer.ts

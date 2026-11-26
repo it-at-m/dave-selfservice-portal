@@ -1,8 +1,6 @@
 import { describe, expect, test } from "vitest";
 
-import { serializeDate, Zaehldauer } from "@/api/client";
-import Fahrzeug from "@/types/enum/Fahrzeug";
-import Zaehlart from "@/types/enum/Zaehlart";
+import { Fahrzeug, serializeDate, Zaehlart, Zaehldauer } from "@/api/client";
 import {
   zaehldauerIntervallnummern,
   zaehldauerText,
@@ -269,13 +267,13 @@ describe("ValidationUtils -> hasCorrectZaehldatenHeader", () => {
 
 describe("ValidationUtils -> validateZaehlwerteOccurrence", () => {
   const vehicleIndexMap: Record<string, number> = {
-    [Fahrzeug.PKW]: 4,
-    [Fahrzeug.LKW]: 5,
-    [Fahrzeug.LZ]: 6,
-    [Fahrzeug.BUS]: 7,
-    [Fahrzeug.KRAD]: 8,
-    [Fahrzeug.RAD]: 9,
-    [Fahrzeug.FUSS]: 10,
+    [Fahrzeug.Pkw]: 4,
+    [Fahrzeug.Lkw]: 5,
+    [Fahrzeug.Lz]: 6,
+    [Fahrzeug.Bus]: 7,
+    [Fahrzeug.Krad]: 8,
+    [Fahrzeug.Rad]: 9,
+    [Fahrzeug.Fuss]: 10,
   };
 
   Object.entries(vehicleIndexMap).forEach(([veh, idx]) => {
@@ -308,7 +306,7 @@ describe("ValidationUtils -> validateZaehlwerteOccurrence", () => {
   });
 
   test("returns error when one of multiple requested categories is missing", () => {
-    const requested = [Fahrzeug.PKW, Fahrzeug.LKW];
+    const requested = [Fahrzeug.Pkw, Fahrzeug.Lkw];
     const line = new Array(11).fill("");
     line[4] = "1"; // PKW present
     // LKW missing
@@ -343,11 +341,10 @@ describe("ValidationUtils -> hasCorrectMetadata", () => {
     const knotenarmNr = 5;
     const zaehlung = {
       zaehlstelleNummer: "ZS123",
-      zaehlart: Zaehlart.QJS,
+      zaehlart: Zaehlart.Qjs,
       datum: new Date(2023, 0, 1),
     };
-    const metaZaehlart =
-      zaehlung.zaehlart === Zaehlart.N ? "" : zaehlung.zaehlart;
+    const metaZaehlart = zaehlung.zaehlart;
     const expectedMetaDataArray = [
       zaehlung.zaehlstelleNummer,
       metaZaehlart,
@@ -733,7 +730,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
     };
 
     const fjsZaehlung = createZaehlung();
-    fjsZaehlung.zaehlart = Zaehlart.FJS;
+    fjsZaehlung.zaehlart = Zaehlart.Fjs;
     fjsZaehlung.laengsverkehr = [
       { knotenarm: 2 },
       { knotenarm: undefined },
@@ -743,7 +740,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
     ]);
 
     const quZaehlung = createZaehlung();
-    quZaehlung.zaehlart = Zaehlart.QU;
+    quZaehlung.zaehlart = Zaehlart.Qu;
     quZaehlung.querungsverkehr = [
       { knotenarm: 3 },
       { knotenarm: undefined },
@@ -778,7 +775,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
 describe("ValidationUtils -> validateKnotenarmWithoutFile", () => {
   test("returns true only when a relevant Knotenarm has no filename", () => {
     const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-    zaehlung.zaehlart = Zaehlart.QU;
+    zaehlung.zaehlart = Zaehlart.Qu;
     zaehlung.querungsverkehr = [
       { knotenarm: 1 },
     ] as typeof zaehlung.querungsverkehr;

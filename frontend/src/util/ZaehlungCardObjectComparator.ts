@@ -1,6 +1,6 @@
 import type ZaehlungCardObject from "@/domain/ZaehlungCardObject";
 
-import Zaehlart from "@/types/enum/Zaehlart";
+import { Zaehlart } from "@/api/client";
 
 export default class ZaehlungCardObjectComparator {
   /**

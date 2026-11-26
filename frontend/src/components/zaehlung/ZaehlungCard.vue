@@ -196,6 +196,7 @@ import { LatLng } from "leaflet";
 import { cloneDeep, isEmpty, isNil } from "lodash";
 import { computed, ref } from "vue";
 
+import { Zaehlart } from "@/api/client";
 import { serializeDate } from "@/api/client/runtime";
 import { ApiError } from "@/api/error";
 import ZaehlungService from "@/api/service/ZaehlungService";
@@ -210,7 +211,6 @@ import { getCsvContentForAllZaehlarten } from "@/components/zaehlung/ZaehlungCsv
 import { useConfigurationStore } from "@/store/ConfigurationStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import Status, { statusIcon } from "@/types/enum/Status";
-import Zaehlart from "@/types/enum/Zaehlart";
 import { useDateUtils } from "@/util/DateUtils";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";

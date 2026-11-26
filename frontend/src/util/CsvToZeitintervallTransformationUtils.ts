@@ -10,9 +10,9 @@ import type { StartUhrzeitEndeUhrzeit } from "@/types/common/StartUhrzeitEndeUhr
 
 import { parseInt } from "lodash";
 
+import { Zaehlart } from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { intervallnummern } from "@/types/enum/Intervallnummern";
-import Zaehlart from "@/types/enum/Zaehlart";
 
 const SEPARATOR = ";";
 
@@ -24,11 +24,11 @@ export function useCsvToZeitintervallTransformationUtils() {
   ) {
     const zaehlart = zaehlung.zaehlart;
 
-    if (zaehlart === Zaehlart.FJS) {
+    if (zaehlart === Zaehlart.Fjs) {
       prepareForSaveZaehlungFjs(zaehlung);
-    } else if (zaehlart === Zaehlart.QU) {
+    } else if (zaehlart === Zaehlart.Qu) {
       prepareForSaveZaehlungQu(zaehlung);
-    } else if (zaehlart === Zaehlart.QJS) {
+    } else if (zaehlart === Zaehlart.Qjs) {
       prepareForSaveZaehlungQjs(zaehlung);
     } else {
       // alle anderen Zählarten

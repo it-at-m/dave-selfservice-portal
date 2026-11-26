@@ -12,26 +12,31 @@
  * Do not edit the class manually.
  */
 import type { GenerateMessstellePdfRequest } from "../models/GenerateMessstellePdfRequest";
-import type { GeneratePdfAuswertungRequest } from "../models/GeneratePdfAuswertungRequest";
-import type { GeneratePdfReportRequest } from "../models/GeneratePdfReportRequest";
+import type { GeneratePdfReportRequestAssetsInner } from "../models/GeneratePdfReportRequestAssetsInner";
 import type { GenerateZaehlungPdfRequest } from "../models/GenerateZaehlungPdfRequest";
+import type { LadeZaehldatenSteplineDTO } from "../models/LadeZaehldatenSteplineDTO";
+import type { MessstelleAuswertungOptionsDTO } from "../models/MessstelleAuswertungOptionsDTO";
 
 import {
   GenerateMessstellePdfRequestFromJSON,
   GenerateMessstellePdfRequestToJSON,
 } from "../models/GenerateMessstellePdfRequest";
 import {
-  GeneratePdfAuswertungRequestFromJSON,
-  GeneratePdfAuswertungRequestToJSON,
-} from "../models/GeneratePdfAuswertungRequest";
-import {
-  GeneratePdfReportRequestFromJSON,
-  GeneratePdfReportRequestToJSON,
-} from "../models/GeneratePdfReportRequest";
+  GeneratePdfReportRequestAssetsInnerFromJSON,
+  GeneratePdfReportRequestAssetsInnerToJSON,
+} from "../models/GeneratePdfReportRequestAssetsInner";
 import {
   GenerateZaehlungPdfRequestFromJSON,
   GenerateZaehlungPdfRequestToJSON,
 } from "../models/GenerateZaehlungPdfRequest";
+import {
+  LadeZaehldatenSteplineDTOFromJSON,
+  LadeZaehldatenSteplineDTOToJSON,
+} from "../models/LadeZaehldatenSteplineDTO";
+import {
+  MessstelleAuswertungOptionsDTOFromJSON,
+  MessstelleAuswertungOptionsDTOToJSON,
+} from "../models/MessstelleAuswertungOptionsDTO";
 import * as runtime from "../runtime";
 
 export interface GenerateMessstellePdfOperationRequest {
@@ -49,18 +54,34 @@ export interface GenerateMessstellePdfOperationRequest {
   generateMessstellePdfRequest: GenerateMessstellePdfRequest;
 }
 
-export interface GeneratePdfAuswertungOperationRequest {
+export interface GeneratePdfAuswertungRequest {
   /**
    *
    */
-  generatePdfAuswertungRequest: GeneratePdfAuswertungRequest;
+  department: string;
+  /**
+   *
+   */
+  options: MessstelleAuswertungOptionsDTO;
+  /**
+   *
+   */
+  auswertung: LadeZaehldatenSteplineDTO;
+  /**
+   *
+   */
+  chartAsBase64Png?: string;
 }
 
-export interface GeneratePdfReportOperationRequest {
+export interface GeneratePdfReportRequest {
   /**
    *
    */
-  generatePdfReportRequest: GeneratePdfReportRequest;
+  assets: Array<GeneratePdfReportRequestAssetsInner>;
+  /**
+   *
+   */
+  department: string;
 }
 
 export interface GenerateZaehlungPdfOperationRequest {
@@ -170,12 +191,26 @@ export class GeneratePdfControllerApi extends runtime.BaseAPI {
    * Creates request options for generatePdfAuswertung without sending the request
    */
   async generatePdfAuswertungRequestOpts(
-    requestParameters: GeneratePdfAuswertungOperationRequest
+    requestParameters: GeneratePdfAuswertungRequest
   ): Promise<runtime.RequestOpts> {
-    if (requestParameters["generatePdfAuswertungRequest"] == null) {
+    if (requestParameters["department"] == null) {
       throw new runtime.RequiredError(
-        "generatePdfAuswertungRequest",
-        'Required parameter "generatePdfAuswertungRequest" was null or undefined when calling generatePdfAuswertung().'
+        "department",
+        'Required parameter "department" was null or undefined when calling generatePdfAuswertung().'
+      );
+    }
+
+    if (requestParameters["options"] == null) {
+      throw new runtime.RequiredError(
+        "options",
+        'Required parameter "options" was null or undefined when calling generatePdfAuswertung().'
+      );
+    }
+
+    if (requestParameters["auswertung"] == null) {
+      throw new runtime.RequiredError(
+        "auswertung",
+        'Required parameter "auswertung" was null or undefined when calling generatePdfAuswertung().'
       );
     }
 
@@ -183,7 +218,58 @@ export class GeneratePdfControllerApi extends runtime.BaseAPI {
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    headerParameters["Content-Type"] = "application/json";
+    const consumes: runtime.Consume[] = [
+      { contentType: "multipart/form-data" },
+    ];
+    // @ts-ignore: canConsumeForm may be unused
+    const canConsumeForm = runtime.canConsumeForm(consumes);
+
+    let formParams: { append(param: string, value: any): any };
+    let useForm = false;
+    if (useForm) {
+      formParams = new FormData();
+    } else {
+      formParams = new URLSearchParams();
+    }
+
+    if (requestParameters["department"] != null) {
+      formParams.append("department", requestParameters["department"] as any);
+    }
+
+    if (requestParameters["options"] != null) {
+      formParams.append(
+        "options",
+        new Blob(
+          [
+            JSON.stringify(
+              MessstelleAuswertungOptionsDTOToJSON(requestParameters["options"])
+            ),
+          ],
+          { type: "application/json" }
+        )
+      );
+    }
+
+    if (requestParameters["auswertung"] != null) {
+      formParams.append(
+        "auswertung",
+        new Blob(
+          [
+            JSON.stringify(
+              LadeZaehldatenSteplineDTOToJSON(requestParameters["auswertung"])
+            ),
+          ],
+          { type: "application/json" }
+        )
+      );
+    }
+
+    if (requestParameters["chartAsBase64Png"] != null) {
+      formParams.append(
+        "chartAsBase64Png",
+        requestParameters["chartAsBase64Png"] as any
+      );
+    }
 
     let urlPath = `/generate-pdf/auswertung`;
 
@@ -192,16 +278,14 @@ export class GeneratePdfControllerApi extends runtime.BaseAPI {
       method: "POST",
       headers: headerParameters,
       query: queryParameters,
-      body: GeneratePdfAuswertungRequestToJSON(
-        requestParameters["generatePdfAuswertungRequest"]
-      ),
+      body: formParams,
     };
   }
 
   /**
    */
   async generatePdfAuswertungRaw(
-    requestParameters: GeneratePdfAuswertungOperationRequest,
+    requestParameters: GeneratePdfAuswertungRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<runtime.ApiResponse<string>> {
     const requestOptions =
@@ -218,7 +302,7 @@ export class GeneratePdfControllerApi extends runtime.BaseAPI {
   /**
    */
   async generatePdfAuswertung(
-    requestParameters: GeneratePdfAuswertungOperationRequest,
+    requestParameters: GeneratePdfAuswertungRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<string> {
     const response = await this.generatePdfAuswertungRaw(
@@ -232,12 +316,19 @@ export class GeneratePdfControllerApi extends runtime.BaseAPI {
    * Creates request options for generatePdfReport without sending the request
    */
   async generatePdfReportRequestOpts(
-    requestParameters: GeneratePdfReportOperationRequest
+    requestParameters: GeneratePdfReportRequest
   ): Promise<runtime.RequestOpts> {
-    if (requestParameters["generatePdfReportRequest"] == null) {
+    if (requestParameters["assets"] == null) {
       throw new runtime.RequiredError(
-        "generatePdfReportRequest",
-        'Required parameter "generatePdfReportRequest" was null or undefined when calling generatePdfReport().'
+        "assets",
+        'Required parameter "assets" was null or undefined when calling generatePdfReport().'
+      );
+    }
+
+    if (requestParameters["department"] == null) {
+      throw new runtime.RequiredError(
+        "department",
+        'Required parameter "department" was null or undefined when calling generatePdfReport().'
       );
     }
 
@@ -245,7 +336,30 @@ export class GeneratePdfControllerApi extends runtime.BaseAPI {
 
     const headerParameters: runtime.HTTPHeaders = {};
 
-    headerParameters["Content-Type"] = "application/json";
+    const consumes: runtime.Consume[] = [
+      { contentType: "multipart/form-data" },
+    ];
+    // @ts-ignore: canConsumeForm may be unused
+    const canConsumeForm = runtime.canConsumeForm(consumes);
+
+    let formParams: { append(param: string, value: any): any };
+    let useForm = false;
+    if (useForm) {
+      formParams = new FormData();
+    } else {
+      formParams = new URLSearchParams();
+    }
+
+    if (requestParameters["assets"] != null) {
+      formParams.append(
+        "assets",
+        requestParameters["assets"]!.join(runtime.COLLECTION_FORMATS["csv"])
+      );
+    }
+
+    if (requestParameters["department"] != null) {
+      formParams.append("department", requestParameters["department"] as any);
+    }
 
     let urlPath = `/generate-pdf/report`;
 
@@ -254,16 +368,14 @@ export class GeneratePdfControllerApi extends runtime.BaseAPI {
       method: "POST",
       headers: headerParameters,
       query: queryParameters,
-      body: GeneratePdfReportRequestToJSON(
-        requestParameters["generatePdfReportRequest"]
-      ),
+      body: formParams,
     };
   }
 
   /**
    */
   async generatePdfReportRaw(
-    requestParameters: GeneratePdfReportOperationRequest,
+    requestParameters: GeneratePdfReportRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<runtime.ApiResponse<string>> {
     const requestOptions =
@@ -280,7 +392,7 @@ export class GeneratePdfControllerApi extends runtime.BaseAPI {
   /**
    */
   async generatePdfReport(
-    requestParameters: GeneratePdfReportOperationRequest,
+    requestParameters: GeneratePdfReportRequest,
     initOverrides?: RequestInit | runtime.InitOverrideFunction
   ): Promise<string> {
     const response = await this.generatePdfReportRaw(

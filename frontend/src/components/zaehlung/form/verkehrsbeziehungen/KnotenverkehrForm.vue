@@ -61,7 +61,7 @@
             id="arrows_knotenarm1"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm1_west"
             >
               <path
@@ -106,7 +106,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm1_ost"
             >
               <path
@@ -151,7 +151,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm1_crossing"
             >
               <path
@@ -213,7 +213,7 @@
             id="arrows_knotenarm2"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm2_nord"
             >
               <path
@@ -258,7 +258,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm2_sued"
             >
               <path
@@ -303,7 +303,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm2_crossing"
             >
               <path
@@ -364,7 +364,7 @@
             id="arrows_knotenarm3"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm3_ost"
             >
               <path
@@ -409,7 +409,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm3_west"
             >
               <path
@@ -454,7 +454,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm3_crossing"
             >
               <path
@@ -516,7 +516,7 @@
             id="arrows_knotenarm4"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm4_sued"
             >
               <path
@@ -561,7 +561,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm4_nord"
             >
               <path
@@ -606,7 +606,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm4_crossing"
             >
               <path
@@ -672,7 +672,7 @@
             id="arrows_knotenarm5"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm5_nord_west"
             >
               <path
@@ -717,7 +717,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm5_sued_ost"
             >
               <path
@@ -762,7 +762,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm5_crossing"
             >
               <path
@@ -823,7 +823,7 @@
             id="arrows_knotenarm6"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrow_knotenarm6_nord_ost"
             >
               <path
@@ -868,7 +868,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm6_sued_west"
             >
               <path
@@ -913,7 +913,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm6_crossing"
             >
               <path
@@ -973,7 +973,7 @@
             id="arrows_knotenarm7"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm7_sued_ost"
             >
               <path
@@ -1018,7 +1018,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm7_nord_west"
             >
               <path
@@ -1063,7 +1063,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm7_crossing"
             >
               <path
@@ -1124,7 +1124,7 @@
             id="arrows_knotenarm8"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm8_sued_west"
             >
               <path
@@ -1169,7 +1169,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm8_nord_ost"
             >
               <path
@@ -1214,7 +1214,7 @@
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm8_crossing"
             >
               <path
@@ -1260,8 +1260,7 @@ import type {
 import { cloneDeep, isEmpty, remove, toArray } from "lodash";
 import { computed } from "vue";
 
-import { Bewegungsrichtung, Himmelsrichtung } from "@/api/client";
-import Zaehlart from "@/types/enum/Zaehlart";
+import { Bewegungsrichtung, Himmelsrichtung, Zaehlart } from "@/api/client";
 
 interface Props {
   height: string;
@@ -1361,7 +1360,7 @@ function activateOrDeactivateTotalKnotenarm(knotenarm: number) {
     return;
   }
 
-  if (zaehlung.value.zaehlart === Zaehlart.QU) {
+  if (zaehlung.value.zaehlart === Zaehlart.Qu) {
     if (querungsverkehreForKnotenarmStillSelected(knotenarm)) {
       // Deselect
       deselectQuerungsverkehreOfKnotenarm(knotenarm);
@@ -1387,7 +1386,7 @@ function activateOrDeactivateTotalKnotenarm(knotenarm: number) {
       }
     }
   }
-  if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+  if (zaehlung.value.zaehlart === Zaehlart.Fjs) {
     if (laengsverkehrForKnotenarmStillSelected(knotenarm)) {
       // Deselect
       deselectLaengsverkehreOfKnotenarm(knotenarm);

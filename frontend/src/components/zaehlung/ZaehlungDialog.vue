@@ -45,6 +45,7 @@ import type { ExternalZaehlungDTO } from "@/api/client";
 import { computed, watch } from "vue";
 import { useDisplay } from "vuetify";
 
+import { Zaehlart } from "@/api/client";
 import { ApiError } from "@/api/error";
 import ZaehlungService from "@/api/service/ZaehlungService";
 import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
@@ -53,7 +54,6 @@ import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
-import Zaehlart from "@/types/enum/Zaehlart";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
@@ -120,9 +120,9 @@ function save(): void {
   if (!validationStore.uploadedFilesChanged) {
     // Bewegungsbeziehungen auf leeres Array setzen, um ein Löschen der gespeicherten
     // Zeitintervalle auf Backend-Seite zu verhindern
-    if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+    if (zaehlung.value.zaehlart === Zaehlart.Fjs) {
       zaehlung.value.laengsverkehr = [];
-    } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
+    } else if (zaehlung.value.zaehlart === Zaehlart.Qu) {
       zaehlung.value.querungsverkehr = [];
     } else {
       zaehlung.value.verkehrsbeziehungen = [];

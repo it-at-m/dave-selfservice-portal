@@ -6,9 +6,8 @@ import type {
 
 import { difference, isEmpty, toArray } from "lodash";
 
-import { Bewegungsrichtung, Himmelsrichtung } from "@/api/client";
+import { Bewegungsrichtung, Himmelsrichtung, Zaehlart } from "@/api/client";
 import { himmelsrichtungText } from "@/types/enum/HimmelsrichtungText";
-import Zaehlart from "@/types/enum/Zaehlart";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
 const validationUtils = useValidationUtils();
@@ -43,12 +42,12 @@ export function useFussverkehrValidationUtils() {
    */
   function validateNachOccurrence(zaehlart: string | undefined, nach: string) {
     if (
-      (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QU) &&
+      (zaehlart === Zaehlart.Fjs || zaehlart === Zaehlart.Qu) &&
       nach.trim()
     ) {
       return `Der Zielknotenarm (nach) darf nicht gefüllt sein.`;
     }
-    if (zaehlart === Zaehlart.QJS && !nach.trim()) {
+    if (zaehlart === Zaehlart.Qjs && !nach.trim()) {
       return `Der Zielknotenarm (nach) darf nicht leer sein.`;
     }
   }
@@ -87,15 +86,15 @@ export function useFussverkehrValidationUtils() {
     strassenseite: string
   ) {
     if (
-      (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) &&
+      (zaehlart === Zaehlart.Fjs || zaehlart === Zaehlart.Qjs) &&
       !strassenseite?.trim()
     ) {
       return `Die Strassenseite darf nicht leer sein.`;
     }
-    if (zaehlart === Zaehlart.QU && strassenseite.trim()) {
+    if (zaehlart === Zaehlart.Qu && strassenseite.trim()) {
       return `Die Strassenseite muss leer sein.`;
     }
-    if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
+    if (zaehlart === Zaehlart.Fjs || zaehlart === Zaehlart.Qjs) {
       if (!himmelsrichtungText.has(strassenseite.trim())) {
         return `Die Strassenseite ist ungültig: ${strassenseite}.`;
       }
@@ -343,7 +342,7 @@ export function useFussverkehrValidationUtils() {
     strassenseite: string,
     armNummer: number
   ) {
-    if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
+    if (zaehlart === Zaehlart.Fjs || zaehlart === Zaehlart.Qjs) {
       if (
         isArmnummerAndStrassenseiteInvalid(
           strassenseite,
@@ -387,7 +386,7 @@ export function useFussverkehrValidationUtils() {
     richtung: string
   ) {
     // Prüfung der Richtung
-    if (zaehlart === Zaehlart.QU) {
+    if (zaehlart === Zaehlart.Qu) {
       if (
         ![
           Himmelsrichtung.N,
@@ -400,18 +399,18 @@ export function useFussverkehrValidationUtils() {
           Himmelsrichtung.Sw,
         ].includes(richtung.trim() as Himmelsrichtung)
       ) {
-        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.QU}.`;
+        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.Qu}.`;
       }
-    } else if (zaehlart === Zaehlart.FJS) {
+    } else if (zaehlart === Zaehlart.Fjs) {
       if (
         ![Bewegungsrichtung.Ein, Bewegungsrichtung.Aus].includes(
           richtung.trim() as Bewegungsrichtung
         )
       ) {
-        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.FJS}.`;
+        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.Fjs}.`;
       }
     } else {
-      // Zaehlart.QJS
+      // Zaehlart.Qjs
       if (richtung.trim()) {
         return `Die Richtung muss leer sein für Zählart ${zaehlart}.`;
       }
@@ -431,7 +430,7 @@ export function useFussverkehrValidationUtils() {
     armNummer: number,
     richtung: string
   ) {
-    if (zaehlart !== Zaehlart.QU) {
+    if (zaehlart !== Zaehlart.Qu) {
       return;
     }
     if (

@@ -4,13 +4,13 @@ import { beforeEach, describe, expect, it } from "vitest";
 import {
   ExternalZaehlungDTOFromJSON,
   Himmelsrichtung,
+  Zaehlart,
   Zaehldauer,
 } from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import Wetter from "@/types/enum/Wetter";
-import Zaehlart from "@/types/enum/Zaehlart";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
 describe("prepareForSaveZaehlungQu", () => {
@@ -47,7 +47,7 @@ describe("prepareForSaveZaehlungQu", () => {
       entityVersion: 0,
       createdTime: "0",
       datum: "2026-03-10",
-      zaehlart: Zaehlart.QU,
+      zaehlart: Zaehlart.Qu,
       punkt: { lat: 0, lon: 0 },
       projektNummer: "P123",
       projektName: "Project Name",

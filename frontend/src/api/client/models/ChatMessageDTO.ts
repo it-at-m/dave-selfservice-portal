@@ -45,7 +45,7 @@ export interface ChatMessageDTO {
   /**
    *
    */
-  timestamp: Date;
+  timestamp?: Date;
   /**
    *
    */
@@ -71,7 +71,6 @@ export function instanceOfChatMessageDTO(
   if (!("content" in value) || value["content"] === undefined) return false;
   if (!("participantId" in value) || value["participantId"] === undefined)
     return false;
-  if (!("timestamp" in value) || value["timestamp"] === undefined) return false;
   if (!("type" in value) || value["type"] === undefined) return false;
   if (!("uploaded" in value) || value["uploaded"] === undefined) return false;
   if (!("viewed" in value) || value["viewed"] === undefined) return false;
@@ -95,9 +94,7 @@ export function ChatMessageDTOFromJSONTyped(
     content: json["content"],
     participantId: json["participantId"],
     timestamp:
-      json["timestamp"] == null
-        ? json["timestamp"]
-        : parseDateTime(json["timestamp"]),
+      json["timestamp"] == null ? undefined : parseDateTime(json["timestamp"]),
     type: json["type"],
     uploaded: json["uploaded"],
     viewed: json["viewed"],

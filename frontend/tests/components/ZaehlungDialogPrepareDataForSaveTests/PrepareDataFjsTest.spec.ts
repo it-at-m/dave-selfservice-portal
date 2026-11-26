@@ -7,13 +7,13 @@ import {
   Bewegungsrichtung,
   ExternalZaehlungDTOFromJSON,
   Himmelsrichtung,
+  Zaehlart,
   Zaehldauer,
 } from "@/api/client";
 import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import Quelle from "@/types/enum/Quelle";
 import Status from "@/types/enum/Status";
 import Wetter from "@/types/enum/Wetter";
-import Zaehlart from "@/types/enum/Zaehlart";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
 describe("prepareForSaveZaehlungFjs", () => {
@@ -42,7 +42,7 @@ describe("prepareForSaveZaehlungFjs", () => {
       entityVersion: 0,
       createdTime: "0",
       datum: "2026-03-10",
-      zaehlart: Zaehlart.FJS,
+      zaehlart: Zaehlart.Fjs,
       punkt: { lat: 0, lon: 0 },
       projektNummer: "P456",
       projektName: "Another Project",

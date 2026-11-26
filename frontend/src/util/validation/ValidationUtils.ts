@@ -2,10 +2,8 @@ import type { ExternalKnotenarmDTO, ExternalZaehlungDTO } from "@/api/client";
 
 import { isEmpty, isNil, join, sum, toArray, trim, uniq } from "lodash";
 
-import { Zaehldauer } from "@/api/client";
+import { Fahrzeug, Zaehlart, Zaehldauer } from "@/api/client";
 import { serializeDate } from "@/api/client/runtime";
-import Fahrzeug from "@/types/enum/Fahrzeug";
-import Zaehlart from "@/types/enum/Zaehlart";
 import {
   zaehldauerIntervallnummern,
   zaehldauerText,
@@ -393,7 +391,7 @@ export function useValidationUtils() {
     requestedKategorien: Array<string> = [],
     splittedLine: Array<string>
   ) {
-    if (requestedKategorien.includes(Fahrzeug.PKW.valueOf())) {
+    if (requestedKategorien.includes(Fahrzeug.Pkw.valueOf())) {
       if (isEmpty(trim(splittedLine[4]))) {
         return `Der Zählwert von "PKW" darf nicht leer sein.`;
       }
@@ -402,7 +400,7 @@ export function useValidationUtils() {
         return `Der Zählwert von "PKW" muss leer sein.`;
       }
     }
-    if (requestedKategorien.includes(Fahrzeug.LKW.valueOf())) {
+    if (requestedKategorien.includes(Fahrzeug.Lkw.valueOf())) {
       if (isEmpty(trim(splittedLine[5]))) {
         return `Der Zählwert von "LKW" darf nicht leer sein.`;
       }
@@ -411,7 +409,7 @@ export function useValidationUtils() {
         return `Der Zählwert von "LKW" muss leer sein.`;
       }
     }
-    if (requestedKategorien.includes(Fahrzeug.LZ.valueOf())) {
+    if (requestedKategorien.includes(Fahrzeug.Lz.valueOf())) {
       if (isEmpty(trim(splittedLine[6]))) {
         return `Der Zählwert von "LZ" darf nicht leer sein.`;
       }
@@ -420,7 +418,7 @@ export function useValidationUtils() {
         return `Der Zählwert von "LZ" muss leer sein.`;
       }
     }
-    if (requestedKategorien.includes(Fahrzeug.BUS.valueOf())) {
+    if (requestedKategorien.includes(Fahrzeug.Bus.valueOf())) {
       if (isEmpty(trim(splittedLine[7]))) {
         return `Der Zählwert von "BUS" darf nicht leer sein.`;
       }
@@ -429,7 +427,7 @@ export function useValidationUtils() {
         return `Der Zählwert von "BUS" muss leer sein.`;
       }
     }
-    if (requestedKategorien.includes(Fahrzeug.KRAD.valueOf())) {
+    if (requestedKategorien.includes(Fahrzeug.Krad.valueOf())) {
       if (isEmpty(trim(splittedLine[8]))) {
         return `Der Zählwert von "KRAD" darf nicht leer sein.`;
       }
@@ -438,7 +436,7 @@ export function useValidationUtils() {
         return `Der Zählwert von "KRAD" muss leer sein.`;
       }
     }
-    if (requestedKategorien.includes(Fahrzeug.RAD.valueOf())) {
+    if (requestedKategorien.includes(Fahrzeug.Rad.valueOf())) {
       if (isEmpty(trim(splittedLine[9]))) {
         return `Der Zählwert von "RAD" darf nicht leer sein.`;
       }
@@ -447,7 +445,7 @@ export function useValidationUtils() {
         return `Der Zählwert von "RAD" muss leer sein.`;
       }
     }
-    if (requestedKategorien.includes(Fahrzeug.FUSS.valueOf())) {
+    if (requestedKategorien.includes(Fahrzeug.Fuss.valueOf())) {
       if (isEmpty(trim(splittedLine[10]))) {
         return `Der Zählwert von "FUSS" darf nicht leer sein.`;
       }
@@ -509,11 +507,11 @@ export function useValidationUtils() {
     zaehlung: ExternalZaehlungDTO
   ): Array<ExternalKnotenarmDTO> {
     let relevantKnotenarmNumbers = Array<number>();
-    if (zaehlung.zaehlart === Zaehlart.FJS) {
+    if (zaehlung.zaehlart === Zaehlart.Fjs) {
       relevantKnotenarmNumbers = toArray(zaehlung.laengsverkehr)
         .map((l) => l.knotenarm)
         .filter((nummer): nummer is number => nummer != null);
-    } else if (zaehlung.zaehlart === Zaehlart.QU) {
+    } else if (zaehlung.zaehlart === Zaehlart.Qu) {
       relevantKnotenarmNumbers = toArray(zaehlung.querungsverkehr)
         .map((q) => q.knotenarm)
         .filter((nummer): nummer is number => nummer != null);

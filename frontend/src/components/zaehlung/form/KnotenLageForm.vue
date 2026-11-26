@@ -154,6 +154,7 @@ import { LatLng } from "leaflet";
 import { isEmpty, isNil, parseInt, toArray } from "lodash";
 import { computed, ref } from "vue";
 
+import { Zaehlart } from "@/api/client";
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrForm.vue";
@@ -162,7 +163,6 @@ import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
 import Status from "@/types/enum/Status";
 import UploadedFileStatus from "@/types/enum/UploadedFileStatus";
-import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import { useFussverkehrValidationUtils } from "@/util/validation/FussverkehrValidationUtils";
@@ -253,11 +253,11 @@ const bewegungsbeziehungen = computed<
     | Array<ExternalLaengsverkehrDTO>
     | undefined;
 
-  if (zaehlart === Zaehlart.QU) {
+  if (zaehlart === Zaehlart.Qu) {
     source = zaehlung.value?.querungsverkehr as
       | Array<ExternalQuerungsverkehrDTO>
       | undefined;
-  } else if (zaehlart === Zaehlart.FJS) {
+  } else if (zaehlart === Zaehlart.Fjs) {
     source = zaehlung.value?.laengsverkehr as
       | Array<ExternalLaengsverkehrDTO>
       | undefined;
@@ -268,7 +268,7 @@ const bewegungsbeziehungen = computed<
   }
   // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
   // anschließend sortieren
-  return zaehlart === Zaehlart.QU || zaehlart === Zaehlart.FJS
+  return zaehlart === Zaehlart.Qu || zaehlart === Zaehlart.Fjs
     ? toArray(source).sort(
         VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber
       )
@@ -282,7 +282,7 @@ const bewegungsbeziehungenHeader = computed<Array<any>>(() => {
   const zaehlart = zaehlung.value.zaehlart;
 
   // Header für QjS (Querschnitt je Strassenseite)
-  if (zaehlart === Zaehlart.QJS) {
+  if (zaehlart === Zaehlart.Qjs) {
     return [
       {
         title: "Von",
@@ -307,7 +307,7 @@ const bewegungsbeziehungenHeader = computed<Array<any>>(() => {
   }
 
   // Header für FjS (Fußgänger/Rad je Strassenseite)
-  if (zaehlart === Zaehlart.FJS) {
+  if (zaehlart === Zaehlart.Fjs) {
     return [
       {
         title: "Von",
@@ -332,7 +332,7 @@ const bewegungsbeziehungenHeader = computed<Array<any>>(() => {
   }
 
   // Header für Qu (Fußgänger/Rad Querungen)
-  if (zaehlart === Zaehlart.QU) {
+  if (zaehlart === Zaehlart.Qu) {
     return [
       {
         title: "Von",
@@ -514,9 +514,9 @@ function checkUploadedFiledata(
       // Unterscheidung zw. Fussverkehrszählung und anderen Zählungen
       let invalidityReason: string;
       if (
-        zaehlung.value.zaehlart === Zaehlart.QJS ||
-        zaehlung.value.zaehlart === Zaehlart.FJS ||
-        zaehlung.value.zaehlart === Zaehlart.QU
+        zaehlung.value.zaehlart === Zaehlart.Qjs ||
+        zaehlung.value.zaehlart === Zaehlart.Fjs ||
+        zaehlung.value.zaehlart === Zaehlart.Qu
       ) {
         invalidityReason = checkFussverkehrData(
           csvLineIndex,
@@ -730,7 +730,7 @@ function checkFussverkehrData(
       filename
     );
 
-  if (Zaehlart.QJS === zaehlart) {
+  if (Zaehlart.Qjs === zaehlart) {
     errorMessage = fussverkehrValidationUtils.validateNachValue(
       armNummer,
       splittedLine[1]
@@ -822,7 +822,7 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
   csvDataWithoutHeader: Array<string>,
   zaehlung: ExternalZaehlungDTO
 ): string {
-  if (zaehlung.zaehlart === Zaehlart.QJS) {
+  if (zaehlung.zaehlart === Zaehlart.Qjs) {
     const nachAndStrassenseiteIntervallsAreExistent =
       fussverkehrValidationUtils.validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
         armNummer,
@@ -842,7 +842,7 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
     if (!isEmpty(toMuchNachAndStrassenseiteIntervallsAreExistent)) {
       return toMuchNachAndStrassenseiteIntervallsAreExistent;
     }
-  } else if (zaehlung.zaehlart === Zaehlart.FJS) {
+  } else if (zaehlung.zaehlart === Zaehlart.Fjs) {
     const strassenseiteAndRichtungIntervallsAreExistent =
       fussverkehrValidationUtils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
         armNummer,
@@ -862,7 +862,7 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
     if (!isEmpty(toMuchStrassenseiteAndRichtungIntervallsAreExistent)) {
       return toMuchStrassenseiteAndRichtungIntervallsAreExistent;
     }
-  } else if (zaehlung.zaehlart === Zaehlart.QU) {
+  } else if (zaehlung.zaehlart === Zaehlart.Qu) {
     const richtungIntervallsAreExistent =
       fussverkehrValidationUtils.validateRequiredRichtungIntervallsForQuAreExistent(
         armNummer,
