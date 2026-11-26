@@ -408,15 +408,17 @@
 </template>
 
 <script setup lang="ts">
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalVerkehrsbeziehungDTO,
+  ExternalZaehlungDTO,
+} from "@/api/client";
 import type { ComputedRef, Ref } from "vue";
 
 import { cloneDeep, first, last, toArray } from "lodash";
 import { computed, onMounted, ref, watch } from "vue";
 
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
+import { Himmelsrichtung } from "@/api/client";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 
 interface Props {
@@ -426,7 +428,7 @@ interface Props {
   showStreetnames?: boolean;
 }
 
-const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
+const zaehlung = defineModel<ExternalZaehlungDTO>("zaehlung", {
   required: true,
 });
 
@@ -440,7 +442,7 @@ const activeColor = "#D50000";
 const passiveColor = "#9E9E9E";
 
 const selectedVerkehrsbeziehungen = computed(() => {
-  return zaehlung.value.verkehrsbeziehungen;
+  return zaehlung.value.verkehrsbeziehungen ?? [];
 });
 
 const firstStreetname = ref<Array<string>>([]);
@@ -455,7 +457,7 @@ const availableKnotenarmNummern = computed(() => {
   return availableKnotenarme.value.map((arm) => arm.nummer);
 });
 const availableKnotenarme = computed(() => {
-  return zaehlung.value.knotenarme
+  return (zaehlung.value.knotenarme ?? [])
     .toSorted(KnotenarmComparator.sortByNumber)
     .reverse();
 });
@@ -528,8 +530,8 @@ function rotateNumberInverseFor(
   });
 }
 
-function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
-  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+function createVerkehrsbeziehungArrowOne(): ExternalVerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as ExternalVerkehrsbeziehungDTO;
   if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 1;
     verkehrsbeziehung.nach = 3;
@@ -543,18 +545,18 @@ function createVerkehrsbeziehungArrowOne(): VerkehrsbeziehungDTO {
   if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 5;
     verkehrsbeziehung.nach = 7;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.Nw;
   }
   if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 6;
     verkehrsbeziehung.nach = 8;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.No;
   }
   return verkehrsbeziehung;
 }
 
-function createVerkehrsbeziehungArrowTwo(): VerkehrsbeziehungDTO {
-  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+function createVerkehrsbeziehungArrowTwo(): ExternalVerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as ExternalVerkehrsbeziehungDTO;
   if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 3;
     verkehrsbeziehung.nach = 1;
@@ -568,18 +570,18 @@ function createVerkehrsbeziehungArrowTwo(): VerkehrsbeziehungDTO {
   if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 7;
     verkehrsbeziehung.nach = 5;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.NW;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.Nw;
   }
   if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 8;
     verkehrsbeziehung.nach = 6;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.NO;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.No;
   }
   return verkehrsbeziehung;
 }
 
-function createVerkehrsbeziehungArrowThree(): VerkehrsbeziehungDTO {
-  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+function createVerkehrsbeziehungArrowThree(): ExternalVerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as ExternalVerkehrsbeziehungDTO;
   if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 1;
     verkehrsbeziehung.nach = 3;
@@ -593,18 +595,18 @@ function createVerkehrsbeziehungArrowThree(): VerkehrsbeziehungDTO {
   if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 5;
     verkehrsbeziehung.nach = 7;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.So;
   }
   if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 6;
     verkehrsbeziehung.nach = 8;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.Sw;
   }
   return verkehrsbeziehung;
 }
 
-function createVerkehrsbeziehungArrowFour(): VerkehrsbeziehungDTO {
-  const verkehrsbeziehung = {} as VerkehrsbeziehungDTO;
+function createVerkehrsbeziehungArrowFour(): ExternalVerkehrsbeziehungDTO {
+  const verkehrsbeziehung = {} as ExternalVerkehrsbeziehungDTO;
   if (availableKnotenarmNummern.value.includes(1)) {
     verkehrsbeziehung.von = 3;
     verkehrsbeziehung.nach = 1;
@@ -618,12 +620,12 @@ function createVerkehrsbeziehungArrowFour(): VerkehrsbeziehungDTO {
   if (availableKnotenarmNummern.value.includes(5)) {
     verkehrsbeziehung.von = 7;
     verkehrsbeziehung.nach = 5;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.SO;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.So;
   }
   if (availableKnotenarmNummern.value.includes(6)) {
     verkehrsbeziehung.von = 8;
     verkehrsbeziehung.nach = 6;
-    verkehrsbeziehung.strassenseite = Himmelsrichtung.SW;
+    verkehrsbeziehung.strassenseite = Himmelsrichtung.Sw;
   }
   return verkehrsbeziehung;
 }
@@ -713,10 +715,10 @@ function handleClickOnQuerschnittsverkehrJeStrassenseiteArrowFour() {
 }
 
 function findIndexInSelectedVerkehrsbeziehungForClickedVerkehrsbeziehung(
-  clickedVerkehrsbeziehung: VerkehrsbeziehungDTO
+  clickedVerkehrsbeziehung: ExternalVerkehrsbeziehungDTO
 ) {
   return selectedVerkehrsbeziehungen.value.findIndex(
-    (verkehrsbeziehung: VerkehrsbeziehungDTO) => {
+    (verkehrsbeziehung: ExternalVerkehrsbeziehungDTO) => {
       return (
         verkehrsbeziehung.von === clickedVerkehrsbeziehung.von &&
         verkehrsbeziehung.nach === clickedVerkehrsbeziehung.nach &&
@@ -819,7 +821,9 @@ function prepareStreetnames(): void {
   secondStreetname.value = getStreetname(secondKnotenarm.value);
 }
 
-function getStreetname(knotenarm: KnotenarmDTO | undefined): Array<string> {
+function getStreetname(
+  knotenarm: ExternalKnotenarmDTO | undefined
+): Array<string> {
   let strasse = "";
   if (knotenarm && knotenarm.strassenname) {
     strasse = knotenarm.strassenname;

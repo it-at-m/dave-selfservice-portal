@@ -61,7 +61,7 @@
             id="arrows_knotenarm1"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm1_west"
             >
               <path
@@ -72,14 +72,14 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     1,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.W
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     1,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.W
                   )
                 "
@@ -92,21 +92,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     1,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.W
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     1,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.W
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm1_ost"
             >
               <path
@@ -117,14 +117,14 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     1,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.O
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     1,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.O
                   )
                 "
@@ -137,21 +137,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     1,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.O
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     1,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.O
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm1_crossing"
             >
               <path
@@ -213,7 +213,7 @@
             id="arrows_knotenarm2"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm2_nord"
             >
               <path
@@ -224,14 +224,14 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     2,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.N
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     2,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.N
                   )
                 "
@@ -244,21 +244,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     2,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.N
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     2,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.N
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm2_sued"
             >
               <path
@@ -269,14 +269,14 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     2,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.S
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     2,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.S
                   )
                 "
@@ -289,21 +289,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     2,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.S
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     2,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.S
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm2_crossing"
             >
               <path
@@ -364,7 +364,7 @@
             id="arrows_knotenarm3"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm3_ost"
             >
               <path
@@ -375,14 +375,14 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     3,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.O
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     3,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.O
                   )
                 "
@@ -395,21 +395,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     3,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.O
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     3,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.O
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm3_west"
             >
               <path
@@ -420,14 +420,14 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     3,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.W
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     3,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.W
                   )
                 "
@@ -440,21 +440,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     3,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.W
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     3,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.W
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm3_crossing"
             >
               <path
@@ -516,7 +516,7 @@
             id="arrows_knotenarm4"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm4_sued"
             >
               <path
@@ -527,14 +527,14 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     4,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.S
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     4,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.S
                   )
                 "
@@ -547,21 +547,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     4,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.S
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     4,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.S
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm4_nord"
             >
               <path
@@ -572,14 +572,14 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     4,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.N
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     4,
-                    Bewegungsrichtung.AUS,
+                    Bewegungsrichtung.Aus,
                     Himmelsrichtung.N
                   )
                 "
@@ -592,21 +592,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     4,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.N
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     4,
-                    Bewegungsrichtung.EIN,
+                    Bewegungsrichtung.Ein,
                     Himmelsrichtung.N
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm4_crossing"
             >
               <path
@@ -672,7 +672,7 @@
             id="arrows_knotenarm5"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm5_nord_west"
             >
               <path
@@ -683,15 +683,15 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     5,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.NW
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.Nw
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     5,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.NW
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.Nw
                   )
                 "
               />
@@ -703,21 +703,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     5,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.NW
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.Nw
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     5,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.NW
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.Nw
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm5_sued_ost"
             >
               <path
@@ -728,15 +728,15 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     5,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.SO
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.So
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     5,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.SO
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.So
                   )
                 "
               />
@@ -748,21 +748,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     5,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.SO
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.So
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     5,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.SO
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.So
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm5_crossing"
             >
               <path
@@ -770,16 +770,16 @@
                 d="m 583.33335,322.22223 h 194.44503 v -11.11111 l 38.88831,19.44345 -38.88831,19.44544 V 338.88889 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
-                :fill="calculateColorOfQuerungsverkehr(5, Himmelsrichtung.SO)"
-                @click="handleClickOnQuerungsverkehr(5, Himmelsrichtung.SO)"
+                :fill="calculateColorOfQuerungsverkehr(5, Himmelsrichtung.So)"
+                @click="handleClickOnQuerungsverkehr(5, Himmelsrichtung.So)"
               />
               <path
                 id="arrow_knotenarm5_crossing_nord_west"
                 d="M 816.66669,299.99959 H 622.22175 v 11.11153 l -38.8884,-19.4435 38.8884,-19.44539 v 11.11057 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
-                :fill="calculateColorOfQuerungsverkehr(5, Himmelsrichtung.NW)"
-                @click="handleClickOnQuerungsverkehr(5, Himmelsrichtung.NW)"
+                :fill="calculateColorOfQuerungsverkehr(5, Himmelsrichtung.Nw)"
+                @click="handleClickOnQuerungsverkehr(5, Himmelsrichtung.Nw)"
               />
             </g>
           </g>
@@ -823,7 +823,7 @@
             id="arrows_knotenarm6"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrow_knotenarm6_nord_ost"
             >
               <path
@@ -834,15 +834,15 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     6,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.NO
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.No
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     6,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.NO
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.No
                   )
                 "
               />
@@ -854,21 +854,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     6,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.NO
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.No
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     6,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.NO
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.No
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm6_sued_west"
             >
               <path
@@ -879,15 +879,15 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     6,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.SW
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.Sw
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     6,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.SW
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.Sw
                   )
                 "
               />
@@ -899,21 +899,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     6,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.SW
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.Sw
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     6,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.SW
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.Sw
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm6_crossing"
             >
               <path
@@ -921,16 +921,16 @@
                 d="m 583.33335,322.22223 h 194.44503 v -11.11111 l 38.88831,19.44345 -38.88831,19.44544 V 338.88889 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
-                :fill="calculateColorOfQuerungsverkehr(6, Himmelsrichtung.SW)"
-                @click="handleClickOnQuerungsverkehr(6, Himmelsrichtung.SW)"
+                :fill="calculateColorOfQuerungsverkehr(6, Himmelsrichtung.Sw)"
+                @click="handleClickOnQuerungsverkehr(6, Himmelsrichtung.Sw)"
               />
               <path
                 id="arrow_knotenarm6_crossing_nord_ost"
                 d="M 816.66669,299.99959 H 622.22175 v 11.11153 l -38.8884,-19.4435 38.8884,-19.44539 v 11.11057 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
-                :fill="calculateColorOfQuerungsverkehr(6, Himmelsrichtung.NO)"
-                @click="handleClickOnQuerungsverkehr(6, Himmelsrichtung.NO)"
+                :fill="calculateColorOfQuerungsverkehr(6, Himmelsrichtung.No)"
+                @click="handleClickOnQuerungsverkehr(6, Himmelsrichtung.No)"
               />
             </g>
           </g>
@@ -973,7 +973,7 @@
             id="arrows_knotenarm7"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm7_sued_ost"
             >
               <path
@@ -984,15 +984,15 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     7,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.SO
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.So
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     7,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.SO
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.So
                   )
                 "
               />
@@ -1004,21 +1004,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     7,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.SO
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.So
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     7,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.SO
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.So
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm7_nord_west"
             >
               <path
@@ -1029,15 +1029,15 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     7,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.NW
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.Nw
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     7,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.NW
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.Nw
                   )
                 "
               />
@@ -1049,21 +1049,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     7,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.NW
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.Nw
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     7,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.NW
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.Nw
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm7_crossing"
             >
               <path
@@ -1071,16 +1071,16 @@
                 d="M 808.33025,1077.7756 H 613.88531 v 11.1116 l -38.8884,-19.4435 38.8884,-19.4454 v 11.1105 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
-                :fill="calculateColorOfQuerungsverkehr(7, Himmelsrichtung.NW)"
-                @click="handleClickOnQuerungsverkehr(7, Himmelsrichtung.NW)"
+                :fill="calculateColorOfQuerungsverkehr(7, Himmelsrichtung.Nw)"
+                @click="handleClickOnQuerungsverkehr(7, Himmelsrichtung.Nw)"
               />
               <path
                 id="arrow_knotenarm7_crossing_sued_ost"
                 d="m 575.66231,1099.9989 h 194.44506 v -11.1112 l 38.8883,19.4435 -38.8883,19.4454 v -11.1111 H 575.66231 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
-                :fill="calculateColorOfQuerungsverkehr(7, Himmelsrichtung.SO)"
-                @click="handleClickOnQuerungsverkehr(7, Himmelsrichtung.SO)"
+                :fill="calculateColorOfQuerungsverkehr(7, Himmelsrichtung.So)"
+                @click="handleClickOnQuerungsverkehr(7, Himmelsrichtung.So)"
               />
             </g>
           </g>
@@ -1124,7 +1124,7 @@
             id="arrows_knotenarm8"
           >
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm8_sued_west"
             >
               <path
@@ -1135,15 +1135,15 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     8,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.SW
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.Sw
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     8,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.SW
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.Sw
                   )
                 "
               />
@@ -1155,21 +1155,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     8,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.SW
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.Sw
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     8,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.SW
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.Sw
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.FJS"
+              v-if="zaehlung.zaehlart === Zaehlart.Fjs"
               id="arrows_knotenarm8_nord_ost"
             >
               <path
@@ -1180,15 +1180,15 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     8,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.NO
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.No
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     8,
-                    Bewegungsrichtung.AUS,
-                    Himmelsrichtung.NO
+                    Bewegungsrichtung.Aus,
+                    Himmelsrichtung.No
                   )
                 "
               />
@@ -1200,21 +1200,21 @@
                 :fill="
                   calculateColorOfLaengsverkehr(
                     8,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.NO
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.No
                   )
                 "
                 @click="
                   handleClickOnLaengsverkehr(
                     8,
-                    Bewegungsrichtung.EIN,
-                    Himmelsrichtung.NO
+                    Bewegungsrichtung.Ein,
+                    Himmelsrichtung.No
                   )
                 "
               />
             </g>
             <g
-              v-if="zaehlung.zaehlart === Zaehlart.QU"
+              v-if="zaehlung.zaehlart === Zaehlart.Qu"
               id="arrows_knotenarm8_crossing"
             >
               <path
@@ -1222,16 +1222,16 @@
                 d="m 583.33335,322.22223 h 194.44503 v -11.11111 l 38.88831,19.44345 -38.88831,19.44544 V 338.88889 H 583.33335 Z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
-                :fill="calculateColorOfQuerungsverkehr(8, Himmelsrichtung.NO)"
-                @click="handleClickOnQuerungsverkehr(8, Himmelsrichtung.NO)"
+                :fill="calculateColorOfQuerungsverkehr(8, Himmelsrichtung.No)"
+                @click="handleClickOnQuerungsverkehr(8, Himmelsrichtung.No)"
               />
               <path
                 id="arrow_knotenarm8_crossing_sued_west"
                 d="M 816.66669,299.99959 H 622.22175 v 11.11153 l -38.8884,-19.4435 38.8884,-19.44539 v 11.11057 h 194.44494 z"
                 stroke="none"
                 :style="{ cursor: 'pointer' }"
-                :fill="calculateColorOfQuerungsverkehr(8, Himmelsrichtung.SW)"
-                @click="handleClickOnQuerungsverkehr(8, Himmelsrichtung.SW)"
+                :fill="calculateColorOfQuerungsverkehr(8, Himmelsrichtung.Sw)"
+                @click="handleClickOnQuerungsverkehr(8, Himmelsrichtung.Sw)"
               />
             </g>
           </g>
@@ -1250,17 +1250,17 @@
 </template>
 
 <script setup lang="ts">
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalLaengsverkehrDTO,
+  ExternalQuerungsverkehrDTO,
+  ExternalZaehlungDTO,
+} from "@/api/client";
 
 import { cloneDeep, isEmpty, remove, toArray } from "lodash";
 import { computed } from "vue";
 
-import Bewegungsrichtung from "@/types/enum/Bewegungsrichtung";
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
-import Zaehlart from "@/types/enum/Zaehlart";
+import { Bewegungsrichtung, Himmelsrichtung, Zaehlart } from "@/api/client";
 
 interface Props {
   height: string;
@@ -1271,7 +1271,7 @@ const props = withDefaults(defineProps<Props>(), {
   clickable: true,
 });
 
-const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
+const zaehlung = defineModel<ExternalZaehlungDTO>("zaehlung", {
   required: true,
 });
 
@@ -1281,18 +1281,22 @@ const activeColor = "#D50000";
 const passiveColor = "#9E9E9E";
 
 const availableKnotenarme = computed(() => {
-  return zaehlung.value.knotenarme.map((arm: KnotenarmDTO) => arm.nummer);
+  return (zaehlung.value.knotenarme ?? []).map(
+    (arm: ExternalKnotenarmDTO) => arm.nummer
+  );
 });
 const hasAvailableKnotenarme = computed(() => {
   return availableKnotenarme.value.length > 0;
 });
 
-const selectedLaengsverkehre = computed<Array<LaengsverkehrDTO>>(() => {
+const selectedLaengsverkehre = computed<Array<ExternalLaengsverkehrDTO>>(() => {
   return toArray(zaehlung.value.laengsverkehr);
 });
-const selectedQuerungsverkehre = computed<Array<QuerungsverkehrDTO>>(() => {
-  return toArray(zaehlung.value.querungsverkehr);
-});
+const selectedQuerungsverkehre = computed<Array<ExternalQuerungsverkehrDTO>>(
+  () => {
+    return toArray(zaehlung.value.querungsverkehr);
+  }
+);
 
 function isKnotenarmAvailable(knotenarm: number): boolean {
   return availableKnotenarme.value.includes(knotenarm);
@@ -1311,7 +1315,7 @@ function calculateColorOfLaengsverkehr(
   strassenseite: Himmelsrichtung
 ): string | undefined {
   let color = passiveColor;
-  const clickedLaengsverkehr: LaengsverkehrDTO = createLaengsverkehr(
+  const clickedLaengsverkehr: ExternalLaengsverkehrDTO = createLaengsverkehr(
     knotenarm,
     richtung,
     strassenseite
@@ -1338,10 +1342,8 @@ function calculateColorOfQuerungsverkehr(
   richtung: Himmelsrichtung
 ): string | undefined {
   let color = passiveColor;
-  const clickedQuerungsverkehr: QuerungsverkehrDTO = createQuerungsverkehr(
-    knotenarm,
-    richtung
-  );
+  const clickedQuerungsverkehr: ExternalQuerungsverkehrDTO =
+    createQuerungsverkehr(knotenarm, richtung);
   const index = findIndexInSelectedQuerungsverkehreForClickedQuerungsverkehr(
     clickedQuerungsverkehr
   );
@@ -1358,7 +1360,7 @@ function activateOrDeactivateTotalKnotenarm(knotenarm: number) {
     return;
   }
 
-  if (zaehlung.value.zaehlart === Zaehlart.QU) {
+  if (zaehlung.value.zaehlart === Zaehlart.Qu) {
     if (querungsverkehreForKnotenarmStillSelected(knotenarm)) {
       // Deselect
       deselectQuerungsverkehreOfKnotenarm(knotenarm);
@@ -1384,7 +1386,7 @@ function activateOrDeactivateTotalKnotenarm(knotenarm: number) {
       }
     }
   }
-  if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+  if (zaehlung.value.zaehlart === Zaehlart.Fjs) {
     if (laengsverkehrForKnotenarmStillSelected(knotenarm)) {
       // Deselect
       deselectLaengsverkehreOfKnotenarm(knotenarm);
@@ -1414,7 +1416,7 @@ function activateOrDeactivateTotalKnotenarm(knotenarm: number) {
 
 function deselectLaengsverkehreOfKnotenarm(knotenarm: number) {
   const laengsverkehre = toArray(cloneDeep(selectedLaengsverkehre.value));
-  remove(laengsverkehre, function (laengsverkehr: LaengsverkehrDTO) {
+  remove(laengsverkehre, function (laengsverkehr: ExternalLaengsverkehrDTO) {
     return laengsverkehr.knotenarm === knotenarm;
   });
   zaehlung.value.laengsverkehr = laengsverkehre;
@@ -1423,7 +1425,8 @@ function deselectLaengsverkehreOfKnotenarm(knotenarm: number) {
 function laengsverkehrForKnotenarmStillSelected(knotenarm: number): boolean {
   return !isEmpty(
     selectedLaengsverkehre.value.filter(
-      (laengsverkehr: LaengsverkehrDTO) => laengsverkehr.knotenarm === knotenarm
+      (laengsverkehr: ExternalLaengsverkehrDTO) =>
+        laengsverkehr.knotenarm === knotenarm
     )
   );
 }
@@ -1433,26 +1436,26 @@ function selectAllLaengsverkehreForKnotenarmEight() {
 
   let laengsverkehr = createLaengsverkehr(
     8,
-    Bewegungsrichtung.EIN,
-    Himmelsrichtung.NO
+    Bewegungsrichtung.Ein,
+    Himmelsrichtung.No
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     8,
-    Bewegungsrichtung.AUS,
-    Himmelsrichtung.NO
+    Bewegungsrichtung.Aus,
+    Himmelsrichtung.No
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     8,
-    Bewegungsrichtung.EIN,
-    Himmelsrichtung.SW
+    Bewegungsrichtung.Ein,
+    Himmelsrichtung.Sw
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     8,
-    Bewegungsrichtung.AUS,
-    Himmelsrichtung.SW
+    Bewegungsrichtung.Aus,
+    Himmelsrichtung.Sw
   );
   laengsverkehre.push(laengsverkehr);
 
@@ -1464,26 +1467,26 @@ function selectAllLaengsverkehreForKnotenarmSeven() {
 
   let laengsverkehr = createLaengsverkehr(
     7,
-    Bewegungsrichtung.EIN,
-    Himmelsrichtung.NW
+    Bewegungsrichtung.Ein,
+    Himmelsrichtung.Nw
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     7,
-    Bewegungsrichtung.AUS,
-    Himmelsrichtung.NW
+    Bewegungsrichtung.Aus,
+    Himmelsrichtung.Nw
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     7,
-    Bewegungsrichtung.EIN,
-    Himmelsrichtung.SO
+    Bewegungsrichtung.Ein,
+    Himmelsrichtung.So
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     7,
-    Bewegungsrichtung.AUS,
-    Himmelsrichtung.SO
+    Bewegungsrichtung.Aus,
+    Himmelsrichtung.So
   );
   laengsverkehre.push(laengsverkehr);
 
@@ -1495,26 +1498,26 @@ function selectAllLaengsverkehreForKnotenarmSix() {
 
   let laengsverkehr = createLaengsverkehr(
     6,
-    Bewegungsrichtung.EIN,
-    Himmelsrichtung.NO
+    Bewegungsrichtung.Ein,
+    Himmelsrichtung.No
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     6,
-    Bewegungsrichtung.AUS,
-    Himmelsrichtung.NO
+    Bewegungsrichtung.Aus,
+    Himmelsrichtung.No
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     6,
-    Bewegungsrichtung.EIN,
-    Himmelsrichtung.SW
+    Bewegungsrichtung.Ein,
+    Himmelsrichtung.Sw
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     6,
-    Bewegungsrichtung.AUS,
-    Himmelsrichtung.SW
+    Bewegungsrichtung.Aus,
+    Himmelsrichtung.Sw
   );
   laengsverkehre.push(laengsverkehr);
 
@@ -1526,26 +1529,26 @@ function selectAllLaengsverkehreForKnotenarmFive() {
 
   let laengsverkehr = createLaengsverkehr(
     5,
-    Bewegungsrichtung.EIN,
-    Himmelsrichtung.NW
+    Bewegungsrichtung.Ein,
+    Himmelsrichtung.Nw
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     5,
-    Bewegungsrichtung.AUS,
-    Himmelsrichtung.NW
+    Bewegungsrichtung.Aus,
+    Himmelsrichtung.Nw
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     5,
-    Bewegungsrichtung.EIN,
-    Himmelsrichtung.SO
+    Bewegungsrichtung.Ein,
+    Himmelsrichtung.So
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     5,
-    Bewegungsrichtung.AUS,
-    Himmelsrichtung.SO
+    Bewegungsrichtung.Aus,
+    Himmelsrichtung.So
   );
   laengsverkehre.push(laengsverkehr);
 
@@ -1557,25 +1560,25 @@ function selectAllLaengsverkehreForKnotenarmFour() {
 
   let laengsverkehr = createLaengsverkehr(
     4,
-    Bewegungsrichtung.EIN,
+    Bewegungsrichtung.Ein,
     Himmelsrichtung.N
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     4,
-    Bewegungsrichtung.AUS,
+    Bewegungsrichtung.Aus,
     Himmelsrichtung.N
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     4,
-    Bewegungsrichtung.EIN,
+    Bewegungsrichtung.Ein,
     Himmelsrichtung.S
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     4,
-    Bewegungsrichtung.AUS,
+    Bewegungsrichtung.Aus,
     Himmelsrichtung.S
   );
   laengsverkehre.push(laengsverkehr);
@@ -1588,25 +1591,25 @@ function selectAllLaengsverkehreForKnotenarmThree() {
 
   let laengsverkehr = createLaengsverkehr(
     3,
-    Bewegungsrichtung.EIN,
+    Bewegungsrichtung.Ein,
     Himmelsrichtung.W
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     3,
-    Bewegungsrichtung.AUS,
+    Bewegungsrichtung.Aus,
     Himmelsrichtung.W
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     3,
-    Bewegungsrichtung.EIN,
+    Bewegungsrichtung.Ein,
     Himmelsrichtung.O
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     3,
-    Bewegungsrichtung.AUS,
+    Bewegungsrichtung.Aus,
     Himmelsrichtung.O
   );
   laengsverkehre.push(laengsverkehr);
@@ -1619,25 +1622,25 @@ function selectAllLaengsverkehreForKnotenarmTwo() {
 
   let laengsverkehr = createLaengsverkehr(
     2,
-    Bewegungsrichtung.EIN,
+    Bewegungsrichtung.Ein,
     Himmelsrichtung.N
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     2,
-    Bewegungsrichtung.AUS,
+    Bewegungsrichtung.Aus,
     Himmelsrichtung.N
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     2,
-    Bewegungsrichtung.EIN,
+    Bewegungsrichtung.Ein,
     Himmelsrichtung.S
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     2,
-    Bewegungsrichtung.AUS,
+    Bewegungsrichtung.Aus,
     Himmelsrichtung.S
   );
   laengsverkehre.push(laengsverkehr);
@@ -1650,25 +1653,25 @@ function selectAllLaengsverkehreForKnotenarmOne() {
 
   let laengsverkehr = createLaengsverkehr(
     1,
-    Bewegungsrichtung.EIN,
+    Bewegungsrichtung.Ein,
     Himmelsrichtung.W
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     1,
-    Bewegungsrichtung.AUS,
+    Bewegungsrichtung.Aus,
     Himmelsrichtung.W
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     1,
-    Bewegungsrichtung.EIN,
+    Bewegungsrichtung.Ein,
     Himmelsrichtung.O
   );
   laengsverkehre.push(laengsverkehr);
   laengsverkehr = createLaengsverkehr(
     1,
-    Bewegungsrichtung.AUS,
+    Bewegungsrichtung.Aus,
     Himmelsrichtung.O
   );
   laengsverkehre.push(laengsverkehr);
@@ -1678,16 +1681,19 @@ function selectAllLaengsverkehreForKnotenarmOne() {
 
 function deselectQuerungsverkehreOfKnotenarm(knotenarm: number) {
   const querungsverkehre = toArray(cloneDeep(selectedQuerungsverkehre.value));
-  remove(querungsverkehre, function (querungsverkehr: QuerungsverkehrDTO) {
-    return querungsverkehr.knotenarm === knotenarm;
-  });
+  remove(
+    querungsverkehre,
+    function (querungsverkehr: ExternalQuerungsverkehrDTO) {
+      return querungsverkehr.knotenarm === knotenarm;
+    }
+  );
   zaehlung.value.querungsverkehr = querungsverkehre;
 }
 
 function querungsverkehreForKnotenarmStillSelected(knotenarm: number): boolean {
   return !isEmpty(
     selectedQuerungsverkehre.value.filter(
-      (querungsverkehr: QuerungsverkehrDTO) =>
+      (querungsverkehr: ExternalQuerungsverkehrDTO) =>
         querungsverkehr.knotenarm === knotenarm
     )
   );
@@ -1696,9 +1702,9 @@ function querungsverkehreForKnotenarmStillSelected(knotenarm: number): boolean {
 function selectAllQuerungenForKnotenarmEight() {
   const querungsverkehre = toArray(cloneDeep(selectedQuerungsverkehre.value));
 
-  let querungsverkehr = createQuerungsverkehr(8, Himmelsrichtung.NO);
+  let querungsverkehr = createQuerungsverkehr(8, Himmelsrichtung.No);
   querungsverkehre.push(querungsverkehr);
-  querungsverkehr = createQuerungsverkehr(8, Himmelsrichtung.SW);
+  querungsverkehr = createQuerungsverkehr(8, Himmelsrichtung.Sw);
   querungsverkehre.push(querungsverkehr);
 
   zaehlung.value.querungsverkehr = querungsverkehre;
@@ -1707,9 +1713,9 @@ function selectAllQuerungenForKnotenarmEight() {
 function selectAllQuerungenForKnotenarmSeven() {
   const querungsverkehre = toArray(cloneDeep(selectedQuerungsverkehre.value));
 
-  let querungsverkehr = createQuerungsverkehr(7, Himmelsrichtung.NW);
+  let querungsverkehr = createQuerungsverkehr(7, Himmelsrichtung.Nw);
   querungsverkehre.push(querungsverkehr);
-  querungsverkehr = createQuerungsverkehr(7, Himmelsrichtung.SO);
+  querungsverkehr = createQuerungsverkehr(7, Himmelsrichtung.So);
   querungsverkehre.push(querungsverkehr);
 
   zaehlung.value.querungsverkehr = querungsverkehre;
@@ -1718,9 +1724,9 @@ function selectAllQuerungenForKnotenarmSeven() {
 function selectAllQuerungenForKnotenarmSix() {
   const querungsverkehre = toArray(cloneDeep(selectedQuerungsverkehre.value));
 
-  let querungsverkehr = createQuerungsverkehr(6, Himmelsrichtung.NO);
+  let querungsverkehr = createQuerungsverkehr(6, Himmelsrichtung.No);
   querungsverkehre.push(querungsverkehr);
-  querungsverkehr = createQuerungsverkehr(6, Himmelsrichtung.SW);
+  querungsverkehr = createQuerungsverkehr(6, Himmelsrichtung.Sw);
   querungsverkehre.push(querungsverkehr);
 
   zaehlung.value.querungsverkehr = querungsverkehre;
@@ -1729,9 +1735,9 @@ function selectAllQuerungenForKnotenarmSix() {
 function selectAllQuerungenForKnotenarmFive() {
   const querungsverkehre = toArray(cloneDeep(selectedQuerungsverkehre.value));
 
-  let querungsverkehr = createQuerungsverkehr(5, Himmelsrichtung.NW);
+  let querungsverkehr = createQuerungsverkehr(5, Himmelsrichtung.Nw);
   querungsverkehre.push(querungsverkehr);
-  querungsverkehr = createQuerungsverkehr(5, Himmelsrichtung.SO);
+  querungsverkehr = createQuerungsverkehr(5, Himmelsrichtung.So);
   querungsverkehre.push(querungsverkehr);
 
   zaehlung.value.querungsverkehr = querungsverkehre;
@@ -1802,7 +1808,7 @@ function handleClickOnLaengsverkehr(
   richtung: Bewegungsrichtung,
   strassenseite: Himmelsrichtung
 ): void {
-  const clickedLaengsverkehr: LaengsverkehrDTO = createLaengsverkehr(
+  const clickedLaengsverkehr: ExternalLaengsverkehrDTO = createLaengsverkehr(
     knotenarm,
     richtung,
     strassenseite
@@ -1828,10 +1834,8 @@ function handleClickOnQuerungsverkehr(
   knotenarm: number,
   richtung: Himmelsrichtung
 ): void {
-  const clickedQuerungsverkehr: QuerungsverkehrDTO = createQuerungsverkehr(
-    knotenarm,
-    richtung
-  );
+  const clickedQuerungsverkehr: ExternalQuerungsverkehrDTO =
+    createQuerungsverkehr(knotenarm, richtung);
 
   const querungsverkehre = toArray(cloneDeep(selectedQuerungsverkehre.value));
 
@@ -1849,10 +1853,10 @@ function handleClickOnQuerungsverkehr(
 }
 
 function findIndexInSelectedLaengsverkehreForClickedLaengsverkehr(
-  clickedLaengsverkehr: LaengsverkehrDTO
+  clickedLaengsverkehr: ExternalLaengsverkehrDTO
 ) {
   return selectedLaengsverkehre.value.findIndex(
-    (laengsverkehr: LaengsverkehrDTO) => {
+    (laengsverkehr: ExternalLaengsverkehrDTO) => {
       return (
         laengsverkehr.knotenarm === clickedLaengsverkehr.knotenarm &&
         laengsverkehr.richtung === clickedLaengsverkehr.richtung &&
@@ -1863,10 +1867,10 @@ function findIndexInSelectedLaengsverkehreForClickedLaengsverkehr(
 }
 
 function findIndexInSelectedQuerungsverkehreForClickedQuerungsverkehr(
-  clickedQuerungsverkehr: QuerungsverkehrDTO
+  clickedQuerungsverkehr: ExternalQuerungsverkehrDTO
 ) {
   return selectedQuerungsverkehre.value.findIndex(
-    (querungsverkehr: QuerungsverkehrDTO) => {
+    (querungsverkehr: ExternalQuerungsverkehrDTO) => {
       return (
         querungsverkehr.knotenarm === clickedQuerungsverkehr.knotenarm &&
         querungsverkehr.richtung === clickedQuerungsverkehr.richtung
@@ -1879,8 +1883,8 @@ function createLaengsverkehr(
   knotenarm: number,
   richtung: Bewegungsrichtung,
   strassenseite: Himmelsrichtung
-): LaengsverkehrDTO {
-  const laengsverkehr = {} as LaengsverkehrDTO;
+): ExternalLaengsverkehrDTO {
+  const laengsverkehr = {} as ExternalLaengsverkehrDTO;
   laengsverkehr.knotenarm = knotenarm;
   laengsverkehr.richtung = richtung;
   laengsverkehr.strassenseite = strassenseite;
@@ -1890,8 +1894,8 @@ function createLaengsverkehr(
 function createQuerungsverkehr(
   knotenarm: number,
   richtung: Himmelsrichtung
-): QuerungsverkehrDTO {
-  const querungsverkehr = {} as QuerungsverkehrDTO;
+): ExternalQuerungsverkehrDTO {
+  const querungsverkehr = {} as ExternalQuerungsverkehrDTO;
   querungsverkehr.knotenarm = knotenarm;
   querungsverkehr.richtung = richtung;
   return querungsverkehr;

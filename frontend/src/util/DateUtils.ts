@@ -6,9 +6,12 @@ import { useSnackbarStore } from "@/store/SnackbarStore";
 export function useDateUtils() {
   const snackbarStore = useSnackbarStore();
 
-  function formatDate(date: string): string {
+  function formatDate(date: Date | string | undefined): string {
     if (!date) {
       return "";
+    }
+    if (date instanceof Date) {
+      return `${String(date.getDate()).padStart(2, "0")}.${String(date.getMonth() + 1).padStart(2, "0")}.${date.getFullYear()}`;
     }
     const [year, month, day] = date.split("-");
     return `${day}.${month}.${year}`;
@@ -49,7 +52,7 @@ export function useDateUtils() {
     return `${i18n.global.d(date, "time", "de-DE")}`;
   }
 
-  function getShortVersionOfDate(date: Date | string): string {
+  function getShortVersionOfDate(date: Date | string | undefined): string {
     if (!date) {
       return "";
     }

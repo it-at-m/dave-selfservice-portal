@@ -1,7 +1,7 @@
 <template>
   <knotenverkehr-form
     v-if="
-      zaehlung.zaehlart === Zaehlart.FJS || zaehlung.zaehlart === Zaehlart.QU
+      zaehlung.zaehlart === Zaehlart.Fjs || zaehlung.zaehlart === Zaehlart.Qu
     "
     v-model:zaehlung="zaehlung"
     :height="height"
@@ -9,7 +9,7 @@
     :clickable="false"
   />
   <querschnitt-je-strassenseite-form
-    v-else-if="zaehlung.zaehlart === Zaehlart.QJS"
+    v-else-if="zaehlung.zaehlart === Zaehlart.Qjs"
     v-model:zaehlung="zaehlung"
     :height="height"
     :width="width"
@@ -20,7 +20,7 @@
   <zaehlung-geometrie
     v-else
     id="geo"
-    v-model="zaehlung.knotenarme"
+    :model-value="zaehlung.knotenarme ?? []"
     :height="height"
     :width="width"
     active-color="#1565C0"
@@ -29,12 +29,12 @@
 </template>
 
 <script setup lang="ts">
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ExternalZaehlungDTO } from "@/api/client";
 
+import { Zaehlart } from "@/api/client";
 import KnotenverkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/KnotenverkehrForm.vue";
 import QuerschnittJeStrassenseiteForm from "@/components/zaehlung/form/verkehrsbeziehungen/QuerschnittJeStrassenseiteForm.vue";
 import ZaehlungGeometrie from "@/components/zaehlung/form/verkehrsbeziehungen/ZaehlungGeometrie.vue";
-import Zaehlart from "@/types/enum/Zaehlart";
 
 interface Props {
   height: string;
@@ -42,7 +42,7 @@ interface Props {
 }
 defineProps<Props>();
 
-const zaehlung = defineModel<ZaehlungDTO>("zaehlung", {
+const zaehlung = defineModel<ExternalZaehlungDTO>("zaehlung", {
   required: true,
 });
 </script>

@@ -214,7 +214,7 @@
   </v-sheet>
 </template>
 <script setup lang="ts">
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type { ExternalKnotenarmDTO } from "@/api/client";
 
 import { computed } from "vue";
 
@@ -232,7 +232,7 @@ const props = withDefaults(defineProps<Props>(), {
   passiveColor: "#757575",
 });
 
-const knotenarme = defineModel<Array<KnotenarmDTO>>({
+const knotenarme = defineModel<Array<ExternalKnotenarmDTO>>({
   required: true,
 });
 

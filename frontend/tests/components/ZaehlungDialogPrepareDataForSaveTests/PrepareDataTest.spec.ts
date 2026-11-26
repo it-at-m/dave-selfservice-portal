@@ -1,28 +1,57 @@
-import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { Himmelsrichtung, ZeitintervallDTO } from "@/api/client";
 
-import { describe, expect, it } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
 
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
-import Quelle from "@/types/enum/Quelle";
-import Status from "@/types/enum/Status";
-import Wetter from "@/types/enum/Wetter";
-import Zaehlart from "@/types/enum/Zaehlart";
-import Zaehldauer from "@/types/enum/Zaehldauer";
+import {
+  ExternalZaehlungDTOFromJSON,
+  Quelle,
+  Status,
+  Wetter,
+  Zaehlart,
+  Zaehldauer,
+} from "@/api/client";
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
-const csvToZeitintervallTransformationUtils =
-  useCsvToZeitintervallTransformationUtils();
-
 describe("prepareForSaveZaehlung", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   it("should properly transform CSV data into time intervals", () => {
-    const zaehlung: ZaehlungDTO = {
+    const csvToZeitintervallTransformationUtils =
+      useCsvToZeitintervallTransformationUtils();
+    const fileStore = useKnotenarmFileStore();
+    fileStore.setFiledata(1, [
+      "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
+      "164701;;2026-03-10;1;;;;;;;",
+      "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
+      "1;2;;;1;2;3;4;5;6;0",
+      "2;2;;;1;1;1;1;1;1;0",
+      "3;2;;;2;2;2;2;2;2;0",
+      "4;2;;;3;3;3;3;3;3;0",
+      "5;2;;;4;4;4;4;4;4;0",
+      "6;2;;;5;5;5;5;5;5;0",
+    ]);
+    fileStore.setFiledata(2, [
+      "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
+      "164702;;2026-03-10;2;;;;;;;",
+      "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
+      "1;1;;;7;6;5;4;3;2;1",
+      "2;1;;;2;2;2;2;2;2;2",
+      "3;1;;;3;3;3;3;3;3;3",
+      "4;1;;;4;4;4;4;4;4;4",
+      "5;1;;;5;5;5;5;5;5;5",
+      "6;1;;;6;6;6;6;6;6;6",
+    ]);
+    const zaehlung = ExternalZaehlungDTOFromJSON({
       id: "1",
       entityVersion: 0,
       createdTime: "0",
       datum: "2026-03-10",
       zaehlart: Zaehlart.N,
-      punkt: { lat: "0", lon: "0" },
+      punkt: { lat: 0, lon: 0 },
       projektNummer: "P123",
       projektName: "Project Name",
       kreuzungsname: "Intersection Name",
@@ -32,10 +61,10 @@ describe("prepareForSaveZaehlung", () => {
       zaehlsituation: "Situation",
       zaehlsituationErweitert: "Extended Situation",
       zaehlIntervall: 15,
-      zaehldauer: Zaehldauer.DAUER_24_STUNDEN,
-      wetter: Wetter.NO_INFORMATION,
-      status: Status.COUNTING,
-      quelle: Quelle.MANUALLY,
+      zaehldauer: Zaehldauer.Dauer24Stunden,
+      wetter: Wetter.NoInformation,
+      status: Status.Counting,
+      quelle: Quelle.Manually,
       kommentar: "Comment",
       knotenarme: [
         {
@@ -45,17 +74,6 @@ describe("prepareForSaveZaehlung", () => {
           nummer: 1,
           strassenname: "Street A",
           filename: "file1.csv",
-          filedata: [
-            "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
-            "164701;;2026-03-10;1;;;;;;;",
-            "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
-            "1;2;;;1;2;3;4;5;6;0",
-            "2;2;;;1;1;1;1;1;1;0",
-            "3;2;;;2;2;2;2;2;2;0",
-            "4;2;;;3;3;3;3;3;3;0",
-            "5;2;;;4;4;4;4;4;4;0",
-            "6;2;;;5;5;5;5;5;5;0",
-          ],
         },
         {
           id: "1",
@@ -64,17 +82,6 @@ describe("prepareForSaveZaehlung", () => {
           nummer: 2,
           strassenname: "Street B",
           filename: "file2.csv",
-          filedata: [
-            "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
-            "164702;;2026-03-10;2;;;;;;;",
-            "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
-            "1;1;;;7;6;5;4;3;2;1",
-            "2;1;;;2;2;2;2;2;2;2",
-            "3;1;;;3;3;3;3;3;3;3",
-            "4;1;;;4;4;4;4;4;4;4",
-            "5;1;;;5;5;5;5;5;5;5",
-            "6;1;;;6;6;6;6;6;6;6",
-          ],
         },
       ],
       verkehrsbeziehungen: [
@@ -101,7 +108,7 @@ describe("prepareForSaveZaehlung", () => {
           isKreuzung: false,
           strassenseite: {} as Himmelsrichtung,
           active: true,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          zeitintervalle: [],
         },
         {
           id: "2",
@@ -126,24 +133,24 @@ describe("prepareForSaveZaehlung", () => {
           isKreuzung: true,
           strassenseite: {} as Himmelsrichtung,
           active: true,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          zeitintervalle: [],
         },
       ],
       querungsverkehr: [],
       laengsverkehr: [],
       zaehlstelleNummer: "Z123",
       zaehlstelleStadtbezirk: "District A",
-      zaehlstellePunkt: { lat: "0", lon: "0" },
+      zaehlstellePunkt: { lat: 0, lon: 0 },
       zaehlstelleKommentar: "Comment",
       unreadMessagesDienstleister: false,
-    };
+    });
 
     csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
       zaehlung
     );
 
     expect(zaehlung.verkehrsbeziehungen).toBeDefined();
-    expect(zaehlung.verkehrsbeziehungen.length).toBe(2);
+    expect(zaehlung.verkehrsbeziehungen?.length).toBe(2);
 
     const expectedTimeIntervals1: ZeitintervallDTO[] = [
       {
@@ -282,10 +289,10 @@ describe("prepareForSaveZaehlung", () => {
         fussgaenger: 6,
       },
     ];
-    expect(zaehlung.verkehrsbeziehungen[0].zeitintervalle).toEqual(
+    expect(zaehlung.verkehrsbeziehungen?.[0].zeitintervalle).toEqual(
       expectedTimeIntervals1
     );
-    expect(zaehlung.verkehrsbeziehungen[1].zeitintervalle).toEqual(
+    expect(zaehlung.verkehrsbeziehungen?.[1].zeitintervalle).toEqual(
       expectedTimeIntervals2
     );
   });

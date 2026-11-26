@@ -1,6 +1,8 @@
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
+import type {
+  ExternalLaengsverkehrDTO,
+  ExternalQuerungsverkehrDTO,
+  ExternalVerkehrsbeziehungDTO,
+} from "@/api/client";
 
 export default class VerkehrsbeziehungComparator {
   /**
@@ -9,69 +11,23 @@ export default class VerkehrsbeziehungComparator {
    * @param a
    * @param b
    */
-  public static sortByActiveVonAndNach(
-    a: VerkehrsbeziehungDTO,
-    b: VerkehrsbeziehungDTO
+  public static sortByVonAndNach(
+    a: ExternalVerkehrsbeziehungDTO,
+    b: ExternalVerkehrsbeziehungDTO
   ): number {
-    // beide sind aktiv, dann nach von und dann nach nach
-    if (a.active && b.active) {
-      if (a.von === b.von) {
-        if (a.nach > b.nach) {
-          return 1;
-        }
-        if (a.nach < b.nach) {
-          return -1;
-        }
-        return 0;
-      }
-      if (a.von > b.von) {
-        return 1;
-      }
-      if (a.von < b.von) {
-        return -1;
-      }
-      return 0;
-    }
-
-    if (a.active && !b.active) {
-      return -1;
-    }
-
-    if (!a.active && b.active) {
-      return 1;
-    }
-
-    if (!a.active && !b.active) {
-      if (a.von === b.von) {
-        if (a.nach > b.nach) {
-          return 1;
-        }
-        if (a.nach < b.nach) {
-          return -1;
-        }
-        return 0;
-      }
-      if (a.von > b.von) {
-        return 1;
-      }
-      if (a.von < b.von) {
-        return -1;
-      }
-      return 0;
-    }
-    return 0;
+    return (a.von ?? 0) - (b.von ?? 0) || (a.nach ?? 0) - (b.nach ?? 0);
   }
 
   /**
-   * Sortiert eine Liste von Querungs- und LaengsverkehrDTO mit ihren Knotenarmen nach der Nummer
+   * Sortiert eine Liste von ExternalQuerungsverkehrDTO und ExternalLaengsverkehrDTO nach der Knotenarmnummer
    *
    * @param a
    * @param b
    */
   public static sortLaengsUndQuerungByNumber(
-    a: LaengsverkehrDTO | QuerungsverkehrDTO,
-    b: LaengsverkehrDTO | QuerungsverkehrDTO
+    a: ExternalLaengsverkehrDTO | ExternalQuerungsverkehrDTO,
+    b: ExternalLaengsverkehrDTO | ExternalQuerungsverkehrDTO
   ): number {
-    return a.knotenarm - b.knotenarm;
+    return (a.knotenarm ?? 0) - (b.knotenarm ?? 0);
   }
 }

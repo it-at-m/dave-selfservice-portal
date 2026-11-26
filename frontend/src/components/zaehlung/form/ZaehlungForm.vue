@@ -55,7 +55,7 @@
 </template>
 
 <script setup lang="ts">
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ExternalZaehlungDTO } from "@/api/client";
 
 import { computed, ref, watch } from "vue";
 import { useDisplay } from "vuetify";
@@ -66,7 +66,7 @@ import KnotenLageForm from "@/components/zaehlung/form/KnotenLageForm.vue";
 import { useEventbusStore } from "@/store/EventbusStore";
 import { useDaveUtils } from "@/util/DaveUtils";
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 

@@ -1,4 +1,4 @@
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
+import type { ExternalKnotenarmDTO } from "@/api/client";
 
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
@@ -35,7 +35,7 @@ export const useValidationStore = defineStore("validationStore", () => {
    * @param status neuer Status des Knotenarms
    */
   function setUploadedFileStatus(
-    knotenarm: KnotenarmDTO,
+    knotenarm: ExternalKnotenarmDTO,
     status: UploadedFileStatus
   ) {
     uploadedFileStatusByKnotenarm.value.set(knotenarm.nummer, status);
@@ -47,7 +47,7 @@ export const useValidationStore = defineStore("validationStore", () => {
    *
    * @param knotenarme Array von KnotenarmDTOs der Zählung
    */
-  function initUploadedFileStatus(knotenarme: Array<KnotenarmDTO>) {
+  function initUploadedFileStatus(knotenarme: Array<ExternalKnotenarmDTO>) {
     uploadedFileStatusByKnotenarm.value = new Map(
       knotenarme.map((knotenarm) => [
         knotenarm.nummer,

@@ -1,29 +1,40 @@
-import type ChatMessageDTO from "@/types/chat/ChatMessageDTO";
+import type { ChatMessageDTO } from "@/api/client";
 
-import FetchService from "@/api/service/FetchService";
+import { ChatMessageControllerApi } from "@/api/client";
+import createBackendApiConfiguration from "@/api/util/BackendApiConfiguration";
+import BaseUrlProvider from "@/api/util/BaseUrlProvider";
+import { handleOpenApiError } from "@/api/util/OpenApiErrorHandler";
 
 export default class ChatMessageService {
-  private static readonly ENDPOINT: string =
-    "api/dave-backend-service/chat-message";
+  private static readonly ENDPOINT = `${BaseUrlProvider.getBaseUrl()}/api/dave-backend-service`;
+  private static readonly API = new ChatMessageControllerApi(
+    createBackendApiConfiguration(this.ENDPOINT)
+  );
 
   static save(data: ChatMessageDTO): Promise<ChatMessageDTO> {
-    return FetchService.postData(
-      data,
-      `${this.ENDPOINT}/save`,
+    return handleOpenApiError(
+      this.API.saveChatMessage({
+        chatMessageDTO: data,
+      }).then((response) => response),
       "Beim Speichern der ChatMessage ist ein Fehler aufgetreten. Bitte Daten kontrollieren."
     );
   }
 
-  static getAllByZaehlungId(id: string): Promise<ChatMessageDTO[]> {
-    return FetchService.getData(
-      `${this.ENDPOINT}/allChatMessagesByZaehlungId?zaehlungId=${id}`,
+  static getAllByZaehlungId(id: string): Promise<Array<ChatMessageDTO>> {
+    return handleOpenApiError(
+      this.API.getAllChatMessagesByZaehlungId({
+        zaehlungId: id,
+      }).then((response) => response),
       "Beim Holen der ChatMessages ist ein Fehler aufgetreten."
     );
   }
 
   static updateUnreadMessages(zaehlungId: string, participantId: number) {
-    return FetchService.getData(
-      `${this.ENDPOINT}/updateUnreadMessages?zaehlungId=${zaehlungId}&callingParticipantId=${participantId}`,
+    return handleOpenApiError(
+      this.API.updateUnreadMessages({
+        zaehlungId,
+        callingParticipantId: participantId,
+      }).then((response) => response),
       "Beim Updaten des ViewStatus der Chat Messages ist ein Fehler aufgetreten."
     );
   }

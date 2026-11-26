@@ -192,17 +192,17 @@
 </template>
 
 <script setup lang="ts">
+import type { ExternalZaehlungDTO } from "@/api/client";
 import type KeyVal from "@/types/common/KeyVal";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
 
 import { computed, onMounted, ref } from "vue";
 
+import { Status } from "@/api/client";
 import LhmTextField from "@/components/common/LhmTextField.vue";
-import { quelleText } from "@/types/enum/Quelle";
-import Status from "@/types/enum/Status";
-import { wetterDropDown } from "@/types/enum/Wetter";
-import { zaehlartenDropDown, zaehlartText } from "@/types/enum/Zaehlart";
-import { zaehldauerText } from "@/types/enum/Zaehldauer";
+import { quelleText } from "@/types/enum/QuelleText";
+import { wetterDropDown } from "@/types/enum/WetterText";
+import { zaehlartenDropDown, zaehlartText } from "@/types/enum/ZaehlartText";
+import { zaehldauerText } from "@/types/enum/ZaehldauerText";
 import { useDateUtils } from "@/util/DateUtils";
 
 interface Props {
@@ -220,7 +220,7 @@ onMounted(() => {
   resetDatum();
 });
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 
@@ -229,11 +229,11 @@ const getSonderzaehlungText = computed<string>(() => {
 });
 
 const getZaehldauer = computed<string | undefined>(() => {
-  return zaehldauerText.get(zaehlung.value.zaehldauer);
+  return zaehldauerText.get(zaehlung.value.zaehldauer ?? "");
 });
 
 const getQuelle = computed<string | undefined>(() => {
-  return quelleText.get(zaehlung.value.quelle);
+  return quelleText.get(zaehlung.value.quelle ?? "");
 });
 
 const getZaehlintervall = computed<string>(() => {
@@ -249,7 +249,10 @@ const getZaehlarten = computed<Array<KeyVal>>(() => {
 });
 
 const isZaehlungReadonly = computed<boolean>(() => {
-  return ![Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
+  return (
+    zaehlung.value.status !== Status.Counting &&
+    zaehlung.value.status !== Status.Correction
+  );
 });
 
 const formattedDate = computed(() => {
@@ -257,7 +260,7 @@ const formattedDate = computed(() => {
 });
 
 const isZaehlungInstructed = computed<boolean>(() => {
-  return zaehlung.value.status === Status.INSTRUCTED;
+  return zaehlung.value.status === Status.Instructed;
 });
 
 const formattedDateAsText = computed<string>(() => {
@@ -265,16 +268,16 @@ const formattedDateAsText = computed<string>(() => {
 });
 
 const getZaehlart = computed<string | undefined>(() => {
-  return zaehlartText.get(zaehlung.value.zaehlart);
+  return zaehlartText.get(zaehlung.value.zaehlart ?? "");
 });
 
 function resetDatum(): void {
-  datepickerModel.value = dateUtils.getDatumOfString(zaehlung.value.datum);
+  datepickerModel.value = zaehlung.value.datum ?? new Date();
 }
 
 function saveDate(): void {
   datepickerMenuModel.value = false;
-  zaehlung.value.datum = dateUtils.formatDateForBackend(datepickerModel.value);
+  zaehlung.value.datum = datepickerModel.value;
 }
 
 function closeMenu(): void {

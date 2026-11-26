@@ -40,19 +40,19 @@
 </template>
 
 <script setup lang="ts">
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ExternalZaehlungDTO } from "@/api/client";
 
 import { computed, watch } from "vue";
 import { useDisplay } from "vuetify";
 
+import { Status, Zaehlart } from "@/api/client";
 import { ApiError } from "@/api/error";
 import ZaehlungService from "@/api/service/ZaehlungService";
 import ZaehlungForm from "@/components/zaehlung/form/ZaehlungForm.vue";
 import { useEventbusStore } from "@/store/EventbusStore";
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
-import Status from "@/types/enum/Status";
-import Zaehlart from "@/types/enum/Zaehlart";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
@@ -67,7 +67,7 @@ const emits = defineEmits<{
   (e: "close-dialog"): void;
 }>();
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 
@@ -75,6 +75,7 @@ const { mobile } = useDisplay();
 const eventbusStore = useEventbusStore();
 const snackbarStore = useSnackbarStore();
 const validationStore = useValidationStore();
+const knotenarmFileStore = useKnotenarmFileStore();
 const validationUtils = useValidationUtils();
 
 const csvToZeitintervallTransformationUtils =
@@ -83,6 +84,7 @@ const csvToZeitintervallTransformationUtils =
 watch(
   () => props.showDialog,
   () => {
+    knotenarmFileStore.reset();
     const knotenarme = validationUtils.getRelevantKnotenarmeForFileUpload(
       zaehlung.value
     );
@@ -101,9 +103,9 @@ const showDialog = computed<boolean>(() => props.showDialog);
 
 const dialogtitle = computed<string>(() => {
   let dialogtitleText = "anzeigen";
-  if (zaehlung.value.status === Status.CORRECTION) {
+  if (zaehlung.value.status === Status.Correction) {
     dialogtitleText = "korrigieren";
-  } else if (zaehlung.value.status === Status.COUNTING) {
+  } else if (zaehlung.value.status === Status.Counting) {
     dialogtitleText = "bearbeiten";
   }
   return `${zaehlung.value.zaehlstelleNummer} - Zählung ${dialogtitleText}`;
@@ -117,16 +119,16 @@ function save(): void {
   if (!validationStore.uploadedFilesChanged) {
     // Bewegungsbeziehungen auf leeres Array setzen, um ein Löschen der gespeicherten
     // Zeitintervalle auf Backend-Seite zu verhindern
-    if (zaehlung.value.zaehlart === Zaehlart.FJS) {
+    if (zaehlung.value.zaehlart === Zaehlart.Fjs) {
       zaehlung.value.laengsverkehr = [];
-    } else if (zaehlung.value.zaehlart === Zaehlart.QU) {
+    } else if (zaehlung.value.zaehlart === Zaehlart.Qu) {
       zaehlung.value.querungsverkehr = [];
     } else {
       zaehlung.value.verkehrsbeziehungen = [];
     }
   }
 
-  ZaehlungService.saveZaehlung(zaehlung.value)
+  ZaehlungService.saveExternalZaehlung(zaehlung.value)
     .then(() => {
       snackbarStore.showSuccess("Die Zählung wurde aktualisiert.");
       emits("saved");

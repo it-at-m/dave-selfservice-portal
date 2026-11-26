@@ -1,5 +1,5 @@
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ExternalZaehlungDTO } from "@/api/client";
 
 export default interface ZaehlungCardObject {
-  zaehlung: ZaehlungDTO;
+  zaehlung: ExternalZaehlungDTO;
 }

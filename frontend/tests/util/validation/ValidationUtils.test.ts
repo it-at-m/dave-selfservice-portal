@@ -1,12 +1,10 @@
 import { describe, expect, test } from "vitest";
 
-import Fahrzeug from "@/types/enum/Fahrzeug";
-import Zaehlart from "@/types/enum/Zaehlart";
+import { Fahrzeug, serializeDate, Zaehlart, Zaehldauer } from "@/api/client";
 import {
-  Zaehldauer,
   zaehldauerIntervallnummern,
   zaehldauerText,
-} from "@/types/enum/Zaehldauer";
+} from "@/types/enum/ZaehldauerText";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
@@ -269,13 +267,13 @@ describe("ValidationUtils -> hasCorrectZaehldatenHeader", () => {
 
 describe("ValidationUtils -> validateZaehlwerteOccurrence", () => {
   const vehicleIndexMap: Record<string, number> = {
-    [Fahrzeug.PKW]: 4,
-    [Fahrzeug.LKW]: 5,
-    [Fahrzeug.LZ]: 6,
-    [Fahrzeug.BUS]: 7,
-    [Fahrzeug.KRAD]: 8,
-    [Fahrzeug.RAD]: 9,
-    [Fahrzeug.FUSS]: 10,
+    [Fahrzeug.Pkw]: 4,
+    [Fahrzeug.Lkw]: 5,
+    [Fahrzeug.Lz]: 6,
+    [Fahrzeug.Bus]: 7,
+    [Fahrzeug.Krad]: 8,
+    [Fahrzeug.Rad]: 9,
+    [Fahrzeug.Fuss]: 10,
   };
 
   Object.entries(vehicleIndexMap).forEach(([veh, idx]) => {
@@ -308,7 +306,7 @@ describe("ValidationUtils -> validateZaehlwerteOccurrence", () => {
   });
 
   test("returns error when one of multiple requested categories is missing", () => {
-    const requested = [Fahrzeug.PKW, Fahrzeug.LKW];
+    const requested = [Fahrzeug.Pkw, Fahrzeug.Lkw];
     const line = new Array(11).fill("");
     line[4] = "1"; // PKW present
     // LKW missing
@@ -343,15 +341,14 @@ describe("ValidationUtils -> hasCorrectMetadata", () => {
     const knotenarmNr = 5;
     const zaehlung = {
       zaehlstelleNummer: "ZS123",
-      zaehlart: Zaehlart.QJS,
-      datum: "2023-01-01",
+      zaehlart: Zaehlart.Qjs,
+      datum: new Date(2023, 0, 1),
     };
-    const metaZaehlart =
-      zaehlung.zaehlart === Zaehlart.N ? "" : zaehlung.zaehlart;
+    const metaZaehlart = zaehlung.zaehlart;
     const expectedMetaDataArray = [
       zaehlung.zaehlstelleNummer,
       metaZaehlart,
-      zaehlung.datum,
+      serializeDate(zaehlung.datum),
       knotenarmNr,
     ];
     while (expectedMetaDataArray.length < COLUMN_COUNT) {
@@ -369,14 +366,14 @@ describe("ValidationUtils -> hasCorrectMetadata", () => {
     const zaehlung = {
       zaehlstelleNummer: "ZS999",
       zaehlart: Zaehlart.N,
-      datum: "2022-12-31",
+      datum: new Date(2022, 11, 31),
     };
     const metaZaehlart =
       zaehlung.zaehlart === Zaehlart.N ? "" : zaehlung.zaehlart;
     const expectedMetaDataArray = [
       zaehlung.zaehlstelleNummer,
       metaZaehlart,
-      zaehlung.datum,
+      serializeDate(zaehlung.datum),
       knotenarmNr,
     ];
     while (expectedMetaDataArray.length < COLUMN_COUNT) {
@@ -485,7 +482,7 @@ describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", 
     expect(
       checkForAlignmentOfIntervallsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.DAUER_24_STUNDEN
+        Zaehldauer.Dauer24Stunden
       )
     ).toBe("");
   });
@@ -495,7 +492,7 @@ describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", 
     expect(
       checkForAlignmentOfIntervallsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.DAUER_24_STUNDEN
+        Zaehldauer.Dauer24Stunden
       )
     ).toBe(
       "In der CSV-Datei existieren folgende Intervallnummern die sich ausserhalb des Zählzeitraums definiert durch die Zähldauer Ganztageszählung befinden: 0, 97"
@@ -507,7 +504,7 @@ describe("ValidationUtils -> checkForAlignmentOfIntervallsAccordingZaehldauer", 
     expect(
       checkForAlignmentOfIntervallsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.SONSTIGE
+        Zaehldauer.Sonstige
       )
     ).toBe("");
   });
@@ -524,9 +521,7 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
   }
 
   test("returns empty when number of intervalls per bewegungsinformation matches expected for 2x4h (two bewegungsinformationen)", () => {
-    const ranges = zaehldauerIntervallnummern.get(
-      Zaehldauer.DAUER_2_X_4_STUNDEN
-    )!;
+    const ranges = zaehldauerIntervallnummern.get(Zaehldauer.Dauer2X4Stunden)!;
     const csvLines: Array<string> = [];
     // build all intervall numbers for the zaehldauer for two different bewegungsinformationen (A and B)
     ranges.forEach((r) => {
@@ -541,15 +536,13 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     expect(
       checkForCorrectNumberOfIntervalsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.DAUER_2_X_4_STUNDEN
+        Zaehldauer.Dauer2X4Stunden
       )
     ).toBe("");
   });
 
   test("returns descriptive message when count does not match expected for 2x4h (one bewegungsinformation wrong)", () => {
-    const ranges = zaehldauerIntervallnummern.get(
-      Zaehldauer.DAUER_2_X_4_STUNDEN
-    )!;
+    const ranges = zaehldauerIntervallnummern.get(Zaehldauer.Dauer2X4Stunden)!;
     const csvLines: Array<string> = [];
     // Build two bewegungsinformationen: A (correct), B (one missing intervall)
     // bewegungsinformation A
@@ -573,12 +566,12 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     );
     // actual count for the offending bewegungsinformation (B) is expectedTotal - 1
     const actualCount = expectedTotal - 1;
-    const expectedMessage = `Die Menge von ${actualCount} Intervallnummern in der CSV-Datei entspricht nicht der erwarteten Anzahl von ${expectedTotal} Intervallen der Zähldauer ${zaehldauerText.get(Zaehldauer.DAUER_2_X_4_STUNDEN)}.`;
+    const expectedMessage = `Die Menge von ${actualCount} Intervallnummern in der CSV-Datei entspricht nicht der erwarteten Anzahl von ${expectedTotal} Intervallen der Zähldauer ${zaehldauerText.get(Zaehldauer.Dauer2X4Stunden)}.`;
 
     expect(
       checkForCorrectNumberOfIntervalsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.DAUER_2_X_4_STUNDEN
+        Zaehldauer.Dauer2X4Stunden
       )
     ).toBe(expectedMessage);
   });
@@ -588,7 +581,7 @@ describe("ValidationUtils -> checkForCorrectNumberOfIntervalsAccordingZaehldauer
     expect(
       checkForCorrectNumberOfIntervalsAccordingZaehldauer(
         csvLines,
-        Zaehldauer.SONSTIGE
+        Zaehldauer.Sonstige
       )
     ).toBe("");
   });
@@ -737,23 +730,23 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
     };
 
     const fjsZaehlung = createZaehlung();
-    fjsZaehlung.zaehlart = Zaehlart.FJS;
+    fjsZaehlung.zaehlart = Zaehlart.Fjs;
     fjsZaehlung.laengsverkehr = [
       { knotenarm: 2 },
       { knotenarm: undefined },
     ] as typeof fjsZaehlung.laengsverkehr;
     expect(getRelevantKnotenarmeForFileUpload(fjsZaehlung)).toEqual([
-      fjsZaehlung.knotenarme[1],
+      fjsZaehlung.knotenarme![1],
     ]);
 
     const quZaehlung = createZaehlung();
-    quZaehlung.zaehlart = Zaehlart.QU;
+    quZaehlung.zaehlart = Zaehlart.Qu;
     quZaehlung.querungsverkehr = [
       { knotenarm: 3 },
       { knotenarm: undefined },
     ] as typeof quZaehlung.querungsverkehr;
     expect(getRelevantKnotenarmeForFileUpload(quZaehlung)).toEqual([
-      quZaehlung.knotenarme[2],
+      quZaehlung.knotenarme![2],
     ]);
 
     const kreisverkehrZaehlung = createZaehlung();
@@ -764,7 +757,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
       { knotenarm: undefined },
     ] as typeof kreisverkehrZaehlung.verkehrsbeziehungen;
     expect(getRelevantKnotenarmeForFileUpload(kreisverkehrZaehlung)).toEqual([
-      kreisverkehrZaehlung.knotenarme[0],
+      kreisverkehrZaehlung.knotenarme![0],
     ]);
 
     const kreuzungZaehlung = createZaehlung();
@@ -774,7 +767,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
       { von: undefined },
     ] as typeof kreuzungZaehlung.verkehrsbeziehungen;
     expect(getRelevantKnotenarmeForFileUpload(kreuzungZaehlung)).toEqual([
-      kreuzungZaehlung.knotenarme[1],
+      kreuzungZaehlung.knotenarme![1],
     ]);
   });
 });
@@ -782,7 +775,7 @@ describe("ValidationUtils -> getRelevantKnotenarmeForFileUpload", () => {
 describe("ValidationUtils -> validateKnotenarmWithoutFile", () => {
   test("returns true only when a relevant Knotenarm has no filename", () => {
     const zaehlung = DefaultObjectCreator.createDefaultZaehlungDTO();
-    zaehlung.zaehlart = Zaehlart.QU;
+    zaehlung.zaehlart = Zaehlart.Qu;
     zaehlung.querungsverkehr = [
       { knotenarm: 1 },
     ] as typeof zaehlung.querungsverkehr;
@@ -792,7 +785,7 @@ describe("ValidationUtils -> validateKnotenarmWithoutFile", () => {
     ] as typeof zaehlung.knotenarme;
     expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(true);
 
-    zaehlung.knotenarme[0].filename = "uploaded.csv";
+    zaehlung.knotenarme![0].filename = "uploaded.csv";
     expect(hasAnyRelevantKnotenarmNoFile(zaehlung)).toBe(false);
 
     zaehlung.querungsverkehr = [];

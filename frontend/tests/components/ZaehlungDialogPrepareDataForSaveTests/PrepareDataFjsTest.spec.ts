@@ -1,30 +1,49 @@
-import type ZeitintervallDTO from "@/domain/dto/ZeitintervallDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ExternalLaengsverkehrDTO } from "@/api/client";
 
-import { describe, expect, it } from "vitest";
+import { createPinia, setActivePinia } from "pinia";
+import { beforeEach, describe, expect, it } from "vitest";
 
-import Bewegungsrichtung from "@/types/enum/Bewegungsrichtung";
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
-import Quelle from "@/types/enum/Quelle";
-import Status from "@/types/enum/Status";
-import Wetter from "@/types/enum/Wetter";
-import Zaehlart from "@/types/enum/Zaehlart";
-import Zaehldauer from "@/types/enum/Zaehldauer";
+import {
+  Bewegungsrichtung,
+  ExternalZaehlungDTOFromJSON,
+  Himmelsrichtung,
+  Quelle,
+  Status,
+  Wetter,
+  Zaehlart,
+  Zaehldauer,
+} from "@/api/client";
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useCsvToZeitintervallTransformationUtils } from "@/util/CsvToZeitintervallTransformationUtils";
 
-const csvToZeitintervallTransformationUtils =
-  useCsvToZeitintervallTransformationUtils();
-
 describe("prepareForSaveZaehlungFjs", () => {
+  beforeEach(() => {
+    setActivePinia(createPinia());
+  });
+
   it("sollte FJS-Verkehr aus CSV-Datei mit Strassenseite und Richtung parsen", () => {
-    const zaehlung: ZaehlungDTO = {
+    const csvToZeitintervallTransformationUtils =
+      useCsvToZeitintervallTransformationUtils();
+    useKnotenarmFileStore().setFiledata(1, [
+      "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
+      "164704;FJS;2026-03-10;1;;;;;;;",
+      "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
+      "1;;O;EIN;;;;;;1;1",
+      "2;;O;EIN;;;;;;2;2",
+      "1;;O;AUS;;;;;;3;4",
+      "2;;O;AUS;;;;;;5;6",
+      "1;;W;AUS;;;;;;1;1",
+      "2;;W;AUS;;;;;;1;1",
+      "1;;W;EIN;;;;;;5;6",
+      "2;;W;EIN;;;;;;7;8",
+    ]);
+    const zaehlung = ExternalZaehlungDTOFromJSON({
       id: "2-test",
       entityVersion: 0,
       createdTime: "0",
       datum: "2026-03-10",
-      zaehlart: Zaehlart.FJS,
-      punkt: { lat: "0", lon: "0" },
+      zaehlart: Zaehlart.Fjs,
+      punkt: { lat: 0, lon: 0 },
       projektNummer: "P456",
       projektName: "Another Project",
       kreuzungsname: "Another Intersection",
@@ -34,10 +53,10 @@ describe("prepareForSaveZaehlungFjs", () => {
       zaehlsituation: "Situation FJS",
       zaehlsituationErweitert: "Extended Situation FJS",
       zaehlIntervall: 15,
-      zaehldauer: Zaehldauer.DAUER_24_STUNDEN,
-      wetter: Wetter.NO_INFORMATION,
-      status: Status.COUNTING,
-      quelle: Quelle.MANUALLY,
+      zaehldauer: Zaehldauer.Dauer24Stunden,
+      wetter: Wetter.NoInformation,
+      status: Status.Counting,
+      quelle: Quelle.Manually,
       kommentar: "Comment FJS",
       knotenarme: [
         {
@@ -47,19 +66,6 @@ describe("prepareForSaveZaehlungFjs", () => {
           nummer: 1,
           strassenname: "Street C",
           filename: "file_fjs.csv",
-          filedata: [
-            "Zählstellennummer;Zählart;Datum;Knotenarmnummer;;;;;;;",
-            "164704;FJS;2026-03-10;1;;;;;;;",
-            "Intervallnummer;nach;Strassenseite;Richtung;Pkw;Lkw;Lz;Bus;Krad;Rad;Fuss",
-            "1;;O;EIN;;;;;;1;1",
-            "2;;O;EIN;;;;;;2;2",
-            "1;;O;AUS;;;;;;3;4",
-            "2;;O;AUS;;;;;;5;6",
-            "1;;W;AUS;;;;;;1;1",
-            "2;;W;AUS;;;;;;1;1",
-            "1;;W;EIN;;;;;;5;6",
-            "2;;W;EIN;;;;;;7;8",
-          ],
         },
       ],
       verkehrsbeziehungen: [],
@@ -71,8 +77,8 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 1,
           strassenseite: Himmelsrichtung.O,
-          richtung: Bewegungsrichtung.EIN,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          richtung: Bewegungsrichtung.Ein,
+          zeitintervalle: [],
         },
         {
           id: "21",
@@ -80,8 +86,8 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 1,
           strassenseite: Himmelsrichtung.O,
-          richtung: Bewegungsrichtung.AUS,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          richtung: Bewegungsrichtung.Aus,
+          zeitintervalle: [],
         },
         {
           id: "22",
@@ -89,8 +95,8 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 1,
           strassenseite: Himmelsrichtung.W,
-          richtung: Bewegungsrichtung.EIN,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          richtung: Bewegungsrichtung.Ein,
+          zeitintervalle: [],
         },
         {
           id: "23",
@@ -98,8 +104,8 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 1,
           strassenseite: Himmelsrichtung.W,
-          richtung: Bewegungsrichtung.AUS,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          richtung: Bewegungsrichtung.Aus,
+          zeitintervalle: [],
         },
         {
           id: "24",
@@ -107,8 +113,8 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 2,
           strassenseite: Himmelsrichtung.N,
-          richtung: Bewegungsrichtung.EIN,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          richtung: Bewegungsrichtung.Ein,
+          zeitintervalle: [],
         },
         {
           id: "25",
@@ -116,8 +122,8 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 2,
           strassenseite: Himmelsrichtung.N,
-          richtung: Bewegungsrichtung.AUS,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          richtung: Bewegungsrichtung.Aus,
+          zeitintervalle: [],
         },
         {
           id: "26",
@@ -125,8 +131,8 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 2,
           strassenseite: Himmelsrichtung.S,
-          richtung: Bewegungsrichtung.EIN,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          richtung: Bewegungsrichtung.Ein,
+          zeitintervalle: [],
         },
         {
           id: "27",
@@ -134,33 +140,33 @@ describe("prepareForSaveZaehlungFjs", () => {
           createdTime: "0",
           knotenarm: 2,
           strassenseite: Himmelsrichtung.S,
-          richtung: Bewegungsrichtung.AUS,
-          zeitintervalle: {} as ZeitintervallDTO[],
+          richtung: Bewegungsrichtung.Aus,
+          zeitintervalle: [],
         },
       ],
       zaehlstelleNummer: "Z456",
       zaehlstelleStadtbezirk: "District B",
-      zaehlstellePunkt: { lat: "0", lon: "0" },
+      zaehlstellePunkt: { lat: 0, lon: 0 },
       zaehlstelleKommentar: "Comment FJS",
       unreadMessagesDienstleister: false,
-    };
+    });
 
     csvToZeitintervallTransformationUtils.transformCsvDataInKnotenarmeToZeitintervalleAndAddToZaehlung(
       zaehlung
     );
 
     // Prüfen: 2 Laengsverkehrsrichtungen (O/EIN, W/AUS) wurden mit Daten gefüllt
-    expect(zaehlung.laengsverkehr.length).toBe(8); // alle 8 wurden initialisiert
+    expect(zaehlung.laengsverkehr?.length).toBe(8); // alle 8 wurden initialisiert
 
     // O/EIN
-    const oEin = zaehlung.laengsverkehr.find(
+    const oEin = zaehlung.laengsverkehr?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.O &&
-        v.richtung === Bewegungsrichtung.EIN
-    ) as LaengsverkehrDTO;
+        v.richtung === Bewegungsrichtung.Ein
+    ) as ExternalLaengsverkehrDTO;
     expect(oEin).toBeDefined();
-    expect(oEin?.zeitintervalle.length).toBe(2);
-    expect(oEin?.zeitintervalle[0]).toEqual({
+    expect(oEin?.zeitintervalle?.length).toBe(2);
+    expect(oEin?.zeitintervalle?.[0]).toEqual({
       startUhrzeit: "00:00",
       endeUhrzeit: "00:15",
       pkw: undefined,
@@ -171,7 +177,7 @@ describe("prepareForSaveZaehlungFjs", () => {
       fahrradfahrer: 1,
       fussgaenger: 1,
     });
-    expect(oEin?.zeitintervalle[1]).toEqual({
+    expect(oEin?.zeitintervalle?.[1]).toEqual({
       startUhrzeit: "00:15",
       endeUhrzeit: "00:30",
       pkw: undefined,
@@ -184,14 +190,14 @@ describe("prepareForSaveZaehlungFjs", () => {
     });
 
     // O/AUS
-    const oAus = zaehlung.laengsverkehr.find(
+    const oAus = zaehlung.laengsverkehr?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.O &&
-        v.richtung === Bewegungsrichtung.AUS
-    ) as LaengsverkehrDTO;
+        v.richtung === Bewegungsrichtung.Aus
+    ) as ExternalLaengsverkehrDTO;
     expect(oAus).toBeDefined();
-    expect(oAus?.zeitintervalle.length).toBe(2);
-    expect(oAus?.zeitintervalle[0]).toEqual({
+    expect(oAus?.zeitintervalle?.length).toBe(2);
+    expect(oAus?.zeitintervalle?.[0]).toEqual({
       startUhrzeit: "00:00",
       endeUhrzeit: "00:15",
       pkw: undefined,
@@ -202,7 +208,7 @@ describe("prepareForSaveZaehlungFjs", () => {
       fahrradfahrer: 3,
       fussgaenger: 4,
     });
-    expect(oAus?.zeitintervalle[1]).toEqual({
+    expect(oAus?.zeitintervalle?.[1]).toEqual({
       startUhrzeit: "00:15",
       endeUhrzeit: "00:30",
       pkw: undefined,
@@ -215,14 +221,14 @@ describe("prepareForSaveZaehlungFjs", () => {
     });
 
     // W/AUS
-    const wAus = zaehlung.laengsverkehr.find(
+    const wAus = zaehlung.laengsverkehr?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.W &&
-        v.richtung === Bewegungsrichtung.AUS
-    ) as LaengsverkehrDTO;
+        v.richtung === Bewegungsrichtung.Aus
+    ) as ExternalLaengsverkehrDTO;
     expect(wAus).toBeDefined();
-    expect(wAus?.zeitintervalle.length).toBe(2);
-    expect(wAus?.zeitintervalle[0]).toEqual({
+    expect(wAus?.zeitintervalle?.length).toBe(2);
+    expect(wAus?.zeitintervalle?.[0]).toEqual({
       startUhrzeit: "00:00",
       endeUhrzeit: "00:15",
       pkw: undefined,
@@ -233,7 +239,7 @@ describe("prepareForSaveZaehlungFjs", () => {
       fahrradfahrer: 1,
       fussgaenger: 1,
     });
-    expect(wAus?.zeitintervalle[1]).toEqual({
+    expect(wAus?.zeitintervalle?.[1]).toEqual({
       startUhrzeit: "00:15",
       endeUhrzeit: "00:30",
       pkw: undefined,
@@ -246,14 +252,14 @@ describe("prepareForSaveZaehlungFjs", () => {
     });
 
     // W/EIN
-    const wEin = zaehlung.laengsverkehr.find(
+    const wEin = zaehlung.laengsverkehr?.find(
       (v) =>
         v.strassenseite === Himmelsrichtung.W &&
-        v.richtung === Bewegungsrichtung.EIN
-    ) as LaengsverkehrDTO;
+        v.richtung === Bewegungsrichtung.Ein
+    ) as ExternalLaengsverkehrDTO;
     expect(wEin).toBeDefined();
-    expect(wEin?.zeitintervalle.length).toBe(2);
-    expect(wEin?.zeitintervalle[0]).toEqual({
+    expect(wEin?.zeitintervalle?.length).toBe(2);
+    expect(wEin?.zeitintervalle?.[0]).toEqual({
       startUhrzeit: "00:00",
       endeUhrzeit: "00:15",
       pkw: undefined,
@@ -264,7 +270,7 @@ describe("prepareForSaveZaehlungFjs", () => {
       fahrradfahrer: 5,
       fussgaenger: 6,
     });
-    expect(wEin?.zeitintervalle[1]).toEqual({
+    expect(wEin?.zeitintervalle?.[1]).toEqual({
       startUhrzeit: "00:15",
       endeUhrzeit: "00:30",
       pkw: undefined,

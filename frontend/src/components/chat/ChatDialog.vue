@@ -168,8 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import type ChatMessageDTO from "@/types/chat/ChatMessageDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type { ChatMessageDTO, ExternalZaehlungDTO } from "@/api/client";
 
 import { isEmpty, isNil } from "lodash";
 import { computed, ref, watch } from "vue";
@@ -186,7 +185,7 @@ interface Props {
 }
 const props = defineProps<Props>();
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 
@@ -229,11 +228,11 @@ function getTitle(item: ChatMessageDTO) {
     : "Mobilitätsreferat";
 }
 function getMessageTime(item: ChatMessageDTO) {
-  return dateUtils.getShortVersionOfDateWithTime(item.timestamp);
+  return dateUtils.getShortVersionOfDateWithTime(item.timestamp || "");
 }
 
 function loadMessages() {
-  if (props.showDialog) {
+  if (props.showDialog && zaehlung.value.id) {
     items.value = [];
     ChatMessageService.getAllByZaehlungId(zaehlung.value.id)
       .then((messageDTOs) => {
@@ -254,7 +253,11 @@ function loadMessages() {
 }
 
 function sendMessage() {
-  if (isNil(message.value) || isEmpty(message.value.trim())) {
+  if (
+    !zaehlung.value.id ||
+    isNil(message.value) ||
+    isEmpty(message.value.trim())
+  ) {
     // Keine Nachricht senden, wenn kein Text eingegeben wurde
     return;
   }

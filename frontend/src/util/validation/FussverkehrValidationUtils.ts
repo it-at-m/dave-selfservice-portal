@@ -1,13 +1,13 @@
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
+import type {
+  ExternalLaengsverkehrDTO,
+  ExternalQuerungsverkehrDTO,
+  ExternalVerkehrsbeziehungDTO,
+} from "@/api/client";
 
 import { difference, isEmpty, toArray } from "lodash";
 
-import Himmelsrichtung from "@/types/enum/Himmelsrichtung";
-import Richtung from "@/types/enum/Richtung";
-import Strassenseite, { StrassenseiteText } from "@/types/enum/Strassenseite";
-import Zaehlart from "@/types/enum/Zaehlart";
+import { Bewegungsrichtung, Himmelsrichtung, Zaehlart } from "@/api/client";
+import { himmelsrichtungText } from "@/types/enum/HimmelsrichtungText";
 import { useValidationUtils } from "@/util/validation/ValidationUtils";
 
 const validationUtils = useValidationUtils();
@@ -25,11 +25,11 @@ export function useFussverkehrValidationUtils() {
     strassenseite: string,
     armNummer: number,
     validArmNummern: Array<number>,
-    validStrassenseiten: Array<Strassenseite>
+    validStrassenseiten: Array<Himmelsrichtung>
   ): boolean {
     return (
       validArmNummern.includes(armNummer) &&
-      !validStrassenseiten.includes(strassenseite as Strassenseite)
+      !validStrassenseiten.includes(strassenseite as Himmelsrichtung)
     );
   }
 
@@ -40,11 +40,14 @@ export function useFussverkehrValidationUtils() {
    * @param nach csv-Spalte für nach.
    * @return Fehlermeldung
    */
-  function validateNachOccurrence(zaehlart: Zaehlart, nach: string) {
-    if ([Zaehlart.FJS, Zaehlart.QU].includes(zaehlart) && nach.trim()) {
+  function validateNachOccurrence(zaehlart: string | undefined, nach: string) {
+    if (
+      (zaehlart === Zaehlart.Fjs || zaehlart === Zaehlart.Qu) &&
+      nach.trim()
+    ) {
       return `Der Zielknotenarm (nach) darf nicht gefüllt sein.`;
     }
-    if (zaehlart === Zaehlart.QJS && !nach.trim()) {
+    if (zaehlart === Zaehlart.Qjs && !nach.trim()) {
       return `Der Zielknotenarm (nach) darf nicht leer sein.`;
     }
   }
@@ -79,20 +82,20 @@ export function useFussverkehrValidationUtils() {
    * @return Fehlermeldung
    */
   function validateStrassenseiteOccurrence(
-    zaehlart: Zaehlart,
+    zaehlart: string | undefined,
     strassenseite: string
   ) {
     if (
-      [Zaehlart.FJS, Zaehlart.QJS].includes(zaehlart) &&
+      (zaehlart === Zaehlart.Fjs || zaehlart === Zaehlart.Qjs) &&
       !strassenseite?.trim()
     ) {
       return `Die Strassenseite darf nicht leer sein.`;
     }
-    if (zaehlart === Zaehlart.QU && strassenseite.trim()) {
+    if (zaehlart === Zaehlart.Qu && strassenseite.trim()) {
       return `Die Strassenseite muss leer sein.`;
     }
-    if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
-      if (!StrassenseiteText.has(strassenseite.trim())) {
+    if (zaehlart === Zaehlart.Fjs || zaehlart === Zaehlart.Qjs) {
+      if (!himmelsrichtungText.has(strassenseite.trim())) {
         return `Die Strassenseite ist ungültig: ${strassenseite}.`;
       }
     }
@@ -108,7 +111,7 @@ export function useFussverkehrValidationUtils() {
   function validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+    verkehrsbeziehungen: Array<ExternalVerkehrsbeziehungDTO> = []
   ) {
     const nachAndStrassenseiteOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -149,7 +152,7 @@ export function useFussverkehrValidationUtils() {
   function validateNonRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    verkehrsbeziehungen: Array<VerkehrsbeziehungDTO>
+    verkehrsbeziehungen: Array<ExternalVerkehrsbeziehungDTO> = []
   ) {
     const nachAndStrassenseiteOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -190,7 +193,7 @@ export function useFussverkehrValidationUtils() {
   function validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    laengsverkehre: Array<LaengsverkehrDTO>
+    laengsverkehre: Array<ExternalLaengsverkehrDTO> = []
   ) {
     const strassenseiteAndRichtungOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -229,7 +232,7 @@ export function useFussverkehrValidationUtils() {
   function validateNonRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    laengsverkehre: Array<LaengsverkehrDTO>
+    laengsverkehre: Array<ExternalLaengsverkehrDTO> = []
   ) {
     const strassenseiteAndRichtungOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -268,7 +271,7 @@ export function useFussverkehrValidationUtils() {
   function validateRequiredRichtungIntervallsForQuAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    querungsverkehre: Array<QuerungsverkehrDTO>
+    querungsverkehre: Array<ExternalQuerungsverkehrDTO> = []
   ) {
     const richtungOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -302,7 +305,7 @@ export function useFussverkehrValidationUtils() {
   function validateNonRequiredRichtungIntervallsForQuAreExistent(
     armNummer: number,
     csvDataWithoutHeader: Array<string>,
-    querungsverkehre: Array<QuerungsverkehrDTO>
+    querungsverkehre: Array<ExternalQuerungsverkehrDTO> = []
   ) {
     const richtungOfEachLine = csvDataWithoutHeader
       .filter((csvLine) => !isEmpty(csvLine))
@@ -335,35 +338,35 @@ export function useFussverkehrValidationUtils() {
    * @return Fehlermeldung
    */
   function validateStrassenseiteValue(
-    zaehlart: Zaehlart,
+    zaehlart: string | undefined,
     strassenseite: string,
     armNummer: number
   ) {
-    if (zaehlart === Zaehlart.FJS || zaehlart === Zaehlart.QJS) {
+    if (zaehlart === Zaehlart.Fjs || zaehlart === Zaehlart.Qjs) {
       if (
         isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [1, 3],
-          [Strassenseite.W, Strassenseite.O]
+          [Himmelsrichtung.W, Himmelsrichtung.O]
         ) ||
         isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [2, 4],
-          [Strassenseite.N, Strassenseite.S]
+          [Himmelsrichtung.N, Himmelsrichtung.S]
         ) ||
         isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [5, 7],
-          [Strassenseite.NW, Strassenseite.SO]
+          [Himmelsrichtung.Nw, Himmelsrichtung.So]
         ) ||
         isArmnummerAndStrassenseiteInvalid(
           strassenseite,
           armNummer,
           [6, 8],
-          [Strassenseite.NO, Strassenseite.SW]
+          [Himmelsrichtung.No, Himmelsrichtung.Sw]
         )
       ) {
         return `Die Strassenseite ${strassenseite} ist ungültig für den Knotenarm.`;
@@ -378,29 +381,36 @@ export function useFussverkehrValidationUtils() {
    * @param richtung csv-Spalte für Richtung.
    * @return Fehlermeldung
    */
-  function validateRichtungOccurrence(zaehlart: Zaehlart, richtung: string) {
+  function validateRichtungOccurrence(
+    zaehlart: string | undefined,
+    richtung: string
+  ) {
     // Prüfung der Richtung
-    if (zaehlart === Zaehlart.QU) {
+    if (zaehlart === Zaehlart.Qu) {
       if (
         ![
-          Richtung.N,
-          Richtung.O,
-          Richtung.S,
-          Richtung.W,
-          Richtung.NO,
-          Richtung.SO,
-          Richtung.NW,
-          Richtung.SW,
-        ].includes(richtung.trim() as Richtung)
+          Himmelsrichtung.N,
+          Himmelsrichtung.O,
+          Himmelsrichtung.S,
+          Himmelsrichtung.W,
+          Himmelsrichtung.No,
+          Himmelsrichtung.So,
+          Himmelsrichtung.Nw,
+          Himmelsrichtung.Sw,
+        ].includes(richtung.trim() as Himmelsrichtung)
       ) {
-        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.QU}.`;
+        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.Qu}.`;
       }
-    } else if (zaehlart === Zaehlart.FJS) {
-      if (![Richtung.EIN, Richtung.AUS].includes(richtung.trim() as Richtung)) {
-        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.FJS}.`;
+    } else if (zaehlart === Zaehlart.Fjs) {
+      if (
+        ![Bewegungsrichtung.Ein, Bewegungsrichtung.Aus].includes(
+          richtung.trim() as Bewegungsrichtung
+        )
+      ) {
+        return `Die Richtung ${richtung} ist ungültig für Zählart ${Zaehlart.Fjs}.`;
       }
     } else {
-      // Zaehlart.QJS
+      // Zaehlart.Qjs
       if (richtung.trim()) {
         return `Die Richtung muss leer sein für Zählart ${zaehlart}.`;
       }
@@ -416,11 +426,11 @@ export function useFussverkehrValidationUtils() {
    * @return Fehlermeldung
    */
   function validateRichtungValue(
-    zaehlart: Zaehlart,
+    zaehlart: string | undefined,
     armNummer: number,
     richtung: string
   ) {
-    if (zaehlart !== Zaehlart.QU) {
+    if (zaehlart !== Zaehlart.Qu) {
       return;
     }
     if (
@@ -437,17 +447,17 @@ export function useFussverkehrValidationUtils() {
         richtung !== Himmelsrichtung.N.valueOf() &&
         richtung !== Himmelsrichtung.S.valueOf()) ||
       (armNummer === 5 &&
-        richtung !== Himmelsrichtung.NW.valueOf() &&
-        richtung !== Himmelsrichtung.SO.valueOf()) ||
+        richtung !== Himmelsrichtung.Nw.valueOf() &&
+        richtung !== Himmelsrichtung.So.valueOf()) ||
       (armNummer === 6 &&
-        richtung !== Himmelsrichtung.NO.valueOf() &&
-        richtung !== Himmelsrichtung.SW.valueOf()) ||
+        richtung !== Himmelsrichtung.No.valueOf() &&
+        richtung !== Himmelsrichtung.Sw.valueOf()) ||
       (armNummer === 7 &&
-        richtung !== Himmelsrichtung.NW.valueOf() &&
-        richtung !== Himmelsrichtung.SO.valueOf()) ||
+        richtung !== Himmelsrichtung.Nw.valueOf() &&
+        richtung !== Himmelsrichtung.So.valueOf()) ||
       (armNummer === 8 &&
-        richtung !== Himmelsrichtung.NO.valueOf() &&
-        richtung !== Himmelsrichtung.SW.valueOf())
+        richtung !== Himmelsrichtung.No.valueOf() &&
+        richtung !== Himmelsrichtung.Sw.valueOf())
     ) {
       return `Die Richtung ${richtung} ist ungültig für den Knotenarm ${armNummer}.`;
     }

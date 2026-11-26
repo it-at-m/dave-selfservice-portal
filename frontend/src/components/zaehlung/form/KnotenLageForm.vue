@@ -85,7 +85,7 @@
           </v-row>
           <v-row
             v-for="arm in relevantKnotenarme"
-            :key="arm.id"
+            :key="arm.nummer"
             dense
             no-gutters
           >
@@ -142,25 +142,26 @@
 </template>
 
 <script setup lang="ts">
-import type VerkehrsbeziehungDTO from "@/domain/dto/VerkehrsbeziehungDTO";
-import type GeoPoint from "@/domain/GeoPoint";
-import type KnotenarmDTO from "@/types/zaehlung/KnotenarmDTO";
-import type LaengsverkehrDTO from "@/types/zaehlung/LaengsverkehrDTO";
-import type QuerungsverkehrDTO from "@/types/zaehlung/QuerungsverkehrDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  ExternalKnotenarmDTO,
+  ExternalLaengsverkehrDTO,
+  ExternalQuerungsverkehrDTO,
+  ExternalVerkehrsbeziehungDTO,
+  ExternalZaehlungDTO,
+} from "@/api/client";
 
 import { LatLng } from "leaflet";
 import { isEmpty, isNil, parseInt, toArray } from "lodash";
 import { computed, ref } from "vue";
 
+import { Status, Zaehlart } from "@/api/client";
 import LhmTextField from "@/components/common/LhmTextField.vue";
 import ZaehlungCardMap from "@/components/map/ZaehlungCardMap.vue";
 import VerkehrForm from "@/components/zaehlung/form/verkehrsbeziehungen/VerkehrForm.vue";
+import { useKnotenarmFileStore } from "@/store/KnotenarmFileStore";
 import { useSnackbarStore } from "@/store/SnackbarStore";
 import { useValidationStore } from "@/store/ValidationStore";
-import Status from "@/types/enum/Status";
 import UploadedFileStatus from "@/types/enum/UploadedFileStatus";
-import Zaehlart from "@/types/enum/Zaehlart";
 import DefaultObjectCreator from "@/util/DefaultObjectCreator";
 import KnotenarmComparator from "@/util/KnotenarmComparator";
 import { useFussverkehrValidationUtils } from "@/util/validation/FussverkehrValidationUtils";
@@ -174,7 +175,7 @@ interface Props {
 
 defineProps<Props>();
 
-const zaehlung = defineModel<ZaehlungDTO>({
+const zaehlung = defineModel<ExternalZaehlungDTO>({
   required: true,
 });
 
@@ -187,6 +188,7 @@ const FILE_INPUT_FIELD_ID = "fileInputField";
 const snackbarStore = useSnackbarStore();
 
 const validationStore = useValidationStore();
+const knotenarmFileStore = useKnotenarmFileStore();
 
 const fussverkehrValidationUtils = useFussverkehrValidationUtils();
 const kfzVerkehrValidationUtils = useKfzVerkehrValidationUtils();
@@ -195,7 +197,7 @@ const resetFileInput = ref<number>(0);
 
 const files = ref<Array<File>>([]);
 
-const relevantKnotenarme = computed<Array<KnotenarmDTO>>(() => {
+const relevantKnotenarme = computed<Array<ExternalKnotenarmDTO>>(() => {
   const knotenarme = validationUtils.getRelevantKnotenarmeForFileUpload(
     zaehlung.value
   );
@@ -211,58 +213,65 @@ const uploadIcon = computed<string>(() =>
 );
 
 const coordsZaehlstelle = computed<LatLng>(() => {
-  const punkt: GeoPoint = zaehlung.value.zaehlstellePunkt;
-  if (punkt) {
-    return new LatLng(parseFloat(punkt.lat), parseFloat(punkt.lon));
+  const punkt = zaehlung.value.zaehlstellePunkt;
+  if (punkt?.lat != null && punkt.lon != null) {
+    return new LatLng(punkt.lat, punkt.lon);
   } else {
     return DefaultObjectCreator.createCenterOfMunichLatLng();
   }
 });
 
 const coordsZaehlung = computed<LatLng>(() => {
-  const punkt: GeoPoint = zaehlung.value.punkt;
-  if (punkt) {
-    return new LatLng(parseFloat(punkt.lat), parseFloat(punkt.lon));
+  const punkt = zaehlung.value.punkt;
+  if (punkt?.lat != null && punkt.lon != null) {
+    return new LatLng(punkt.lat, punkt.lon);
   } else {
     return coordsZaehlstelle.value;
   }
 });
 
 const isZaehlungEditable = computed<boolean>(() => {
-  return [Status.COUNTING, Status.CORRECTION].includes(zaehlung.value.status);
+  return (
+    zaehlung.value.status === Status.Counting ||
+    zaehlung.value.status === Status.Correction
+  );
 });
 
 const bewegungsbeziehungen = computed<
-  Array<VerkehrsbeziehungDTO | QuerungsverkehrDTO | LaengsverkehrDTO>
+  Array<
+    | ExternalVerkehrsbeziehungDTO
+    | ExternalQuerungsverkehrDTO
+    | ExternalLaengsverkehrDTO
+  >
 >(() => {
   const zaehlart = zaehlung.value?.zaehlart;
 
   let source:
-    | Array<VerkehrsbeziehungDTO>
-    | Array<QuerungsverkehrDTO>
-    | Array<LaengsverkehrDTO>
+    | Array<ExternalVerkehrsbeziehungDTO>
+    | Array<ExternalQuerungsverkehrDTO>
+    | Array<ExternalLaengsverkehrDTO>
     | undefined;
 
-  if (zaehlart === Zaehlart.QU) {
+  if (zaehlart === Zaehlart.Qu) {
     source = zaehlung.value?.querungsverkehr as
-      | Array<QuerungsverkehrDTO>
+      | Array<ExternalQuerungsverkehrDTO>
       | undefined;
-  } else if (zaehlart === Zaehlart.FJS) {
+  } else if (zaehlart === Zaehlart.Fjs) {
     source = zaehlung.value?.laengsverkehr as
-      | Array<LaengsverkehrDTO>
+      | Array<ExternalLaengsverkehrDTO>
       | undefined;
   } else {
     source = zaehlung.value?.verkehrsbeziehungen as
-      | Array<VerkehrsbeziehungDTO>
+      | Array<ExternalVerkehrsbeziehungDTO>
       | undefined;
   }
   // toArray sorgt dafür, dass undefined/null in [] umgewandelt werden,
   // anschließend sortieren
-  return zaehlart === Zaehlart.QU || zaehlart === Zaehlart.FJS
+  return zaehlart === Zaehlart.Qu || zaehlart === Zaehlart.Fjs
     ? toArray(source).sort(
         VerkehrsbeziehungComparator.sortLaengsUndQuerungByNumber
       )
-    : toArray(source).sort(VerkehrsbeziehungComparator.sortByActiveVonAndNach);
+    : toArray(source).sort(VerkehrsbeziehungComparator.sortByVonAndNach);
 });
 
 const isNotKreisverkehr = computed<boolean>(() => !zaehlung.value.kreisverkehr);
@@ -272,7 +281,7 @@ const bewegungsbeziehungenHeader = computed<Array<any>>(() => {
   const zaehlart = zaehlung.value.zaehlart;
 
   // Header für QjS (Querschnitt je Strassenseite)
-  if (zaehlart === Zaehlart.QJS) {
+  if (zaehlart === Zaehlart.Qjs) {
     return [
       {
         title: "Von",
@@ -297,7 +306,7 @@ const bewegungsbeziehungenHeader = computed<Array<any>>(() => {
   }
 
   // Header für FjS (Fußgänger/Rad je Strassenseite)
-  if (zaehlart === Zaehlart.FJS) {
+  if (zaehlart === Zaehlart.Fjs) {
     return [
       {
         title: "Von",
@@ -322,7 +331,7 @@ const bewegungsbeziehungenHeader = computed<Array<any>>(() => {
   }
 
   // Header für Qu (Fußgänger/Rad Querungen)
-  if (zaehlart === Zaehlart.QU) {
+  if (zaehlart === Zaehlart.Qu) {
     return [
       {
         title: "Von",
@@ -364,7 +373,7 @@ function fileUpload(): void {
   }
 }
 
-function getStyle(arm: KnotenarmDTO): string {
+function getStyle(arm: ExternalKnotenarmDTO): string {
   let style = "display: none";
   if (arm.filename && arm.filename.trim().length > 0) {
     style = "";
@@ -378,11 +387,11 @@ function wrongFileType(file: File): boolean {
 
 function deleteFile(nummer: number): void {
   validationStore.uploadedFilesChanged = true;
-  relevantKnotenarme.value.forEach((arm: KnotenarmDTO) => {
+  relevantKnotenarme.value.forEach((arm: ExternalKnotenarmDTO) => {
     if (arm.nummer === nummer) {
       validationStore.setUploadedFileStatus(arm, UploadedFileStatus.MISSING);
       arm.filename = "";
-      arm.filedata = [];
+      knotenarmFileStore.deleteFiledata(arm.nummer);
     }
   });
 }
@@ -504,9 +513,9 @@ function checkUploadedFiledata(
       // Unterscheidung zw. Fussverkehrszählung und anderen Zählungen
       let invalidityReason: string;
       if (
-        zaehlung.value.zaehlart === Zaehlart.QJS ||
-        zaehlung.value.zaehlart === Zaehlart.FJS ||
-        zaehlung.value.zaehlart === Zaehlart.QU
+        zaehlung.value.zaehlart === Zaehlart.Qjs ||
+        zaehlung.value.zaehlart === Zaehlart.Fjs ||
+        zaehlung.value.zaehlart === Zaehlart.Qu
       ) {
         invalidityReason = checkFussverkehrData(
           csvLineIndex,
@@ -720,7 +729,7 @@ function checkFussverkehrData(
       filename
     );
 
-  if (Zaehlart.QJS === zaehlart) {
+  if (Zaehlart.Qjs === zaehlart) {
     errorMessage = fussverkehrValidationUtils.validateNachValue(
       armNummer,
       splittedLine[1]
@@ -810,9 +819,9 @@ function checkFussverkehrData(
 function validateIntervallsWithRequiredRichtungsinformationAreExistent(
   armNummer: number,
   csvDataWithoutHeader: Array<string>,
-  zaehlung: ZaehlungDTO
+  zaehlung: ExternalZaehlungDTO
 ): string {
-  if (zaehlung.zaehlart === Zaehlart.QJS) {
+  if (zaehlung.zaehlart === Zaehlart.Qjs) {
     const nachAndStrassenseiteIntervallsAreExistent =
       fussverkehrValidationUtils.validateRequiredNachAndStrassenseiteIntervallsForQjsAreExistent(
         armNummer,
@@ -832,7 +841,7 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
     if (!isEmpty(toMuchNachAndStrassenseiteIntervallsAreExistent)) {
       return toMuchNachAndStrassenseiteIntervallsAreExistent;
     }
-  } else if (zaehlung.zaehlart === Zaehlart.FJS) {
+  } else if (zaehlung.zaehlart === Zaehlart.Fjs) {
     const strassenseiteAndRichtungIntervallsAreExistent =
       fussverkehrValidationUtils.validateRequiredStrassenseiteAndRichtungIntervallsForFjsAreExistent(
         armNummer,
@@ -852,7 +861,7 @@ function validateIntervallsWithRequiredRichtungsinformationAreExistent(
     if (!isEmpty(toMuchStrassenseiteAndRichtungIntervallsAreExistent)) {
       return toMuchStrassenseiteAndRichtungIntervallsAreExistent;
     }
-  } else if (zaehlung.zaehlart === Zaehlart.QU) {
+  } else if (zaehlung.zaehlart === Zaehlart.Qu) {
     const richtungIntervallsAreExistent =
       fussverkehrValidationUtils.validateRequiredRichtungIntervallsForQuAreExistent(
         armNummer,
@@ -951,16 +960,18 @@ function handleCsvFileSelection() {
  */
 function isKnotenarmRelevantForFileUpload(knotenarmnummer: number): boolean {
   return relevantKnotenarme.value.some(
-    (zaehlungArm: KnotenarmDTO) => zaehlungArm.nummer === knotenarmnummer
+    (zaehlungArm: ExternalKnotenarmDTO) =>
+      zaehlungArm.nummer === knotenarmnummer
   );
 }
 
 /**
  * Liest die ausgewählten CSV-Dateien ein und ordnet sie den relevanten Knotenarmen zu.
- * Prüft die CSV-Daten und speichert Dateiname, Dateiinhalt und Validierungsstatus am jeweiligen Knotenarm.
+ * Prüft die CSV-Daten und speichert den Dateinamen am Knotenarm sowie Dateiinhalt und Validierungsstatus in den Stores.
  * Zeigt Erfolgs- oder Fehlermeldungen an.
  */
 function readAndValidateUploadedCsvFiles() {
+  const filedataByKnotenarm = knotenarmFileStore.filedataByKnotenarm;
   let successfull = true;
   let errorText = "";
   let itemsProcessed = 0;
@@ -983,6 +994,12 @@ function readAndValidateUploadedCsvFiles() {
         fileReader.addEventListener(
           "load",
           function () {
+            // Nach einem Dialogwechsel dürfen ausstehende Uploads keine Daten mehr ändern.
+            if (
+              filedataByKnotenarm !== knotenarmFileStore.filedataByKnotenarm
+            ) {
+              return;
+            }
             try {
               const csv: Array<string> = (fileReader.result as string).split(
                 /\r\n|\n/
@@ -1016,7 +1033,7 @@ function readAndValidateUploadedCsvFiles() {
 
                 itemsProcessed++;
                 relevantKnotenarme.value.forEach(
-                  (zaehlungArm: KnotenarmDTO) => {
+                  (zaehlungArm: ExternalKnotenarmDTO) => {
                     if (zaehlungArm.nummer === knotenarmnummerOfCsv) {
                       // Plausibilitätscheck
                       const errorMessage: string = checkUploadedFiledata(
@@ -1035,7 +1052,7 @@ function readAndValidateUploadedCsvFiles() {
                       );
 
                       zaehlungArm.filename = myFile.name;
-                      zaehlungArm.filedata = csv;
+                      knotenarmFileStore.setFiledata(zaehlungArm.nummer, csv);
 
                       if (!isUploadedFileForKnotenarmPlausible) {
                         successfull = false;

@@ -1,32 +1,42 @@
-import type UpdateStatusDTO from "@/domain/dto/UpdateStatusDTO";
-import type ZaehlungDTO from "@/types/zaehlung/ZaehlungDTO";
+import type {
+  BackendIdDTO,
+  ExternalZaehlungDTO,
+  UpdateStatusDTO,
+} from "@/api/client";
 
-import FetchService from "@/api/service/FetchService";
+import { ZaehlungControllerApi } from "@/api/client";
+import createBackendApiConfiguration from "@/api/util/BackendApiConfiguration";
+import BaseUrlProvider from "@/api/util/BaseUrlProvider";
+import { handleOpenApiError } from "@/api/util/OpenApiErrorHandler";
 
 export default class ZaehlungService {
-  private static readonly ENDPOINT: string =
-    "api/dave-backend-service/zaehlung";
+  private static readonly ENDPOINT = `${BaseUrlProvider.getBaseUrl()}/api/dave-backend-service`;
+  private static readonly API = new ZaehlungControllerApi(
+    createBackendApiConfiguration(this.ENDPOINT)
+  );
 
-  static saveZaehlung(data: ZaehlungDTO): Promise<void> {
-    return FetchService.postData(
-      data,
-      `${this.ENDPOINT}/saveExternal`,
+  static saveExternalZaehlung(data: ExternalZaehlungDTO) {
+    return handleOpenApiError(
+      this.API.saveExternalZaehlung({
+        externalZaehlungDTO: data,
+      }).then((response) => response),
       "Beim Speichern der Zählung ist ein Fehler aufgetreten. Bitte Daten kontrollieren."
     );
   }
 
-  static getAllRelevantZaehlungen(): Promise<Array<ZaehlungDTO>> {
-    return FetchService.getData(
-      `${this.ENDPOINT}/getZaehlungenForExternal`,
+  static updateStatus(updateStatusDto: UpdateStatusDTO): Promise<BackendIdDTO> {
+    return handleOpenApiError(
+      this.API.updateStatus({
+        updateStatusDTO: updateStatusDto,
+      }).then((response) => response),
+      "Beim Speichern der Zählung ist ein Fehler aufgetreten. Bitte Daten kontrollieren."
+    );
+  }
+
+  static getAllRelevantZaehlungen(): Promise<Array<ExternalZaehlungDTO>> {
+    return handleOpenApiError(
+      this.API.getZaehlungenForExternal(),
       "Beim Laden der Zählung ist ein Fehler aufgetreten."
-    );
-  }
-
-  static updateStatus(data: UpdateStatusDTO): Promise<void> {
-    return FetchService.postData(
-      data,
-      `${this.ENDPOINT}/updateStatus`,
-      "Beim Speichern der Zählung ist ein Fehler aufgetreten. Bitte Daten kontrollieren."
     );
   }
 }
